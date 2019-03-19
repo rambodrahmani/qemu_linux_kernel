@@ -111,7 +111,7 @@ char conv(natb c);
  * @param   screen_max_y
  *
  */
-natb * bochsvga_config(natw screen_max_x, natw screen_max_y);
+natb* bochsvga_config(natw screen_max_x, natw screen_max_y);
 
 /*
  * Utility functions to write to the video output.
@@ -177,4 +177,95 @@ void serial_o(natb c);
  *
  */
 void serial2_o(natb c);
+
+/*
+ * Utility functions to work with strings.
+ */
+
+/**
+ *
+ * @param   dest
+ * @param   c
+ * @param   n
+ *
+ */
+void *memset(void* dest, int c, size_t n);
+
+/**
+ *
+ * @param   dest
+ * @param   src
+ * @param   n
+ *
+ */
+void *memcpy(void* dest, const void* src, size_t n);
+
+/**
+ *
+ * @param str[]
+ *
+ * @return
+ *
+ */
+size_t strlen(const char str[]);
+
+/**
+ *
+ * @param   src[]
+ * @param   dst[]
+ *
+ * @return
+ *
+ */
+char* copy(const char src[], char dst[]);
+
+/**
+ *
+ * @param   n
+ * @param   dst[]
+ *
+ * @return
+ *
+ */
+char* natb_conv(natb n, char dst[]);
+
+/**
+ *
+ * @param   n
+ * @param   dst[]
+ *
+ * @return
+ *
+ */
+char* natw_conv(natw n, char dst[]);
+
+/**
+ *
+ * @param   n
+ * @param   dst[]
+ *
+ * @return
+ *
+ */
+char* natl_conv(natl n, char dst[]);
+
+/**
+ *
+ * @param   n
+ * @param   dst[]
+ *
+ * @return
+ *
+ */
+char* natq_conv(natq n, char dst[]);
+
+/**
+ *
+ * @param   n
+ * @param   dst[]
+ *
+ * @return
+ *
+ */
+char* int_conv(long n, char dst[]);
 
