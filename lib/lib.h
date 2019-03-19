@@ -79,3 +79,62 @@ extern "C" void outputbw(natw vect[], int length, ioaddr reg);
  */
 extern "C" void inputbw(ioaddr reg, natw vect[], int length);
 
+/*
+ * Utility functions to read from the keyboard.
+ */
+
+/**
+ * @return 
+ */
+natb get_code();
+
+/**
+ * @return 
+ */
+char char_read();
+
+/**
+ *
+ * @param   c
+ *
+ * @return
+ */
+char conv(natb c);
+
+/*
+ * Utility functions to setup the video ourput.
+ */
+
+/**
+ *
+ * @param   screen_max_x
+ * @param   screen_max_y
+ *
+ */
+natb * bochsvga_config(natw screen_max_x, natw screen_max_y);
+
+/*
+ * Utility functions to write to video output.
+ */
+
+/**
+ *
+ * @param   col
+ *
+ */
+void clear_screen(natb col);
+
+/**
+ *
+ * @param c
+ *
+ */
+void char_write(natb c);
+
+/**
+ *
+ * @param str[]
+ *
+ */
+void str_write(const char str[]);
+
