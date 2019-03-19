@@ -331,3 +331,14 @@ extern "C" void sem_wait(natl sem);
  */
 extern "C" void sem_signal(natl sem);
 
+/*
+ * Utility functions to implment time delay.
+ */
+
+/**
+ *
+ * @param   num
+ *
+ */
+extern "C" void delay(natl num);
+
