@@ -8,6 +8,7 @@
  */
 
 #include "type.h"
+#include <stdarg.h>
 
 /*
  * Utility functions to read and write to a registry of the I/O space.
@@ -451,4 +452,127 @@ bool pci_find_class(natb& bus, natb& dev, natb& fun, natb code[]);
  *
  */
 bool pci_next(natb& bus, natb& dev, natb& fun);
+
+/*
+ * Utility functions to work with Heap Memory.
+ */
+
+/**
+ *
+ * @param   v
+ * @param   a
+ *
+ * @return
+ *
+ */
+size_t allinea(size_t v, size_t a);
+
+/**
+ *
+ * @param   start
+ * @param   size
+ *
+ */
+void heap_init(void* start, size_t size);
+
+/**
+ *
+ * @param   dim
+ */
+void* alloca(size_t dim);
+
+/**
+ *
+ * @param   p
+ */
+void dealloca(void* p);
+
+/**
+ *
+ * @return
+ *
+ */
+size_t disponibile();
+
+/*
+ * Utility functions for logging.
+ */
+
+/**
+ * This enumeration contains the severity which can be used for a log.
+ */
+enum log_sev
+{
+    LOG_DEBUG,
+    LOG_INFO,
+    LOG_WARN,
+    LOG_ERR,
+    LOG_USR
+};
+
+/**
+ *
+ * @param   sev
+ * @param   fmt
+ *
+ */
+extern "C" void flog(log_sev sev, const char* fmt, ...);
+
+/**
+ *
+ * @param   sev
+ * @param   buf
+ * @param   quanti
+ *
+ */
+extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
+
+/*
+ * Advanced utility functions.
+ */
+
+/**
+ *
+ * @param   fmt
+ *
+ * @return
+ *
+ */
+int printf(const char* fmt, ...);
+
+/**
+ *
+ * @param   str
+ * @param   size
+ * @param   fmt
+ * @param   ap
+ *
+ * @return 
+ */
+int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
+
+/**
+ *
+ * @param   buf
+ * @param   n
+ * @param   fmt
+ *
+ * @return
+ */
+int snprintf(char* buf, natl n, const char* fmt, ...);
+
+/**
+ *
+ * @return
+ *
+ */
+bool apic_init();
+
+/**
+ *
+ * @return
+ *
+ */
+void apic_reset();
+
 
