@@ -138,3 +138,25 @@ void char_write(natb c);
  */
 void str_write(const char str[]);
 
+/*
+ * Utility functions to read and write to the primary hard disk drive.
+ */
+
+/**
+ *
+ * @param   lba
+ * @param   length
+ * @param   vect[]
+ *
+ */
+void hdd_read(natl lba, natb length, natw vect[]);
+
+/**
+ *
+ * @param   lba
+ * @param   length
+ * @param   vect[]
+ *
+ */
+void hdd_write(natl lba, natb length, natw vect[]);
+
