@@ -160,3 +160,21 @@ void hdd_read(natl lba, natb length, natw vect[]);
  */
 void hdd_write(natl lba, natb length, natw vect[]);
 
+/*
+ * Utility functions for the serial port.
+ */
+
+/**
+ *
+ * @param c
+ *
+ */
+void serial_o(natb c);
+
+/**
+ *
+ * @param c
+ *
+ */
+void serial2_o(natb c);
+
