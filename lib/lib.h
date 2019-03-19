@@ -10,7 +10,7 @@
 #include "type.h"
 
 /*
- * Utility functions to read and write in a registry of the I/O space.
+ * Utility functions to read and write to a registry of the I/O space.
  */
 
 /**
@@ -114,7 +114,7 @@ char conv(natb c);
 natb * bochsvga_config(natw screen_max_x, natw screen_max_y);
 
 /*
- * Utility functions to write to video output.
+ * Utility functions to write to the video output.
  */
 
 /**
