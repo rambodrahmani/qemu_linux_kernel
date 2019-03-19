@@ -310,6 +310,7 @@ extern "C" void apic_set_MIRQ(natl irq, bool enable);
  *
  * @param   irq
  * @param   vec
+ *
  */
 extern "C" void apic_set_VECT(natl irq, natb vec);
 
@@ -341,4 +342,113 @@ extern "C" void sem_signal(natl sem);
  *
  */
 extern "C" void delay(natl num);
+
+/*
+ * Utility functions to work with the PCI bus.
+ */
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   regn
+ *
+ * @return
+ *
+ */
+natb pci_read_confb(natb bus, natb dev, natb fun, natb regn);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   regn
+ *
+ * @return
+ *
+ */
+natw pci_read_confw(natb bus, natb dev, natb fun, natb regn);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   regn
+ *
+ * @return
+ *
+ */
+natl pci_read_confl(natb bus, natb dev, natb fun, natb regn);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   regn
+ * @param   data
+ *
+ */
+void pci_write_confb(natb bus, natb dev, natb fun, natb regn, natb data);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   regn
+ * @param   data
+ *
+ */
+void pci_write_confw(natb bus, natb dev, natb fun, natb regn, natw data);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   regn
+ * @param   data
+ *
+ */
+void pci_write_confl(natb bus, natb dev, natb fun, natb regn, natl data);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   vendorID
+ * @param   deviceID
+ *
+ * @return
+ *
+ */
+bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw vendorID, natw deviceID);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ * @param   code[]
+ *
+ * @return
+ *
+ */
+bool pci_find_class(natb& bus, natb& dev, natb& fun, natb code[]);
+
+/**
+ *
+ * @param   bus
+ * @param   dev
+ * @param   fun
+ *
+ * @return
+ *
+ */
+bool pci_next(natb& bus, natb& dev, natb& fun);
 
