@@ -88,4 +88,33 @@ boot64/boot_cpp.o: boot64/boot.cpp boot64/mboot.h boot64/elf64.h
 ################################################################################
 # Install directives.
 ################################################################################
+.PHONY: zerohd clean install
+
+$(HD_PATH):
+	mkdir -p $(dir $(HD_PATH))
+	truncate -s $(HD_SIZE) $(HD_PATH)
+
+zerohd:
+	dd if=/dev/zero of=$(HD_PATH) bs=$(HD_SIZE) count=1
+
+libce.conf:
+	rm -f $@
+	( $(foreach v,BIN LIB LIB64 INCLUDE HD_SIZE HD_PATH QEMU_BOOT,echo $v=$($v);) ) > $@
+
+install: $(HD_PATH) 
+	install -d					$(ETC)
+	install -m 0444 libce.conf	$(ETC)
+	install -d					$(BIN)
+	install -d					$(LIB)
+	install -d					$(LIB64)
+	install -m 0444 libce.a		$(LIB)
+	install -m 0444 libce64.a	$(LIB64)
+	install -m 0444 start64.o	$(LIB64)
+	install -d					$(INCLUDE)
+	install -m 0444 *.h			$(INCLUDE)
+	install -m 0444 libce.s		$(INCLUDE)
+	install -m 0444 boot.bin	$(LIB)
+
+clean:
+	rm -f *.o 32/*.o 64/*.o libce.a libce64.a boot.bin boot64/*.o
 
