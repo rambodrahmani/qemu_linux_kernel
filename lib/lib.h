@@ -313,3 +313,21 @@ extern "C" void apic_set_MIRQ(natl irq, bool enable);
  */
 extern "C" void apic_set_VECT(natl irq, natb vec);
 
+/*
+ * Utility functions for thread synchronization.
+ */
+
+/**
+ *
+ * @param   sem
+ *
+ */
+extern "C" void sem_wait(natl sem);
+
+/**
+ *
+ * @param   sem
+ *
+ */
+extern "C" void sem_signal(natl sem);
+
