@@ -278,3 +278,38 @@ char* int_conv(long n, char dst[]);
  */
 void pause();
 
+/*
+ * Utility functions to work with the interrupt mechanism.
+ */
+
+/**
+ *
+ * @param   num
+ * @param   routine()
+ *
+ */
+extern "C" void gate_init(natl num, void routine());
+
+/**
+ *
+ * @param   num
+ * @param   routine()
+ *
+ */
+extern "C" void trap_init(natl num, void routine());
+
+/**
+ *
+ * @param   irq
+ * @param   enable
+ *
+ */
+extern "C" void apic_set_MIRQ(natl irq, bool enable);
+
+/**
+ *
+ * @param   irq
+ * @param   vec
+ */
+extern "C" void apic_set_VECT(natl irq, natb vec);
+
