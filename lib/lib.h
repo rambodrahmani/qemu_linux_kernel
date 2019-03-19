@@ -269,3 +269,12 @@ char* natq_conv(natq n, char dst[]);
  */
 char* int_conv(long n, char dst[]);
 
+/*
+ * Utility functions to wait.
+ */
+
+/**
+ *
+ */
+void pause();
+
