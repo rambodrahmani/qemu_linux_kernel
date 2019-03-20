@@ -1,7 +1,7 @@
 ###
 #
-# File: inputl.s
-#       x64 Assembly implementation for the inputl function.
+# File: outputb.s
+#       Assembly implementation for the outputb function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -9,14 +9,14 @@
 ###
 
 .text
-    .global inputl
+    .global outputb
 
-inputl:
+outputb:
     pushq   %rax
     pushq   %rdx
-    movw    %di, %dx
-    inl     %dx, %eax
-    movl    %eax, (%rsi)
+    movb    %dil, %al
+    movw    %si, %dx
+    outb    %al, %dx
     popq    %rdx
     popq    %rax
     ret

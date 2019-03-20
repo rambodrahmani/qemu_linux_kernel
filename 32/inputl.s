@@ -1,7 +1,7 @@
 ###
 #
 # File: inputl.s
-#       x64 Assembly implementation for the inputl function.
+#       Assembly implementation for the inputl function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.

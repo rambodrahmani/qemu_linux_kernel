@@ -1,7 +1,7 @@
 ###
 #
-# File: outputbw.s
-#       x64 Assembly implementation for the outputbw function.
+# File: inputbw.s
+#       Assembly implementation for the inputbw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -9,22 +9,23 @@
 ###
 
 .text
-    .global outputbw
+    .global inputbw
 
-outputbw:
+inputbw:
     pushq   %rax
     pushq   %rdx
-    pushq   %rsi
+    pushq   %rdi
     pushq   %rcx
 
-    movq    %rsi, %rcx
-    movq    %rdi, %rsi
+    movq    %rdx, %rcx
+    movw    %di, %dx
+    movq    %rsi, %rdi
     cld
     rep
-    outsw
+    insw
 
     popq    %rcx
-    popq    %rsi
+    popq    %rdi
     popq    %rdx
     popq    %rax
     ret

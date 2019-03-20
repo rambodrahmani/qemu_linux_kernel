@@ -1,7 +1,7 @@
 ###
 #
-# File: inputl.s
-#       x64 Assembly implementation for the inputl function.
+# File: inputw.s
+#       Assembly implementation for the inputw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -9,14 +9,14 @@
 ###
 
 .text
-    .global inputl
+    .global inputw
 
-inputl:
+inputw:
     pushq   %rax
     pushq   %rdx
     movw    %di, %dx
-    inl     %dx, %eax
-    movl    %eax, (%rsi)
+    inw     %dx, %ax
+    movw    %ax, (%rsi)
     popq    %rdx
     popq    %rax
     ret

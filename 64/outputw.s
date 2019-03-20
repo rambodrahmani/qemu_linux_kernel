@@ -1,7 +1,7 @@
 ###
 #
 # File: outputw.s
-#       Assembly implementation for the outputw function.
+#       x64 Assembly implementation for the outputw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.

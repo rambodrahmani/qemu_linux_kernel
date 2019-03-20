@@ -1,7 +1,7 @@
 ###
 #
 # File: outputl.s
-#       Assembly implementation for the outputl function.
+#       x64 Assembly implementation for the outputl function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
