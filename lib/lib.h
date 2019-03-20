@@ -4,7 +4,7 @@
  *       This file contains utility methods declarations.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
- *         Created on 19/03/2019
+ *         Created on 19/03/2019.
  *
  */
 
@@ -65,21 +65,21 @@ extern "C" void outputl(natl a, ioaddr reg);
 
 /**
  *
- * @param   vect[]
- * @param   length
- * @param   reg
- *
- */
-extern "C" void outputbw(natw vect[], int length, ioaddr reg);
-
-/**
- *
  * @param   reg
  * @param   vect[]
  * @param   length
  *
  */
 extern "C" void inputbw(ioaddr reg, natw vect[], int length);
+
+/**
+ *
+ * @param   vect[]
+ * @param   length
+ * @param   reg
+ *
+ */
+extern "C" void outputbw(natw vect[], int length, ioaddr reg);
 
 /*
  * Utility functions to read from the keyboard.

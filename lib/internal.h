@@ -5,7 +5,7 @@
  *       Table (GDT) and the Interrupt Descriptor Table (IDT).
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
- *         Created on 19/03/2019
+ *         Created on 19/03/2019.
  *
  */
 
