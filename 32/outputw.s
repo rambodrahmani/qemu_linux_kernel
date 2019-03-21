@@ -1,7 +1,7 @@
 ###
 #
 # File: outputw.s
-#       Assembly implementation for the outputw function.
+#       x32 Assembly implementation for the outputw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -12,12 +12,12 @@
     .global outputw
 
 outputw:
-    pushq   %rax
-    pushq   %rdx
-    movw    %di, %ax
-    movw    %si, %dx
+    pushl   %eax
+    pushl   %edx
+    movw    12(%esp), %ax
+    movl    16(%esp), %edx
     outw    %ax, %dx
-    popq    %rdx
-    popq    %rax
+    popl    %edx
+    popl    %eax
     ret
 

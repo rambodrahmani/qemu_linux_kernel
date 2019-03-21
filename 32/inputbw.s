@@ -1,7 +1,7 @@
 ###
 #
 # File: inputbw.s
-#       Assembly implementation for the inputbw function.
+#       x32 Assembly implementation for the inputbw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -12,21 +12,21 @@
     .global inputbw
 
 inputbw:
-    pushq   %rax
-    pushq   %rdx
-    pushq   %rdi
-    pushq   %rcx
+    pushl   %eax
+    pushl   %edx
+    pushl   %edi
+    pushl   %ecx
 
-    movq    %rdx, %rcx
-    movw    %di, %dx
-    movq    %rsi, %rdi
+    movw    20(%esp), %dx
+    movl    24(%esp), %edi
+    movl    28(%esp), %ecx
     cld
     rep
     insw
 
-    popq    %rcx
-    popq    %rdi
-    popq    %rdx
-    popq    %rax
+    popl    %ecx
+    popl    %edi
+    popl    %edx
+    popl    %eax
     ret
 

@@ -1,7 +1,7 @@
 ###
 #
 # File: outputl.s
-#       Assembly implementation for the outputl function.
+#       x32 Assembly implementation for the outputl function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -12,12 +12,12 @@
     .global outputl
 
 outputl:
-    pushq   %rax
-    pushq   %rdx
-    movl    %edi, %eax
-    movw    %si, %dx
+    pushl   %eax
+    pushl   %edx
+    movl    12(%esp), %eax
+    movl    16(%esp), %edx
     outl    %eax, %dx
-    popq    %rdx
-    popq    %rax
+    popl    %edx
+    popl    %eax
     ret
 

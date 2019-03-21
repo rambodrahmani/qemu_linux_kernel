@@ -1,7 +1,7 @@
 ###
 #
 # File: outputbw.s
-#       Assembly implementation for the outputbw function.
+#       x32 Assembly implementation for the outputbw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -12,20 +12,21 @@
     .global outputbw
 
 outputbw:
-    pushq   %rax
-    pushq   %rdx
-    pushq   %rsi
-    pushq   %rcx
+    pushl   %eax
+    pushl   %edx
+    pushl   %esi
+    pushl   %ecx
 
-    movq    %rsi, %rcx
-    movq    %rdi, %rsi
+    movw    28(%esp), %dx
+    movl    20(%esp), %esi
+    movl    24(%esp),%ecx
     cld
     rep
     outsw
 
-    popq    %rcx
-    popq    %rsi
-    popq    %rdx
-    popq    %rax
+    popl    %ecx
+    popl    %esi
+    popl    %edx
+    popl    %eax
     ret
 

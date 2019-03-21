@@ -1,7 +1,7 @@
 ###
 #
 # File: inputl.s
-#       Assembly implementation for the inputl function.
+#       x32 Assembly implementation for the inputl function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -12,12 +12,13 @@
     .global inputl
 
 inputl:
-    pushq   %rax
-    pushq   %rdx
-    movw    %di, %dx
+    pushl   %eax
+    pushl   %edx
+    movl    12(%esp), %edx
     inl     %dx, %eax
-    movl    %eax, (%rsi)
-    popq    %rdx
-    popq    %rax
+    movl    16(%esp), %edx
+    movl    %eax, (%edx)
+    popl    %edx
+    popl    %eax
     ret
 

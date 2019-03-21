@@ -1,7 +1,7 @@
 ###
 #
 # File: inputw.s
-#       Assembly implementation for the inputw function.
+#       x32 Assembly implementation for the inputw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -12,12 +12,13 @@
     .global inputw
 
 inputw:
-    pushq   %rax
-    pushq   %rdx
-    movw    %di, %dx
+    pushl   %eax
+    pushl   %edx
+    movl    12(%esp), %edx
     inw     %dx, %ax
-    movw    %ax, (%rsi)
-    popq    %rdx
-    popq    %rax
+    movl    16(%esp), %edx
+    movw    %ax, (%edx)
+    popl    %edx
+    popl    %eax
     ret
 
