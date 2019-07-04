@@ -1,11 +1,9 @@
 ###
-#
 # File: inputb.s
 #       x32 Assembly implementation for the inputb function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
-#
 ###
 
 .text

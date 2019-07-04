@@ -1,12 +1,10 @@
 /**
- *
  * File: internal.h
  *       This file contains utility methods to work with the Global Descriptor
  *       Table (GDT) and the Interrupt Descriptor Table (IDT).
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 19/03/2019.
- *
  */
 
 #include "libce.h"

@@ -1,11 +1,9 @@
 ###
-#
 # File: inputw.s
 #       x32 Assembly implementation for the inputw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
-#
 ###
 
 .text

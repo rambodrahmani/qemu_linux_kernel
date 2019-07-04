@@ -1,11 +1,9 @@
 /**
- *
  * File: type.h
  *       Native types declaration.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 19/03/2019.
- *
  */
 
 // virtual and physical addresses in the memory space

@@ -1,11 +1,9 @@
 /**
- *
  * File: lib.h
  *       This file contains utility methods declarations.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 19/03/2019.
- *
  */
 
 #include "type.h"

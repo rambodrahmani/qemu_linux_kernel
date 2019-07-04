@@ -24,6 +24,16 @@ operating system (e.g. the keyboard and the video output);
 4. fully access the IDT (Interrupt Descriptor Table) for the interrupt
 mechanism;
 
+## C++ and Assembly
+The Kernel was mainly developed in Assembly and C++, using the GNU/GCC (The GNU
+Compiler Collection).
+
+Assembly was used wherever C++ could not complete the required tasks (e.g.
+accessing the I/O space) and both x32 and x64 implementations of the native
+functions are provided.
+
+User software can be developed using both Assembly and C++.
+
 ## Patching and installing QEMU
 QEMU (short for Quick Emulator) is a free and open-source emulator that performs
 hardware virtualization. QEMU is a hosted virtual machine monitor: it emulates
