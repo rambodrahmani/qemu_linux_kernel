@@ -1,0 +1,45 @@
+#!/bin/sh
+if [ -z "$PREFIX" ]; then
+	PREFIX="$HOME/CE"
+fi
+VERS=3.1.0
+
+echo "Scarico QEMU v$VERS..."
+[ -e qemu-$VERS.tar.xz ] || wget https://download.qemu.org/qemu-$VERS.tar.xz
+
+echo "Estraggo i sorgenti..."
+rm -rf qemu-$VERS
+tar xf qemu-$VERS.tar.xz
+
+cd qemu-$VERS
+
+echo "Applico le patch..."
+for f in ../*.patch; do 
+	patch -p1 < $f
+done
+
+
+echo "Configuro..."
+./configure \
+	--target-list=x86_64-softmmu \
+	--disable-xen \
+	--disable-vnc \
+	--disable-curses \
+	--disable-user \
+	--disable-vhost-net \
+	--disable-virtfs \
+	--disable-attr \
+	--disable-slirp \
+	--enable-sdl \
+	--audio-drv-list=alsa \
+	--enable-debug \
+	--disable-pie \
+	--disable-capstone \
+	--prefix=$PREFIX \
+
+echo "Costruisco..."
+make
+cp pc-bios/optionrom/multiboot.bin pc-bios
+
+echo "Installo..."
+make install || sudo make install

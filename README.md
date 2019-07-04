@@ -12,7 +12,7 @@ machines at near-native speed (by taking advantage of hardware extensions such
 as Intel VT-x). QEMU can also do emulation for user-level processes, allowing
 applications compiled for one architecture to run on another.
 
-We will be using a patched version of QEMU.
+#### We will be using a patched version of QEMU.
 
 ### Prerequisites
 The following packages must be installed before continuing:

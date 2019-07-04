@@ -1,0 +1,42 @@
+From 3e14dc082949fb620126faae23cc798987750399 Mon Sep 17 00:00:00 2001
+From: Giuseppe Lettieri <g.lettieri@iet.unipi.it>
+Date: Mon, 8 Apr 2019 13:26:05 +0200
+Subject: [PATCH 4/4] allow function calls from gdb
+
+---
+ exec.c    | 2 +-
+ gdbstub.c | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/exec.c b/exec.c
+index bb6170dbff..2e34c487df 100644
+--- a/exec.c
++++ b/exec.c
+@@ -3114,7 +3114,7 @@ int cpu_memory_rw_debug(CPUState *cpu, target_ulong addr,
+         if (!(flags & PAGE_VALID))
+             return -1;
+         if (is_write) {
+-            if (!(flags & PAGE_WRITE))
++            if (!(flags & (PAGE_WRITE | PAGE_WRITE_ORG)))
+                 return -1;
+             /* XXX: this code should not depend on lock_user */
+             if (!(p = lock_user(VERIFY_WRITE, addr, l, 0)))
+diff --git a/gdbstub.c b/gdbstub.c
+index c4e4f9f082..899f00fd88 100644
+--- a/gdbstub.c
++++ b/gdbstub.c
+@@ -707,6 +707,11 @@ static int gdb_read_register(CPUState *cpu, uint8_t *mem_buf, int reg)
+             return r->get_reg(env, mem_buf, reg - r->base_reg);
+         }
+     }
++#ifdef TARGET_X86_64
++    return 8;
++#elif TARGET_I386
++    return 4;
++#endif
+     return 0;
+ }
+ 
+-- 
+2.17.1
+

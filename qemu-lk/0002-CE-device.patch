@@ -1,0 +1,556 @@
+From 2a262ab380f1e791292c3cfbc9956e89788c8c4b Mon Sep 17 00:00:00 2001
+From: Giuseppe Lettieri <g.lettieri@iet.unipi.it>
+Date: Sat, 16 May 2015 15:10:49 +0200
+Subject: [PATCH 2/4] CE device
+
+---
+ default-configs/pci.mak |   1 +
+ hw/misc/Makefile.objs   |   1 +
+ hw/misc/ce.c            | 517 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 519 insertions(+)
+ create mode 100644 hw/misc/ce.c
+
+diff --git a/default-configs/pci.mak b/default-configs/pci.mak
+index 6c7be12779..954fc5550b 100644
+--- a/default-configs/pci.mak
++++ b/default-configs/pci.mak
+@@ -47,3 +47,4 @@ CONFIG_VGA_PCI=y
+ CONFIG_BOCHS_DISPLAY=y
+ CONFIG_IVSHMEM_DEVICE=$(CONFIG_IVSHMEM)
+ CONFIG_ROCKER=y
++CONFIG_CE=y
+diff --git a/hw/misc/Makefile.objs b/hw/misc/Makefile.objs
+index 680350b3c3..271c652a7a 100644
+--- a/hw/misc/Makefile.objs
++++ b/hw/misc/Makefile.objs
+@@ -74,3 +74,4 @@ obj-$(CONFIG_PVPANIC) += pvpanic.o
+ obj-$(CONFIG_AUX) += auxbus.o
+ obj-$(CONFIG_ASPEED_SOC) += aspeed_scu.o aspeed_sdmc.o
+ obj-$(CONFIG_MSF2) += msf2-sysreg.o
++obj-$(CONFIG_CE) += ce.o
+diff --git a/hw/misc/ce.c b/hw/misc/ce.c
+new file mode 100644
+index 0000000000..30f5335ef7
+--- /dev/null
++++ b/hw/misc/ce.c
+@@ -0,0 +1,517 @@
++/*
++ * Copyright (c) 2015 Giuseppe Lettieri
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
++
++//#include "qemu/timer.h"
++//#include "qemu/main-loop.h" /* iothread mutex */
++#include "qemu/osdep.h"
++#include "qapi/error.h"
++#include "qemu/cutils.h"
++#include "hw/hw.h"
++#include "hw/qdev.h"
++#include "hw/i386/pc.h"
++#include "hw/pci/pci.h"
++#include "hw/pci/msi.h"
++#include "hw/pci/msix.h"
++#include "qemu/error-report.h"
++#include "qapi/qmp/json-parser.h"
++#include "qapi/qmp/qerror.h"
++#include "qapi/qmp/qjson.h"
++#include "qapi/qmp/qnum.h"
++#include "qapi/qmp/qdict.h"
++#include "qapi/qmp/qstring.h"
++#include "qapi/qmp/qlist.h"
++#include "chardev/char-fe.h"
++#include "sysemu/dma.h"
++#include <stdio.h>
++#include <stdarg.h>
++
++#define PCI_CE_DEVICE_ID	0xedce
++#define CE_BUFSZ		4096
++
++struct ce_parser_state {
++    void *ce;
++    JSONMessageParser parser;
++    bool return_ok;
++    uint64_t return_value;
++    bool is_async;
++};
++
++struct ce_bar {
++    void *ce;
++    MemoryRegion mr;
++};
++
++typedef struct {
++    PCIDevice pdev;
++    struct ce_bar bars[6];
++    int next_bar;
++    struct ce_parser_state pstate[2], *pcur;
++    bool initialized;
++    int fd_in;
++    int fd_out;
++    CharBackend chr;
++    
++    char *ctrl;
++} CEState;
++
++
++static int
++ce_out(CEState *ce, const char *fmt, ...)
++{
++    va_list ap;
++    int n, rv;
++    char buf[CE_BUFSZ];
++
++    va_start(ap, fmt);
++    n = vsnprintf(buf, CE_BUFSZ, fmt, ap);
++    va_end(ap);
++
++    if (n < 0) {
++        fprintf(stderr, "ce_out: error in message formatting: %s\n", strerror(errno));
++        return n;
++    }
++
++    if (n >= CE_BUFSZ) {
++        fprintf(stderr, "ce_out: message truncated, not sent\n");
++        return -1;
++    }
++
++    if (ce->pcur->is_async) {
++        qemu_chr_fe_printf(&ce->chr, "%s", buf);
++        return n;
++    }
++
++
++    for (;;) {
++        errno = 0;
++        qemu_mutex_unlock_iothread();
++        rv = write(ce->fd_out, (uint8_t *)buf, n);
++        qemu_mutex_lock_iothread();
++        if (rv >= 0)
++            break;
++        if (errno != EAGAIN) {
++            fprintf(stderr, "ce_out: error during write: %s\n", strerror(errno));
++            return rv;
++        }
++        fprintf(stderr, "ce_out: retrying...\n");
++        sleep(1);
++    }
++    return rv;
++}
++
++#define ce_err(ce, fmt, ...)  ce_out(ce, "{ \"error\" : \"" fmt "\" }\n", ##__VA_ARGS__)
++
++static uint64_t
++ce_get_reply(CEState *ce)
++{
++    uint8_t buf;
++    struct ce_parser_state *s = ce->pcur;
++    int n;
++
++    s->return_ok = false;
++    while (!s->return_ok) {
++    again:
++        qemu_mutex_unlock_iothread();
++	n = read(ce->fd_in, &buf, 1);
++        qemu_mutex_lock_iothread();
++	if (n <= 0) {
++            if (n < 0 && errno != EAGAIN) {
++                fprintf(stderr, "qemu_chr_fe_read_all(): %s\n", strerror(errno));
++                s->return_value = (uint64_t)-1;
++                break;
++            }
++            fprintf(stderr, "ce_get_reply: n %d, errno %d (%s): retrying...\n",
++                    n, errno, strerror(errno));
++            sleep(1);
++            goto again;
++	}
++        json_message_parser_feed(&s->parser, (const char *)&buf, 1);
++    }
++    return s->return_value;
++}
++
++static uint64_t ce_io_read(void *opaque, hwaddr addr, unsigned size)
++{
++    struct ce_bar *b = opaque;
++    CEState *ce = b->ce;
++    
++    //fprintf(stderr, "read %u bytes from %s:%lx\n", size, b->mr.name, addr);
++    ce_out(ce, "{ \"read\": { \"bar\": \"%s\", \"addr\": %ld, \"size\": %d } }\n",
++		    b->mr.name, addr, size);
++    //fprintf(stderr, "waiting for reply...");
++    return ce_get_reply(ce);
++}
++
++static void ce_io_write(void *opaque, hwaddr addr, uint64_t val,
++                unsigned size)
++{
++    struct ce_bar *b = opaque;
++    CEState *ce = b->ce;
++
++    //fprintf(stderr, "write %lx in %u bytes starting at %s:%lx\n", val, size, b->mr.name, addr);
++    
++    ce_out(ce, "{ \"write\": { \"bar\": \"%s\", \"addr\": %ld, \"size\": %d, \"val\": %ld } }\n",
++		    b->mr.name, addr, size, val);
++    ce_get_reply(ce);
++    return;
++}
++
++static const MemoryRegionOps ce_io_ops = {
++    .read = ce_io_read,
++    .write = ce_io_write,
++    .endianness = DEVICE_NATIVE_ENDIAN,
++};
++
++static int ce_can_read(void *opaque)
++{
++	return 1;
++}
++
++static void ce_read(void *opaque, const uint8_t *buf, int size)
++{
++    CEState *ce = opaque;
++    struct ce_parser_state *old = ce->pcur;
++    ce->pcur = &ce->pstate[1];
++    json_message_parser_feed(&ce->pcur->parser, (const char *) buf, size);
++    ce->pcur = old;
++}
++
++static void ce_event(void *opaque, int event)
++{
++}
++
++struct ce_fillbuf_opaque {
++	uint8_t *buf;
++	CEState *ce;
++};
++
++static void ce_fillbuf_iter(QObject *obj, void *opaque)
++{
++    struct ce_fillbuf_opaque *o = opaque;
++    QNum *i = qobject_to(QNum, obj);
++    int v;
++    if (i == NULL) {
++        ce_err(o->ce, "not an integer");
++        return;
++    }
++    v = qnum_get_int(i);
++    if (v < 0 || v > 255) {
++        ce_err(o->ce, "out of range: %d", v);
++	return;
++    }
++    *o->buf++ = v;
++}
++
++static void ce_init_bar(CEState *ce, const char *name, size_t size, uint8_t type)
++{
++    struct ce_bar *b;
++
++    if (ce->next_bar >= 6) {
++        error_report("too many BARs");
++	exit(1);
++    }
++    b = &ce->bars[ce->next_bar];
++    b->ce = ce;
++    memory_region_init_io(&b->mr, OBJECT(ce), &ce_io_ops, b, name, size);
++    pci_register_bar(&ce->pdev, ce->next_bar, type, &b->mr);
++    ce->next_bar++;
++}
++
++static void ce_handle_command(void *opaque, QObject *req, Error *err)
++{
++    const QDictEntry *ent;
++    QDict *dict;
++    struct ce_parser_state *s = opaque;
++    CEState *ce = s->ce;
++    
++    dict = qobject_to(QDict, req);
++    if (!dict) {
++        ce_err(ce, "not a JSON object");
++	return;
++    }
++    for (ent = qdict_first(dict); ent; ent = qdict_next(dict, ent)) {
++        const char *arg_name = qdict_entry_key(ent);
++	const QObject *arg_obj = qdict_entry_value(ent);
++
++	if (strcmp(arg_name, "return") == 0) {
++	    QNum *qi = qobject_to(QNum, arg_obj);
++	    if (qi == NULL) {
++	        ce_err(ce, "missing or invalid return value");
++		return;
++	    }
++	    s->return_value = qnum_get_int(qi);
++	    s->return_ok = true;
++        } else if (strcmp(arg_name, "dma-read") == 0) {
++	    dma_addr_t addr, len, i;
++	    QDict *args = qobject_to(QDict, arg_obj);
++	    uint8_t *buf;
++	    QString *str;
++
++	    if (args == NULL) {
++	        ce_err(ce, "missing or invalid args");
++		return;
++	    }
++	    addr = qdict_get_try_int(args, "addr", ~1L);
++	    if (addr == ~1L) {
++	        ce_err(ce, "missing or invalid addr");
++	        return;
++	    } 
++	    len = qdict_get_try_int(args, "len", ~1L);
++	    if (len == ~1L) {
++	        ce_err(ce, "missing or invalid len");
++	        return;
++	    } 
++            if (len == 0) {
++                ce_out(ce, "{ \"bytes\" : [] }");
++                return;
++            }
++            buf = g_malloc(len);
++	    dma_memory_read(&address_space_memory, addr, buf, len);
++            str = qstring_from_str("{ \"bytes\" : [ ");
++	    for (i = 0; i < len; i++) {
++	        if (i)
++	            qstring_append(str, ", ");
++                qstring_append_int(str, buf[i]);
++	    }
++	    g_free(buf);
++	    qstring_append(str, " ] }");
++	    ce_out(ce, "%s\n", qstring_get_str(str));
++	    qobject_unref(str);
++        } else if (strcmp(arg_name, "dma-write") == 0) {
++	    dma_addr_t addr, len;
++	    QDict *args = qobject_to(QDict, arg_obj);
++	    uint8_t *start;
++	    QList *list;
++	    QObject *obj;
++            struct ce_fillbuf_opaque op;
++
++	    if (args == NULL) {
++	        ce_err(ce, "missing or invalid args");
++		return;
++	    }
++	    addr = qdict_get_try_int(args, "addr", ~1L);
++	    if (addr == ~1L) {
++	        ce_err(ce, "missing or invalid addr");
++	        return;
++	    } 
++	    len = qdict_get_try_int(args, "len", ~1L);
++	    if (len == ~1L) {
++	        ce_err(ce, "missing or invalid len");
++	        return;
++	    } 
++            if (len == 0) {
++	        ce_out(ce, "{}\n");
++                return;
++            }
++	    obj = qdict_get(args, "bytes");
++	    if (obj == NULL || qobject_type(obj) != QTYPE_QLIST) {
++	        ce_err(ce, "missing bytes");
++		return;
++	    }
++	    list = qobject_to(QList, obj);
++            start = g_malloc0(len);
++            op.buf = start;
++            op.ce = ce;
++            qlist_iter(list, ce_fillbuf_iter, &op);
++	    if (op.buf == start + len) {
++	        dma_memory_write(&address_space_memory, addr, start, len);
++	        ce_out(ce, "{}\n");
++            } else {
++                ce_err(ce, "len/bytes mismatch");
++            }
++	    g_free(start);
++	} else if (strcmp(arg_name, "raise-irq") == 0) {
++	    pci_set_irq(&ce->pdev, 1);
++	    ce_out(ce, "{}\n");
++	} else if (strcmp(arg_name, "lower-irq") == 0) {
++	    pci_set_irq(&ce->pdev, 0);
++	    ce_out(ce, "{}\n");
++        } else if (strcmp(arg_name, "bars") == 0) {
++	    QList *bars = qobject_to(QList, arg_obj);
++	    QObject *_bar;
++
++            printf("bars...\n");
++
++	    if (ce->initialized) {
++	        ce_err(ce, "already initialized");
++		return;
++	    }
++	    if (bars == NULL) {
++	        ce_err(ce, "missing or invalid BARs");
++		return;
++	    }
++	    while ( (_bar = qlist_pop(bars)) ) {
++	        QDict *bar = qobject_to(QDict, _bar);
++      	        const char *name, *_type;
++	        uint64_t size;
++		uint8_t type = PCI_BASE_ADDRESS_SPACE_IO;
++
++		if (bar == NULL) {
++		    ce_err(ce, "invalid BAR");
++		    break;
++		}
++		name = qdict_get_try_str(bar, "name");
++		if (name == NULL) {
++		    ce_err(ce, "missing BAR name");
++		    break;
++		}
++		size = qdict_get_try_int(bar, "size", 0);
++		if (size == 0) {
++		    ce_err(ce, "missing or invalid BAR size");
++		    break;
++		}
++		_type = qdict_get_try_str(bar, "type");
++		if (_type) {
++		    if (strcmp(_type, "io") == 0) {
++		        type = PCI_BASE_ADDRESS_SPACE_IO;
++		    } else if (strcmp(_type, "mmio") == 0) {
++		        type = PCI_BASE_ADDRESS_SPACE_MEMORY;
++		    } else {
++		        ce_err(ce, "unknown BAR type: %s", _type);
++			break;
++		    }
++	        }
++		ce_init_bar(ce, name, size, type);
++	    }
++	} else if (strcmp(arg_name, "interrupt-pin") == 0) {
++	    QNum *pin;
++
++	    if (ce->initialized) {
++	        ce_err(ce, "already initialized");
++		return;
++	    }
++            pin = qobject_to(QNum, arg_obj);
++            if (pin == NULL) {
++                ce_err(ce, "missing or invalid interrupt pin");
++                break;
++            }
++            ce->pdev.config[PCI_INTERRUPT_PIN] = qnum_get_int(pin); /* interrupt pin A */
++	} else {
++	    ce_err(ce, "unknown command: '%s'", arg_name);
++	}
++    }
++    qobject_unref(dict);
++}
++
++static void ce_init_parser(struct ce_parser_state *s, CEState *ce, bool async)
++{
++    s->ce = ce;
++    s->is_async = async;
++    json_message_parser_init(&s->parser, ce_handle_command, s, NULL);
++}
++
++static void pci_ce_realize(PCIDevice *pdev, Error **errp)
++{
++    CEState *ce = DO_UPCAST(CEState, pdev, pdev);
++    struct ce_parser_state *s = &ce->pstate[0];
++    char buf[CE_BUFSZ];
++    int n;
++
++    if (ce->ctrl == NULL) {
++        ce->ctrl = g_strdup(pdev->qdev.id);
++    }
++
++    n = snprintf(buf, CE_BUFSZ, "%s.out", ce->ctrl);
++    if (n < 0 || n >= CE_BUFSZ) {
++        error_setg(errp, "'%s' invalid or too long", ce->ctrl);
++    }
++    fprintf(stderr, "%s: opening %s...", pdev->qdev.id, buf);
++    ce->fd_out = qemu_open(buf, O_WRONLY);
++    if (ce->fd_out < 0) {
++        error_setg(errp, "failed to open '%s': %s", buf, strerror(errno));
++        return;
++    } else {
++        fprintf(stderr, "OK (%d)\n", ce->fd_out);
++    }
++    snprintf(buf, CE_BUFSZ, "%s.in", ce->ctrl);
++    fprintf(stderr, "%s: opening %s...", pdev->qdev.id, buf);
++    ce->fd_in = qemu_open(buf, O_RDONLY);
++    if (ce->fd_in < 0) {
++        error_setg(errp, "failed to open '%s': %s", buf, strerror(errno));
++        return;
++    } else {
++        fprintf(stderr, "OK (%d)\n", ce->fd_in);
++    }
++    
++    ce_init_parser(s, ce, false);
++    ce->pcur = s;
++
++    if (qemu_chr_fe_get_driver(&ce->chr)) {
++	s = &ce->pstate[1];
++        ce_init_parser(s, ce, true);
++        fprintf(stderr, "init async\n");
++	qemu_chr_fe_set_handlers(&ce->chr, ce_can_read, ce_read, ce_event, NULL, ce, NULL, true);
++    }
++
++    ce->initialized = false;
++    ce_out(ce, "{ \"get-config\" : \"%s\" }\n", pdev->qdev.id);
++    if (ce_get_reply(ce) == (uint64_t)-1) {
++        error_setg(errp, "%s: initialization failed\n", pdev->qdev.id);
++        return;
++    }
++    ce->initialized = true;
++}
++
++static void pci_ce_uninit(PCIDevice *pdev)
++{
++}
++
++static Property ce_properties[] = {
++    DEFINE_PROP_STRING("ctrl", CEState, ctrl),
++    DEFINE_PROP_CHR("async", CEState, chr),
++    DEFINE_PROP_END_OF_LIST(),
++};
++
++static void ce_class_init(ObjectClass *class, void *data)
++{
++    DeviceClass *dc = DEVICE_CLASS(class);
++    PCIDeviceClass *k = PCI_DEVICE_CLASS(class);
++
++    fprintf(stderr, "init ce class\n");
++
++    k->realize = pci_ce_realize;
++    k->exit = pci_ce_uninit;
++    k->vendor_id = PCI_VENDOR_ID_QEMU;
++    k->device_id = PCI_CE_DEVICE_ID;
++    k->revision = 0x00;
++    k->class_id = PCI_CLASS_OTHERS;
++    dc->props = ce_properties;
++    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
++}
++
++static const TypeInfo ce_info = {
++    .name          = "ce",
++    .parent        = TYPE_PCI_DEVICE,
++    .instance_size = sizeof(CEState),
++    .class_init    = ce_class_init,
++	.interfaces = (InterfaceInfo[]) {
++        { INTERFACE_CONVENTIONAL_PCI_DEVICE },
++        { },
++    },
++};
++
++static void pci_ce_register_types(void)
++{
++
++    type_register_static(&ce_info);
++}
++type_init(pci_ce_register_types)
+-- 
+2.17.1
+
