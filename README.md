@@ -208,3 +208,8 @@ for d in x86_64-softmmu; do \
 make --no-print-directory --quiet BUILD_DIR=/home/rambodrahmani/DevOps/qemu_linux_kernel/qemu-lk/qemu-3.1.0 TARGET_DIR=$d/ -C $d install || exit 1 ; \
         done
 ```
+
+--
+
+Originally seen here: [Calcolatori Elettronici - Unipi - Ing. Informatica](http://calcolatori.iet.unipi.it/)
+

@@ -3,3 +3,7 @@
 This folder contains an installation script and the related patches in order to
 obtain the properly patched version of QEMU used.
 
+--
+
+Originally seen here: [Calcolatori Elettronici - Unipi - Ing. Informatica](http://calcolatori.iet.unipi.it/)
+
