@@ -1,8 +1,8 @@
 ################################################################################
-# File: inputl.s
-#       Transfers a long from the I/O port specified in the DX register into the
-#       EAX register.
-#       x64 Assembly implementation for the inputl function.
+# File: outputbw.s
+#       Transfers a sequence of words from the memory location specified in
+#       DS:(E)SI to the I/O port specified in DX.
+#       x64 Assembly implementation for the outputbw function.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 20/03/2019.
@@ -10,14 +10,22 @@
 
 #-------------------------------------------------------------------------------
 .TEXT
-.GLOBAL inputl
+.GLOBAL outputsw
 #-------------------------------------------------------------------------------
-inputl:
+outputsw:
     pushq   %rax
     pushq   %rdx
-    movw    %di, %dx
-    inl     %dx, %eax
-    movl    %eax, (%rsi)
+    pushq   %rsi
+    pushq   %rcx
+
+    movq    %rsi, %rcx
+    movq    %rdi, %rsi
+    cld
+    rep
+    outsw
+
+    popq    %rcx
+    popq    %rsi
     popq    %rdx
     popq    %rax
     ret
