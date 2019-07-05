@@ -1,5 +1,4 @@
-##
-#
+################################################################################
 # File:	Makefile
 # 		Code compilation directives.
 # 		Compile and install using
@@ -9,28 +8,28 @@
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 19/03/2019
 #
-##
+################################################################################
 
-##
-# Compilation output paths.
-##
+################################################################################
+#							Compilation output paths.
+################################################################################
 PREFIX=$(HOME)/QEMU_LINUX_KERNEL
 ETC=$(PREFIX)/etc
 BIN=$(PREFIX)/bin
-LIB=$(PREFIX)/lib/ce
-LIB64=$(PREFIX)/lib64/ce
-INCLUDE=$(PREFIX)/include/ce
+LIB=$(PREFIX)/lib/qlk
+LIB64=$(PREFIX)/lib64/qlk
+INCLUDE=$(PREFIX)/include/qlk
 
-##
-# QEMU Directives.
-##
+################################################################################
+#								QEMU Directives.
+################################################################################
 HD_SIZE=20M
 HD_PATH=$(PREFIX)/share/hd.img
 QEMU_BOOT=$(LIB)/boot.bin
 
-##
-# Compilation directives.
-##
+################################################################################
+# 							Compilation directives.
+################################################################################
 CXXFLAGS=-nostdlib -fno-exceptions -g -fno-rtti -fno-stack-protector -mno-red-zone -gdwarf-2 -fpic -fuse-ld=gold
 CXX=g++
 AS=gcc -c -x assembler-with-cpp -g
@@ -85,9 +84,9 @@ boot64/boot_s.o: boot64/boot.S boot64/mboot.h
 boot64/boot_cpp.o: boot64/boot.cpp boot64/mboot.h boot64/elf64.h
 	$(BCC) $(BCFLAGS) -c boot64/boot.cpp -o boot64/boot_cpp.o
 
-##
-# Install directives.
-##
+################################################################################
+#							Install directives.
+################################################################################
 .PHONY: zerohd clean install
 
 $(HD_PATH):

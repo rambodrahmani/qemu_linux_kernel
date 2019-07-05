@@ -14,7 +14,7 @@
 
 # check and create the LK (Linux Kernel) folder in the home directory
 if [ -z "$PREFIX" ]; then
-	PREFIX="$HOME/LK"
+	PREFIX="$HOME/QEMU_LINUX_KERNEL"
 fi
 VERS=3.1.0
 

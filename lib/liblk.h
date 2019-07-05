@@ -1,5 +1,5 @@
 /**
- * File: lib.h
+ * File: liblk.h
  *       This file contains utility methods declarations.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
@@ -14,70 +14,69 @@
  */
 
 /**
+ * Transfers a byte from the I/O port addressed by reg to b.
  *
- * @param   reg
- * @param   &a
- *
+ * @param   reg  source I/O port address
+ * @param   &b   destination byte
  */
-extern "C" void inputb(ioaddr reg, natb &a);
+extern "C" void inputb(ioaddr reg, natb &b);
 
 /**
+ * Transfers the byte contained in b to the I/O port addressed by reg.
  *
- * @param   a
- * @param   reg
- *
+ * @param   b    source byte
+ * @param   reg  destination I/O port address
  */
-extern "C" void outputb(natb a, ioaddr reg);
+extern "C" void outputb(natb b, ioaddr reg);
 
 /**
+ * Transfers a word from the I/O port addressed by reg to w.
  *
- * @param   reg
- * @param   &a
+ * @param   reg  source I/O port address
+ * @param   &w   destination word
  *
  */
-extern "C" void inputw(ioaddr reg, natw &a);
+extern "C" void inputw(ioaddr reg, natw &w);
 
 /**
+ * Transfers the word contained in w to the I/O port addressed by reg.
  *
- * @param   a
- * @param   reg
- *
+ * @param   w    source word
+ * @param   reg  destination I/O port address
  */
-extern "C" void outputw(natw a, ioaddr reg);
+extern "C" void outputw(natw w, ioaddr reg);
 
 /**
+ * Transfers a long from the I/O port addressed by reg to l.
  *
- * @param   reg
- * @param   &a
- *
+ * @param   reg  source I/O port address
+ * @param   &l   destination long
  */
-extern "C" void inputl(ioaddr reg, natl &a);
+extern "C" void inputl(ioaddr reg, natl &l);
 
 /**
+ * Transfers the long contained in l to the I/O port addressed by reg.
  *
- * @param   a
- * @param   reg
- *
+ * @param   l    source long
+ * @param   reg  destination I/O port address
  */
-extern "C" void outputl(natl a, ioaddr reg);
+extern "C" void outputl(natl l, ioaddr reg);
 
 /**
  *
  * @param   reg
  * @param   vect[]
  * @param   length
- *
  */
-extern "C" void inputbw(ioaddr reg, natw vect[], int length);
+extern "C" void inputsw(ioaddr reg, natw vect[], int length);
 
 /**
  *
  * @param   vect[]
  * @param   length
  * @param   reg
- *
  */
-extern "C" void outputbw(natw vect[], int length, ioaddr reg);
+extern "C" void outputsw(natw vect[], int length, ioaddr reg);
 
 /*
  * Utility functions to read from the keyboard.
