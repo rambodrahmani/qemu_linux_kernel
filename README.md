@@ -34,6 +34,46 @@ functions are provided.
 
 User software can be developed using both Assembly and C++.
 
+## Text and graphic mode
+
+## Compiling and executing a user program
+First of all, anytime you open up a new terminal instance, you will have to set
+your `PATH` in order to be able to use some custom executables developer for
+easy of use when deploying to the Linux Kernel.
+```console
+source setenv
+```
+Each user program can be made up of several source files. For the sake of
+simplicity, let's assume there are all in the same folder: as you will be able
+to see, this is also the case for all the examples showing the in I/O Examples
+folder. In order to compile and link the program you can use the following
+command:
+```console
+compile output-file-name
+```
+This will take care of compiling and linking all the C++ and Assembly files
+contained in the current directory, producing the executable `output-file-name`
+(output-file-name can be omitted, in which case the default `a.out` executable
+file name will be used).
+
+To load the program on the QEMU emulator and execute it, execute the following
+command within the directory where the executable is placed:
+```console
+boot output-file-name
+```
+again, `output-file-name` is the executable file name.
+
+### Compiling and executing a user program with Graphic Mode enabled
+If the user program uses the graphic mode, you will have to add the `-G` option
+to the `compile` command:
+```console
+compile -G output-file-name
+```
+whereas he `boot` command stays the same
+```console
+boot output-file-name
+```
+
 ## Patching and installing QEMU
 QEMU (short for Quick Emulator) is a free and open-source emulator that performs
 hardware virtualization. QEMU is a hosted virtual machine monitor: it emulates
