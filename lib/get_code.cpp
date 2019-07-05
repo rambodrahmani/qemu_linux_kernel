@@ -1,6 +1,7 @@
 /**
  * File: get_code.cpp
  *       Implementation for the get_code() function.
+ *       Returns the keycode of the key presssed or released on the keyboard.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 20/03/2019.

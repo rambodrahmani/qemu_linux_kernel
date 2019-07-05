@@ -1,6 +1,7 @@
 /**
  * File: keycode_to_ascii.cpp
  *       Implementation for the keycode_to_ascii() function.
+ *       Converts the given keycode to the corresponding ASCII char.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 05/07/2019.

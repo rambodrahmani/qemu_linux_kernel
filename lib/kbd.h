@@ -67,7 +67,11 @@ void keyboard_reset();
 void keyboard_clear();
 
 /**
+ * Reads the key pressed on the keyboard and returns the corresponding ASCII
+ * char.
  *
+ * @return  the ASCII char corresponding to the keycode received from the
+ *          keyboard
  */
 natb keyboard_read();
 

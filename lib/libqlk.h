@@ -93,7 +93,7 @@ natb get_code();
 
 /**
  * @return the ASCII char corresponding to the key pressed on the keyboard, or
- *         0 if the key is not a char.
+ *         0 if the key is not a valid ASCII char.
  */
 char char_read();
 
@@ -129,7 +129,7 @@ natb* bochsvga_config(natw screen_max_x, natw screen_max_y);
 void clear_screen(natb color);
 
 /**
- * Write the given char to the video output.
+ * Writes the given char to the video output.
  *
  * @param cha   the char to be written:
  *                1. if cha is equal to '\r' the position of the cursor is set

@@ -20,6 +20,7 @@ typedef unsigned long natq;
 typedef void* str;
 typedef const void* cstr;
 
+// definition of size_t based on the cpu architecture
 #ifdef x86_64
     typedef unsigned long size_t;
 #else
