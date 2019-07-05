@@ -63,42 +63,48 @@ extern "C" void inputl(ioaddr reg, natl &l);
 extern "C" void outputl(natl l, ioaddr reg);
 
 /**
+ * Transfers a sequence of length words from the I/O port addressed by reg to
+ * the vector vectw[].
  *
- * @param   reg
- * @param   vect[]
- * @param   length
+ * @param   reg      source I/O port address
+ * @param   vectw[]  vector of words to be transferred
+ * @param   length   number of words to be transferred
  */
-extern "C" void inputsw(ioaddr reg, natw vect[], int length);
+extern "C" void inputsw(ioaddr reg, natw vectw[], int length);
 
 /**
+ * Transfers a sequence of length words contained in vectw to the I/O port
+ * addressed by reg.
  *
- * @param   vect[]
- * @param   length
- * @param   reg
+ * @param   vectw[]  vector of words to be transferred
+ * @param   length   number of words to be transferred
+ * @param   reg      destination I/O port address
  */
-extern "C" void outputsw(natw vect[], int length, ioaddr reg);
+extern "C" void outputsw(natw vectw[], int length, ioaddr reg);
 
 /*
  * Utility functions to read from the keyboard.
  */
 
 /**
- * @return 
+ * @return the keycode of the key presssed or released on the keyboard.
  */
 natb get_code();
 
 /**
- * @return 
+ * @return the ASCII char corresponding to the key pressed on the keyboard, or
+ *         0 if the key is not a char.
  */
 char char_read();
 
 /**
+ * Converts the given keycode to the corresponding ASCII char.
  *
- * @param   c
+ * @param   keycode  the keycode to be converted.
  *
- * @return
+ * @return  the ASCII char corresponding to the given keycode.
  */
-char conv(natb c);
+char keycode_to_ascii(natb keycode);
 
 /*
  * Utility functions to setup the video ourput.
@@ -108,7 +114,6 @@ char conv(natb c);
  *
  * @param   screen_max_x
  * @param   screen_max_y
- *
  */
 natb* bochsvga_config(natw screen_max_x, natw screen_max_y);
 
@@ -117,23 +122,29 @@ natb* bochsvga_config(natw screen_max_x, natw screen_max_y);
  */
 
 /**
+ * Clears the screen to the given color value.
  *
- * @param   col
- *
+ * @param   color   the color value to clear the screen with
  */
-void clear_screen(natb col);
+void clear_screen(natb color);
 
 /**
+ * Write the given char to the video output.
  *
- * @param c
- *
+ * @param cha   the char to be written:
+ *                1. if cha is equal to '\r' the position of the cursor is set
+ *                   to column 0 (same line);
+ *                2. if cha is equal to '\n' the position of the cursor is set
+ *                   to column 0 on the following line.
+ *                3. if cha is equal to '0' nothing happens.
  */
-void char_write(natb c);
+void char_write(natb cha);
 
 /**
+ * Writes the given string to the video output (the termination char '\0' is not
+ * included).
  *
- * @param str[]
- *
+ * @param   str[]   the string to be written to the video output.
  */
 void str_write(const char str[]);
 
@@ -142,11 +153,10 @@ void str_write(const char str[]);
  */
 
 /**
- *
+ * 
  * @param   lba
  * @param   length
  * @param   vect[]
- *
  */
 void hdd_read(natl lba, natb length, natw vect[]);
 
@@ -155,25 +165,22 @@ void hdd_read(natl lba, natb length, natw vect[]);
  * @param   lba
  * @param   length
  * @param   vect[]
- *
  */
 void hdd_write(natl lba, natb length, natw vect[]);
 
 /*
- * Utility functions for the serial port.
+ * Utility functions for the serial ports.
  */
 
 /**
  *
  * @param c
- *
  */
 void serial_o(natb c);
 
 /**
  *
  * @param c
- *
  */
 void serial2_o(natb c);
 
@@ -182,11 +189,10 @@ void serial2_o(natb c);
  */
 
 /**
- *
+ * 
  * @param   dest
  * @param   c
  * @param   n
- *
  */
 void *memset(void* dest, int c, size_t n);
 
@@ -195,85 +201,103 @@ void *memset(void* dest, int c, size_t n);
  * @param   dest
  * @param   src
  * @param   n
- *
  */
 void *memcpy(void* dest, const void* src, size_t n);
 
 /**
+ * @param   str[]   the given string
  *
- * @param str[]
- *
- * @return
- *
+ * @return  the ;ength of the given string (the termination char '\0' is not
+ *          included)
  */
 size_t strlen(const char str[]);
 
 /**
+ * Copies the src string to the dst string.
  *
- * @param   src[]
- * @param   dst[]
- *
- * @return
- *
+ * @param   src[]   source string to be copied
+ * @param   dst[]   destination string
+ * 
+ * @return  the address of the ending char '\0' in dst.
  */
 char* copy(const char src[], char dst[]);
 
 /**
+ * Converts the given natural number n, having the length of a byte, in a string
+ * of 2 chars which represent the given hex digits. Copies the resulting string
+ * into dst.
  *
- * @param   n
- * @param   dst[]
- *
- * @return
- *
+ * @param   n       the natural number to be converted
+ * @param   dst[]   the string resulting from the conversion
+ * 
+ * @return  the address of the ending char '\0' in dst (dst + 2).
  */
 char* natb_conv(natb n, char dst[]);
 
 /**
+ * Converts the given natural number n, having the length of a word, in a string
+ * of 4 chars which represent the given hex digits. Copies the resulting string
+ * into dst.
  *
- * @param   n
- * @param   dst[]
- *
- * @return
- *
+ * @param   n       the natural number to be converted
+ * @param   dst[]   the string resulting from the conversion
+ * 
+ * @return  the address of the ending char '\0' in dst (dst + 4).
  */
 char* natw_conv(natw n, char dst[]);
 
 /**
+ * Converts the given natural number n, having the length of a long, in a string
+ * of 8 chars which represent the given hex digits. Copies the resulting string
+ * into dst.
  *
- * @param   n
- * @param   dst[]
- *
- * @return
- *
+ * @param   n       the natural number to be converted
+ * @param   dst[]   the string resulting from the conversion
+ * 
+ * @return  the address of the ending char '\0' in dst (dst + 8).
  */
 char* natl_conv(natl n, char dst[]);
 
 /**
+ * Converts the given natural number n, having the length of a quad, in a string
+ * of 16 chars which represent the given hex digits. Copies the resulting string
+ * into dst.
  *
- * @param   n
- * @param   dst[]
- *
- * @return
- *
+ * @param   n       the natural number to be converted
+ * @param   dst[]   the string resulting from the conversion
+ * 
+ * @return  the address of the ending char '\0' in dst (dst + 16).
  */
 char* natq_conv(natq n, char dst[]);
 
 /**
+ * Converts the given integer number n in a string of chars which represent the 
+ * sign and the hex digits. Copies the resulting string
+ * into dst.
  *
- * @param   n
- * @param   dst[]
- *
- * @return
- *
+ * @param   n       the integer number to be converted
+ * @param   dst[]   the string resulting from the conversion
+ * 
+ * @return  the address of the ending char '\0' in dst.
  */
 char* int_conv(long n, char dst[]);
 
 /*
- * Utility functions to wait.
+ * Keep in mind that the previous functions can be used to obtain a String of
+ * text by concatenation of partial strings of chars, natural and integer
+ * numbers: the first function to be called must be given as second actual
+ * parameter the first element of the buffer used to contain the final string
+ * and the second actual parameter of any successive function called must be the
+ * address returned by the previous one.
+ */
+
+/*
+ * Utility functions to enter a wait state.
  */
 
 /**
- *
+ * Prints the string "Press ESC to continue" to the video output and waits for
+ * the ESC key to be pressed.
  */
 void pause();
 
@@ -285,7 +309,6 @@ void pause();
  *
  * @param   num
  * @param   routine()
- *
  */
 extern "C" void gate_init(natl num, void routine());
 
@@ -293,7 +316,6 @@ extern "C" void gate_init(natl num, void routine());
  *
  * @param   num
  * @param   routine()
- *
  */
 extern "C" void trap_init(natl num, void routine());
 
@@ -301,7 +323,6 @@ extern "C" void trap_init(natl num, void routine());
  *
  * @param   irq
  * @param   enable
- *
  */
 extern "C" void apic_set_MIRQ(natl irq, bool enable);
 
@@ -309,7 +330,6 @@ extern "C" void apic_set_MIRQ(natl irq, bool enable);
  *
  * @param   irq
  * @param   vec
- *
  */
 extern "C" void apic_set_VECT(natl irq, natb vec);
 
@@ -320,14 +340,12 @@ extern "C" void apic_set_VECT(natl irq, natb vec);
 /**
  *
  * @param   sem
- *
  */
 extern "C" void sem_wait(natl sem);
 
 /**
  *
  * @param   sem
- *
  */
 extern "C" void sem_signal(natl sem);
 
@@ -338,7 +356,6 @@ extern "C" void sem_signal(natl sem);
 /**
  *
  * @param   num
- *
  */
 extern "C" void delay(natl num);
 
@@ -354,7 +371,6 @@ extern "C" void delay(natl num);
  * @param   regn
  *
  * @return
- *
  */
 natb pci_read_confb(natb bus, natb dev, natb fun, natb regn);
 
@@ -366,7 +382,6 @@ natb pci_read_confb(natb bus, natb dev, natb fun, natb regn);
  * @param   regn
  *
  * @return
- *
  */
 natw pci_read_confw(natb bus, natb dev, natb fun, natb regn);
 
@@ -378,7 +393,6 @@ natw pci_read_confw(natb bus, natb dev, natb fun, natb regn);
  * @param   regn
  *
  * @return
- *
  */
 natl pci_read_confl(natb bus, natb dev, natb fun, natb regn);
 
@@ -389,7 +403,6 @@ natl pci_read_confl(natb bus, natb dev, natb fun, natb regn);
  * @param   fun
  * @param   regn
  * @param   data
- *
  */
 void pci_write_confb(natb bus, natb dev, natb fun, natb regn, natb data);
 
@@ -400,7 +413,6 @@ void pci_write_confb(natb bus, natb dev, natb fun, natb regn, natb data);
  * @param   fun
  * @param   regn
  * @param   data
- *
  */
 void pci_write_confw(natb bus, natb dev, natb fun, natb regn, natw data);
 
@@ -411,7 +423,6 @@ void pci_write_confw(natb bus, natb dev, natb fun, natb regn, natw data);
  * @param   fun
  * @param   regn
  * @param   data
- *
  */
 void pci_write_confl(natb bus, natb dev, natb fun, natb regn, natl data);
 
@@ -424,7 +435,6 @@ void pci_write_confl(natb bus, natb dev, natb fun, natb regn, natl data);
  * @param   deviceID
  *
  * @return
- *
  */
 bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw vendorID, natw deviceID);
 
@@ -436,7 +446,6 @@ bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw vendorID, natw deviceID)
  * @param   code[]
  *
  * @return
- *
  */
 bool pci_find_class(natb& bus, natb& dev, natb& fun, natb code[]);
 
@@ -447,7 +456,6 @@ bool pci_find_class(natb& bus, natb& dev, natb& fun, natb code[]);
  * @param   fun
  *
  * @return
- *
  */
 bool pci_next(natb& bus, natb& dev, natb& fun);
 
@@ -461,7 +469,6 @@ bool pci_next(natb& bus, natb& dev, natb& fun);
  * @param   a
  *
  * @return
- *
  */
 size_t allinea(size_t v, size_t a);
 
@@ -469,7 +476,6 @@ size_t allinea(size_t v, size_t a);
  *
  * @param   start
  * @param   size
- *
  */
 void heap_init(void* start, size_t size);
 
@@ -488,7 +494,6 @@ void dealloca(void* p);
 /**
  *
  * @return
- *
  */
 size_t disponibile();
 
@@ -512,7 +517,6 @@ enum log_sev
  *
  * @param   sev
  * @param   fmt
- *
  */
 extern "C" void flog(log_sev sev, const char* fmt, ...);
 
@@ -521,7 +525,6 @@ extern "C" void flog(log_sev sev, const char* fmt, ...);
  * @param   sev
  * @param   buf
  * @param   quanti
- *
  */
 extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
 
@@ -534,7 +537,6 @@ extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
  * @param   fmt
  *
  * @return
- *
  */
 int printf(const char* fmt, ...);
 
@@ -562,14 +564,12 @@ int snprintf(char* buf, natl n, const char* fmt, ...);
 /**
  *
  * @return
- *
  */
 bool apic_init();
 
 /**
  *
  * @return
- *
  */
 void apic_reset();
 
