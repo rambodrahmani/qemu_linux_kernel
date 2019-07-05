@@ -74,6 +74,39 @@ whereas he `boot` command stays the same
 boot output-file-name
 ```
 
+## Using GDB
+GDB (GNU Debugger) can be used to debug user programs running on the QEMU
+emulator. In order to be able to do it:
+
+1. the user program bust be compiled with the debugging option (`-g`);
+2. the qemu emulator, at startup, will pause and wait for an incoming connection
+from GDB;
+3. GDB need connection parameters to communicate with QEMU.
+
+The `compile` command always enables the debugging option as default, so you
+won't have to do any change to the procedures previously descripted. However you
+will have to change the `boot` command in order to tell QEMU of the incoming
+connection from GDB. To do so, just add the `-g` option to the `boot` command:
+```console
+boot -g output-file-name
+```
+Once done, you will have the following result: QEMU is waiting for the incoming
+GDB connection
+![qemu_witing_for_gdb_connection](/img/qemu-0.png)
+Open up a new terminal and move to the same folder where you executed the
+`boot -g` command for the user program. This time execute the `debug` command
+![gdb_connection_to_qemu](/img/qemu-1.png)
+Use the `continue` command in the GDB terminal to start the program.
+![qemu_execution](/img/qemu-2.png)
+The `debug` command will
+
+1. execute GDB and provide connection parameters to reach the QEMU emulator;
+2. add a breakpoint at the beginning of the `main` function;
+3. launch the user program execution;
+4. the execution will hang at the first default breakpoint, at which point,
+you can debug your program using the terminal where you executed GDB (the
+`debug` command) as you normally do using GDB.
+
 ## Patching and installing QEMU
 QEMU (short for Quick Emulator) is a free and open-source emulator that performs
 hardware virtualization. QEMU is a hosted virtual machine monitor: it emulates
