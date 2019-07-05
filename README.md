@@ -92,12 +92,18 @@ boot -g output-file-name
 ```
 Once done, you will have the following result: QEMU is waiting for the incoming
 GDB connection
+
 ![qemu_witing_for_gdb_connection](/img/gdb-0.png)
+
 Open up a new terminal and move to the same folder where you executed the
 `boot -g` command for the user program. This time execute the `debug` command
+
 ![gdb_connection_to_qemu](/img/gdb-1.png)
+
 Use the `continue` command in the GDB terminal to start the program.
+
 ![qemu_execution](/img/gdb-2.png)
+
 The `debug` command will
 
 1. execute GDB and provide connection parameters to reach the QEMU emulator;
