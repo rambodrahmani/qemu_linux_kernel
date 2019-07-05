@@ -1,5 +1,5 @@
 /**
- * File: liblk.h
+ * File: libqlk.h
  *       This file contains utility methods declarations.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
