@@ -11,7 +11,7 @@
 ################################################################################
 
 ################################################################################
-#							Compilation output paths.
+#                           Compilation output paths
 ################################################################################
 PREFIX=$(HOME)/QEMU_LINUX_KERNEL
 ETC=$(PREFIX)/etc
@@ -21,14 +21,14 @@ LIB64=$(PREFIX)/lib64/qlk
 INCLUDE=$(PREFIX)/include/qlk
 
 ################################################################################
-#								QEMU Directives.
+#                               QEMU directives
 ################################################################################
 HD_SIZE=20M
 HD_PATH=$(PREFIX)/share/hd.img
 QEMU_BOOT=$(LIB)/boot.bin
 
 ################################################################################
-# 							Compilation directives.
+#                            Compilation directives
 ################################################################################
 CXXFLAGS=-nostdlib -fno-exceptions -g -fno-rtti -fno-stack-protector -mno-red-zone -gdwarf-2 -fpic -fuse-ld=gold
 CXX=g++
@@ -46,7 +46,7 @@ HEADERS:=$(wildcard *.h)
 OBJECTS32:=$(addsuffix .o, $(basename $(CXX_SOURCES))) $(addsuffix _s.o, $(basename $(AS32_SOURCES)))
 OBJECTS64:=$(addsuffix -m64.o, $(basename $(CXX_SOURCES))) $(addsuffix _s.o, $(basename $(AS64_SOURCES)))
 
-all: libce.a libce64.a boot.bin start64.o libce.conf
+all: libqlk.a libqlk64.a boot.bin start64.o libqlk.conf
 
 $(OBJECTS32): CXXFLAGS += -m32
 $(OBJECTS32): AS += -m32
@@ -55,11 +55,11 @@ $(OBJECTS64): AS += -m64
 
 $(OBJECTS32) $(OBJECTS64): $(HEADERS)
 
-libce.a: $(OBJECTS32)
-	ar r libce.a $?
+libqlk.a: $(OBJECTS32)
+	ar r libqlk.a $?
 
-libce64.a: $(OBJECTS64)
-	ar r libce64.a $?
+libqlk64.a: $(OBJECTS64)
+	ar r libqlk64.a $?
 
 %_s.o: %.s
 	$(AS) $*.s -o $@
@@ -85,7 +85,7 @@ boot64/boot_cpp.o: boot64/boot.cpp boot64/mboot.h boot64/elf64.h
 	$(BCC) $(BCFLAGS) -c boot64/boot.cpp -o boot64/boot_cpp.o
 
 ################################################################################
-#							Install directives.
+#                             Install directives
 ################################################################################
 .PHONY: zerohd clean install
 
@@ -96,24 +96,24 @@ $(HD_PATH):
 zerohd:
 	dd if=/dev/zero of=$(HD_PATH) bs=$(HD_SIZE) count=1
 
-libce.conf:
+libqlk.conf:
 	rm -f $@
 	( $(foreach v,BIN LIB LIB64 INCLUDE HD_SIZE HD_PATH QEMU_BOOT,echo $v=$($v);) ) > $@
 
 install: $(HD_PATH) 
 	install -d					$(ETC)
-	install -m 0444 libce.conf	$(ETC)
+	install -m 0444 libqlk.conf	$(ETC)
 	install -d					$(BIN)
 	install -d					$(LIB)
 	install -d					$(LIB64)
-	install -m 0444 libce.a		$(LIB)
-	install -m 0444 libce64.a	$(LIB64)
+	install -m 0444 libqlk.a	$(LIB)
+	install -m 0444 libqlk64.a	$(LIB64)
 	install -m 0444 start64.o	$(LIB64)
 	install -d					$(INCLUDE)
 	install -m 0444 *.h			$(INCLUDE)
-	install -m 0444 libce.s		$(INCLUDE)
+	install -m 0444 libqlk.s	$(INCLUDE)
 	install -m 0444 boot.bin	$(LIB)
 
 clean:
-	rm -f *.o 32/*.o 64/*.o libce.a libce64.a boot.bin boot64/*.o
+	rm -f *.o 32/*.o 64/*.o libqlk.a libqlk64.a boot.bin boot64/*.o
 
