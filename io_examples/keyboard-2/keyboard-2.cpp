@@ -5,6 +5,13 @@
  *       correspond more than one ASCII char, based on some special keys
  *       (e.g. SHIFT, ALT, CTRL) combinations (if pressed or not).
  *
+ *       The following program takes into account the 26 keys on the keyboard
+ *       corresponding to letters and prints to video the lowercase or uppercase
+ *       of the pressed letter based on the value of the LEFT SHIFT key.
+ *       All other keys won't have any effect, except for the ESC key which will
+ *       terminate the program, the ENTER key ('\n') and the SPACE BAR key
+ *       (' ').
+ *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
  */
@@ -23,14 +30,24 @@
  */
 int main(int argc, char * argv[])
 {
-	char c;
+    char c;
 
-	for (;;) {
-		c = char_read(); // puo' restituire 0
-		if (c == 0x1B) // carattere ASCII esc
-			break;
-		char_write(c);	// non effettua azioni se c vale 0
-	}
-	return 0;
+    for (;;)
+    {
+        // get the ascii char corresponding to the pressed key
+        c = char_read();
+
+        // che if the ESC char was retrieved
+        if (c == 0x1B)
+        {
+            break;
+        }
+
+        // print the given ASCII char to the video output
+        char_write(c);
+    }
+
+    // return with no errors
+    return 0;
 }
 

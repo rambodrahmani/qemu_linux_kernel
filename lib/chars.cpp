@@ -1,5 +1,5 @@
 /**
- * File: tab.cpp
+ * File: chars.cpp
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -8,7 +8,7 @@
 #include "internal.h"
 #include "kbd.h"
 
-natb tab[MAX_CODE] =
+natb chars[MAX_CODE] =
 {
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19,
     0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26,

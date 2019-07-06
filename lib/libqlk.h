@@ -144,9 +144,9 @@ void char_write(natb cha);
  * Writes the given string to the video output (the termination char '\0' is not
  * included).
  *
- * @param   str[]   the string to be written to the video output.
+ * @param   buf[]   the string to be written to the video output.
  */
-void str_write(const char str[]);
+void str_write(const char buf[]);
 
 /*
  * Utility functions to read and write to the primary hard disk drive.
@@ -205,12 +205,12 @@ void *memset(void* dest, int c, size_t n);
 void *memcpy(void* dest, const void* src, size_t n);
 
 /**
- * @param   str[]   the given string
+ * @param   *str   the given string
  *
- * @return  the ;ength of the given string (the termination char '\0' is not
+ * @return  the length of the given string (the termination char '\0' is not
  *          included)
  */
-size_t strlen(const char str[]);
+size_t strlen(const char *str);
 
 /**
  * Copies the src string to the dst string.

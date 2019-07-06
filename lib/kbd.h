@@ -17,7 +17,7 @@
  */
 
 /**
- *
+ * Number of valid keyboard char keys including ' ', '\r', '\n' and ESC.
  */
 const natl MAX_CODE = 30;
 
@@ -47,19 +47,19 @@ const ioaddr iSTR = 0x64;
 extern bool shift;
 
 /**
- *
+ * Keyboard chars.
  */
-extern natb tab[MAX_CODE];
+extern natb chars[MAX_CODE];
 
 /**
- *
+ * Keyboard lowercase chars.
  */
-extern char tabmin[MAX_CODE];
+extern char lowercase_chars[MAX_CODE];
 
 /**
- *
+ * Keyboard uppercase chars.
  */
-extern char tabmai[MAX_CODE];
+extern char uppercase_chars[MAX_CODE];
 
 /**
  * Initializes the keyboard.
@@ -86,9 +86,7 @@ void keyboard_clear();
 natb keyboard_read();
 
 /*
-
-    8042 - Keyboard Controller (AT,PS/2)
-
+                  8042 - Keyboard Controller (AT,PS/2)
 
 	8042 Status Register (port 64h read)
 
@@ -233,16 +231,12 @@ natb keyboard_read();
 	  maintained by the BIOS.
 	- see  KEYBOARD COMMANDS for information on programming the
 	  keyboards internal microprocessor
-
  */
 
  /*
+                    Keyboard Commands & Responses
 
-Keyboard Commands & Responses
-
-
-Commands System Issues to Keyboard (via 8042 port 60h)
-
+        Commands System Issues to Keyboard (via 8042 port 60h)
 
 	ED  Set/Reset Mode Indicators, keyboard responds with ACK then
 	    waits for a following option byte.	When the option byte is
@@ -345,9 +339,7 @@ Commands System Issues to Keyboard (via 8042 port 60h)
 	    Keyboard returns a one byte completion code then sets default
 	    Scan Code Set 2.
 
-
-Keyboard Responses to System (via 8042 port 60h)
-
+    Keyboard Responses to System (via 8042 port 60h)
 
 	00  Key Detection Error or Overrun Error for Scan Code Set 1,
 	    replaces last key in the keyboard buffer if the buffer is full. 
@@ -367,8 +359,8 @@ Keyboard Responses to System (via 8042 port 60h)
 	    the Read ID command.  The byte stream contains 83AB in LSB, MSB
 	    order.  The keyboard then resumes scanning.
 
-
 	- command F7 through FD are NOP's on the AT and are ACK'ed but not
 	  acted upon
 	- see	8042  MAKE CODES  BREAK CODES  INT 16,3
   */
+

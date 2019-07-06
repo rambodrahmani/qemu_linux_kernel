@@ -1,9 +1,9 @@
 ################################################################################
 # File:	Makefile
-# 		Code compilation directives.
-# 		Compile and install using
-# 			$ make
-# 			$ make install
+#       Code compilation directives.
+#       Compile and install using
+#          $ make
+#          $ make install
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 19/03/2019
