@@ -272,8 +272,7 @@ char* natq_conv(natq n, char dst[]);
 
 /**
  * Converts the given integer number n in a string of chars which represent the 
- * sign and the hex digits. Copies the resulting string
- * into dst.
+ * sign and the hex digits. Copies the resulting string into dst.
  *
  * @param   n       the integer number to be converted
  * @param   dst[]   the string resulting from the conversion
