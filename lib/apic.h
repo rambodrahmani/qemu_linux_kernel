@@ -1,5 +1,11 @@
 /**
  * File: apic.h
+ *       In computing, Intel's Advanced Programmable Interrupt Controller (APIC)
+ *       is a family of interrupt controllers. As its name suggests, the APIC is
+ *       more advanced than Intel's 8259 Programmable Interrupt Controller
+ *       (PIC), particularly enabling the construction of multiprocessor
+ *       systems. It is one of several architectural designs intended to solve
+ *       interrupt routing efficiency issues in multiprocessor computer systems.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -141,12 +147,18 @@ void apic_set_DEST(natl irq, natb dest);
 void apic_set_IPOL(natl irq, bool v);
 
 /**
+ * Enables (v = false) or disables (v = true) the given interrupt controller ir
+ * pin.
  *
+ * @param   irq     ir pin index number
+ * @param   enable  false to enable and true to disable the ir pin
  */
-void apic_set_MIRQ(natl irq, bool v);
+void apic_set_MIRQ(natl irq, bool enable);
 
 /**
  *
+ * @param   irq
+ * @param   v
  */
 void apic_set_TRGM(natl irq, bool v);
 
@@ -164,3 +176,4 @@ void apic_write_rth(natb irq, natl w);
  *
  */
 void apic_write_rtl(natb irq, natl w);
+
