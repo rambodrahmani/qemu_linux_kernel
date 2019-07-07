@@ -34,15 +34,15 @@ functions are provided.
 
 User software can be developed using both Assembly and C++.
 
-## Text and graphic mode
-The video output system of a Personal Computer is made up of a complex graphic
+## Text and graphic Video Modes
+The video output system of a Personal Computer is made up of a complex video
 adapter and a video output display: to the developer, this complex systems
-appears as the video controller, wich represents the graphic adapter and the
+appears as the video controller, wich represents the video adapter and the
 video memory, which represent the display.
 
 One of the most used video controllers is known as VGA (Video Graphics Array).
 
-The graphic adapter circuitry manages the video display according to specific
+The video adapter circuitry manages the video display according to specific
 usage methods, which can me grouped into two main modes: the text mode and the
 graphic mode.
 
