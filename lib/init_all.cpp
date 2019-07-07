@@ -22,11 +22,13 @@ extern void ini();
 
 bool init_all()
 {
+    // initialize the GDT
     init_gdt();
 
     load_gdt();
     
-    init_idt(); // chiama gate_init per le prime 32 entrate
+    // init the IDT (first 32 entries only)
+    init_idt();
     
     bochsvga_init();
     

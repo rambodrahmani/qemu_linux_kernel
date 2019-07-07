@@ -1,5 +1,7 @@
 /**
  * File: gate_init.cpp
+ *       Initializes the entry number 'num' of the IDT with the address of the
+ *       given sub routine.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
