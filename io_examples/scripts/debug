@@ -7,7 +7,7 @@ trap "rm '$GDBINIT'" exit
 
 cat <<EOF > "$GDBINIT"
 set arch i386:x86-64
-file /home/rambodrahmani/CE/lib/ce/boot.bin
+file /home/rambodrahmani/QEMU_LINUX_KERNEL/lib/qlk/boot.bin
 target remote localhost:1234
 print wait_for_gdb=0
 file $EXE

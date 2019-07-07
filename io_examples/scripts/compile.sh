@@ -52,5 +52,5 @@ for f in *.s; do
 done
 shopt -u nullglob
 
-ld.gold $LINKER_OPTIONS *.o -lce64 -o "$OUTPUT"
+ld.gold $LINKER_OPTIONS *.o -lqlk64 -o "$OUTPUT"
 

@@ -7,7 +7,7 @@
 		REPORT=${REPORT:-1}
 	}
 }
-[ -z "$QEMU" ] && QEMU=/home/rambodrahmani/CE/bin/qemu-system-x86_64
+[ -z "$QEMU" ] && QEMU=/home/rambodrahmani/QEMU_LINUX_KERNEL/bin/qemu-system-x86_64
 [ -x "$QEMU" ] || QEMU=$(which qemu-system-x86_64)
 [ -x "$QEMU" ] || { echo "qemu non trovato" >&2; exit 1; }
 
@@ -18,7 +18,7 @@ cmd="\"$QEMU\" \
 	-soundhw pcspk \
 	-no-reboot \
 	-m ${MEM:-16} \
-        -drive file=\"/home/rambodrahmani/CE/share/hd.img\",index=0,media=disk,cache=writeback,format=raw"
+        -drive file=\"/home/rambodrahmani/QEMU_LINUX_KERNEL/share/hd.img\",index=0,media=disk,cache=writeback,format=raw"
 
 boot="boot.bin"
 exe="a.out"
@@ -35,7 +35,7 @@ if [ -d "$exe" ]; then
 		exe="$exe/a.out"
 fi
 
-cmd="$cmd -kernel \"/home/rambodrahmani/CE/lib/ce/$boot\" -initrd \"$exe\""
+cmd="$cmd -kernel \"/home/rambodrahmani/QEMU_LINUX_KERNEL/lib/qlk/$boot\" -initrd \"$exe\""
 
 trap 'stty sane 2>/dev/null' exit
 
