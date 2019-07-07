@@ -7,6 +7,9 @@
 
 #include "internal.h"
 
+/**
+ *
+ */
 struct gate
 {
 	natl dw1;

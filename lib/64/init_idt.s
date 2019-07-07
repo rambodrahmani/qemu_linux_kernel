@@ -1,5 +1,5 @@
 ################################################################################
-# File: inputb.s
+# File: init_idt.s
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 06/07/2019.
@@ -74,4 +74,23 @@ init_idt:
     popq %rcx
 
     ret
+
+# Software Initialization for Protected Mode
+# ------------------------------------------
+# Most of the initialization needed for protected mode can be done either before
+# or after switching to protected mode. If done in protected mode, however, the
+# initialization procedures must not use protected-mode features that are not
+# yet initialized.
+
+# Interrupt Descriptor Table
+# --------------------------
+# The IDTR may be loaded in either real-address or protected mode. However, the
+# format of the interrupt table for protected mode is different than that for
+# real-address mode. It is not possible to change to protected mode and change
+# interrupt table formats at the same time; therefore, it is inevitable that, if
+# IDTR selects an interrupt table, it will have the wrong format at some time.
+# An interrupt or exception that occurs at this time will have unpredictable
+# results. To avoid this unpredictability, interrupts should remain disabled
+# until interrupt handlers are in place and a valid IDT has been created in
+# protected mode.
 
