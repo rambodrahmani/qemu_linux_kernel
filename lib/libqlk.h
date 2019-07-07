@@ -330,19 +330,21 @@ extern "C" void trap_init(natl num, void routine());
 extern "C" void apic_set_MIRQ(natl irq, bool enable);
 
 /**
+ * Sets the given type for the interrupts coming from the specified ir pin.
  *
- * @param   irq
- * @param   vec
+ * @param   irq   ir pin index number
+ * @param   type  interrupt type
  */
-extern "C" void apic_set_VECT(natl irq, natb vec);
+extern "C" void apic_set_VECT(natl irq, natb type);
 
 /*
  * Utility functions for thread synchronization.
  */
 
 /**
+ * Sets the specified semaphore to 0 and waits for it to be set to 1.
  *
- * @param   sem
+ * @param   sem   the semaphore to set
  */
 extern "C" void sem_wait(natl sem);
 

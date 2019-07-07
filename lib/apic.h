@@ -163,7 +163,10 @@ void apic_set_MIRQ(natl irq, bool enable);
 void apic_set_TRGM(natl irq, bool v);
 
 /**
+ * Sets the given type for the interrupts coming from the specified ir pin.
  *
+ * @param   irq   ir pin index number
+ * @param   type  interrupt type
  */
 void apic_set_VECT(natl irq, natb vec);
 
