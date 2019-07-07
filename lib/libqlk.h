@@ -305,9 +305,11 @@ void pause();
  */
 
 /**
+ * Initializes the entry with index num of the IDT with the address of the given
+ * sub routine.
  *
- * @param   num
- * @param   routine()
+ * @param   num         IDT entry index
+ * @param   routine()   sub routine address
  */
 extern "C" void gate_init(natl num, void routine());
 

@@ -1,6 +1,6 @@
 /**
  * File: gate_init.cpp
- *       Initializes the entry number 'num' of the IDT with the address of the
+ *       Initializes the entry with index num of the IDT with the address of the
  *       given sub routine.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
@@ -17,10 +17,10 @@ struct gate
 	natl dw1;
 	natl dw2;
 
-#ifdef X86_64
-	natl dw3;
-	natl dw4;
-#endif
+    #ifdef X86_64
+	    natl dw3;
+    	natl dw4;
+    #endif
 };
 
 extern gate idt[];
