@@ -37,6 +37,10 @@ User software can be developed using both Assembly and C++.
 ## Text and graphic mode
 
 ## The setup.sh script
+You can setup the required components of this repo manually one by one, or
+simply use the `setup.sh` script which will setup everything for you.
+Once done, you will be ready to compile and boot the provided I/O examples or
+develop your own user programs for the kernel.
 
 ## Compiling and executing a user program
 First of all, anytime you open up a new terminal instance, you will have to set
