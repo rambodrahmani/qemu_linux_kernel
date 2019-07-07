@@ -16,7 +16,7 @@
  *         Created on 06/07/2019.
  */
 
-#include <libcqlk.h>
+#include <libqlk.h>
 #include <kbd.h>
 
 /**

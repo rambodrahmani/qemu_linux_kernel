@@ -1,8 +1,19 @@
 #!/bin/bash
 
+################################################################################
+#   File: debug.sh
+#
+#  Usage: DO NOT CALL THIS SCRIPT MANUALLY. Use the make command in the parent
+#         folder.
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 07/07/2019
+################################################################################
+
 EXE=${1:-a.out}
 
 GDBINIT=$(mktemp)
+
 trap "rm '$GDBINIT'" exit
 
 cat <<EOF > "$GDBINIT"
@@ -15,3 +26,4 @@ break main
 EOF
 
 gdb -x "$GDBINIT"
+

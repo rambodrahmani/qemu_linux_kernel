@@ -36,6 +36,8 @@ User software can be developed using both Assembly and C++.
 
 ## Text and graphic mode
 
+## The setup.sh script
+
 ## Compiling and executing a user program
 First of all, anytime you open up a new terminal instance, you will have to set
 your `PATH` in order to be able to use some custom executables developer for
