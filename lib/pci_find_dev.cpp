@@ -1,3 +1,10 @@
+/**
+ * File: pci_find_dev.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 07/07/2019.
+ */
+
 #include "internal.h"
 #include "pci.h"
 
@@ -11,5 +18,6 @@ bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw devID, natw vendID)
 		if ( work == vendID && pci_read_confw(bus, dev, fun, 2) == devID) 
 			return true;
 	} while (pci_next(bus, dev, fun));
+
 	return false;
 }

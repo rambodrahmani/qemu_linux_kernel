@@ -1,3 +1,10 @@
+/**
+ * File: pci_find_class.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 07/07/2019.
+ */
+
 #include "internal.h"
 #include "pci.h"
 
@@ -19,5 +26,6 @@ bool pci_find_class(natb& bus, natb& dev, natb& fun, natb code[])
 			return true;
 		}
 	} while (pci_next(bus, dev, fun));
+	
 	return false;
 }

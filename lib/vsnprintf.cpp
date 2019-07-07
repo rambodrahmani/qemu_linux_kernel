@@ -1,4 +1,12 @@
+/**
+ * File: vsnprintf.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 07/07/2019.
+ */
+
 #include "internal.h"
+
 #define DEC_BUFSIZE 12
 
 int vsnprintf(char *str, size_t size, const char *fmt, va_list ap)

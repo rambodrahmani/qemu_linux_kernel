@@ -16,7 +16,7 @@ char keycode_to_ascii(natb c)
 
 	natl pos = 0;
 	
-    while (pos < MAX_CODE && tab[pos] != c)
+    while (pos < MAX_CODE && chars[pos] != c)
     {
 		pos++;
     }
@@ -28,11 +28,11 @@ char keycode_to_ascii(natb c)
 
     if (shift)
     {
-        cc = tabmai[pos];
+        cc = uppercase_chars[pos];
     }
     else
     {
-        cc = tabmin[pos];
+        cc = lowercase_chars[pos];
     }
 
     return cc;

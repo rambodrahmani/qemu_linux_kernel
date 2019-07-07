@@ -1,11 +1,20 @@
+/**
+ * File: pci_decode_class.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 07/07/2019.
+ */
+
 #include "internal.h"
 
-struct pci_class_codes_t {
+struct pci_class_codes_t
+{
 	natb code;
 	const char *des;
 };
 
-pci_class_codes_t pci_class_codes[] = {
+pci_class_codes_t pci_class_codes[] =
+{
 	0x00,	"pre revision 2.0",
 	0x01,	"mass storage controller",
 	0x02,	"network controller",
@@ -20,13 +29,15 @@ pci_class_codes_t pci_class_codes[] = {
 	0x0B,	"processor",
 	0x0C,	"serial bus controller",
 	0xFF,	"other"
-	};
+};
 
 const char* pci_decode_class(natb code)
 {
-	for (unsigned int i = 0; i < sizeof(pci_class_codes)/sizeof(pci_class_codes_t); i++) {
+	for (unsigned int i = 0; i < sizeof(pci_class_codes)/sizeof(pci_class_codes_t); i++)
+	{
 		if (pci_class_codes[i].code == code)
 			return pci_class_codes[i].des;
 	}
+
 	return "unkwnown";
 }

@@ -14,4 +14,3 @@ char uppercase_chars[MAX_CODE] =
     'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
     'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ', '\r', '\b', 0x1b
 };
-
