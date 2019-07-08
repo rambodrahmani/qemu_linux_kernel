@@ -15,12 +15,12 @@ void cursor()
     // new cursor position
     natw pos = COLS * y + x;
 
+    // write new position to the cursor high register
     outputb(CUR_HIGH, ADDR);
-
     outputb((natb)(pos >> 8), DATA);
 
+    // write new position to the cursor low register
     outputb(CUR_LOW, ADDR);
-
     outputb((natb)pos, DATA);
 }
 
