@@ -33,15 +33,15 @@ echo "*********************************"
 echo "*  Cleaning up the QLK library  *"
 echo "*********************************"
 cd lib
-rm *.o
-rm *.a
-rm *.bin
+rm -f *.o
+rm -f *.a
+rm -f *.bin
 cd 64
-rm *.o
+rm -f *.o
 cd ../32
-rm *.o
+rm -f *.o
 cd ../boot64
-rm *.o
+rm -f *.o
 cd ..
 cd ..
 echo "Completed."
@@ -52,11 +52,26 @@ echo "*****************************************"
 echo "*  Cleaning up the I/O examples folder  *"
 echo "*****************************************"
 cd io_examples
-rm setenv
+
+for D in `find . -type d`
+do
+    # skip the parent folder and the scripts folder
+    if [ "$D" = . ] || [ "$D" = ./scripts ]
+    then
+        continue
+    fi
+
+    # remove executable and object file
+    rm -f $D/*.out
+    rm -f $D/*.o
+done
+
+rm -f setenv
 cd scripts
-rm compile
-rm debug
-rm boot
+rm -f compile
+rm -f debug
+rm -f boot
+cd ..
 cd ..
 echo "Completed."
 
