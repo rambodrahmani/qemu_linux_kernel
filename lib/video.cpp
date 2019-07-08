@@ -7,4 +7,11 @@
 
 #include "vid.h"
 
-natw* video = (natw*)0xB8000;
+/**
+ * The video memory can be seen as an array of words visible starting from the
+ * physical address 0xB8000: the position indexed 0,0 (top left corner) has
+ * index 0 in the array, while the last position (bottom right corner) has index
+ * 1999.
+ */
+natw* video = reinterpret_cast<natw*>(0x000B8000);
+

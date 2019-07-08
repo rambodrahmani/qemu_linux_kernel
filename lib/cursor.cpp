@@ -15,9 +15,12 @@ void cursor()
     // new cursor position
     natw pos = COLS * y + x;
 
-    outputb(CUR_HIGH, iIND);
-    outputb((natb)(pos >> 8), iDAT);
-    outputb(CUR_LOW, iIND);
-    outputb((natb)pos, iDAT);
+    outputb(CUR_HIGH, ADDR);
+
+    outputb((natb)(pos >> 8), DATA);
+
+    outputb(CUR_LOW, ADDR);
+
+    outputb((natb)pos, DATA);
 }
 

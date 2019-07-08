@@ -100,11 +100,11 @@ char char_read();
 /**
  * Converts the given keycode to the corresponding ASCII char.
  *
- * @param   keycode  the keycode to be converted.
+ * @param   k   the keycode to be converted.
  *
  * @return  the ASCII char corresponding to the given keycode.
  */
-char keycode_to_ascii(natb keycode);
+char keycode_to_ascii(natb k);
 
 /*
  * Utility functions to setup the video ourput.

@@ -15,7 +15,7 @@ OUTPUT=${1:-a.out}
 case "$OUTPUT" in
     *.cpp|*.s)
         if [ -f "$OUTPUT" ]; then
-            echo "`basename $0`: evito sovrascrittura di '$OUTPUT'" > /dev/stderr
+            echo "`basename $0`: Avoid overriding existing file '$OUTPUT'" > /dev/stderr
             exit 1
         fi
         ;;

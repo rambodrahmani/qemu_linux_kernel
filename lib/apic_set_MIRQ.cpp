@@ -1,7 +1,7 @@
 /**
  * File: apic_set_MIRQ.cpp
- *       Enables (v = false) or disables (v = true) the given interrupt
- *       controller ir pin.
+ *       Enables (enable = false) or disables (enable = true) the given
+ *       interrupt controller ir pin.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -19,7 +19,7 @@ void apic_set_MIRQ(natl ir, bool enable)
     *IOREGSEL = 16 + ir * 2;
     work = *IOWIN;
     
-    if (v)
+    if (enable)
     {
         work |= 0x00010000;
     }

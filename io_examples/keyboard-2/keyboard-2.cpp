@@ -20,8 +20,9 @@
 #include <kbd.h>
 
 /**
- * Developer harness test shows how to retrieve keycodes from the keyboard and
- * print their binary representation the video output.
+ * Developer harness test shows how to use the char_read() function to retrieve
+ * the ASCII char corresponding to the key pressed on the keyboard, and print it
+ * to the video output.
  *
  * @param   argc    command line arguments counter.
  * @param   argv    command line arguments.
@@ -37,7 +38,7 @@ int main(int argc, char * argv[])
         // get the ascii char corresponding to the pressed key
         c = char_read();
 
-        // che if the ESC char was retrieved
+        // check if the ESC char was retrieved
         if (c == 0x1B)
         {
             break;

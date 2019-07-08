@@ -12,18 +12,18 @@
 
 natb get_code()
 {
-    // return key code
-    natb c;
+    // keycode byte
+    natb k;
 
-    // wait for a new key to be pressed
+    // check the status register: wait for a new key to be pressed
     do {
-        inputb(iSTR, c);
-    } while (!(c & 0x01));
+        inputb(iSTR, k);
+    } while (!(k & 0x01));
 
-    // read the key code from the keyboard RBR register
-    inputb(iRBR, c);
+    // read the keycode from the keyboard RBR register
+    inputb(iRBR, k);
 
-    // return
-    return c;
+    // return the keycode
+    return k;
 }
 
