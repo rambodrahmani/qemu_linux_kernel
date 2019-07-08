@@ -39,12 +39,12 @@ const natl ROWS = 25;
 const natl VIDEO_SIZE = COLS * ROWS;
 
 /**
- *
+ * Cursor Address High register.
  */
 const natb CUR_HIGH = 0x0e;
 
 /**
- *
+ * Cursor Address Low register.
  */
 const natb CUR_LOW = 0x0f;
 
@@ -61,7 +61,7 @@ const ioaddr DATA = 0x03D5;
 
 
 /**
- *
+ * Graphics Video Array.
  */
 extern natw * video;
 
@@ -71,7 +71,7 @@ extern natw * video;
 extern natb x, y;
 
 /**
- *
+ * VGA Attribute.
  */
 extern natw attr;
 
@@ -82,7 +82,15 @@ extern natw attr;
 void cursor();
 
 /**
- *
+ * Scrolls up the content of the display.
  */
 void scroll();
 
+/*
+ * The cursor location on an alphanumeric mode can also be set using a BIOS
+ * service or programming the CRT Controller registers directly. BIOS service
+ * number 0,interrupt 10H, allows setting the cursor to any desired column and
+ * row address. Alternatively the cursor can be repositioned by setting the
+ * contents of the cursor address registers on the VGA CRT Controller. The
+ * cursor address registers are locatedat offset 14 and 15, respectively.
+ */
