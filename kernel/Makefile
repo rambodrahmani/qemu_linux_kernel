@@ -1,24 +1,38 @@
-LIBCECONF ?= $(firstword $(wildcard /usr/local/etc/libce.conf) $(wildcard /etc/libce.conf) $(wildcard $(HOME)/CE/etc/libce.conf))
-$(if $(LIBCECONF),,$(error libce non trovata))
-include $(LIBCECONF)
+################################################################################
+# File:	Makefile
+#       Code compilation directives.
+#       Compile and install using
+#          $ make
+#          $ make swap
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 19/03/2019
+#
+################################################################################
 
-START_SISTEMA=   0x0000000000200000
-SWAP=		 swap.img
+##
+LIBQLKCONF ?= $(firstword $(wildcard /usr/local/etc/libqlk.conf) $(wildcard /etc/libqlk.conf) $(wildcard $(HOME)/QEMU_LINUX_KERNEL/etc/libqlk.conf))
+$(if $(LIBQLKCONF),,$(error libqlk not found))
+include $(LIBQLKCONF)
+
+START_SISTEMA = 0x0000000000200000
+SWAP = swap.img
+
 -include util/start.mk
 
 NCC ?= g++
 NLD ?= ld.gold
 
-COMM_CFLAGS=$(CFLAGS) \
-	-Wall 			\
-	-nostdlib		\
-	-fno-exceptions 	\
-	-fno-rtti 		\
-	-fno-stack-protector 	\
-	-Iinclude		\
-	-I$(INCLUDE)		\
-	-mno-red-zone		\
-	-g3
+COMM_CFLAGS=$(CFLAGS)     \
+    -Wall    -            \
+    -nostdlib             \
+    -fno-exceptions       \
+    -fno-rtti             \
+    -fno-stack-protector  \
+    -Iinclude             \
+    -I$(INCLUDE)          \
+    -mno-red-zone         \
+    -g3
 
 COMM_LDFLAGS=\
        -nostdlib
@@ -37,55 +51,55 @@ ifdef AUTOCORR
 endif
 
 all: \
-     build/sistema \
-     build/parse   \
-     build/creatimg \
-     utente/prog \
+     build/system     \
+     build/parse      \
+     build/make_swap  \
+     user/prog        \
      util/start.gdb
 
-toparse := $(wildcard utente/prog/*)
+toparse := $(wildcard user/prog/*)
 
-build/sistema: sistema/sist_s.o sistema/sist_cpp.o
-	$(NLD) $(NLDFLAGS) -o build/sistema -Ttext $(START_SISTEMA) sistema/sist_s.o sistema/sist_cpp.o $(NLDLIBS)
+build/system: system/system_s.o system/system_cpp.o
+	$(NLD) $(NLDFLAGS) -o build/system -Ttext $(START_SISTEMA) system/system_s.o system/system_cpp.o $(NLDLIBS)
 
 build/io: io/io_s.o io/io_cpp.o
 	$(NLD) $(NLDFLAGS) -o build/io -Ttext $(START_IO) io/io_s.o io/io_cpp.o $(NLDLIBS)
 
-build/utente: utente/uten_s.o utente/lib.o utente/uten_cpp.o
-	$(NLD) $(NLDFLAGS) -o build/utente -Ttext $(START_UTENTE) utente/uten_cpp.o utente/uten_s.o utente/lib.o $(NLDLIBS)
+build/user: user/user_s.o user/lib.o user/user_cpp.o
+	$(NLD) $(NLDFLAGS) -o build/user -Ttext $(START_UTENTE) user/user_cpp.o user/user_s.o user/lib.o $(NLDLIBS)
 
-# compilazione di sistema.s e sistema.cpp
-sistema/sist_s.o: sistema/sistema.s include/costanti.h
-	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c sistema/sistema.s -o sistema/sist_s.o
+# compilazione di system.s e system.cpp
+system/syst_s.o: system/system.s include/constants.h
+	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c system/system.s -o systema/syst_s.o
 
-sistema/sist_cpp.o: sistema/sistema.cpp include/costanti.h
-	$(NCC) $(NCFLAGS) -c sistema/sistema.cpp -o sistema/sist_cpp.o
+system/syst_cpp.o: system/system.cpp include/constants.h
+	$(NCC) $(NCFLAGS) -c system/system.cpp -o system/syst_cpp.o
 
 # compilazione di io.s e io.cpp
-io/io_s.o: io/io.s include/costanti.h
+io/io_s.o: io/io.s include/constants.h
 	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c io/io.s -o io/io_s.o
 
-io/io_cpp.o: io/io.cpp include/costanti.h
+io/io_cpp.o: io/io.cpp include/constants.h
 	$(NCC) $(NCFLAGS) -fpic -c io/io.cpp -o io/io_cpp.o
 
-# compilazione di utente.s e utente.cpp
-utente/uten_s.o: utente/utente.s include/costanti.h
-	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c utente/utente.s -o utente/uten_s.o
+# compilazione di user.s e user.cpp
+user/user_s.o: user/user.s include/constants.h
+	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c user/user.s -o user/user_s.o
 
-utente/utente.cpp: build/parse utente/include/* utente/prog $(toparse)
-	build/parse -o utente/utente.cpp $(toparse)
+user/user.cpp: build/parse user/include/* user/prog $(toparse)
+	build/parse -o user/user.cpp $(toparse)
 
-utente/uten_cpp.o: utente/utente.cpp
-	$(NCC) $(NCFLAGS) -fpic -Iutente/include -c utente/utente.cpp -o utente/uten_cpp.o
+user/user_cpp.o: user/user.cpp
+	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/user.cpp -o user/user_cpp.o
 
-utente/lib.o: utente/lib.cpp utente/include/lib.h
-	$(NCC) $(NCFLAGS) -fpic -Iutente/include -c utente/lib.cpp -o utente/lib.o
+user/lib.o: user/lib.cpp user/include/lib.h
+	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/lib.cpp -o user/lib.o
 
 # creazione di parse e createimg
 build/parse: util/parse.c util/src.h
 	gcc -o build/parse util/parse.c
 
-util/coff.o: include/costanti.h util/interp.h util/coff.h util/dos.h util/coff.cpp
+util/coff.o: include/constants.h util/interp.h util/coff.h util/dos.h util/coff.cpp
 	g++ -c -g -Iinclude -o util/coff.o util/coff.cpp
 
 util/elf32.o:  include/costanti.h util/interp.h include/elf.h util/elf32.h util/elf32.cpp
@@ -115,10 +129,10 @@ $(SWAP): util/start.mk
 
 .PHONY: swap clean reset
 swap: build/creatimg build/io build/utente $(SWAP)
-	build/creatimg $(SWAP) build/io build/utente && ln -fs $(SWAP) .swap
+	build/creatimg $(SWAP) build/io build/user && ln -fs $(SWAP) .swap
 
 clean:
-	rm -f sistema/*.o io/*.o utente/*.o util/*.o
+	rm -f system/*.o io/*.o user/*.o util/*.o
 	rm -f util/start.mk util/start.gdb util/start.pl
 
 reset: clean
@@ -127,7 +141,7 @@ reset: clean
 build:
 	mkdir -p $@
 
-utente/prog:
+user/prog:
 	mkdir -p $@
 
 build/mkstart: include/costanti.h util/mkstart.cpp
@@ -139,3 +153,4 @@ util/start.mk: include/costanti.h include/tipo.h build/mkstart
 util/start.gdb: build/io build/utente
 	objdump -h build/io | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_IO=%u\n",hex($$F[3]);}' > $@
 	objdump -h build/utente | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_UTENTE=%u\n",hex($$F[3]);}' >> $@
+
