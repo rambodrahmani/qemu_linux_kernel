@@ -46,7 +46,45 @@ partition.
 
 Keep in mind that you will be able to use only the library methods declared in
 `user/include/lib.h` and the system primitives declared in `user/include/sys.h`.
-Some example programs can be found in `user/examples`.
+Some example programs can be found in `user/examples`. These example programs
+are written using keywords such as `process`, `semaphpore` etc.., and must
+therefore be first processed using the `parse` tool which takes an `.in` file as
+intput and produces the `user.cpp` file containing the main function.
+
+Place your program in the `user/prog` folder (you can also just copy there one
+of the provided examples at the beginning), and compile it using the following
+commands:
+```console
+make
+make swap
+```
+
+If everything works fine, the following files will be created:
+
+1. `build/system`: the system module to be loaded by the boot-loader;
+2. `build/parse`: the program which automatically produces the `user.cpp` file;
+3. `build/make_swap`: the program which copies the `user` and the `io` module in
+the swap partition;
+4. `build/user.cpp`: the `user.cpp` file produced by the `parse` program;
+5. `build/user`: the `user` module resulting from the compilation of
+`user/user.cpp`, `user/user.s` and `user/lib.cpp` files;
+6. `build/io`: the `io` module resulting from the compilation of `io/io.cpp` and
+`io/io.s`;
+7. `swap.img`: the swap partition.
+
+## Boot the Kernel
+To start the Kernel you can use the provided script:
+```console
+./run.sh
+```
+Which will launch the virtual machine, boot the `build/system` module in 64 bit
+mode, and jump to the `start` label in `system/system.s`. The terminal where the
+script is executed can be used to receive feedback messages from the serial port
+of the emulator running the Kernel. The first outputs come from the boot-loader
+program and then those coded using the `flog` function.
+
+## Using the debugger
+
 
 --
 
