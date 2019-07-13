@@ -1,5 +1,7 @@
 /**
  * File: pci_read_confl.cpp
+ *       Reads a long from the register having internal offset regn relative to
+ *       the PCI function specified by fun of the device specified by dev.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 07/07/2019.
@@ -10,10 +12,12 @@
 
 natl pci_read_confl(natb bus, natb dev, natb fun, natb off)
 {
-	natl confaddr = make_CAP(bus, dev, fun, off);
-	outputl(confaddr, PCI_CAP);
-	natl ret;
-	inputl(PCI_CDP, ret);
+    natl ret;
 
-	return ret;
+    natl confaddr = make_CAP(bus, dev, fun, off);
+    outputl(confaddr, PCI_CAP);
+    inputl(PCI_CDP, ret);
+
+    return ret;
 }
+

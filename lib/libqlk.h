@@ -349,8 +349,9 @@ extern "C" void apic_set_VECT(natl irq, natb type);
 extern "C" void sem_wait(natl sem);
 
 /**
+ * Sets the specified semaphore to 1.
  *
- * @param   sem
+ * @param   sem     the semaphore to set
  */
 extern "C" void sem_signal(natl sem);
 
@@ -359,8 +360,9 @@ extern "C" void sem_signal(natl sem);
  */
 
 /**
+ * Waits for the amount of milliseconds specified by num*50.
  *
- * @param   num
+ * @param   num     50*num = milliseconds to wait
  */
 extern "C" void delay(natl num);
 
@@ -369,65 +371,77 @@ extern "C" void delay(natl num);
  */
 
 /**
+ * Reads a byte from the register having internal offset regn relative to the
+ * PCI function specified by fun of the device specified by dev.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   regn
+ * @param   bus     the bus to read from
+ * @param   dev     the device to read from
+ * @param   fun     the PCI function to read from
+ * @param   regn    the internal register to read from
  *
- * @return
+ * @return  the return byte from the register.
  */
 natb pci_read_confb(natb bus, natb dev, natb fun, natb regn);
 
 /**
+ * Reads a word from the register having internal offset regn relative to the
+ * PCI function specified by fun of the device specified by dev.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   regn
+ * @param   bus     the bus to read from
+ * @param   dev     the device to read from
+ * @param   fun     the PCI function to read from
+ * @param   regn    the internal register to read from
  *
- * @return
+ * @return  the return word from the register.
  */
 natw pci_read_confw(natb bus, natb dev, natb fun, natb regn);
 
 /**
+ * Reads a long from the register having internal offset regn relative to the
+ * PCI function specified by fun of the device specified by dev.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   regn
+ * @param   bus     the bus to read from
+ * @param   dev     the device to read from
+ * @param   fun     the PCI function to read from
+ * @param   regn    the internal register to read from
  *
- * @return
+ * @return  the return long from the register.
  */
 natl pci_read_confl(natb bus, natb dev, natb fun, natb regn);
 
 /**
+ * Writes the byte data to the register having internal offset regn relative to
+ * the PCI function specified by fun of the device specified by dev.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   regn
- * @param   data
+ * @param   bus     the bus to write to
+ * @param   dev     the device to write to
+ * @param   fun     the PCI function to write to
+ * @param   regn    the internal register to write to
+ * @param   data    the byte to be written to the register
  */
 void pci_write_confb(natb bus, natb dev, natb fun, natb regn, natb data);
 
 /**
+ * Writes the word data to the register having internal offset regn relative to
+ * the PCI function specified by fun of the device specified by dev.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   regn
- * @param   data
+ * @param   bus     the bus to write to
+ * @param   dev     the device to write to
+ * @param   fun     the PCI function to write to
+ * @param   regn    the internal register to write to
+ * @param   data    the word to be written to the register
  */
 void pci_write_confw(natb bus, natb dev, natb fun, natb regn, natw data);
 
 /**
+ * Writes the long data to the register having internal offset regn relative to
+ * the PCI function specified by fun of the device specified by dev.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   regn
- * @param   data
+ * @param   bus     the bus to write to
+ * @param   dev     the device to write to
+ * @param   fun     the PCI function to write to
+ * @param   regn    the internal register to write to
+ * @param   data    the long to be written to the register
  */
 void pci_write_confl(natb bus, natb dev, natb fun, natb regn, natl data);
 
