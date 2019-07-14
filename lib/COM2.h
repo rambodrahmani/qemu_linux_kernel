@@ -1,5 +1,13 @@
 /**
  * File: COM2.h
+ *       The 8250 UART (universal asynchronous receiver/transmitter) is an
+ *       integrated circuit designed for implementing the interface for serial
+ *       communications. The part was originally manufactured by the National
+ *       Semiconductor Corporation. It was commonly used in PCs and related
+ *       equipment such as printers or modems. The 8250 included an on-chip
+ *       programmable bit rate generator, allowing use for both common and
+ *       special-purpose bit rates which could be accurately derived from an
+ *       arbitrary crystal oscillator reference frequency.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.

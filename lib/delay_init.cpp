@@ -10,6 +10,7 @@
 
 extern "C" void delay_init()
 {
+    // initialize counter 0
     ini_ip_cont_0();
 
     // initialize IDT entry number 240 with a_delay subroutine address

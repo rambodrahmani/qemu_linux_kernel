@@ -34,14 +34,17 @@ bool init_all()
     
     clear_screen(0x4b);
     
+    // initialize serial interface COM1
     ini_COM1();
     
+    // initialize serial interface COM2
     ini_COM2();
     
     apic_init();
     
     apic_reset();
     
+    // initialize keyboard
     keyboard_init();
     
     delay_init();
