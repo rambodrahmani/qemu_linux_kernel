@@ -1,114 +1,45 @@
-/**
- * File: io.cpp
- *
- * Author: Rambod Rahmani <rambodrahmani@autistici.org>
- *         Created on 08/07/2019.
- */
-
-#include "constants.h"
-#include "libqlk.h"
-
+// io.cpp
+//
+#include "costanti.h"
+#include "libce.h"
+//#define BOCHS
 ////////////////////////////////////////////////////////////////////////////////
-//                                CONSTANTS                                   //
+//    COSTANTI                                                                //
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- *
- */
+
 const natl PRIO = 1000;
-/**
- *
- */
 const natl LIV = LIV_SISTEMA;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//                               SYSTEM CALLS                                 //
+//                        CHIAMATE DI SISTEMA USATE                           //
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- *
- */
 extern "C" natl activate_pe(void f(int), int a, natl prio, natl liv, natb type);
-
-/**
- *
- */
 extern "C" void terminate_p();
-
-/**
- *
- */
 extern "C" void sem_wait(natl sem);
-
-/**
- *
- */
 extern "C" void sem_signal(natl sem);
-
-/**
- *
- */
 extern "C" natl sem_ini(int val);
-
-/**
- *
- */
 extern "C" void wfi();	//
-
-/**
- *
- */
 extern "C" void abort_p();
-
-/**
- *
- */
 extern "C" addr trasforma(addr ff);
-
-/**
- *
- */
 extern "C" void panic(const char *msg);
 
-/**
- *
- */
 void *mem_alloc(natl dim);
-
-/**
- *
- */
 void mem_free(void *p);
 
 ////////////////////////////////////////////////////////////////////////////////
-//                               SERIAL INTEFACES                             //
+//                    GESTIONE DELLE INTERFACCE SERIALI                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- *
- */
-enum funz
-{
-    input_n,
-    input_ln,
-    output_n,
-    output_0
-};
+enum funz { input_n, input_ln, output_n, output_0 };  //
 
-/**
- *
- */
-struct interfse_reg
-{
+struct interfse_reg {	//
 	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;
 };
 
-/**
- *
- */
-struct des_se
-{
+struct des_se {		//
 	interfse_reg indreg;
 	natl mutex;
 	natl sincr;
@@ -118,16 +49,8 @@ struct des_se
 	natb stato;
 };
 
-/**
- *
- */
 const natl S = 2;
-
-/**
- *
- */
-des_se com[S] =
-{
+des_se com[S] = {
 	{	// com[0]
 		{	// indreg
 			0x03f8,	// iRBR
@@ -160,20 +83,9 @@ des_se com[S] =
 	}
 };
 
-/**
- *
- */
-void input_com(des_se* p_des);
-
-/**
- *
- */
-void output_com(des_se* p_des);
-
-/**
- *
- */
-void estern_com(int i)
+void input_com(des_se* p_des);	//
+void output_com(des_se* p_des);	//
+void estern_com(int i) //
 {
 	natb r;
 	des_se *p_des;
@@ -188,14 +100,7 @@ void estern_com(int i)
 	}
 }
 
-/**
- *
- */
 void startse_in(des_se *p_des, natb vetti[], natl quanti, funz op); // [9.2.1]
-
-/**
- *
- */
 extern "C" void c_readse_n(natl serial, natb vetti[], natl quanti, natb& errore) // [9.2.1]
 {
 	des_se *p_des;
@@ -215,9 +120,6 @@ extern "C" void c_readse_n(natl serial, natb vetti[], natl quanti, natb& errore)
 	sem_signal(p_des->mutex);
 }
 
-/**
- *
- */
 extern "C" void c_readse_ln(natl serial, natb vetti[], int& quanti, natb& errore)
 {
 	des_se *p_des;
@@ -238,14 +140,7 @@ extern "C" void c_readse_ln(natl serial, natb vetti[], int& quanti, natb& errore
 	sem_signal(p_des->mutex);
 }
 
-/**
- *
- */
 extern "C" void go_inputse(ioaddr i_ctr);
-
-/**
- *
- */
 void startse_in(des_se *p_des, natb vetti[], natl quanti, funz op) // [9.2.1]
 {
 	p_des->cont = quanti;
@@ -254,14 +149,7 @@ void startse_in(des_se *p_des, natb vetti[], natl quanti, funz op) // [9.2.1]
 	go_inputse(p_des->indreg.iIER);
 }
 
-/**
- *
- */
 extern "C" void halt_inputse(ioaddr i_ctr);
-
-/**
- *
- */
 void input_com(des_se *p_des) // [9.2.1]
 {
 	natb c; bool fine;
@@ -307,14 +195,7 @@ void input_com(des_se *p_des) // [9.2.1]
 		go_inputse(p_des->indreg.iIER);
 }
 
-/**
- *
- */
 void startse_out(des_se *p_des, natb vetto[], natl quanti, funz op);
-
-/**
- *
- */
 extern "C" void c_writese_n(natl serial, natb vetto[], natl quanti)	// [9.2.2]
 {
 	des_se *p_des;
@@ -333,9 +214,6 @@ extern "C" void c_writese_n(natl serial, natb vetto[], natl quanti)	// [9.2.2]
 	sem_signal(p_des->mutex);
 }
 
-/**
- *
- */
 extern "C" void c_writese_0(natl serial, natb vetto[], natl &quanti)
 {
 	des_se *p_des;
@@ -355,14 +233,7 @@ extern "C" void c_writese_0(natl serial, natb vetto[], natl &quanti)
 	sem_signal(p_des->mutex);
 }
 
-/**
- *
- */
 extern "C" void go_outputse(ioaddr i_ctr);
-
-/**
- *
- */
 void startse_out(des_se *p_des, natb vetto[], natl quanti, funz op) // [9.2.2]
 {
 	p_des->cont = quanti;
@@ -372,14 +243,7 @@ void startse_out(des_se *p_des, natb vetto[], natl quanti, funz op) // [9.2.2]
 	output_com(p_des);
 }
 
-/**
- *
- */
 extern "C" void halt_outputse(ioaddr i_ctr);
-
-/**
- *
- */
 void output_com(des_se *p_des)	// [9.2.2]
 {
 	natb c; bool fine;
@@ -412,20 +276,10 @@ void output_com(des_se *p_des)	// [9.2.2]
 }
 
 // ( inizializzazione delle interfacce seriali
-/**
- *
- */
 extern "C" void com_setup(void);	// vedi "io.S"
-
 // interruzioni hardware delle interfacce seriali
-/**
- *
- */
 int com_irq[S] = { 4, 3 };
 
-/**
- *
- */
 bool com_init()
 {
 	des_se *p_des;
@@ -456,63 +310,33 @@ bool com_init()
 	flog(LOG_INFO, "com: inizializzate %d seriali", S);
 	return true;
 }
+// )
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                  CONSOLE                                   //
+//                         GESTIONE DELLA CONSOLE                       //
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- *
- */
-const natl COLS = 80;
+const natl COLS = 80; 	//
+const natl ROWS = 25;	//
+const natl VIDEO_SIZE = COLS * ROWS;	//
 
-/**
- *
- */
-const natl ROWS = 25;
-
-/**
- *
- */
-const natl VIDEO_SIZE = COLS * ROWS;
-
-/**
- *
- */
-struct interfvid_reg
-{
+struct interfvid_reg {	//
 	ioaddr iIND, iDAT;
 };
 
-/**
- *
- */
-struct des_vid
-{
+struct des_vid {	//
 	interfvid_reg indreg;
 	natw* video;
 	natl x, y;
 	natw attr;
 };
 
-/**
- *
- */
-const natl MAX_CODE = 40;
-
-/**
- *
- */
-struct interfkbd_reg
-{
+const natl MAX_CODE = 40; //
+struct interfkbd_reg {	//
 	ioaddr iRBR, iTBR, iCMR, iSTR;
 };
 
-/**
- *
- */
-struct des_kbd
-{
+struct des_kbd { //
 	interfkbd_reg indreg;
 	addr punt;
 	natl cont;
@@ -522,22 +346,14 @@ struct des_kbd
 	natb tabmai[MAX_CODE];
 };
 
-/**
- *
- */
-struct des_console
-{
+struct des_console { //
 	natl mutex;
 	natl sincr;
 	des_kbd kbd;
 	des_vid vid;
 };
 
-/**
- *
- */
-des_console console =
-{
+des_console console = {
 	0,	// mutex (da inizializzare)
 	0,	// sync  (da inizializzare)
 	{	// kbd
@@ -584,34 +400,18 @@ des_console console =
 	}
 };
 
-/**
- *
- */
-extern "C" void cursore(ioaddr iIND, ioaddr iDAT, int x, int y);
+extern "C" void cursore(ioaddr iIND, ioaddr iDAT, int x, int y); //
 
-/**
- *
- */
-void scroll(des_vid *p_des)
+void scroll(des_vid *p_des)	//
 {
 	for (natl i = 0; i < VIDEO_SIZE - COLS; i++)
-    {
 		p_des->video[i] = p_des->video[i + COLS];
-    }
-
 	for (natl i = 0; i < COLS; i++)
-    {
 		p_des->video[VIDEO_SIZE - COLS + i] = p_des->attr | ' ';
-    }
-
 	p_des->y--;
 }
 
-/**
- *
- */
-void writeelem(natb c)
-{
+void writeelem(natb c) {	//
 	des_vid* p_des = &console.vid;
 	switch (c) {
 	case 0:
@@ -649,24 +449,16 @@ void writeelem(natb c)
 		p_des->x, p_des->y);
 }
 
-/**
- *
- */
-void writeseq(cstr seq)
+void writeseq(cstr seq)	//
 {
 	const natb* pn = static_cast<const natb*>(seq);
-
-	while (*pn != 0)
-    {
+	while (*pn != 0) {
 		writeelem(*pn);
 		pn++;
 	}
 }
 
-/**
- *
- */
-extern "C" void c_writeconsole(cstr buff)
+extern "C" void c_writeconsole(cstr buff) //
 {
 	des_console *p_des = &console;
 	sem_wait(p_des->mutex);
@@ -679,19 +471,9 @@ extern "C" void c_writeconsole(cstr buff)
 	sem_signal(p_des->mutex);
 }
 
-/**
- *
- */
-extern "C" void go_inputkbd(interfkbd_reg* indreg);
+extern "C" void go_inputkbd(interfkbd_reg* indreg); //
+extern "C" void halt_inputkbd(interfkbd_reg* indreg); //
 
-/**
- *
- */
-extern "C" void halt_inputkbd(interfkbd_reg* indreg);
-
-/**
- *
- */
 void startkbd_in(des_kbd* p_des, str buff, natl dim)
 {
 	p_des->punt = buff;
@@ -699,10 +481,7 @@ void startkbd_in(des_kbd* p_des, str buff, natl dim)
 	go_inputkbd(&p_des->indreg);
 }
 
-/**
- *
- */
-extern "C" void c_readconsole(str buff, natl& quanti)
+extern "C" void c_readconsole(str buff, natl& quanti) //
 {
 	des_console *p_des;
 
@@ -714,11 +493,7 @@ extern "C" void c_readconsole(str buff, natl& quanti)
 	sem_signal(p_des->mutex);
 }
 
-/**
- *
- */
-natb converti(des_kbd* p_des, natb c)
-{
+natb converti(des_kbd* p_des, natb c) { //
 	natb cc;
 	natl pos = 0;
 	while (pos < MAX_CODE && p_des->tab[pos] != c)
@@ -732,10 +507,7 @@ natb converti(des_kbd* p_des, natb c)
 	return cc;
 }
 
-/**
- *
- */
-void estern_kbd(int h)
+void estern_kbd(int h) //
 {
 	des_console *p_des = &console;
 	natb a, c;
@@ -792,19 +564,9 @@ void estern_kbd(int h)
 }
 
 // (* inizializzazioni
-/**
- *
- */
 extern "C" void abilita_tastiera(void);
-
-/**
- *
- */
 bool vid_init();
 
-/**
- *
- */
 extern "C" void c_iniconsole(natb cc)
 {
 	des_vid *p_des = &console.vid;
@@ -813,36 +575,22 @@ extern "C" void c_iniconsole(natb cc)
 }
 
 // Interruzione hardware della tastiera
-/**
- *
- */
 const int KBD_IRQ = 1;
 
-/**
- *
- */
 bool kbd_init()
 {
 	// blocchiamo subito le interruzioni generabili dalla tastiera
 	halt_inputkbd(&console.kbd.indreg);
 
-	if (activate_pe(estern_kbd, 0, PRIO, LIV, KBD_IRQ) == 0xFFFFFFFF)
-    {
+	if (activate_pe(estern_kbd, 0, PRIO, LIV, KBD_IRQ) == 0xFFFFFFFF) {
 		flog(LOG_ERR, "kbd: impossibile creare estern_kbd");
-
 		return false;
 	}
 	return true;
 }
 
-/**
- *
- */
 extern "C" des_vid vid;
 
-/**
- *
- */
 bool vid_init()
 {
 	des_vid *p_des = &console.vid;
@@ -854,9 +602,6 @@ bool vid_init()
 	return true;
 }
 
-/**
- *
- */
 bool console_init()
 {
 	des_console *p_des = &console;
@@ -872,42 +617,21 @@ bool console_init()
 	return kbd_init() && vid_init();
 }
 
+// *)
+
 // inerfacce ATA
 
-/**
- *
- */
-enum hd_cmd
-{
-    WRITE_SECT = 0x30,
-    READ_SECT = 0x20,
-    WRITE_DMA = 0xCA,
-    READ_DMA = 0xC8
-};
-
-/**
- *
- */
-struct interfata_reg
-{
+enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };
+struct interfata_reg {
 	ioaddr iBR;
 	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,
 	       iCMD, iSTS, iDCR, iASR;
 };
-
-/**
- *
- */
 struct pci_ata
 {
 	ioaddr iBMCMD, iBMSTR, iBMDTPR;
 };
-
-/**
- *
- */
-struct des_ata
-{
+struct des_ata {
 	interfata_reg indreg;
 	pci_ata bus_master;
 	natl prd[2];
@@ -918,12 +642,7 @@ struct des_ata
 	natb cont;
 	addr punt;
 };
-
-/**
- *
- */
-des_ata hd =
-{
+des_ata hd = {
 	{
 		0x0170,	// iBR
 		0x0174, // iCNL
@@ -940,16 +659,10 @@ des_ata hd =
 	// il resto e' inizializzato a zero
 };
 
-/**
- *
- */
+
 const natb HD_IRQ = 15;
 
-/**
- *
- */
 extern "C" void hd_write_address(des_ata* p_des, natl primo);
-
 // scrive primo nei registri di indirizzo CNL, CNH, SNR e HND
 extern "C" void hd_write_command(hd_cmd cmd, ioaddr iCMD);
 // scrive cmd nel registro iCMD e aspetta che BSY torni a 0
@@ -1249,4 +962,3 @@ extern "C" void cmain(int sem_io)
 	sem_signal(sem_io);
 	terminate_p();
 }
-

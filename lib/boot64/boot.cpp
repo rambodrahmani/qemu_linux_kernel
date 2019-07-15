@@ -109,18 +109,18 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 	
 	// (* inizializzazione Seriale per il Debugging
 	init_COM1();
-	flog(LOG_INFO, "Boot loader Calcolatori Elettronici, v0.01");
+	flog(LOG_INFO, "QEMU Linux Kernel Boot Loader, v0.01");
 	// *)
 	
 	// (* controlliamo di essere stati caricati
 	//    da un bootloader che rispetti lo standard multiboot
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-		flog(LOG_ERR, "Numero magico non valido: 0x%x", magic);
+		flog(LOG_ERR, "Invalid magic number: 0x%x", magic);
 	}
 	// *)
 
 	if (mbi->flags & MULTIBOOT_INFO_CMDLINE) {
-		flog(LOG_INFO, "argomenti: %s", mbi->cmdline);
+		flog(LOG_INFO, "parameters: %s", mbi->cmdline);
 		parse_args((char *)mbi->cmdline);
 	}
 
@@ -129,7 +129,7 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 	if (!(mbi->flags & MULTIBOOT_INFO_MODS) ||
 	      mbi->mods_count != 1)
 	{
-		flog(LOG_ERR, "Informazioni sui moduli assenti o errate");
+		flog(LOG_ERR, "Modules data missing or wrong.");
 		return;
 	}
 
@@ -143,7 +143,7 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 	
 	loadCR3(tab4);
 	if (debug_mode)
-		flog(LOG_INFO, "Attendo collegamento da gdb...");
+		flog(LOG_INFO, "Waiting for gdb connection...");
 	attiva_paginazione(entry, debug_mode);
 	
 	/* mai raggiunto */

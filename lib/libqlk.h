@@ -153,20 +153,24 @@ void str_write(const char buf[]);
  */
 
 /**
- * 
- * @param   lba
- * @param   length
- * @param   vect[]
+ * Writes the given data to specified HDD sectors starting from the specified
+ * sector.
+ *
+ * @param   start       starting sector
+ * @param   sectors     sectors to be written
+ * @param   data[]      data to be written
  */
-void hdd_read(natl lba, natb length, natw vect[]);
+void hdd_read(natl start, natb sectors, natw data[]);
 
 /**
+ * Reads into data from the specified HDD sectors starting from the specified
+ * start sector.
  *
- * @param   lba
- * @param   length
- * @param   vect[]
+ * @param   start       starting sector
+ * @param   sectors     sectors to be read
+ * @param   data[]      retrieved data
  */
-void hdd_write(natl lba, natb length, natw vect[]);
+void hdd_write(natl start, natb sectors, natw data[]);
 
 /*
  * Utility functions for the serial ports.
