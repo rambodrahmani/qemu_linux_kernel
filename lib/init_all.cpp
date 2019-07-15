@@ -5,7 +5,7 @@
  *       from the start entry point. The init_all function is automatically
  *       called which will cause the subsequent calls to the following library
  *       functions: init_gdt(), load_gdt(), init_idt(), bochsvga_init(),
- *       clear_screen(), ini_COM1(), ini_COM2(), apic_init(), apic_reset(),
+ *       clear_screen(), init_COM1(), init_COM2(), apic_init(), apic_reset(),
  *       keyboard_init(), delay_init(), ini(), sti() and finally main(), which
  *       contains the user program instructions.
  *
@@ -35,10 +35,10 @@ bool init_all()
     clear_screen(0x4b);
     
     // initialize serial interface COM1
-    ini_COM1();
+    init_COM1();
     
     // initialize serial interface COM2
-    ini_COM2();
+    init_COM2();
     
     apic_init();
     

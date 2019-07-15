@@ -1,5 +1,6 @@
 /**
  * File: do_log.cpp
+ *       Writes the given log message to the serial interface COM1.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -32,25 +33,29 @@ extern "C" void do_log(log_sev sev, const char* buf, natl quanti)
 
     while (*l)
     {
-        serial_o(*l++);
+        serial1_o(*l++);
     }
 
-    serial_o((natb)'\t');
+    serial1_o((natb)'\t');
+
     natb idbuf[10];
+    
     snprintf((char*)idbuf, 10, "%d", esecuzione->id);
+    
     l = idbuf;
 
     while (*l)
     {
-        serial_o(*l++);
+        serial1_o(*l++);
     }
 
-    serial_o((natb)'\t');
+    serial1_o((natb)'\t');
 
     for (natl i = 0; i < quanti; i++)
     {
-        serial_o(buf[i]);
+        serial1_o(buf[i]);
     }
 
-    serial_o((natb)'\n');
+    serial1_o((natb)'\n');
 }
+

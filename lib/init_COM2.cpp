@@ -1,33 +1,37 @@
 /**
- * File: ini_COM1.cpp
- *       Initializes serial interface COM1:
+ * File: init_COM2.cpp
+ *       Initializes serial interface COM2:
  *          bit-rate:    9600 bit/s
- *          frame:       8 bits
- *          parity bit:  disabled
+ *          frame:       start-bit:  1
+ *                       character:  8 bits
+ *                       parity bit: 0
+ *                       stop-bit:   1
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
  */
 
 #include "libqlk.h"
-#include "COM1.h"
+#include "COM2.h"
 
-void ini_COM1()
+void init_COM2()
 {
     // dummy bit
-    natb dymmy;
+    natb dummy;
 
     // 9600 bits/sec
     natw CBITR = 0x000C;
 
-    // DLAB = 1
+    // DLAB = 1, select DLR register
     outputb(0x80, iLCR);
 
+    // write time constant LSB
     outputb(CBITR, iDLR_LSB);
 
+    // write time constant MSB
     outputb(CBITR >> 8, iDLR_MSB);
 
-    // 1 stop-bit, 8-bits frame, no parity bit
+    // 1 stop-bit, 8-bits character, no parity bit
     outputb(0x03, iLCR);
 
     // interrupt requests disabled

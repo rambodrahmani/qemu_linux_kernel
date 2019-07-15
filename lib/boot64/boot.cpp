@@ -1,6 +1,11 @@
-// sistema.cpp
-//
-#include "mboot.h"		// *****
+/**
+ * File: boot64.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 06/07/2019.
+ */
+
+#include "mboot.h"
 #include "elf64.h"
 #define MAX_LOG LOG_ERR
 #include "libqlk.h"
@@ -17,7 +22,7 @@ extern "C" addr readCR3();
 // attiva la paginazione [vedi sistema.S]
 extern "C" void attiva_paginazione(natl entry, int debug);
 
-void ini_COM1();
+void init_COM1();
 
 natl carica_modulo(multiboot_module_t* mod) {
 	Elf64_Ehdr* elf_h = (Elf64_Ehdr*)mod->mod_start;
@@ -103,7 +108,7 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 	natl entry;
 	
 	// (* inizializzazione Seriale per il Debugging
-	ini_COM1();
+	init_COM1();
 	flog(LOG_INFO, "Boot loader Calcolatori Elettronici, v0.01");
 	// *)
 	
@@ -144,9 +149,4 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 	/* mai raggiunto */
 	return;
 }
-// )
-
-
-
-
 

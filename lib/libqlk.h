@@ -173,16 +173,32 @@ void hdd_write(natl lba, natb length, natw vect[]);
  */
 
 /**
- *
- * @param c
+ * Writes the given byte to the COM1 serial interface THR register.
+ * 
+ * @param   b   the byte to be written
  */
-void serial_o(natb c);
+void serial1_o(natb b);
 
 /**
+ * Reads a byte from the COM1 serial interface RBR register.
  *
- * @param c
+ * @param   &b   the retrieved byte
  */
-void serial2_o(natb c);
+void serial1_i(natb &b);
+
+/**
+ * Write the given byte to the COM2 serial interface THR register.
+ *
+ * @param   b   the byte to be written
+ */
+void serial2_o(natb b);
+
+/**
+ * Reads a byte from the COM2 serial interface RBR register.
+ *
+ * @param   &b   the retrieved byte
+ */
+void serial2_i(natb &b);
 
 /*
  * Utility functions to work with strings.

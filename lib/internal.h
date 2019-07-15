@@ -57,8 +57,8 @@ extern "C" void delay_init();
  * the user program is loaded into memory, the execution starts from the start
  * entry point. The init_all function is automatically called which will cause
  * the subsequent calls to the following library functions: init_gdt(),
- * load_gdt(), init_idt(), bochsvga_init(), clear_screen(), ini_COM1(),
- * ini_COM2(), apic_init(), apic_reset(), keyboard_init(), delay_init(), ini(),
+ * load_gdt(), init_idt(), bochsvga_init(), clear_screen(), init_COM1(),
+ * init_COM2(), apic_init(), apic_reset(), keyboard_init(), delay_init(), ini(),
  * sti() and finally main(), which contains the user program instructions.
  */
 extern "C" bool init_all();
@@ -173,12 +173,12 @@ extern "C" void panic(const char* msg);
 #endif
 
 /**
- *
+ * Initializes serial interface COM1.
  */
-void ini_COM1();
+void init_COM1();
 
 /**
- *
+ * Initializes serial interface COM2.
  */
-void ini_COM2();
+void init_COM2();
 

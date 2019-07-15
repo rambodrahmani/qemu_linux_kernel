@@ -14,47 +14,47 @@
  */
 
 /**
- *
+ * COM1 RBR (Receiver Buffer Register) I/O address.
  */
-const ioaddr iRBR = 0x03F8;     // DLAB deve essere 0
+const ioaddr iRBR = 0x03F8;
 
 /**
- *
+ * COM1 THR (Transmitter Holding Register) I/O address.
  */
-const ioaddr iTHR = 0x03F8;     // DLAB deve essere 0
+const ioaddr iTHR = 0x03F8;
 
 /**
- *
+ * COM1 LSR (Line Status Register) I/O address.
  */
 const ioaddr iLSR = 0x03FD;
 
 /**
- *
+ * COM1 LCR (Line Control Register) I/O address.
  */
 const ioaddr iLCR = 0x03FB;
 
 /**
- *
+ * COM1 DLR (Divisor Latch Register) LSB I/O address.
  */
-const ioaddr iDLR_LSB = 0x03F8;     // DLAB deve essere 1
+const ioaddr iDLR_LSB = 0x03F8;
 
 /**
- *
+ * COM1 DLR (Divisor Latch Register) MSB I/O address.
  */
-const ioaddr iDLR_MSB = 0x03F9;     // DLAB deve essere 1
+const ioaddr iDLR_MSB = 0x03F9;
 
 /**
- *
- */
-const ioaddr iIER = 0x03F9;     // DLAB deve essere 0
-
-/**
- *
+ * COM1 MSR (Modem Control Register) I/O address.
  */
 const ioaddr iMCR = 0x03FC;
 
 /**
- *
+ * COM1 IER (Interrupt Enable Register) I/O address.
+ */
+const ioaddr iIER = 0x03F9;
+
+/**
+ * COM1 IIR (Interrupt Identification Register) I/O address.
  */
 const ioaddr iIIR = 0x03FA;
 
