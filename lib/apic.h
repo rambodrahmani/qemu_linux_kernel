@@ -147,13 +147,21 @@ void apic_set_DEST(natl irq, natb dest);
 void apic_set_IPOL(natl irq, bool v);
 
 /**
- * Enables (v = false) or disables (v = true) the given interrupt controller ir
- * pin.
+ * Enables (disable = false) or disables (disable = true) the given APIC
+ * ir pin.
  *
  * @param   irq     ir pin index number
- * @param   enable  false to enable and true to disable the ir pin
+ * @param   disable false to enable and true to disable the ir pin
  */
-void apic_set_MIRQ(natl irq, bool enable);
+extern "C" void apic_set_MIRQ(natl irq, bool disable);
+
+/**
+ * Sets the given type for the interrupts coming from the specified APIC ir pin.
+ *
+ * @param   irq   ir pin index number
+ * @param   type  interrupt type
+ */
+extern "C" void apic_set_VECT(natl irq, natb type);
 
 /**
  *
@@ -161,14 +169,6 @@ void apic_set_MIRQ(natl irq, bool enable);
  * @param   v
  */
 void apic_set_TRGM(natl irq, bool v);
-
-/**
- * Sets the given type for the interrupts coming from the specified ir pin.
- *
- * @param   irq   ir pin index number
- * @param   type  interrupt type
- */
-void apic_set_VECT(natl irq, natb vec);
 
 /**
  *

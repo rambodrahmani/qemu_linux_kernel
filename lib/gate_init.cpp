@@ -25,13 +25,13 @@ struct gate
 
 extern gate idt[];
 
-extern "C" void componi_gate(gate& g, void routine(), bool trap);
+extern "C" void create_gate(gate& g, void routine(), bool trap);
 
 void gate_init(natl num, void routine())
 {
 	gate gg;
 
-	componi_gate(gg, routine, false /* interrupt */);
+	create_gate(gg, routine, false /* interrupt */);
 	
 	idt[num] = gg;
 }

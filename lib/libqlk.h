@@ -340,23 +340,6 @@ extern "C" void gate_init(natl num, void routine());
  */
 extern "C" void trap_init(natl num, void routine());
 
-/**
- * Enables (v = false) or disables (v = true) the given interrupt controller ir
- * pin.
- *
- * @param   irq     ir pin index number
- * @param   enable  false to enable and true to disable the ir pin
- */
-extern "C" void apic_set_MIRQ(natl irq, bool enable);
-
-/**
- * Sets the given type for the interrupts coming from the specified ir pin.
- *
- * @param   irq   ir pin index number
- * @param   type  interrupt type
- */
-extern "C" void apic_set_VECT(natl irq, natb type);
-
 /*
  * Utility functions for thread synchronization.
  */

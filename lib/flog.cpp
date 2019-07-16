@@ -22,6 +22,7 @@ extern "C" void flog(log_sev sev, const char* fmt, ...)
 
     if (l > 1)
     {
-    	do_log(sev, buf, l - 1);
+        do_log(sev, buf, l - 1);
     }
 }
+

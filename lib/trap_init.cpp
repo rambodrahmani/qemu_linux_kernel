@@ -8,7 +8,7 @@
 #include "internal.h"
 
 /**
- *
+ * IDT Gate structure.
  */
 struct gate
 {
@@ -23,13 +23,13 @@ struct gate
 
 extern gate idt[];
 
-extern "C" void componi_gate(gate& g, void routine(), bool trap);
+extern "C" void create_gate(gate& g, void routine(), bool trap);
 
 void trap_init(natl num, void routine())
 {
 	gate gg;
 
-	componi_gate(gg, routine, true /* trap */);
+	create_gate(gg, routine, true /* trap */);
 
 	idt[num] = gg;
 }

@@ -1,7 +1,7 @@
 /**
  * File: apic_set_VECT.cpp
- *       Sets the given type for the interrupts coming from the specified ir
- *       pin.
+ *       Sets the given type for the interrupts coming from the specified APIC
+ *       ir pin.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -28,3 +28,4 @@ void apic_set_VECT(natl ir, natb vec)
 	*IOREGSEL = 16 + ir * 2;
 	*IOWIN = work;
 }
+

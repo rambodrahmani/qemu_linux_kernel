@@ -1,20 +1,29 @@
-################################################################################
+#*******************************************************************************
 # File: a_driver_timer.s
+#       Interrupt primitive 40.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 07/07/2019.
-################################################################################
+#*******************************************************************************
 
 #-------------------------------------------------------------------------------
 #include "../libqlk.s"
-.text
+#-------------------------------------------------------------------------------
+.TEXT
+#-------------------------------------------------------------------------------
+.EXTERN c_driver_timer
+#-------------------------------------------------------------------------------
+.GLOBAL a_driver_timer
+#-------------------------------------------------------------------------------
+a_driver_timer:
+    salva_registri
 
-.extern c_driver_timer
-.global a_driver_timer       # dichiarazione necessaria per la funzione ini()
-a_driver_timer:      	     # driver di interruzione, associato al tipo 40
-	salva_registri
-	call c_driver_timer
-	movq $0xFEE000B0, %rax
-	movl $0, (%rax)  # invio di End Of Interrupt
-	carica_registri
-	iretq
+    call  c_driver_timer
+    movq  $0xFEE000B0, %rax
+    movl  $0, (%rax)
+    
+    carica_registri
+    
+    iretq
+#*******************************************************************************
+

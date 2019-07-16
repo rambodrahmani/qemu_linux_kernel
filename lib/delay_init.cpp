@@ -6,6 +6,7 @@
  */
 
 #include "libqlk.h"
+#include "apic.h"
 #include "delay.h"
 
 extern "C" void delay_init()

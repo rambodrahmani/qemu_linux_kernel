@@ -1,7 +1,7 @@
 /**
  * File: apic_set_MIRQ.cpp
- *       Enables (enable = false) or disables (enable = true) the given
- *       interrupt controller ir pin.
+ *       Enables (disable = false) or disables (enable = true) the given
+ *       APIC ir pin.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.

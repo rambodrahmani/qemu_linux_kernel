@@ -1,14 +1,14 @@
-################################################################################
+#*******************************************************************************
 # File: libs.s
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 06/07/2019.
-################################################################################
+#*******************************************************************************
 
 #-------------------------------------------------------------------------------
 #include "def.h"
 #-------------------------------------------------------------------------------
-.macro carica_descr num base limite pres dpl tipo gran
+.MACRO carica_descr num base limite pres dpl tipo gran
     pushl $\gran
     pushl $\tipo
     pushl $\dpl
@@ -19,6 +19,45 @@
     call  init_descrittore
     addl  $28, %esp
 .endm
+#-------------------------------------------------------------------------------
+.DATA
+gdt_pointer:
+    .word 0xffff    // limite della GDT
+    .long gdt       // base della GDT
+
+idt_pointer:
+    .word 0x7FF    // limite della IDT (256 entrate)
+    .long idt      // base della IDT
+.bss
+.balign 16
+
+gdt:
+    .space 8 * 8192, 0
+
+.balign 16
+.global idt
+
+idt:
+    .space 8 * 256, 0
+
+save_selectors:
+s_CS:   .word 0
+s_DS:   .word 0
+s_ES:   .word 0
+s_FS:   .word 0
+s_GS:   .word 0
+s_SS:   .word 0
+
+save_gdt:
+    .word 0
+    .long 0
+
+save_idt:
+    .word 0
+    .long 0
+
+sys_tss:
+    .space 216, 0
 #-------------------------------------------------------------------------------
 .TEXT
 .GLOBAL init_descrittore
@@ -153,37 +192,37 @@ avanti:
 
     ret
 #-------------------------------------------------------------------------------
-// carica un gate nella IDT
-// parametri: 
-// num: indice (a partire da 0) in IDT del gate da caricare
-// routine: indirizzo della routine da associare al gate
-.GLOBAL componi_gate
+// Loads an IDT gate at the given index for the given routine
+// parameters:
+//  num: IDT Gate index (starting from 0)
+//  routine: address of the routine
+.GLOBAL create_gate
 #-------------------------------------------------------------------------------
-componi_gate:
+create_gate:
     pushl %ebp
-    movl %esp, %ebp
+    movl  %esp, %ebp
 
     pushl %ebx
     pushl %eax
 
-    movl 8(%ebp), %ebx         // indirizzo struttura
-    movl 12(%ebp), %eax        // offset della routine
+    movl  8(%ebp), %ebx         // indirizzo struttura
+    movl  12(%ebp), %eax        // offset della routine
 
-    movw %ax, (%ebx)            // primi 16 bit dell offset
-    movw $SEL_CODICE_SISTEMA, 2(%ebx)
+    movw  %ax, (%ebx)            // primi 16 bit dell offset
+    movw  $SEL_CODICE_SISTEMA, 2(%ebx)
 
-    movw $0, %ax
-    movb $0b10001110, %ah     // byte di accesso
+    movw  $0, %ax
+    movb  $0b10001110, %ah     // byte di accesso
                               // (presente, 32bit, tipo interrupt)
-    movb $LIV_SISTEMA, %al    // DPL
-    shlb $5, %al          // posizione del DPL nel byte di accesso
-    orb  %al, %ah         // byte di accesso con DPL in %ah
-    movb $0, %al          // la parte bassa deve essere 0
-    movl %eax, 4(%ebx)    // 16 bit piu sign. dell offset
+    movb  $LIV_SISTEMA, %al    // DPL
+    shlb  $5, %al          // posizione del DPL nel byte di accesso
+    orb   %al, %ah         // byte di accesso con DPL in %ah
+    movb  $0, %al          // la parte bassa deve essere 0
+    movl  %eax, 4(%ebx)    // 16 bit piu sign. dell offset
                           // e byte di accesso
 
-    popl %eax
-    popl %ebx
+    popl  %eax
+    popl  %ebx
 
     leave
     ret
@@ -356,7 +395,7 @@ simd_exc:
     jmp comm_exc
 #-------------------------------------------------------------------------------
 comm_exc:
-    call gestore_eccezioni
+    call handle_exception
     hlt
 #-------------------------------------------------------------------------------
 ignore_pic:
@@ -380,43 +419,5 @@ sti:
 cli:
     cli
     ret
-#-------------------------------------------------------------------------------
-.DATA
-gdt_pointer:
-    .word 0xffff    // limite della GDT
-    .long gdt       // base della GDT
-
-idt_pointer:
-    .word 0x7FF    // limite della IDT (256 entrate)
-    .long idt      // base della IDT
-.bss
-.balign 16
-
-gdt:
-    .space 8 * 8192, 0
-
-.balign 16
-.global idt
-
-idt:
-    .space 8 * 256, 0
-
-save_selectors:
-s_CS:   .word 0
-s_DS:   .word 0
-s_ES:   .word 0
-s_FS:   .word 0
-s_GS:   .word 0
-s_SS:   .word 0
-
-save_gdt:
-    .word 0
-    .long 0
-
-save_idt:
-    .word 0
-    .long 0
-
-sys_tss:
-    .space 216, 0
+#*******************************************************************************
 
