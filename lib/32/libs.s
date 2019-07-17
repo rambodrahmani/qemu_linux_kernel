@@ -257,16 +257,16 @@ init_idt:
     load_gate 2       nmi
     load_gate 3       breakpoint
     load_gate 4       overflow
-    load_gate 5       bound_re
+    load_gate 5       out_of_bound
     load_gate 6       invalid_opcode
-    load_gate 7       dev_na
+    load_gate 7       coproc_na
     load_gate 8       double_fault
     load_gate 9       coproc_so
     load_gate 10      invalid_tss
     load_gate 11      segm_fault
     load_gate 12      stack_fault
     load_gate 13      prot_fault
-    load_gate 14      int_tipo_pf
+    load_gate 14      page_fault
     load_gate 15      unknown_exc
     load_gate 16      fp_exc
     load_gate 17      ac_exc
@@ -325,7 +325,7 @@ overflow:
     pushl $4
     jmp comm_exc
 #-------------------------------------------------------------------------------
-bound_re:
+out_of_bound:
     pushl $0
     pushl $5
     jmp comm_exc
@@ -335,7 +335,7 @@ invalid_opcode:
     pushl $6
     jmp comm_exc
 #-------------------------------------------------------------------------------
-dev_na:
+coproc_na:
     pushl $0
     pushl $7
     jmp comm_exc
@@ -366,7 +366,7 @@ prot_fault:
     pushl $13
     jmp comm_exc
 #-------------------------------------------------------------------------------
-int_tipo_pf:
+page_fault:
     pushl $14
     jmp comm_exc
 #-------------------------------------------------------------------------------

@@ -7,6 +7,8 @@
 
 #include "internal.h"
 #include "heap.h"
+#include "log.h"
+
 // rende libera la zona di memoria puntata da "indirizzo" e grande "quanti"
 // byte, preoccupandosi di creare il descrittore della zona e, se possibile, di
 // unificare la zona con eventuali zone libere contigue in memoria.  La

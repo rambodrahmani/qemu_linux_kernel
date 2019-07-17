@@ -7,8 +7,9 @@
 
 #include "mboot.h"
 #include "elf64.h"
-#define MAX_LOG LOG_ERR
 #include "libqlk.h"
+#include "log.h"
+#define MAX_LOG LOG_ERR
 #ifdef X86_64
 #error "this must be compiled for 32 bit"
 #endif

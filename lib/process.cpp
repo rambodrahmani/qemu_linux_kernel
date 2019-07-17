@@ -1,5 +1,5 @@
 /**
- * File: esecuzione.cpp
+ * File: process.cpp
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -15,4 +15,8 @@ struct proc_elem
     natl id;
 } fake_process;
 
-struct proc_elem *esecuzione = &fake_process;
+/**
+ *
+ */
+struct proc_elem *process = &fake_process;
+

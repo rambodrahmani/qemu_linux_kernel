@@ -520,37 +520,6 @@ void dealloca(void* p);
 size_t disponibile();
 
 /*
- * Utility functions for logging.
- */
-
-/**
- * This enumeration contains the severity which can be used for a log.
- */
-enum log_sev
-{
-    LOG_DEBUG,
-    LOG_INFO,
-    LOG_WARN,
-    LOG_ERR,
-    LOG_USR
-};
-
-/**
- *
- * @param   sev
- * @param   fmt
- */
-extern "C" void flog(log_sev sev, const char* fmt, ...);
-
-/**
- *
- * @param   sev
- * @param   buf
- * @param   quanti
- */
-extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
-
-/*
  * Advanced utility functions.
  */
 

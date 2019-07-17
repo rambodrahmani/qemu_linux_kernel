@@ -9,6 +9,7 @@
 #include "internal.h"
 #include "pci.h"
 #include "bochsvga.h"
+#include "log.h"
 
 bool bochsvga_init()
 {
