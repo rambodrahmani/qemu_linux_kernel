@@ -13,13 +13,13 @@
 sem_wait:
     pushl  %eax
     movl   8(%esp), %eax
-    movb   $0, sem(%eax)
-    sti
+    movb   $0, sem(%eax)        # set the semaphore to 0
+    sti                         # enable interrupts to avoid deadlocks
 
-aspetta:
-    testb  $1, sem(%eax)
-    jz     aspetta
-    popl   %eax
+wait:
+    testb   $1, sem(%eax)       # test the semaphore value
+    jz      wait                # wait for the semaphore value to be set to 1
+    popl    %eax
     ret
 #*******************************************************************************
 

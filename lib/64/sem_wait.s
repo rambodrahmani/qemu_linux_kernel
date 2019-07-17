@@ -11,11 +11,12 @@
 .GLOBAL sem_wait
 #-------------------------------------------------------------------------------
 sem_wait:	
-    movb  $0, sem(%edi)
-    sti
+    movb  $0, sem(%edi)     # set the semaphore to 0
+    sti                     # enable interrupts to avoid deadlocks
 
-aspetta:
-    testb  $1, sem(%edi)
-    jz     aspetta
+wait:
+    testb  $1, sem(%edi)    # test the semaphore value
+    jz     wait             # wait for the semaphore value to be set to 1
     ret
 #*******************************************************************************
+

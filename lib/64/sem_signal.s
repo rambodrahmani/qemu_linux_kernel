@@ -1,5 +1,6 @@
 #*******************************************************************************
-# File: 
+# File: sem_signal.s
+#       Sets the specified semaphore to 1. 
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 16/07/2019.
@@ -11,7 +12,7 @@
 .GLOBAL sem_signal
 #-------------------------------------------------------------------------------
 sem_signal:
-    movb $1, sem(%edi)
+    movb  $1, sem(%edi)     # set the semaphore to 1
     ret
 #*******************************************************************************
 

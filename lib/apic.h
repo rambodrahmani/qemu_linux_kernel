@@ -150,18 +150,18 @@ void apic_set_IPOL(natl irq, bool v);
  * Enables (disable = false) or disables (disable = true) the given APIC
  * ir pin.
  *
- * @param   irq     ir pin index number
+ * @param   ir      ir pin index number
  * @param   disable false to enable and true to disable the ir pin
  */
-extern "C" void apic_set_MIRQ(natl irq, bool disable);
+extern "C" void apic_set_MIRQ(natl ir, bool disable);
 
 /**
  * Sets the given type for the interrupts coming from the specified APIC ir pin.
  *
- * @param   irq   ir pin index number
+ * @param   ir    ir pin index number
  * @param   type  interrupt type
  */
-extern "C" void apic_set_VECT(natl irq, natb type);
+extern "C" void apic_set_VECT(natl ir, natb type);
 
 /**
  *

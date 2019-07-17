@@ -10,22 +10,22 @@
 #include "internal.h"
 #include "apic.h"
 
-void apic_set_VECT(natl ir, natb vec)
+void apic_set_VECT(natl ir, natb type)
 {
     natl work;
 
-	// lettura della prima parola lunga dell'entrata
-	// ir-esima della tabella interna
-	*IOREGSEL = 16 + ir * 2;
-	work = *IOWIN;
-	
-    // azzeramento (&) e predisposizione (|) dei bit 7-0 con vec
-	work &= 0xFFFFFF00;
-	work |= vec;
-	
-    // scrittura nella prima parola lunga dell'entrata
-	// ir-esima della tabella interna
-	*IOREGSEL = 16 + ir * 2;
-	*IOWIN = work;
+    // read a long from IDT entry index ir
+    *IOREGSEL = 16 + ir * 2;
+    work = *IOWIN;
+
+    // zero out bits 7-0
+    work &= 0xFFFFFF00;
+
+    // set bits 7-0 with the new type
+    work |= type;
+
+    // write the modified long to the IDT entry index ir
+    *IOREGSEL = 16 + ir * 2;
+    *IOWIN = work;
 }
 

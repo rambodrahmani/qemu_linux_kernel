@@ -17,13 +17,13 @@ bool apic_init()
 
     if (! pci_find_dev(bus, dev, fun, PIIX3_DEVICE_ID, PIIX3_VENDOR_ID))
     {
-        printf("PIIX3 non trovato\n");
+        printf("PIIX3 no found\n");
         return false;
     }
 
     if (! piix3_ioapic_enable(bus, dev, fun))
     {
-        printf("IOAPIC non abilitato\n");
+        printf("IOAPIC not enabled\n");
         return false;
     }
 
@@ -31,3 +31,4 @@ bool apic_init()
 
     return true;
 }
+

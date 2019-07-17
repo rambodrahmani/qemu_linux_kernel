@@ -1,5 +1,6 @@
 #*******************************************************************************
 # File: sem.s
+#       Semaphores array.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 16/07/2019.

@@ -151,12 +151,14 @@ const char* pci_decode_class(natb code);
 extern "C" void apic_send_EOI();
 
 /**
- *
+ * Clears interrupt flag; interrupts disabled when interrupt flag cleared. See
+ * 64/cli.s for details.
  */
 extern "C" void cli();
 
 /**
- *
+ * Sets the interrupt flag; external, maskable interrupts enabled at the end of
+ * the next instruction. See 64/sti.s for details.
  */
 extern "C" void sti();
 
