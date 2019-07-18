@@ -34,13 +34,13 @@ public:
     {
         int i;
 
-        for (i=0;i<4;i++)
+        for (i = 0; i < 4; i++)
         {
             cout << s.vc[i] << ' ';
         }
         cout << endl;
 
-        for (i=0;i<4;i++)
+        for (i = 0; i < 4; i++)
         {
             cout << v[i] << ' ';
         }

@@ -7,22 +7,23 @@
 #*******************************************************************************
 
 #-------------------------------------------------------------------------------
+.TEXT
 .GLOBAL _ZN2clC1Ec3st2                                  # cl::cl(char c, st2 s2)
 #-------------------------------------------------------------------------------
 # activation record:
-#
-#       s2 LSB      -32
-#       s2 MSB      -24
-#       c           -16
-#       i           -12
-#       this        -8
-#       old %rbp    0  <- %rbp
-#       %rip
+# ------------------
+#  s2 LSB      -32 -------------> s2.vd[0]   -32
+#  s2 MSB      -24                s2.vd[1]   -28
+#  c           -16                s2.vd[2]   -24
+#  i           -12                s2.vd[3]   -20
+#  this        -8
+#  old %rbp    0  <- %rbp
+#  %rip
 #-------------------------------------------------------------------------------
 _ZN2clC1Ec3st2:
     pushq  %rbp             # prologue
     movq   %rsp, %rbp
-    subq   $32, %rsp        # memory space for actual arguments
+    subq   $32,  %rsp       # memory space for actual arguments
 
 # copy actual arguments to the stack, [1]
     movq  %rdi, -8(%rbp)    # this
@@ -30,18 +31,18 @@ _ZN2clC1Ec3st2:
     movq  %rdx, -32(%rbp)   # s2 (LSB)
     movq  %rcx, -24(%rbp)   # s2 (MSB)
 	
-# for loop initialization
+# for loop, initialization
     movl  $0, -12(%rbp)     # i = 0
 	
 for:
     cmpl  $4, -12(%rbp)     # i < 4
-    jge   finefor           # end loop
+    jge   finefor           # end loop (i >= 4)
 
 # for loop body
-    movq   -8(%rbp), %rdi     # this -> %rdi
-    movslq -12(%rbp), %rcx	  # i -> %rcx
-    movb   -16(%rbp), %al     # c -> %al
-    movb   %al, (%rdi, %rcx)  # %al -> s.vc[i]
+    movq   -8(%rbp), %rdi      # this -> %rdi
+    movslq -12(%rbp), %rcx	   # i -> %rcx
+    movb   -16(%rbp), %al      # c -> %al
+    movb   %al, (%rdi, %rcx)   # %al -> s.vc[i]
                             
     movsbl (%rdi, %rcx), %eax        # s.vc[i] -> %eax
     addl   -32(%rbp, %rcx, 4), %eax  # s2.vd[i] + s.vc[i] -> %eax
@@ -55,21 +56,23 @@ finefor:
     movq    -8(%rbp), %rax      # return initialized object address
     leave
     ret
+
 #-------------------------------------------------------------------------------
 .GLOBAL _ZN2cl5elab1ER3st1R3st2             # void cl::elab1(st1 & s1, st2 & s2)
 #-------------------------------------------------------------------------------
 # activation record:
-#       i               -72
-#       cla             -64
-#       cla.v[0]        -56
-#       cla.v[1]        -48
-#       cla.v[2]        -40
-#       cla.v[3]        -32
-#       s2              -24
-#       s1              -16
-#       this            -8
-#       old %rbp        0  <- %rbp
-#       %rip
+# ------------------
+#  i           -72
+#  cla         -64
+#  cla.v[0]    -56
+#  cla.v[1]    -48
+#  cla.v[2]    -40
+#  cla.v[3]    -32
+#  s2          -24
+#  s1          -16
+#  this        -8
+#  old %rbp    0  <- %rbp
+#  %rip
 #-------------------------------------------------------------------------------
 _ZN2cl5elab1ER3st1R3st2:
     pushq  %rbp             # prologue
@@ -89,12 +92,12 @@ _ZN2cl5elab1ER3st1R3st2:
     movq  8(%r8), %rcx       # &s2 -> %rdx (MSB)
     call  _ZN2clC1Ec3st2     # call constructor
 
-# for loop initialization
+# for loop, initialization
     movl  $0, -72(%rbp)      # i = 0
 
 for2:
     cmpl  $4, -72(%rbp)      # i < 4
-    jge   finefor2           # end loop
+    jge   finefor2           # end loop (i >= 4)
 
 # for loop body
     movq   -8(%rbp), %rdi         # this -> %rdi

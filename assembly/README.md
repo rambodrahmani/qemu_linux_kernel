@@ -1,6 +1,6 @@
 # Assembly C++ Correspondence
 
-This folder contains Assembly C++ Correspondence exercises.
+This folder contains C++ Assembly Correspondence exercises.
 
 --
 
