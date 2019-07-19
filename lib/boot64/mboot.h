@@ -1,5 +1,7 @@
-/*  multiboot2.h - Multiboot 2 header file.  */
-/*  Copyright (C) 1999,2003,2007,2008,2009,2010  Free Software Foundation, Inc.
+/**
+ *  multiboot2.h - Multiboot 2 header file.
+ *
+ *  Copyright (C) 1999,2003,2007,2008,2009,2010  Free Software Foundation, Inc.
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to
@@ -34,61 +36,61 @@
 #define MULTIBOOT2_BOOTLOADER_MAGIC		0x36d76289
 
 /* Alignment of multiboot modules.  */
-#define MULTIBOOT_MOD_ALIGN			0x00001000
+#define MULTIBOOT_MOD_ALIGN                 0x00001000
 
 /* Alignment of the multiboot info structure.  */
-#define MULTIBOOT_INFO_ALIGN			0x00000004
+#define MULTIBOOT_INFO_ALIGN                0x00000004
 
 /* Flags set in the 'flags' member of the multiboot header.  */
 
 /* Align all boot modules on i386 page (4KB) boundaries.  */
-#define MULTIBOOT_PAGE_ALIGN			0x00000001
+#define MULTIBOOT_PAGE_ALIGN                0x00000001
 
 /* Must pass memory information to OS.  */
-#define MULTIBOOT_MEMORY_INFO			0x00000002
+#define MULTIBOOT_MEMORY_INFO               0x00000002
 
 /* Must pass video information to OS.  */
-#define MULTIBOOT_VIDEO_MODE			0x00000004
+#define MULTIBOOT_VIDEO_MODE                0x00000004
 
 /* This flag indicates the use of the address fields in the header.  */
-#define MULTIBOOT_AOUT_KLUDGE			0x00010000
+#define MULTIBOOT_AOUT_KLUDGE               0x00010000
 
 /* Flags to be set in the 'flags' member of the multiboot info structure.  */
 
 /* is there basic lower/upper memory information? */
-#define MULTIBOOT_INFO_MEMORY			0x00000001
+#define MULTIBOOT_INFO_MEMORY               0x00000001
 /* is there a boot device set? */
-#define MULTIBOOT_INFO_BOOTDEV			0x00000002
+#define MULTIBOOT_INFO_BOOTDEV              0x00000002
 /* is the command-line defined? */
-#define MULTIBOOT_INFO_CMDLINE			0x00000004
+#define MULTIBOOT_INFO_CMDLINE              0x00000004
 /* are there modules to do something with? */
-#define MULTIBOOT_INFO_MODS			0x00000008
+#define MULTIBOOT_INFO_MODS                 0x00000008
 
 /* These next two are mutually exclusive */
 
 /* is there a symbol table loaded? */
-#define MULTIBOOT_INFO_AOUT_SYMS		0x00000010
+#define MULTIBOOT_INFO_AOUT_SYMS            0x00000010
 /* is there an ELF section header table? */
-#define MULTIBOOT_INFO_ELF_SHDR			0X00000020
+#define MULTIBOOT_INFO_ELF_SHDR             0X00000020
 
 /* is there a full memory map? */
-#define MULTIBOOT_INFO_MEM_MAP			0x00000040
+#define MULTIBOOT_INFO_MEM_MAP              0x00000040
 
 /* Is there drive info?  */
-#define MULTIBOOT_INFO_DRIVE_INFO		0x00000080
+#define MULTIBOOT_INFO_DRIVE_INFO           0x00000080
 
 /* Is there a config table?  */
-#define MULTIBOOT_INFO_CONFIG_TABLE		0x00000100
+#define MULTIBOOT_INFO_CONFIG_TABLE         0x00000100
 
 /* Is there a boot loader name?  */
-#define MULTIBOOT_INFO_BOOT_LOADER_NAME		0x00000200
+#define MULTIBOOT_INFO_BOOT_LOADER_NAME     0x00000200
 
 /* Is there a APM table?  */
-#define MULTIBOOT_INFO_APM_TABLE		0x00000400
+#define MULTIBOOT_INFO_APM_TABLE            0x00000400
 
 /* Is there video information?  */
-#define MULTIBOOT_INFO_VBE_INFO		        0x00000800
-#define MULTIBOOT_INFO_FRAMEBUFFER_INFO	        0x00001000
+#define MULTIBOOT_INFO_VBE_INFO             0x00000800
+#define MULTIBOOT_INFO_FRAMEBUFFER_INFO     0x00001000
 
 #ifndef ASM
 
@@ -258,3 +260,40 @@ typedef struct multiboot_mod_list multiboot_module_t;
 #endif /* ! ASM_FILE */
 
 #endif /* ! MULTIBOOT_HEADER */
+
+/**
+ * 1.1 The background of Multiboot2 Specification
+ * ----------------------------------------------
+ * Every operating system ever created tends to have its own boot loader.
+ * Installing a new operating system on a machine generally involves
+ * installing a whole new set of boot mechanisms, each with completely
+ * different install-time and boot-time user interfaces. Getting multiple
+ * operating systems to coexist reliably on one machine through typical
+ * chaining mechanisms can be a nightmare. There is little or no choice
+ * of boot loaders for a particular operating system — if the one that
+ * comes with the operating system doesn’t do exactly what you want, or
+ * doesn’t work on your machine, you’re screwed.While we may not be able
+ * to fix this problem in existing proprietary operating systems, it
+ * shouldn’t be too difficult for a few people in the free operating
+ * system communities to put their heads together and solve this problem
+ * for the popular free operating systems. That’s what this specification
+ * aims for. Basically, it specifies an interface between a boot loader
+ * and a operating system, such that any complying boot loader should be
+ * able to load any complying operating system. This specification does
+ * not specify how boot loaders should work — only how they must
+ * interface with the operating system being loaded.
+ *
+ * 3.1 OS image format
+ * -------------------
+ * An OS image may be an ordinary 32-bit executable file in the standard
+ * format for that particular operating system, except that it may be
+ * linked at a non-default load address to avoid loading on top of the
+ * PC’s I/O region or other reserved areas, and of course it should not
+ * use shared libraries or other fancy features.An OS image must contain
+ * an additional header called Multiboot2 header, besides the headers of
+ * the format used by the OS image. The Multiboot2 header must be
+ * contained completely within the first 32768 bytes of the OS image, and
+ * must be 64-bit aligned. In general, it should come as early as
+ * possible, and may be embedded in the beginning of the text segment
+ * after the real executable header.
+ */

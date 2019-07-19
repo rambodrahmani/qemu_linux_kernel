@@ -1,33 +1,18 @@
-// sistema.s
+#*******************************************************************************
+# File: boot.S
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 19/07/2019.
+#*******************************************************************************
 
+#-------------------------------------------------------------------------------
 #define ASM 1
+#-------------------------------------------------------------------------------
+#                THIS SYSTEM USES THE Multiboot2 STANDARD.
 #include "mboot.h"
-
-/////////////////////////////////////////////////////////////////////////
-// AVVIO                                                                //
-//////////////////////////////////////////////////////////////////////////
-// Il bootstrap loader attiva il modo protetto (per poter accedere agli
-// indirizzi di memoria principale superiori a 1MiB) e carica il sistema
-// in memoria, quindi salta alla prima
-// istruzione del sistema. Il bootstrap loader puo' anche passare
-// delle informazioni al sistema (tramite i registri e la memoria).
-//
-// In questo sistema usiamo lo standard multiboot,
-// che definisce il formato che 
-// il file contentente il sistema deve rispettare e
-// il formato delle informazioni passate dal bootstrap loader al sistema.
-// Il formato del file contenente il sistema deve essere quello di un
-// normale file eseguibile, ma, nei primi 2*4KiB, deve contenere 
-// la struttura multiboot_header, definita piu' avanti. 
-// Il boot loader, prima di saltare alla prima istruzione del sistema
-// (l'entry point specificato nel file eseguibile), lascia nel registro
-// %eax un valore di riconoscimento e in %ebx l'indirizzo di una struttura
-// dati, contentente varie informazioni (in particolare, la quantita'
-// di memoria principale installata nel sistema, il dispositivo da cui
-// e' stato eseguito il bootstrap e l'indirizzo di memoria in cui sono
-// stati caricati gli eventuali moduli)
-     .text
-
+#-------------------------------------------------------------------------------
+.TEXT
+#-------------------------------------------------------------------------------
 #define STACK_SIZE                      0x4000
 
 #ifdef __ELF__
@@ -35,64 +20,90 @@
 #else
 # 	define MULTIBOOT_HEADER_FLAGS         (0x00010003)
 #endif
+#-------------------------------------------------------------------------------
+.DATA
+#-------------------------------------------------------------------------------
+.balign 4096
+gdt64:
+    .quad 0                  // null segment
+    .quad 0x209c0000000000   // system code segment
 
+gdt64_end:
+gdt64_ptr:
+    .word gdt64_end - gdt64
+    .long gdt64
 
-
-     .globl  _start, start
-_start:				// entry point
+.GLOBAL stack
+stack:
+	.space STACK_SIZE, 0
+#-------------------------------------------------------------------------------
+.TEXT
+.GLOBAL  _start, start
+#-------------------------------------------------------------------------------
+_start:                         // entry point
 start:
-     jmp     multiboot_entry	// scavalchiamo la struttra richiesta
-     				// dal bootstrap loader, che deve
-				// trovarsi verso l'inizio del file
+    jmp  multiboot_entry        // scavalchiamo la struttra richiesta
+                                // dal bootstrap loader, che deve
+                                // trovarsi verso l inizio del file
 
-     .align  4
-     // le seguenti informazioni sono richieste dal bootstrap loader
+.align  4
+// le seguenti informazioni sono richieste dal bootstrap loader
 multiboot_header:
-     .long   MULTIBOOT_HEADER_MAGIC 			// valore magico
-     .long   MULTIBOOT_HEADER_FLAGS   				// flag
-     .long   -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS) // checksum
-     .long   multiboot_header
-     .long   _start
-     .long   _edata
-     .long   _end
-     .long   multiboot_entry
+.long   MULTIBOOT_HEADER_MAGIC          // valore magico
+.long   MULTIBOOT_HEADER_FLAGS          // flag
+.long   -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS) // checksum
+.long   multiboot_header
+.long   _start
+.long   _edata
+.long   _end
+.long   multiboot_entry
 
 multiboot_entry:
+    cli                                     # clear interrupt flag
+    movl    $(stack + STACK_SIZE), %esp     # initialize stack
 
-     cli
-     movl    $(stack + STACK_SIZE), %esp // inizializziamo lo stack
+    pushl   %ebx            // parametri passati dal loader
+    pushl   %eax
+    call    cmain           // call C++ initialization method
 
-     pushl   %ebx			// parametri passati dal loader
-     pushl   %eax			
-     call    cmain			// il resto dell'inizializzazione
-     					// e' scritto in C++
-
-//////////////////////////////////////////////////////////////////
-// funzioni di utilita'						//
-//////////////////////////////////////////////////////////////////
-
-	
-// carica il registro cr3
-// parametri: indirizzo fisico del nuovo direttorio
-	.global loadCR3
+#-------------------------------------------------------------------------------
+# A control register is a processor register which changes or controls the
+# general behavior of a CPU or other digital device. Common tasks performed by
+# control registers include interrupt control, switching the addressing mode,
+# paging control, and coprocessor control.
+#
+# CR3: Used when virtual addressing is enabled, hence when the PG bit is set in
+# CR0. CR3 enables the processor to translate linear addresses into physical
+# addresses by locating the page directory and page tables for the current task.
+# Typically, the upper 20 bits of CR3 become the page directory base register
+# (PDBR), which stores the physical address of the first page directory entry.
+# If the PCIDE bit in CR4 is set, the lowest 12 bits are used for the
+# process-context identifier (PCID).
+#
+# Loads a new value in the CR3 register.
+.GLOBAL loadCR3
+#-------------------------------------------------------------------------------
 loadCR3:
 	pushl %ebp
-	movl %esp, %ebp
+	movl  %esp, %ebp
 	pushl %eax
 
-	movl 8(%ebp), %eax
-	movl %eax, %cr3
+	movl  8(%ebp), %eax
+	movl  %eax, %cr3
 	
-	popl %eax
+	popl  %eax
 	leave
 	ret
 
-// restituisce in %eax il contenuto di cr3
-	.global readCR3
+#-------------------------------------------------------------------------------
+# Returns the value of CR3 in %eax.
+.GLOBAL readCR3
+#-------------------------------------------------------------------------------
 readCR3:
-	movl %cr3, %eax
-	ret
+    movl  %cr3, %eax
+    ret
 
+#-------------------------------------------------------------------------------
 // attiva la paginazione
 	.global attiva_paginazione
 attiva_paginazione:
@@ -255,22 +266,3 @@ jmp_off_rel:
 	nop
 .code32
 
-	
-
-////////////////////////////////////////////////////////////////
-// sezione dati: tabelle e stack			      //
-////////////////////////////////////////////////////////////////
-.data
-.balign 4096
-gdt64:
-	.quad 0		//segmento nullo
-	.quad 0x209c0000000000 //segmento codice sistema
-gdt64_end:
-gdt64_ptr:
-	.word gdt64_end - gdt64
-	.long gdt64
-
-
-	.global stack
-stack:
-	.space STACK_SIZE, 0

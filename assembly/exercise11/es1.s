@@ -113,6 +113,7 @@ finefor2:
     movq    -8(%rbp), %rax      # return initialized object address
     leave
     ret
+
 #-------------------------------------------------------------------------------
 .GLOBAL _ZN2cl5elab1EPc3st2                   # cl cl::elab1(char ar1[], st2 s2)
 #-------------------------------------------------------------------------------
@@ -124,8 +125,8 @@ finefor2:
 # cla.v2        -72
 # cla.v2        -64
 # cla.v2        -56
-# s1            -48
-#               -40
+# s1 (LSB)      -48
+# s1 (MSB)      -40
 # s2            -32
 # &ar1          -28
 # this          -16

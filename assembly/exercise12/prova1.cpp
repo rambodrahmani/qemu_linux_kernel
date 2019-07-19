@@ -36,9 +36,9 @@ int main(int argc, char * argv[])
     
     cla1.stampa();
     
-    //cl cla2(s1, a2);
+    cl cla2(s1, a2);
     
-    //cla2.stampa();
+    cla2.stampa();
     
     //cla1 = cla2.elab1(a1, s2);
     

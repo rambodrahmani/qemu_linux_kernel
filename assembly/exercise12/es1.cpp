@@ -18,7 +18,7 @@ cl::cl(st1 ss)
 }
 
 cl::cl(st1 & s1, int ar2[])
-{	
+{
     for (int i = 0; i < 4; i++)
     {
         v1[i] = s1.vi[i];

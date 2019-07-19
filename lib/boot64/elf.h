@@ -1,3 +1,10 @@
+/**
+ * File: elf.h
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 19/07/2019.
+ */
+
 #ifndef ELF_H_
 #define ELF_H_
 
@@ -79,3 +86,4 @@
 #define SHF_MASKPROC               0xf0000000
 
 #endif
+
