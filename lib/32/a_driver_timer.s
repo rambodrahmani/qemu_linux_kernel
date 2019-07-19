@@ -14,10 +14,13 @@
 .GLOBAL a_driver_timer
 #-------------------------------------------------------------------------------
 a_driver_timer:
-    pushal
-    call   c_driver_timer
-    movl   $0, 0xFEE000B0  # End Of Interrupt
-    popal
-    iret
+    pushal                      # push all registers
+
+    call   c_driver_timer       # call driver
+    movl   $0, 0xFEE000B0       # write End Of Interrupt
+
+    popal                       # pop all registers
+
+    iret                        # return from interrupt
 #*******************************************************************************
 

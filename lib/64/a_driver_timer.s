@@ -16,14 +16,14 @@
 .GLOBAL a_driver_timer
 #-------------------------------------------------------------------------------
 a_driver_timer:
-    salva_registri
+    save_registers              # push all registers
 
-    call  c_driver_timer
-    movq  $0xFEE000B0, %rax
+    call  c_driver_timer        # call driver
+    movq  $0xFEE000B0, %rax     # write End Of Interrupt
     movl  $0, (%rax)
     
-    carica_registri
+    restore_registers           # pop all registers
     
-    iretq
+    iretq                       # return from interrupt
 #*******************************************************************************
 

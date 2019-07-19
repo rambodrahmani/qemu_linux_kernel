@@ -17,6 +17,9 @@
 
 #include "type.h"
 
+/**
+ * EOI Register Address.
+ */
 natl* IOAPIC_EOIR = (natl*)0xFEE000B0;
 
 /*

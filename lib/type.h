@@ -19,10 +19,10 @@ typedef unsigned short ioaddr;
 /**
  * Native types.
  */
-typedef unsigned char natb;
-typedef unsigned short natw;
-typedef unsigned int natl;
-typedef unsigned long natq;
+typedef unsigned char  natb;    // 1 byte
+typedef unsigned short natw;    // 2 byte
+typedef unsigned int   natl;    // 4 byte
+typedef unsigned long  natq;    // 8 byte
 typedef void* str;
 typedef const void* cstr;
 

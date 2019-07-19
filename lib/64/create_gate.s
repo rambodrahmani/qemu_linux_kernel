@@ -1,5 +1,7 @@
 #*******************************************************************************
 # File: create_gate.s
+#       x64 Assembly implementation for
+#           create_gate(gate& g, void routine(), bool trap);
 #       Creates an IDT gate at the given index for the given subroutine.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
