@@ -14,9 +14,9 @@ void apic_set_MIRQ(natl ir, bool disable)
 {
     natl work;
     
-    // read a long from IDT entry index ir
-    *IOREGSEL = 16 + ir * 2;
-    work = *IOWIN;
+    // read a long from IDT entry index ir:
+    *IOREGSEL = 16 + ir * 2;        // write APIC internal register address
+    work = *IOWIN;                  // retrieve APIC internal register content
     
     if (disable)
     {
@@ -28,7 +28,7 @@ void apic_set_MIRQ(natl ir, bool disable)
     }
 
     // write the modified long to the IDT entry index ir
-    *IOREGSEL = 16 + ir * 2;
-    *IOWIN = work;
+    *IOREGSEL = 16 + ir * 2;        // write APIC internal register address
+    *IOWIN = work;                  // write APIC internal register content
 }
 

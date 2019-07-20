@@ -15,8 +15,8 @@ void apic_set_VECT(natl ir, natb type)
     natl work;
 
     // read a long from IDT entry index ir
-    *IOREGSEL = 16 + ir * 2;
-    work = *IOWIN;
+    *IOREGSEL = 16 + ir * 2;          // write APIC internal register address
+    work = *IOWIN;                    // retrieve APIC internal register content
 
     // zero out bits 7-0
     work &= 0xFFFFFF00;
@@ -25,7 +25,7 @@ void apic_set_VECT(natl ir, natb type)
     work |= type;
 
     // write the modified long to the IDT entry index ir
-    *IOREGSEL = 16 + ir * 2;
-    *IOWIN = work;
+    *IOREGSEL = 16 + ir * 2;          // write APIC internal register address
+    *IOWIN = work;                    // retrieve APIC internal register content
 }
 

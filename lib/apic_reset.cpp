@@ -19,3 +19,4 @@ void apic_reset()
     apic_set_TRGM(0, false);
     apic_set_TRGM(2, false);
 }
+

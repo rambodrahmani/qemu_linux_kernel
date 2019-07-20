@@ -44,9 +44,10 @@ const ioaddr iCTR0_LSB = 0x40;
 const ioaddr iCTR0_MSB = 0x40;
 
 /**
- * 
+ * Semaphore N. 0. Sample semaphore used for basic interrupt mechanism
+ * examples where sincronization is needed.
  */
-const natl sincr = 0;                    // semaforo numero 0
+const natl sincr = 0;
 
 /**
  *
