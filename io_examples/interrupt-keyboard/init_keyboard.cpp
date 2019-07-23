@@ -9,35 +9,59 @@
 #include <apic.h>
 #include <kbd.h>
 
-// si usa il semaforo numero 1
+/**
+ * Use semaphore number 1.
+ */
 const natl sincr_t = 1;
-
-natl cont;
-
-char* punt;
-
-extern "C" void a_leggi_linea();
-
-extern "C" void a_driv_tasint();
 
 /**
  *
  */
+natl counter;
+
+/**
+ *
+ */
+char* pointer;
+
+/**
+ *
+ */
+extern "C" void a_read_line();
+
+/**
+ *
+ */
+extern "C" void a_keyboard_driver();
+
+/**
+ * Initializes the IDT and the APIC pins.
+ */
 void ini()
 {
-    gate_init(241, a_leggi_linea);
-    gate_init(41, a_driv_tasint);
+    // set interrupt 241 for the primitive
+    gate_init(241, a_read_line);
+
+    // set interrupt 41 for the driver
+    gate_init(41, a_keyboard_driver);
+
+    // set interrupt 41 for APIC pin 1
     apic_set_VECT(1, 41);
+
+    // enable APIC pin number 1
     apic_set_MIRQ(1, false);
 }
 
-extern "C" void c_leggi_linea(int& nn, char vv[])
+/**
+ * C++ implementation for the a_read_line primitive.
+ */
+extern "C" void c_read_line(int& len, char buf[])
 {
-    int old_nn = nn;
+    int old_len = len;
     
-    cont = nn;
+    counter = len;
 
-    punt = vv;
+    pointer = buf;
 
     // enable keyboard interrupt requests
     outputb(0x60, iCMR);
@@ -45,9 +69,12 @@ extern "C" void c_leggi_linea(int& nn, char vv[])
 
     sem_wait(sincr_t);
 
-    nn = old_nn-cont;
+    len = old_len - counter;
 }
 
+/**
+ *
+ */
 natb get_code_int()
 {
     natb c;
@@ -57,9 +84,10 @@ natb get_code_int()
     return c;
 }
 
-extern bool shift;
-
-extern "C" void c_driv_tasint()
+/**
+ * C++ implementation for the a_keyboard_drive subroutine.
+ */
+extern "C" void c_keyboard_driver()
 {
     // retrieved keycode from the keyboard
     natb b;
@@ -71,6 +99,7 @@ extern "C" void c_driv_tasint()
     outputb(0x60, iCMR);
     outputb(0x60, iTBR);
 
+    // retrieve keycode from the keyboard
     b = get_code_int();
 
     if (b == 0x2A)          // left shift make code
@@ -82,7 +111,7 @@ extern "C" void c_driv_tasint()
         shift = false;
     }
 
-    // 
+    // get ASCII code corresponding to the keycode
     c = keycode_to_ascii(b);
 
     if (c == 0)
@@ -95,25 +124,25 @@ extern "C" void c_driv_tasint()
 	}
 
     // decrese chars counter
-	cont--;
+	counter--;
 
     // insert ASCII char in the buffer
-	*punt = c;
+	*pointer = c;
 
     // write ASCII char to the video output
 	char_write(c);
 
     // check if new line was received or maximum number of chars was received
-	if ((c == '\n') || (cont == 0))
+	if ((c == '\n') || (counter == 0))
     {
-        // ultimo carattere trasferito
+        // signal last char retrieved
         sem_signal(sincr_t);
         
         return;
 	}
 
     // increase ASCII chars buffer pointer
-	punt++;
+	pointer++;
 
     // enable keyboard interrupt requests
 	outputb(0x60, iCMR);

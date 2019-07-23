@@ -1,5 +1,7 @@
 #*******************************************************************************
 # File: read_line.s
+#       Assembly implementation for
+#           extern "C" void read_line(int& len, char buff[]);
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 19/07/2019.

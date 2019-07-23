@@ -9,15 +9,25 @@
 
 #include <libqlk.h>
 
-char buff_tas[80];
+/**
+ * Keyboard ASCII chars buffer.
+ */
+char buffer[80];
 
 /**
+ * This primitive invokes interrupt 241. See read_line.s.
  *
+ * @param   &len     number of chars retrieved from keyboard (max 80)
+ * @param   buff[]   buffer containing the retrieved chars
  */
-extern "C" void read_line(int& nn, char vv[]);
+extern "C" void read_line(int& len, char buff[]);
 
 /**
  * Developer harness test.
+ *
+ * After the call to the read_line primitive, length will contain the number of
+ * ASCII chars retrieved from keyboard inputs and buffer will contain the actual
+ * ASCII chars.
  *
  * @param   argc    command line arguments counter.
  * @param   argv    command line arguments.
@@ -26,17 +36,15 @@ extern "C" void read_line(int& nn, char vv[]);
  */
 int main(int argc, char * argv[])
 {
-    char c;
+    int length;
 
-    int quanti;
+    // call read_line primitive
+    read_line(length, buffer);
 
-    read_line(quanti, buff_tas);
-
-    // ...
-
-    for (int i = 0; i < quanti; i++)
+    // print ASCII chars buffer to the video output
+    for (int i = 0; i < length; i++)
     {
-        char_write(buff_tas[i]);
+        char_write(buffer[i]);
     }
 
     // print pause message and wait for the ESC key
