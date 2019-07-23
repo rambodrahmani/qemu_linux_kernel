@@ -11,5 +11,7 @@
 natl apic_in(natb off)
 {
     *IOREGSEL = off;
+
     return *IOWIN;
 }
+

@@ -1,17 +1,12 @@
 /**
- * File: IOREGSEL-IOWIN.cpp
- *       APIC accessible registers.
+ * File: IOAPIC_IOWIN.cpp
+ *       APIC IOWin Register Address Definition.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
  */
 
 #include "type.h"
-
-/**
- * APIC IORegSel Register Address.
- */
-natl* IOREGSEL = reinterpret_cast<natl*>(0xFEC0000);
 
 /**
  * APIC IOWin Register Address.

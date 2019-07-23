@@ -23,3 +23,4 @@ void apic_set_TRGM(natl irq, bool v)
 
     apic_write_rtl(irq, work);
 }
+

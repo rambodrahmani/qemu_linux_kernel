@@ -26,31 +26,36 @@ bool init_all()
     init_gdt();
 
     load_gdt();
-    
+
     // init the IDT (first 32 entries only)
     init_idt();
-    
+
     bochsvga_init();
-    
+
+    // clear the screen background color to the given color
     clear_screen(0x4b);
-    
+
     // initialize serial interface COM1
     init_COM1();
-    
+
     // initialize serial interface COM2
     init_COM2();
-    
+
+    // initialize apic controller
     apic_init();
-    
+
+    // reset apic controller
     apic_reset();
-    
+
     // initialize keyboard
     keyboard_init();
-    
+
     delay_init();
-    
+
+    // initialize the idt
     ini();
-    
+
+    // set the interrupt flag
     sti();
 
     return true;
