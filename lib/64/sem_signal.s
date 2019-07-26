@@ -12,7 +12,7 @@
 .GLOBAL sem_signal
 #-------------------------------------------------------------------------------
 sem_signal:
-    movb  $1, sem(%edi)     # set the semaphore to 1
+    movb  $1, sem(%edi)     # set the semaphore indexed in %rdi to 1
     ret
 #*******************************************************************************
 

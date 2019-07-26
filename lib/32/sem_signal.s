@@ -12,8 +12,8 @@
 #-------------------------------------------------------------------------------
 sem_signal:
     pushl %eax
-    movl  8(%esp), %eax
-    movb  $1, sem(%eax)
+    movl  8(%esp), %eax     # retrieve semaphore index
+    movb  $1, sem(%eax)     # set the sempahore to 1
     popl  %eax
     ret
 #*******************************************************************************

@@ -13,7 +13,7 @@
 .GLOBAL comm_exc
 #-------------------------------------------------------------------------------
 comm_exc:
-    call  handle_exception      # call handle exception
+    call  handle_exception      # call handle_exception
     hlt                         # halt
 #*******************************************************************************
 

@@ -52,8 +52,8 @@ init_idt:
     load_gate 16    fp_exc          # Coprocessor fault
     load_gate 17    ac_exc          # Alignment check exception
     load_gate 18    mc_exc          # Machine check exception
-    load_gate 19    simd_exc        # 19-31 - Reserved
-    load_gate 0x20  ignore_pic
+    load_gate 19    simd_exc
+    load_gate 0x20  ignore_pic      # 19-31 - Reserved
     load_gate 0x21  ignore_pic
     load_gate 0x22  ignore_pic
     load_gate 0x23  ignore_pic
