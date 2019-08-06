@@ -1,7 +1,13 @@
 /**
  * File: main.e
- *       Output for
+ *       Output for:
  *          g++ -E main.cpp >> main.e
+ *
+ *       As you can see, the include directive resulted in the content of lib.h
+ *       being placed inside the source file. New lines have been added at the
+ *       beginning of the new file in order to allow for the compiler to show
+ *       detailed compilation errors. The line containing the comment inside the
+ *       main() function has been removed.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 03/08/2019.
