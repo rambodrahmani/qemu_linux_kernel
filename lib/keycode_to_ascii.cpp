@@ -13,10 +13,10 @@
 char keycode_to_ascii(natb k)
 {
     // ASCII char
-	char c;
+    char c;
 
     // ASCII char position
-	natl pos = 0;
+    natl pos = 0;
 	
     // search for the keycode position in the chars array
     while (pos < MAX_CODE && chars[pos] != k)

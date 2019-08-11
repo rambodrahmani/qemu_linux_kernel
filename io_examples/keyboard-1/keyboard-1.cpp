@@ -60,5 +60,8 @@ int main(int argc, char * argv[])
         // print new line
         char_write('\n');
     }
+
+    // return with no errors
+    return 0;
 }
 
