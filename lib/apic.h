@@ -174,11 +174,13 @@ extern "C" void apic_set_MIRQ(natl ir, bool disable);
 extern "C" void apic_set_VECT(natl ir, natb type);
 
 /**
+ * Sets the trigger mode for the specified APIC ir pin.
  *
- * @param   irq
- * @param   v
+ * @param   ir      ir pin index number
+ * @param   mode    true  IO-APIC-level
+ *                  false IO-APIC-edge
  */
-void apic_set_TRGM(natl irq, bool v);
+void apic_set_TRGM(natl ir, bool mode);
 
 /**
  *
