@@ -30,6 +30,26 @@ boot
 source setenv
 ```
 
+## I/O Examples Order
+Make sure you go through the I/O examples in the following order:
+1.  keyboard-1
+2.  keyboard-2
+3.  svga-1
+4.  svga-2
+5.  svga-3
+6.  video-1
+7.  video-2
+8.  timer-1
+9.  serial-1
+10. serial-2
+11. hard-disk-1
+12. hard-disk-2
+13. keyboard-1-interrupt
+14. keyboard-2-interrupt
+15. interrupt-keyboard
+16. interrupt-timer-1
+17. interrupt-timer-2
+
 --
 
 Originally seen here: [Calcolatori Elettronici - Unipi - Ing. Informatica](http://calcolatori.iet.unipi.it/)

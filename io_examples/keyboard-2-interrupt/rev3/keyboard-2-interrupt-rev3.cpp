@@ -13,8 +13,14 @@
  *          ./boot
  *
  *       Output:
- *          When a key is pressed while executing this implementation, we will
- *          notice that the spinner on the left 
+ *          When this implementation is executed, both spinners are spinning as
+ *          previously. However, when a key is pressed, the spinner on the left
+ *          hangs while the one on the right keeps spinning while the make code
+ *          and break code are peing printed. This results from the fact that
+ *          now interrupt requests are accepted by the CPU while the keyboard
+ *          driver is being executed which can therefore jump to the timer
+ *          driver from time to time to keep the spinner spinning. This is known
+ *          as nested interrupts.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 11/08/2019.

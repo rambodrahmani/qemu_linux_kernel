@@ -29,7 +29,7 @@ const ioaddr iCWR = 0x43;
 const ioaddr iCTR2_LSB = 0x42;
 
 /**
- * Channel 2 data I/O port address (LSB).
+ * Channel 2 data I/O port address (MSB).
  */
 const ioaddr iCTR2_MSB = 0x42;
 

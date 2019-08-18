@@ -141,31 +141,31 @@ extern "C" void c_keyboard_driver()
         outputb(0x61, iTBR);
 
         return;
-	}
+    }
 
     // decrese chars counter
-	counter--;
+    counter--;
 
     // insert ASCII char in the buffer
-	*pointer = c;
+    *pointer = c;
 
     // write ASCII char to the video output
-	char_write(c);
+    char_write(c);
 
     // check if new line was received or maximum number of chars was reached
-	if ((c == '\n') || (counter == 0))
+    if ((c == '\n') || (counter == 0))
     {
         // signal last char retrieved
         sem_signal(sincr_t);
         
         return;
-	}
+    }
 
     // increase ASCII chars buffer pointer
-	pointer++;
+    pointer++;
 
     // enable keyboard interrupt requests
-	outputb(0x60, iCMR);
-	outputb(0x61, iTBR);
+    outputb(0x60, iCMR);
+    outputb(0x61, iTBR);
 }
 
