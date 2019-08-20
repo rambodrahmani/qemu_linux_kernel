@@ -1,17 +1,18 @@
 #*******************************************************************************
-# File: send_int.s
-#       Assembly implementation for primitive serial_send().
+# File: rec_int.s
+#       Assembly implementation for primitive serial_receive.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
-#         Created on 19/07/2019.
+#         Created on 20/08/2019.
 #*******************************************************************************
 
 #-------------------------------------------------------------------------------
 .TEXT
-.GLOBAL serial_send
 #-------------------------------------------------------------------------------
-serial_send:
-    int  $244
+.GLOBAL serial_receive
+#-------------------------------------------------------------------------------
+serial_receive:
+    int  $245
     ret
 #*******************************************************************************
 

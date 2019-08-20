@@ -4,20 +4,20 @@
  *       the interrupt mechanism.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
- *         Created on 18/08/2019.
+ *         Created on 20/08/2019.
  */
 
-#include <libce.h>
-
-/**
- *
- */
-char buffi[80];
+#include <libqlk.h>
 
 /**
- *
+ * Buffer for the chars to be sent on serial interface COM1.
  */
-extern "C" void invia_serial(natl nn, char vv[]);
+char buffer[80];
+
+/**
+ * Primitive to send chars on serial interface COM1.
+ */
+extern "C" void serial_send(natl nn, char vv[]);
 
 /**
  * Developer harness test shows
@@ -30,20 +30,29 @@ extern "C" void invia_serial(natl nn, char vv[]);
 int main(int argc, char * argv[])
 {
     // max 80
-    natl quanti = 25;
+    natl length = 25;
 
+    // string to be sent
     char s[] = "I calcolatori elettronici";
 
-    for (int i = 0; i < quanti; i++) buffi[i] = s[i];
+    // copy string to be sent to the buffer
+    for (int i = 0; i < length; i++)
+    {
+        buffer[i] = s[i];
+    }
 
     // delay(20); 
 
-    invia_serial(quanti, buffi);
+    // send the string over serial interface COM1
+    serial_send(length, buffer);
 
+    // write string to the video output
     str_write("OK\n");
 
+    // print message and wait for the ESC key
     pause();
 
+    // return with no errors
     return 0;
 }
 

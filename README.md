@@ -8,8 +8,9 @@ computer is powered on, it typically does not have an operating system or its
 loader in random-access memory (RAM). The computer first executes a relatively
 small program stored in read-only memory (ROM) along with a small amount of
 needed data, to access the nonvolatile device or devices from which the
-operating system programs and data can be loaded into RAM.The small program that
-starts this sequence is known as a bootstrap loader, bootstrap or boot loader.
+operating system programs and data can be loaded into RAM. The small program
+that starts this sequence is known as a bootstrap loader, bootstrap or boot
+loader.
 This small program's only job is to load other data and programs which are then
 executed from RAM.
 
@@ -17,7 +18,7 @@ executed from RAM.
 
 For this reason, the following linux based kernel was developed in order to be
 able to write Assembly or C++ programs and be able to
-1. use all available instructions: also thos related to the interrupt mechanism;
+1. use all available instructions: also those related to the interrupt mechanism;
 2. freely access to the interfaces registers, also to the ones critical for the
 operating system (e.g. the keyboard and the video output);
 3. freely access the interrupt controller registers;
