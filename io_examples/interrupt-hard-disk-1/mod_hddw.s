@@ -1,22 +1,37 @@
-#include "libce.s"
-#****************************************************************************************************
-# file mod_hddw.s
+#*******************************************************************************
+# File: mod_hddw.s
+#       Assembly implementation for primitives 246 and 46.
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 21/08/2019.
+#*******************************************************************************
 
-.text
+#-------------------------------------------------------------------------------
+#include "../../lib/libqlk.s"
+#-------------------------------------------------------------------------------
+.TEXT
+#-------------------------------------------------------------------------------
+.EXTERN c_go_hddw
+#-------------------------------------------------------------------------------
+.GLOBAL a_go_hddw               # primitive 246 assembly implementation
+#-------------------------------------------------------------------------------
+a_go_hddw:
+    call   c_go_hddw            # call primitive body C++ implementation
+    iretq                       # return from interrupt
 
-.extern 		c_go_hddw
-.global 		a_go_hddw			# dichiarazione necessaria per la funzione ini()
-a_go_hddw:						# routine INT $245
-			call 	c_go_hddw
-			iretq
+#-------------------------------------------------------------------------------
+.EXTERN c_driver_hddw
+#-------------------------------------------------------------------------------
+.GLOBAL a_driver_hddw           # primitive 46 assembly implementation
+#-------------------------------------------------------------------------------
+a_driver_hddw:
+    save_registers              # save general purpose registers content
 
-.extern		c_driver_hddw
-.global 		a_driver_hddw			# dichiarazione necessaria per la funzione ini()
-a_driver_hddw:						# routine associata al tipo 45
-			salva_registri
-			call 	c_driver_hddw
-			movabsq	$0xFEE000B0, %rax	# invio di EOI
-			movl $0, (%rax)
-			carica_registri
-			iretq
-#****************************************************************************************************
+    call     c_driver_hddw      # call driver body C++ implementation
+    movabsq  $0xFEE000B0, %rax  # send EOI
+    movl     $0, (%rax)         # return value
+
+    restore_registers           # save general purpose registers content
+    iretq                       # return from interrupt
+#*******************************************************************************
+

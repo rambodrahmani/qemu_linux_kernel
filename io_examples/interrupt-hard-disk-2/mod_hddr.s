@@ -1,22 +1,37 @@
-#include "libce.s"
-#****************************************************************************************************
-# file mod_hddr.s
+#*******************************************************************************
+# File: mod_hddw.s
+#       Assembly implementation for primitives 246 and 46.
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 21/08/2019.
+#*******************************************************************************
 
-.text
+#-------------------------------------------------------------------------------
+#include "../../lib/libqlk.s"
+#-------------------------------------------------------------------------------
+.TEXT
+#-------------------------------------------------------------------------------
+.EXTERN c_go_hddr
+#-------------------------------------------------------------------------------
+.GLOBAL a_go_hddr                   # primitive 247 assembly implementation
+#-------------------------------------------------------------------------------
+a_go_hddr:
+    call   c_go_hddr
+    iretq                           # return from interrupt
 
-.extern 		c_go_hddr
-.global 		a_go_hddr			# dichiarazione necessaria per la funzione ini()
-a_go_hddr:						# routine INT $244
-			call 	c_go_hddr
-			iretq
+#-------------------------------------------------------------------------------
+.EXTERN c_driver_hddr
+#-------------------------------------------------------------------------------
+.GLOBAL a_driver_hddr               # primitive 47 assembly implementation
+#-------------------------------------------------------------------------------
+a_driver_hddr:
+    save_registers                  # save general purpose registers content
 
-.extern		c_driver_hddr
-.global 		a_driver_hddr			# dichiarazione necessaria per la funzione ini()
-a_driver_hddr:						# routine associata al tipo 44
-			salva_registri
-			call 	c_driver_hddr
-			movabsq	$0xFEE000B0, %rax		# invio di EOI
-			movl 	$0, (%rax)
-			carica_registri
-			iretq
-#****************************************************************************************************
+    call     c_driver_hddr
+    movabsq  $0xFEE000B0, %rax		# send EOI
+    movl     $0, (%rax)
+
+    restore_registers               # restore general purpose registers content
+    iretq                           # return from interrupt
+#*******************************************************************************
+

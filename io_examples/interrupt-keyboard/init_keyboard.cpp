@@ -1,5 +1,7 @@
 /**
  * File: init_keyboard.cpp
+ *       Initializes the IDT, the APIC pins and the keyboard with interrupt
+ *       requests enabled.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 19/07/2019.
@@ -10,7 +12,7 @@
 #include <kbd.h>
 
 /**
- * Use semaphore number 1.
+ * Use semaphore number 1 for synchronization.
  */
 const natl sincr_t = 1;
 
@@ -25,12 +27,12 @@ natl counter;
 char* pointer;
 
 /**
- *
+ * Interrupt 241 primitive.
  */
 extern "C" void a_read_line();
 
 /**
- *
+ * Interrupt 41 primitive.
  */
 extern "C" void a_keyboard_driver();
 
