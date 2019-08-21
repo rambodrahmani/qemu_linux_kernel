@@ -449,14 +449,17 @@ void pci_write_confw(natb bus, natb dev, natb fun, natb regn, natw data);
 void pci_write_confl(natb bus, natb dev, natb fun, natb regn, natl data);
 
 /**
+ * Looks for the PCI device specified using the deviceID and vendorID.
+ * If found, returns true and the PCI device bus, device and function numbers
+ * are passed by reference.
  *
- * @param   bus
- * @param   dev
- * @param   fun
- * @param   vendorID
- * @param   deviceID
+ * @param   bus         the PCI device bus (if device found);
+ * @param   dev         the PCI device number (if device found);
+ * @param   fun         the PCI device function (if device found);
+ * @param   vendorID    the PCI device vendor ID
+ * @param   deviceID    the PCI device ID
  *
- * @return
+ * @return  true if the specified PCI device was found.
  */
 bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw vendorID, natw deviceID);
 
@@ -472,12 +475,14 @@ bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw vendorID, natw deviceID)
 bool pci_find_class(natb& bus, natb& dev, natb& fun, natb code[]);
 
 /**
+ * Finds the next PCI device starting from the given bus, device and function
+ * number, if available.
  *
- * @param   bus
- * @param   dev
- * @param   fun
+ * @param   bus   bus number;
+ * @param   dev   device number;
+ * @param   fun   function number;
  *
- * @return
+ * @return  true if a new PCI device is available.
  */
 bool pci_next(natb& bus, natb& dev, natb& fun);
 
@@ -559,8 +564,7 @@ int snprintf(char* buf, natl n, const char* fmt, ...);
 bool apic_init();
 
 /**
- *
- * @return
+ * Resets the APIC pins.
  */
 void apic_reset();
 

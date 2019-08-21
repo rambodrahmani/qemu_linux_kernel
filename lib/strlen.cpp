@@ -14,8 +14,10 @@ size_t strlen(const char *s)
     // size counter
     size_t l = 0;
 
+    // loop through s string chars
     while(*s++)
     {
+        // count chars
         ++l;
     }
 

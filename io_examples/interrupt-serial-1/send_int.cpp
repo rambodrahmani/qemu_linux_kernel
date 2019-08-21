@@ -20,7 +20,7 @@ char buffer[80];
 extern "C" void serial_send(natl nn, char vv[]);
 
 /**
- * Developer harness test shows
+ * Developer harness test.
  *
  * @param   argc    command line arguments counter.
  * @param   argv    command line arguments.

@@ -89,3 +89,4 @@ void* alloca(size_t dim)
 	// e' ignota al chiamante della funzione).
 	return p;
 }
+

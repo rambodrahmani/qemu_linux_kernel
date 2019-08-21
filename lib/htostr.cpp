@@ -25,3 +25,4 @@ void htostr(char *buf, unsigned long long l, int cifre)
         l /= 16;
     }
 }
+

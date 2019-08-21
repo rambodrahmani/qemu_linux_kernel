@@ -1,5 +1,6 @@
 /**
  * File: apic_reset.cpp
+ *       Resets the APIC pins.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.

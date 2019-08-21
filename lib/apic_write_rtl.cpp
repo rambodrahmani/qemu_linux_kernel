@@ -12,3 +12,4 @@ void apic_write_rtl(natb irq, natl w)
 {
     apic_out(IOAPIC_RTO + irq * 2, w);
 }
+

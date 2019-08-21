@@ -21,40 +21,40 @@
 #  %rip
 #-------------------------------------------------------------------------------
 _ZN2clC1Ec3st2:
-    pushq  %rbp             # prologue
+    pushq  %rbp                       # prologue
     movq   %rsp, %rbp
-    subq   $32,  %rsp       # memory space for actual arguments
+    subq   $32,  %rsp                 # memory space for actual arguments
 
 # copy actual arguments to the stack, [1]
-    movq  %rdi, -8(%rbp)    # this
-    movb  %sil, -16(%rbp)   # c
-    movq  %rdx, -32(%rbp)   # s2 (LSB)
-    movq  %rcx, -24(%rbp)   # s2 (MSB)
+    movq  %rdi, -8(%rbp)              # this
+    movb  %sil, -16(%rbp)             # c
+    movq  %rdx, -32(%rbp)             # s2 (LSB)
+    movq  %rcx, -24(%rbp)             # s2 (MSB)
 	
 # for loop, initialization
-    movl  $0, -12(%rbp)     # i = 0
+    movl  $0, -12(%rbp)               # i = 0
 	
 for:
-    cmpl  $4, -12(%rbp)     # i < 4
-    jge   finefor           # end loop (i >= 4)
+    cmpl  $4, -12(%rbp)               # i < 4
+    jge   finefor                     # end loop (i >= 4)
 
 # for loop body
-    movq   -8(%rbp), %rdi      # this -> %rdi
-    movslq -12(%rbp), %rcx	   # i -> %rcx
-    movb   -16(%rbp), %al      # c -> %al
-    movb   %al, (%rdi, %rcx)   # %al -> s.vc[i]
+    movq   -8(%rbp),  %rdi            # this -> %rdi
+    movslq -12(%rbp), %rcx	          # i -> %rcx
+    movb   -16(%rbp), %al             # c -> %al
+    movb   %al, (%rdi, %rcx)          # %al -> s.vc[i]
                             
-    movsbl (%rdi, %rcx), %eax        # s.vc[i] -> %eax
-    addl   -32(%rbp, %rcx, 4), %eax  # s2.vd[i] + s.vc[i] -> %eax
-    movslq %eax, %rax                # sign extend to 64-bits
-    movq   %rax, 8(%rdi, %rcx, 8)    # v[i] = s2.vd[i] + s.vc[i];
+    movsbl (%rdi, %rcx), %eax         # s.vc[i] -> %eax
+    addl   -32(%rbp, %rcx, 4), %eax   # s2.vd[i] + s.vc[i] -> %eax
+    movslq %eax, %rax                 # sign extend to 64-bits
+    movq   %rax, 8(%rdi, %rcx, 8)     # v[i] = s2.vd[i] + s.vc[i];
 
-    incl   -12(%rbp)                # i++
-    jmp    for                      # loop again
+    incl   -12(%rbp)                  # i++
+    jmp    for                        # loop again
 
 finefor:
-    movq    -8(%rbp), %rax      # return initialized object address
-    leave
+    movq    -8(%rbp), %rax            # return initialized object address
+    leave                             # mov %rbp, %rsp; pop %rbp
     ret
 
 #-------------------------------------------------------------------------------
@@ -75,47 +75,47 @@ finefor:
 #  %rip
 #-------------------------------------------------------------------------------
 _ZN2cl5elab1ER3st1R3st2:
-    pushq  %rbp             # prologue
+    pushq  %rbp                         # prologue
     movq   %rsp, %rbp
-    subq   $72, %rsp        # memory space for actual arguments
+    subq   $72, %rsp                    # memory space for actual arguments
 
 # copy actual arguments to the stack
-    movq  %rdi, -8(%rbp)        # this
-    movq  %rsi, -16(%rbp)       # s1
-    movq  %rdx, -24(%rbp)       # s2
+    movq  %rdi, -8(%rbp)                # this
+    movq  %rsi, -16(%rbp)               # s1
+    movq  %rdx, -24(%rbp)               # s2
 
 # cl cla('f', s2);
-    leaq  -64(%rbp), %rdi    # &cla (this -> %rdi)
-    movb  $'f', %sil         # c -> %rsi
-    movq  -24(%rbp), %r8     # &s2 -> %r8
-    movq  (%r8), %rdx        # &s2 -> %rdx (LSB)
-    movq  8(%r8), %rcx       # &s2 -> %rdx (MSB)
-    call  _ZN2clC1Ec3st2     # call constructor
+    leaq  -64(%rbp), %rdi               # &cla (this -> %rdi)
+    movb  $'f', %sil                    # c -> %rsi
+    movq  -24(%rbp), %r8                # &s2 -> %r8
+    movq  (%r8), %rdx                   # &s2 -> %rdx (LSB)
+    movq  8(%r8), %rcx                  # &s2 -> %rdx (MSB)
+    call  _ZN2clC1Ec3st2                # call constructor
 
 # for loop, initialization
-    movl  $0, -72(%rbp)      # i = 0
+    movl  $0, -72(%rbp)                 # i = 0
 
 for2:
-    cmpl  $4, -72(%rbp)      # i < 4
-    jge   finefor2           # end loop (i >= 4)
+    cmpl  $4, -72(%rbp)                 # i < 4
+    jge   finefor2                      # end loop (i >= 4)
 
 # for loop body
-    movq   -8(%rbp), %rdi         # this -> %rdi
-    movslq -72(%rbp), %rcx        # i -> %rcx
-    movb   (%rdi, %rcx), %al      # s.vc[i] -> %al
-    movq   -16(%rbp), %r8         # s1 -> %r8
-    cmpb   %al, (%r8, %rcx)       # 
-    jle    fineif                 # if (s1.vc[i] <= s.vc[i]) jump
+    movq   -8(%rbp), %rdi               # this -> %rdi
+    movslq -72(%rbp), %rcx              # i -> %rcx
+    movb   (%rdi, %rcx), %al            # s.vc[i] -> %al
+    movq   -16(%rbp), %r8               # s1 -> %r8
+    cmpb   %al, (%r8, %rcx)             # 
+    jle    fineif                       # if (s1.vc[i] <= s.vc[i]) jump
 
 # if (s.vc[i] < s1.vc[i])
-    movb  -64(%rbp, %rcx), %al   # cla.s.vc[i] -> %al
-    movb  %al, (%rdi, %rcx)      # %al -> s.vc[i]
+    movb  -64(%rbp, %rcx), %al          # cla.s.vc[i] -> %al
+    movb  %al, (%rdi, %rcx)             # %al -> s.vc[i]
 
 fineif:
 
-    movq  8(%rdi, %rcx, 8), %rax     # s.v[i] -> %rax
-    cmpq  %rax, -56(%rbp, %rcx, 8)   #
-    jle   fineif2                    # if (cla.v[i] <= v[i]) jump
+    movq  8(%rdi, %rcx, 8), %rax        # s.v[i] -> %rax
+    cmpq  %rax, -56(%rbp, %rcx, 8)      #
+    jle   fineif2                       # if (cla.v[i] <= v[i]) jump
 
 # if (v[i] < cla.v[i])
     movq -56(%rbp, %rcx, 8), %rax       # cla.v[i] -> %rax
@@ -123,11 +123,11 @@ fineif:
 
 fineif2:
 
-    incl  -72(%rbp)      # i++
-    jmp   for2           # loop again
+    incl  -72(%rbp)                     # i++
+    jmp   for2                          # loop again
 
 finefor2:
-    leave
+    leave                               # mov %rbp, %rsp; pop %rbp
     ret
 #*******************************************************************************
 

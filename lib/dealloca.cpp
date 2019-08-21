@@ -31,3 +31,4 @@ void dealloca(void* p)
     // comprensiva del suo descrittore
     free_interna(des, des->dimensione + sizeof(des_mem));
 }
+

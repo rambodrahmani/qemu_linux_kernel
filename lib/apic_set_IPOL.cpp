@@ -17,3 +17,4 @@ void apic_set_IPOL(natl irq, bool v)
         work &= ~IOAPIC_IPOL_BIT;
     apic_write_rtl(irq, work);
 }
+

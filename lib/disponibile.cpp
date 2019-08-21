@@ -19,3 +19,4 @@ size_t disponibile()
 
     return tot;
 }
+

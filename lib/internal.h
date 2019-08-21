@@ -97,15 +97,18 @@ void htostr(char* buf, unsigned long long l, int digits = 8);
 char* convnat(natl l, char* out, int digits);
 
 /**
+ * Copies the first num characters of source to destination. If the end of the
+ * source C string (which is signaled by a null-character) is found before num
+ * characters have been copied, destination is padded with zeros until a total
+ * of num characters have been written to it.
  *
- * @param   dest
- * @param   src
- * @param   l
+ * @param   source       source string to be copied;
+ * @param   destination  destination string for the copy;
+ * @param   num          number of chars to be copied;
  *
- * @return
- *
+ * @return  destination is returned.
  */
-char* strncpy(char* dest, const char* src, natl l);
+char* strncpy(const char* source, char* destination, natl num);
 
 /**
  *
@@ -126,15 +129,6 @@ int snprintf(char* buf, natl n, const char* fmt, ...);
  *
  */
 int printf(const char* fmt, ...);
-
-/**
- *
- * @param   buf
- *
- * @return
- *
- */
-extern "C" int puts(const char* buf);
 
 /**
  *

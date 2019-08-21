@@ -8,3 +8,4 @@
 #include "vid.h"
 
 natw __attribute__((section(".data"))) attr;
+

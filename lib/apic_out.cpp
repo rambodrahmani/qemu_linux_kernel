@@ -13,3 +13,4 @@ void apic_out(natb off, natl v)
     *IOREGSEL = off;
     *IOWIN = v;
 }
+

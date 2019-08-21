@@ -12,3 +12,4 @@ natl apic_read_rth(natb irq)
 {
     return apic_in(IOAPIC_RTO + irq * 2 + 1);
 }
+

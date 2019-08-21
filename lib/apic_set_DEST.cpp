@@ -16,3 +16,4 @@ void apic_set_DEST(natl irq, natb dest)
     
     apic_write_rth(irq, work);
 }
+
