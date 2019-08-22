@@ -9,12 +9,17 @@
 #include "apic.h"
 #include "piix3.h"
 
+/**
+ * See 64/8259.s
+ */
 extern "C" void disable_8259();
 
 bool apic_init()
 {
+    // start from bus 0, device 0, function 0
     natb bus = 0, dev = 0, fun = 0;
 
+    // look for PIIX3 device
     if (! pci_find_dev(bus, dev, fun, PIIX3_DEVICE_ID, PIIX3_VENDOR_ID))
     {
         printf("PIIX3 no found\n");
@@ -27,6 +32,7 @@ bool apic_init()
         return false;
     }
 
+    // disable 8259 controller
     disable_8259();
 
     return true;

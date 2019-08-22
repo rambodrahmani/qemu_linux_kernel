@@ -1,5 +1,9 @@
 /**
  * File: hddr_int.cpp
+ *       We have already seen how to read from the primary HDD in
+ *       ../hard-disk-2.
+ *       In this I/O example we will see how to work with the ATA interface and
+ *       read from the primary HDD using the interrupt mechanism.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 21/08/2019.

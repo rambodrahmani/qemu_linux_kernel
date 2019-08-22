@@ -1,6 +1,9 @@
 /**
  * File: hddw_int.cpp
- *
+ *       We have already seen how to write to the primary HDD in ../hard-disk-1.
+ *       In this I/O example we will see how to work with the ATA interface and
+ *       write to the primary HDD using the interrupt mechanism.
+ * 
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 21/08/2019.
  */

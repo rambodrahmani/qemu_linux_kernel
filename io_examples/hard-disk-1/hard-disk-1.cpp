@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
     // wait for the ESC key before ending
     pause();
 
-    // return
-	return 0;
+    // return with no errors
+    return 0;
 }
 

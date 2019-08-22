@@ -1,5 +1,16 @@
 /**
  * File: pci.h
+ *       One of the major improvements the PCI Local Bus had over other I/O
+ *       architectures was its configuration mechanism. In addition to the
+ *       normal memory-mapped and I/O port spaces, each device function on the
+ *       bus has a configuration space, which is 256 bytes long, addressable by
+ *       knowing the eight-bit PCI bus, five-bit device, and three-bit function
+ *       numbers for the device (commonly referred to as the BDF or B/D/F, as
+ *       abbreviated from bus/device/function). This allows up to 256 buses,
+ *       each with up to 32 devices, each supporting eight functions. A single
+ *       PCI expansion card can respond as a device and must implement at least
+ *       function number zero. The first 64 bytes of configuration space are
+ *       standardized; the remainder are available for vendor-defined purposes.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 07/07/2019.
