@@ -7,6 +7,7 @@
 
 #include "internal.h"
 #include "piix3.h"
+#include "pci.h"
 
 bool piix3_ioapic_disable(natb bus, natb dev, natb fun)
 {

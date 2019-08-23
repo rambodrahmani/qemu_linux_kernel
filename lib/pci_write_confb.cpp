@@ -1,6 +1,6 @@
 /**
  * File: pci_write_confb.cpp
- *       Writes the byte data to the register having internal offset regn
+ *       Writes the byte data to the CDP register having internal offset regn
  *       relative to the PCI function specified by fun of the device
  *       specified by dev.
  *

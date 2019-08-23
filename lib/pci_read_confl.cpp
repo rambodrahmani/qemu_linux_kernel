@@ -1,7 +1,7 @@
 /**
  * File: pci_read_confl.cpp
- *       Reads a long from the register having internal offset regn relative to
- *       the PCI function specified by fun of the device specified by dev.
+ *       Reads a long from the CDP register having internal offset regn relative
+ *       to the PCI function specified by fun of the device specified by dev.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 07/07/2019.

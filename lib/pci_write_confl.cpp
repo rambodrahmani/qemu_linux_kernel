@@ -1,6 +1,6 @@
 /**
  * File: pci_write_confl.cpp
- *       Writes the long data to the register having internal offset regn
+ *       Writes the long data to the CDP register having internal offset regn
  *       relative to the PCI function specified by fun of the device
  *       specified by dev.
  *

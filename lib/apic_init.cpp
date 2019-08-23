@@ -8,6 +8,7 @@
 #include "internal.h"
 #include "apic.h"
 #include "piix3.h"
+#include "pci.h"
 
 /**
  * See 64/8259.s
