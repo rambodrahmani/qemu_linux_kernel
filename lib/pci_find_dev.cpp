@@ -18,6 +18,7 @@ bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw deviceID, natw vendorID)
     do {
         natw work;
 
+        // read till the last function available for the device, [0]
         if ( (work = pci_read_confw(bus, dev, fun, 0)) == 0xFFFF )
         {
             continue;
@@ -34,6 +35,13 @@ bool pci_find_dev(natb& bus, natb& dev, natb& fun, natw deviceID, natw vendorID)
     // PCI device not found
     return false;
 }
+
+/**
+ * [0]
+ * When reading from the configuration space, the result will be 0xFFFF when the
+ * register does not exist. This allows us to keep reading until we get 0xFFFF
+ * and therefore obtain the number of functions available for a given Vendor ID.
+ */
 
 /**
  * A PCI Bus has 3 addressable spaces: memory, I/O and configuration.

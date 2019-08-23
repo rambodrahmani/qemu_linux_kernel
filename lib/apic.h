@@ -10,8 +10,6 @@
  *       In the following definitions, keep in mind that
  *          1U = 00000000000000000000000000000001.
  *
- *       f
- *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
  */
@@ -142,7 +140,9 @@ natl apic_read_rth(natb irq);
 natl apic_read_rtl(natb irq);
 
 /**
- *
+ * Send the End Of Interrupt (EOI). An End Of Interrupt (EOI) is a signal sent
+ * to a Programmable Interrupt Controller (PIC) to indicate the completion of
+ * interrupt processing for a given interrupt.
  */
 extern "C" void apic_send_EOI();
 

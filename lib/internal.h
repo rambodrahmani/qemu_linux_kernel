@@ -131,18 +131,13 @@ int snprintf(char* buf, natl n, const char* fmt, ...);
 int printf(const char* fmt, ...);
 
 /**
+ * Decodes the given PCI class code and return a human readable description.
  *
- * @param   code
+ * @param   code  PCI class code;
  *
- * @return
- *
+ * @return  string description for the given class code.
  */
 const char* pci_decode_class(natb code);
-
-/**
- *
- */
-extern "C" void apic_send_EOI();
 
 /**
  * Clears interrupt flag; interrupts disabled when interrupt flag cleared. See
