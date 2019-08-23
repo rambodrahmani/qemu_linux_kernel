@@ -1,8 +1,8 @@
 /**
  * File: pci_find_class.cpp
- *       Finds and returns (by reference) the class code for a given function of
- *       a given device on a given bus. Returns true if the class code is found
- *       and false otherwise.
+ *       Finds and returns (by reference) the bus, device and function number
+ *       corresponding to the given class codes. Returns true if the class code
+ *       is found and false otherwise.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 07/07/2019.
