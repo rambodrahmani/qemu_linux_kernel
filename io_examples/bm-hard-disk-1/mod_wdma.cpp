@@ -231,24 +231,29 @@ extern "C" void c_go_wdma(natl indse, natb sectors, natb vv[])
 }
 
 /**
- *
+ * When the transfer operation is done, the hdd controller sends, throught the
+ * PCI-ATA bridge, an interrupt request. The associated subroutine must:
+ *  1. clear out the start/stop bit in BMCMD;
+ *  2. read the BMSTR and STS registers (interrupt request handled);
+ *  3. disable ATA controller interrupt requests.
  */
 extern "C" void c_driver_wdma()
 {
     natb work;
 
+    // 1. clear our the start/stop bit in BMCD
     inputb(iBMCMD, work);
-
     work &= 0xFE;
-
     outputb(work, iBMCMD);
 
+    // 2. read the BMSTR and STS registers (interrupt request handled)
     inputb(iBMSTR, work);
-
     inputb(iSTS, work);
 
-    outputb(0x02,iDCR); 
+    // 3. disable ATA controller interrupt rquests
+    outputb(0x02, iDCR);
 
+    // send signal over synchronization semaphore
     sem_signal(sincr);
 }
 
