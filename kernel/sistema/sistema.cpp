@@ -1,35 +1,16 @@
-/**
- * File: sistema.cpp
- *
- * Author: Rambod Rahmani <rambodrahmani@autistici.org>
- *         Created on 15/07/2019.
- */
-
-#include <libqlk.h>
+// sistema.cpp
+//
 #include "costanti.h"
+#include <libqlk.h>
+#include <log.h>
+#include <apic.h>
 
-////////////////////////////////////////////////////////////////////////////////
-//                             PROCESSES                                      //
-////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- */
+/////////////////////////////////////////////////////////////////////////////////
+//                     PROCESSI                                                //
+/////////////////////////////////////////////////////////////////////////////////
 const natl MAX_PRIORITY	= 0xfffffff;
-
-/**
- *
- */
 const natl MIN_PRIORITY	= 0x0000001;
-
-/**
- *
- */
 const natl DUMMY_PRIORITY = 0x0000000;
-
-/**
- *
- */
 const int N_REG = 16;	// numero di registri nel campo contesto
 
 // si veda in PAGINAZIONE per il significato di questi typedef

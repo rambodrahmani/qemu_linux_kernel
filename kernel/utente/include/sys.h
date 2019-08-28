@@ -5,8 +5,9 @@
 #ifndef SYS_H_
 #define SYS_H_
 
-#include <libce.h>
+#include <libqlk.h>
 #include <costanti.h>
+#include <log.h>
 
 extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
 

@@ -1,21 +1,48 @@
+/**
+ * File: cc.h
+ *       Contains the declaration for the data structures used in the exercise.
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 24/08/2019.
+ */
+
 #include <iostream>
+
 using namespace std;
-struct st1 {
-	char vc[8];
+
+struct st1
+{
+    char vc[8];
 };
-struct st2 {
-	long vd[4];
+
+struct st2
+{
+    long vd[4];
 };
-class cl {
-	st1 s;
-	int v[4]; 
+
+class cl
+{
+    st1 s;
+    int v[4];
+
 public:
-	cl(char c, st1& s2);
-	void elab1(st1 s1, st2& s2);
-	void stampa()
-	{
-		for (int i = 0; i < 8 ;i++) cout << s.vc[i] << ' '; cout << endl;
-		for (int i = 0; i < 4; i++) cout << v[i] << ' '; cout << endl << endl;
-	}
+    cl(char c, st1 & s2);
+
+    void elab1(st1 s1, st2 & s2);
+
+    void stampa()
+    {
+        for (int i = 0; i < 8 ;i++)
+        {
+            cout << s.vc[i] << ' ';
+        }
+        cout << endl;
+        
+        for (int i = 0; i < 4; i++)
+        {
+            cout << v[i] << ' ';
+        }
+        cout << endl << endl;
+    }
 };
 

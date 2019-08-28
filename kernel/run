@@ -7,10 +7,10 @@ find_qemu() {
 
 	local b=qemu-system-x86_64
 
-	QEMU=$HOME/CE/bin/$b
+	QEMU=$HOME/QEMU_LINUX_KERNEL/bin/$b
 	[ -x "$QEMU" ] && return
 
-	QEMU=/usr/local/CE/bin/$b
+	QEMU=/usr/local/QLK/bin/$b
 	[ -x "$QEMU" ] && return
 
 	QEMU=$b
@@ -19,8 +19,8 @@ find_qemu() {
 find_boot() {
 	[ -n "$QEMU_BOOT" ] && return
 
-	for d in $HOME/CE /usr/local/CE /usr/CE /usr/local /usr /; do
-		QEMU_BOOT=$d/lib/ce/boot.bin
+	for d in $HOME/QEMU_LINUX_KERNEL /usr/local/QLK /usr/QLK /usr/local /usr /; do
+		QEMU_BOOT=$d/lib/qlk/boot.bin
 		[ -f "$QEMU_BOOT" ] && return
 	done
 

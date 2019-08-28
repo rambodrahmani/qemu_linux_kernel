@@ -1,7 +1,7 @@
 /**
  * File: pci.cpp
  *       This I/O example shows how to use the library utility functions to
- *       prints all the functions available for all the devices on the PCI bus
+ *       print all the functions available for all the devices on the PCI bus
  *       0.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
             char buf[20];
             char *ptr = &buf[0];
 
-            // creates a final string to be printed to the video output
+            // create a final string to be printed to the video output
             // from the retrieved data
 
             // convert the bus number to string and append it

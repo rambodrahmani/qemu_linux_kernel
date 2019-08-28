@@ -1,15 +1,3 @@
-################################################################################
-# File:	Makefile
-#       Code compilation directives.
-#       Compile and install using
-#          $ make
-#          $ make swap
-#
-# Author: Rambod Rahmani <rambodrahmani@autistici.org>
-#         Created on 15/07/2019
-#
-################################################################################
-
 LIBCECONF ?= $(firstword $(wildcard /usr/local/etc/libqlk.conf) $(wildcard /etc/libqlk.conf) $(wildcard $(HOME)/QEMU_LINUX_KERNEL/etc/libqlk.conf))
 $(if $(LIBCECONF),,$(error libqlk not found))
 include $(LIBCECONF)
@@ -42,7 +30,7 @@ ifdef DEBUG
 	NCFLAGS+=-DDEBUG
 endif
 NLDFLAGS=$(COMM_LDFLAGS) -melf_x86_64 -L$(LIB64)
-NLDLIBS=$(COMM_LDLIBS) -lce64
+NLDLIBS=$(COMM_LDLIBS) -lqlk64
 
 ifdef AUTOCORR
 	NCFLAGS+=-DAUTOCORR
@@ -151,3 +139,4 @@ util/start.mk: include/costanti.h include/tipo.h build/mkstart
 util/start.gdb: build/io build/utente
 	objdump -h build/io | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_IO=%u\n",hex($$F[3]);}' > $@
 	objdump -h build/utente | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_UTENTE=%u\n",hex($$F[3]);}' >> $@
+

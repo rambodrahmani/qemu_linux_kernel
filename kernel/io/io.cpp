@@ -1,7 +1,10 @@
 // io.cpp
 //
 #include "costanti.h"
-#include "libce.h"
+#include <libqlk.h>
+#include <log.h>
+#include <pci.h>
+
 //#define BOCHS
 ////////////////////////////////////////////////////////////////////////////////
 //    COSTANTI                                                                //
@@ -745,7 +748,7 @@ void starthd_out(des_ata *p_des, natw vetto[], natl primo, natb quanti)
 	hd_go_inout(p_des->indreg.iDCR);
 	hd_write_command(WRITE_SECT, p_des->indreg.iCMD);
 	hd_wait_data(p_des->indreg.iSTS);
-	outputbw(vetto, DIM_BLOCK/2, p_des->indreg.iBR);
+	outputsw(vetto, DIM_BLOCK/2, p_des->indreg.iBR);
 }
 void dmastarthd_in(des_ata *p_des, natw vetti[], natl primo, natb quanti);
 extern "C" void c_dmareadhd_n(natw vetti[], natl primo, natb quanti,
@@ -833,7 +836,7 @@ void esternAta(int h)			// codice commune ai 2 processi esterni ATA
 			if (!hd_wait_data(p_des->indreg.iSTS))
 				inputb(p_des->indreg.iERR, p_des->errore);
 			else
-				inputbw(p_des->indreg.iBR, static_cast<natw*>(p_des->punt),
+				inputsw(p_des->indreg.iBR, static_cast<natw*>(p_des->punt),
 						DIM_BLOCK / 2);
 			p_des->punt = static_cast<natw*>(p_des->punt) + DIM_BLOCK / 2;
 			break;
@@ -842,7 +845,7 @@ void esternAta(int h)			// codice commune ai 2 processi esterni ATA
 				if (!hd_wait_data(p_des->indreg.iSTS))
 					inputb(p_des->indreg.iERR, p_des->errore);
 				else
-					outputbw(static_cast<natw*>(p_des->punt),
+					outputsw(static_cast<natw*>(p_des->punt),
 							DIM_BLOCK / 2, p_des->indreg.iBR);
 				p_des->punt = static_cast<natw*>(p_des->punt) +
 					DIM_BLOCK / 2;
