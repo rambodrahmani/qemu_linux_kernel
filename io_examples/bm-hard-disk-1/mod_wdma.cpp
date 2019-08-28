@@ -138,16 +138,16 @@ void ini()
     init_bm();
 
     // initialize IDT entry 251 with a_go_wdma address
-	gate_init(251, &a_go_wdma);
+    gate_init(251, &a_go_wdma);
 
     // initialize IDT entry 51 with a_driver_wdma address
-	gate_init(51, &a_driver_wdma);
+    gate_init(51, &a_driver_wdma);
 
     // set interrupt 51 for APIC pin 14
-	apic_set_VECT(14, 51);
+    apic_set_VECT(14, 51);
 
     // enable APIC pin 14 interrupt requests
-	apic_set_MIRQ(14, false);
+    apic_set_MIRQ(14, false);
 }
 
 /**
@@ -241,7 +241,7 @@ extern "C" void c_driver_wdma()
 {
     natb work;
 
-    // 1. clear our the start/stop bit in BMCD
+    // 1. clear our the start/stop bit in BMCMD
     inputb(iBMCMD, work);
     work &= 0xFE;
     outputb(work, iBMCMD);
