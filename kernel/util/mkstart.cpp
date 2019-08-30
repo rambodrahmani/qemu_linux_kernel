@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iomanip>
-#include <costanti.h>
-#include <tipo.h>
+#include <constants.h>
+#include <type.h>
 
 using namespace std;
 

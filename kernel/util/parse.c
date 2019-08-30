@@ -309,7 +309,7 @@ void rilascia_righe()
 	}
 }
 
-//#define MAIN_HEAD "\nint main()\n{\n\tdummy = activate_p(dd, 0, 1, LIV_UTENTE);\n"
+//#define MAIN_HEAD "\nint main()\n{\n\tdummy = activate_p(dd, 0, 1, LEV_USER);\n"
 #define MAIN_HEAD "\nint main()\n{\n"
 
 #if defined WIN || defined WIN_XP
@@ -350,7 +350,7 @@ void agg_proc(const char *nome_proc, const char *corpo_proc, int par_att,
 
 	dim1 = strlen(GLOB_FMT) + strlen(nome_proc);
 	dim2 = strlen(PROC_FMT) + strlen(nome_proc) + strlen(corpo_proc) +
-		MAX_INT_LEN * 2 + strlen("LIV_SISTEMA");
+		MAX_INT_LEN * 2 + strlen("LEV_SYSTEM");
 
 	dim = dim1 < dim2 ? dim2: dim1;
 
@@ -360,14 +360,14 @@ void agg_proc(const char *nome_proc, const char *corpo_proc, int par_att,
 
 #if defined WIN || defined WIN_XP
 	sprintf(buf, PROC_FMT, nome_proc, corpo_proc, par_att, prio,
-		liv == 3? "LIV_UTENTE": "LIV_SISTEMA");
+		liv == 3? "LEV_USER": "LEV_SYSTEM");
 	agg_riga(MAIN, buf);
 
 	sprintf(buf, GLOB_FMT, nome_proc);
 	agg_riga(GLOB, buf);
 #else
 	snprintf(buf, dim, PROC_FMT, nome_proc, corpo_proc, par_att, prio,
-		liv == 3? "LIV_UTENTE": "LIV_SISTEMA");
+		liv == 3? "LEV_USER": "LEV_SYSTEM");
 	agg_riga(MAIN, buf);
 
 	snprintf(buf, dim, GLOB_FMT, nome_proc);
@@ -436,12 +436,12 @@ void process()
 		if(look == ',') {
 			trova(',', 1);
 			leggi_nome(1);		// livello
-			if(!strcmp(nome, "LIV_UTENTE"))
+			if(!strcmp(nome, "LEV_USER"))
 				liv = 3;
-			else if(!strcmp(nome, "LIV_SISTEMA"))
+			else if(!strcmp(nome, "LEV_SYSTEM"))
 				liv = 0;
 			else
-				atteso("un valore per il livello (LIV_SISTEMA, LIV_UTENTE)", 0);
+				atteso("un valore per il livello (LEV_SYSTEM, LEV_USER)", 0);
 		} else
 			liv = 3;
 	} else {

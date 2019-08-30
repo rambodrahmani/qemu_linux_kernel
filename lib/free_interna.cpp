@@ -31,7 +31,7 @@ void free_interna(addr indirizzo, size_t quanti)
 	// la zona va inserita nella lista delle zone libere, ordinata per
 	// indirizzo di partenza (tale ordinamento serve a semplificare la
 	// successiva operazione di riunificazione)
-	des_mem *prec = 0, *scorri = memlibera;
+	des_mem *prec = 0, *scorri = free_heap;
 	while (scorri != 0 && scorri < indirizzo) {
 		prec = scorri;
 		scorri = scorri->next;
@@ -50,7 +50,7 @@ void free_interna(addr indirizzo, size_t quanti)
 	// verifichiamo che la zona possa essere unificata alla zona che la
 	// precede.  Cio' e' possibile se tale zona esiste e il suo ultimo byte
 	// e' contiguo al primo byte della nuova zona
-	if (prec != 0 && (natb*)(prec + 1) + prec->dimensione == indirizzo) {
+	if (prec != 0 && (natb*)(prec + 1) + prec->size == indirizzo) {
 
 		// controlliamo se la zona e' unificabile anche alla eventuale
 		// zona che la segue
@@ -60,7 +60,7 @@ void free_interna(addr indirizzo, size_t quanti)
 			// dimensione pari alla somma delle tre, piu' il
 			// descrittore della zona puntata da scorri (che ormai
 			// non serve piu')
-			prec->dimensione += quanti + sizeof(des_mem) + scorri->dimensione;
+			prec->size += quanti + sizeof(des_mem) + scorri->size;
 			prec->next = scorri->next;
 
 		} else {
@@ -68,7 +68,7 @@ void free_interna(addr indirizzo, size_t quanti)
 			// unificazione con la zona precedente: non creiamo una
 			// nuova zona, ma ci limitiamo ad aumentare la
 			// dimensione di quella precedente
-			prec->dimensione += quanti;
+			prec->size += quanti;
 		}
 
 	} else if (scorri != 0 && static_cast<natb*>(indirizzo) + quanti == (addr)scorri) {
@@ -93,13 +93,13 @@ void free_interna(addr indirizzo, size_t quanti)
 		// automaticamente corretto, mentre il campo dimensione va
 		// aumentato di "quanti"
 		*nuovo = salva;
-		nuovo->dimensione += quanti;
+		nuovo->size += quanti;
 
 		// infine, inseriamo "nuovo" in lista al posto di "scorri"
 		if (prec != 0) 
 			prec->next = nuovo;
 		else
-			memlibera = nuovo;
+			free_heap = nuovo;
 
 	} else if (quanti >= sizeof(des_mem)) {
 
@@ -109,14 +109,14 @@ void free_interna(addr indirizzo, size_t quanti)
 		// zona viene ignorata)
 
 		des_mem* nuovo = reinterpret_cast<des_mem*>(indirizzo);
-		nuovo->dimensione = quanti - sizeof(des_mem);
+		nuovo->size = quanti - sizeof(des_mem);
 
 		// inseriamo "nuovo" in lista, tra "prec" e "scorri"
 		nuovo->next = scorri;
 		if (prec != 0)
 			prec->next = nuovo;
 		else
-			memlibera = nuovo;
+			free_heap = nuovo;
 	}
 }
 

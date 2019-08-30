@@ -6,7 +6,7 @@
 #define SYS_H_
 
 #include <libqlk.h>
-#include <costanti.h>
+#include <constants.h>
 #include <log.h>
 
 extern "C" void do_log(log_sev sev, const char* buf, natl quanti);

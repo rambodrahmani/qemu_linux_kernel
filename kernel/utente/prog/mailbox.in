@@ -11,9 +11,9 @@ const int MSG_SIZE = 100;
 semaphore mailbox_piena value 0;
 semaphore mailbox_vuota value 1;
 
-process scrittore1 body pms(1), 5, LIV_UTENTE;
-process scrittore2 body pms(2), 5, LIV_UTENTE;
-process lettore   body pml(0), 5, LIV_UTENTE;
+process scrittore1 body pms(1), 5, LEV_USER;
+process scrittore2 body pms(2), 5, LEV_USER;
+process lettore   body pml(0), 5, LEV_USER;
 
 struct mess {
 	int mittente;

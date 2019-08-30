@@ -19,8 +19,14 @@ struct proc_elem
     natl id;
 };
 
+/**
+ *
+ */
 extern proc_elem *process;
 
+/**
+ *
+ */
 extern "C" void do_log(log_sev sev, const char* message, natl length)
 {
     // log severity level constant chars

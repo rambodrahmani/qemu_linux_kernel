@@ -22,12 +22,12 @@ void* alloca(size_t dim)
 	// allochiamo "quanti" byte, invece dei "dim" richiesti
 	
 	// per prima cosa, cerchiamo una zona di dimensione sufficiente
-	des_mem *prec = 0, *scorri = memlibera;
-	while (scorri != 0 && scorri->dimensione < quanti) {
+	des_mem *prec = 0, *scorri = free_heap;
+	while (scorri != 0 && scorri->size < quanti) {
 		prec = scorri;
 		scorri = scorri->next;
 	}
-	// assert(scorri == 0 || scorri->dimensione >= quanti);
+	// assert(scorri == 0 || scorri->size >= quanti);
 
 	addr p = 0;
 	if (scorri != 0) {
@@ -39,7 +39,7 @@ void* alloca(size_t dim)
 		// rimanente, dopo aver occupato "quanti" byte, deve poter contenere
 		// almeno il descrittore piu' 4 byte (minima dimensione
 		// allocabile)
-		if (scorri->dimensione - quanti >= sizeof(des_mem) + sizeof(long)) {
+		if (scorri->size - quanti >= sizeof(des_mem) + sizeof(long)) {
 
 			// il nuovo descrittore verra' scritto nei primi byte 
 			// della zona da creare (quindi, "quanti" byte dopo "p")
@@ -47,8 +47,8 @@ void* alloca(size_t dim)
 			des_mem* nuovo = static_cast<des_mem*>(pnuovo);
 
 			// aggiustiamo le dimensioni della vecchia e della nuova zona
-			nuovo->dimensione = scorri->dimensione - quanti - sizeof(des_mem);
-			scorri->dimensione = quanti;
+			nuovo->size = scorri->size - quanti - sizeof(des_mem);
+			scorri->size = quanti;
 
 			// infine, inseriamo "nuovo" nella lista delle zone libere,
 			// al posto precedentemente occupato da "scorri"
@@ -56,7 +56,7 @@ void* alloca(size_t dim)
 			if (prec != 0) 
 				prec->next = nuovo;
 			else
-				memlibera = nuovo;
+				free_heap = nuovo;
 
 		} else {
 
@@ -66,7 +66,7 @@ void* alloca(size_t dim)
 			if (prec != 0)
 				prec->next = scorri->next;
 			else
-				memlibera = scorri->next;
+				free_heap = scorri->next;
 		}
 		
 		// a scopo di debug, inseriamo un valore particolare nel campo

@@ -29,6 +29,6 @@ void dealloca(void* p)
     // la zona viene liberata tramite la funzione "free_interna", che ha
     // bisogno dell'indirizzo di partenza e della dimensione della zona
     // comprensiva del suo descrittore
-    free_interna(des, des->dimensione + sizeof(des_mem));
+    free_interna(des, des->size + sizeof(des_mem));
 }
 

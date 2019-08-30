@@ -1,48 +1,90 @@
-// sistema.cpp
-//
-#include "costanti.h"
+/**
+ * File: sistema.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 30/08/2019.
+ */
+
+#include "constants.h"
 #include <libqlk.h>
 #include <log.h>
 #include <apic.h>
 
-/////////////////////////////////////////////////////////////////////////////////
-//                     PROCESSI                                                //
-/////////////////////////////////////////////////////////////////////////////////
-const natl MAX_PRIORITY	= 0xfffffff;
-const natl MIN_PRIORITY	= 0x0000001;
-const natl DUMMY_PRIORITY = 0x0000000;
-const int N_REG = 16;	// numero di registri nel campo contesto
+////////////////////////////////////////////////////////////////////////////////
+//                                PROCESSES                                   //
+////////////////////////////////////////////////////////////////////////////////
 
-// si veda in PAGINAZIONE per il significato di questi typedef
+/**
+ *
+ */
+const natl MAX_PRIORITY	= 0xfffffff;
+
+/**
+ *
+ */
+const natl MIN_PRIORITY	= 0x0000001;
+
+/**
+ *
+ */
+const natl DUMMY_PRIORITY = 0x0000000;
+
+/**
+ *
+ */
+const int N_REG = 16; // numero di registri nel campo contesto
+
+/**
+ * Memory Virtual Address.
+ */
 typedef natq vaddr;
+
+/**
+ * Memory Physical Address.
+ */
 typedef natq faddr;
+
+/**
+ *
+ */
 typedef natq tab_entry;
 
-// descrittore di processo
-struct des_proc {
-	// parte richiesta dall'hardware
-	struct __attribute__ ((packed)) {
-		natl riservato1;
-		vaddr punt_nucleo;
-		// due quad  a disposizione (puntatori alle pile ring 1 e 2)
-		natq disp1[2];
-		natq riservato2;
-		//entry della IST, non usata
-		natq disp2[7];
-		natq riservato3;
-		natw riservato4;
-		natw iomap_base; // si veda crea_processo()
-	};
-	//finiti i campi obbligatori
-	faddr cr3;
-	natq contesto[N_REG];
-	natl cpl;
+/**
+ * Process Descriptor.
+ */
+struct des_proc
+{
+    // hardware required
+    struct __attribute__ ((packed))
+    {
+        natl riservato1;
+        vaddr punt_nucleo;
+
+        // due quad  a disposizione (puntatori alle pile ring 1 e 2)
+        natq disp1[2];
+        natq riservato2;
+
+        //entry della IST, non usata
+        natq disp2[7];
+        natq riservato3;
+        natw riservato4;
+        natw iomap_base; // si veda crea_processo()
+    };
+
+    // custom data
+    faddr cr3;
+    natq contesto[N_REG];
+    natl cpl;
 };
 
 // numero di processi utente attivi
 volatile natl processi;
-// distrugge il processo puntato da esecuzione
+
+/**
+ * Destroys the process currently pointed by execution.
+ */
 extern "C" void c_abort_p();
+
 // dato un id, restiusce il puntatore al corrispondente des_proc
 // (definita in sistema.s)
 extern "C" des_proc *des_p(natl id);
@@ -55,13 +97,24 @@ enum { I_RAX, I_RCX, I_RDX, I_RBX,
 	I_R11, I_R12, I_R13, I_R14, I_R15 };
 // )
 
-// elemento di una coda di processi
-struct proc_elem {
-	natl id;
-	natl precedenza;
-	proc_elem *puntatore;
+/**
+ * Can be used to represent a process in a queue.
+ */
+struct proc_elem
+{
+    natl id;
+    natl precedenza;
+    proc_elem *puntatore;
 };
-proc_elem *esecuzione;
+
+/**
+ * Current Process at any given time.
+ */
+proc_elem *execution;
+
+/**
+ * 
+ */
 proc_elem *pronti;
 
 void inserimento_lista(proc_elem *&p_lista, proc_elem *p_elem)
@@ -102,21 +155,21 @@ void rimozione_lista(proc_elem *&p_lista, proc_elem *&p_elem)
 // )
 }
 
-// inserisce esecuzione in testa alla lista pronti
+// inserisce execution in testa alla lista pronti
 extern "C" void inspronti()
 {
 // (
-	esecuzione->puntatore = pronti;
-	pronti = esecuzione;
+	execution->puntatore = pronti;
+	pronti = execution;
 // )
 }
 
-// sceglie il prossimo processo da mettere in esecuzione
+// sceglie il prossimo processo da mettere in execution
 extern "C" void schedulatore(void)
 {
 // ( poiche' la lista e' gia' ordinata in base alla priorita',
 //   e' sufficiente estrarre l'elemento in testa
-	rimozione_lista(pronti, esecuzione);
+	rimozione_lista(pronti, execution);
 // )
 }
 
@@ -157,7 +210,7 @@ extern "C" void c_sem_wait(natl sem)
 	(s->counter)--;
 
 	if ((s->counter) < 0) {
-		inserimento_lista(s->pointer, esecuzione);
+		inserimento_lista(s->pointer, execution);
 		schedulatore();
 	}
 }
@@ -207,7 +260,7 @@ extern "C" void c_delay(natl n)
 
 	p = static_cast<richiesta*>(alloca(sizeof(richiesta)));
 	p->d_attesa = n;
-	p->pp = esecuzione;
+	p->pp = execution;
 
 	inserimento_lista_attesa(p);
 	schedulatore();
@@ -279,7 +332,7 @@ void process_dump(natl id, log_sev sev);
 extern "C" void gestore_eccezioni(int tipo, natq errore, addr rip)
 {
 	flog(LOG_WARN, "Eccezione %d (%s), errore %x", tipo, eccezioni[tipo], errore);
-	process_dump(esecuzione->id, LOG_WARN);
+	process_dump(execution->id, LOG_WARN);
 	c_abort_p();
 }
 // (*il microprogramma di gestione delle eccezioni di page fault lascia in cima
@@ -497,10 +550,9 @@ des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virtuale); // piu' avant
 des_frame* alloca_frame(natl proc, int livello, vaddr ind_virt); // piu' avanti
 // )
 
-
-/////////////////////////////////////////////////////////////////////////////////
-//                         PAGINAZIONE                                         //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                               MEMORY PAGING                                //
+////////////////////////////////////////////////////////////////////////////////
 
 static const natq BIT_SEGNO = (1UL << 47);
 static const natq MASCHERA_MODULO = BIT_SEGNO - 1;
@@ -728,7 +780,7 @@ bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
 			set_IND_MASSA(dt, blocco);
 			set_ZERO(dt, true);
 			dt = dt | BIT_RW;
-			if (priv == LIV_UTENTE) dt = dt | BIT_US;
+			if (priv == LEV_USER) dt = dt | BIT_US;
 		}
 		if (liv > 0) {
 			des_frame *df = swap(proc, liv, ind_virt);
@@ -737,7 +789,7 @@ bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
 					proc, liv, ind_virt);
 				return false;
 			}
-			df->residente = (priv == LIV_SISTEMA);
+			df->residente = (priv == LEV_SYSTEM);
 		}
 	}
 	return true;
@@ -784,7 +836,7 @@ faddr crea_tab4()
 	}
 	df->livello = 4;
 	df->residente = true;
-	df->processo = esecuzione->id;
+	df->processo = execution->id;
 	faddr tab4 = indirizzo_frame(df);
 	memset(reinterpret_cast<void *>(tab4), 0, DIM_PAGINA);
 
@@ -852,14 +904,14 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 	// )
 
 	// ( creazione della pila sistema .
-	if (!crea_pila(p->id, fin_sis_p, DIM_SYS_STACK, LIV_SISTEMA))
+	if (!crea_pila(p->id, fin_sis_p, DIM_SYS_STACK, LEV_SYSTEM))
 		goto errore5;
 	pila_sistema = carica_pila_sistema(p->id, fin_sis_p, DIM_SYS_STACK);
 	if (pila_sistema == 0)
 		goto errore6;
 	// )
 
-	if (liv == LIV_UTENTE) {
+	if (liv == LEV_USER) {
 		// ( inizializziamo la pila sistema.
 		natq* pl = reinterpret_cast<natq*>(pila_sistema);
 
@@ -874,7 +926,7 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 		// )
 
 		// ( creazione della pila utente
-		if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LIV_UTENTE)) {
+		if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER)) {
 			flog(LOG_WARN, "creazione pila utente fallita");
 			goto errore6;
 		}
@@ -895,7 +947,7 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 		pdes_proc->contesto[I_RDI] = a;
 		//pdes_proc->contesto[I_FPU_CR] = 0x037f;
 		//pdes_proc->contesto[I_FPU_TR] = 0xffff;
-		pdes_proc->cpl = LIV_UTENTE;
+		pdes_proc->cpl = LEV_USER;
 	
 		//   il campo iomap_base contiene l'offset (nel TSS) dell'inizio 
 		//   della "I/O bitmap". Questa bitmap contiene un bit per ogni
@@ -932,7 +984,7 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 
 		//pdes_proc->contesto[I_FPU_CR] = 0x037f;
 		//pdes_proc->contesto[I_FPU_TR] = 0xffff;
-		pdes_proc->cpl = LIV_SISTEMA;
+		pdes_proc->cpl = LEV_SYSTEM;
 
 		//   tutti gli altri campi valgono 0
 		// )
@@ -957,7 +1009,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 
 	// (* non possiamo accettare una priorita' minore di quella di dummy
 	//    o maggiore di quella del processo chiamante
-	if (prio < MIN_PRIORITY || prio > esecuzione->precedenza) {
+	if (prio < MIN_PRIORITY || prio > execution->precedenza) {
 		flog(LOG_WARN, "priorita' non valida: %d", prio);
 		c_abort_p();
 		return;
@@ -966,14 +1018,14 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 
 	// (* controlliamo che 'liv' contenga un valore ammesso
 	//    [segnalazione di E. D'Urso]
-	if (liv != LIV_UTENTE && liv != LIV_SISTEMA) {
+	if (liv != LEV_USER && liv != LEV_SYSTEM) {
 		flog(LOG_WARN, "livello non valido: %d", liv);
 		c_abort_p();
 		return;
 	}
 	// *)
 
-	if (liv == LIV_SISTEMA && des_p(esecuzione->id)->cpl == LIV_UTENTE) {
+	if (liv == LEV_SYSTEM && des_p(execution->id)->cpl == LEV_USER) {
 		flog(LOG_WARN, "errore di protezione");
 		c_abort_p();
 		return;
@@ -982,7 +1034,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 	// (* accorpiamo le parti comuni tra c_activate_p e c_activate_pe
 	// nella funzione ausiliare crea_processo
 	// (questa svolge, tra l'altro, i punti 1-3 in)
-	p = crea_processo(f, a, prio, liv, (liv == LIV_UTENTE));
+	p = crea_processo(f, a, prio, liv, (liv == LEV_USER));
 	// *)
 
 	if (p != 0) {
@@ -993,7 +1045,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 		flog(LOG_INFO, "proc=%d entry=%p(%d) prio=%d liv=%d", id, f, a, prio, liv);
 	}
 
-	des_proc *self = des_p(esecuzione->id);
+	des_proc *self = des_p(execution->id);
 	self->contesto[I_RAX] = id;
 }
 
@@ -1017,7 +1069,7 @@ void distruggi_processo(proc_elem* p)
 	riassegna_tutto(p->id, tab4, I_UTN_C, N_UTN_C);
 	rilascia_tutto(tab4, I_UTN_P, N_UTN_P);
 	ultimo_terminato = tab4;
-	if (p != esecuzione) {
+	if (p != execution) {
 		distruggi_pila_precedente();
 	}
 	rilascia_tss(id_to_tss(p->id));
@@ -1073,7 +1125,7 @@ void riassegna_tutto(natl proc, faddr tab4, natl i, natl n)
 
 void term_cur_proc(log_sev sev, const char *mode)
 {
-	proc_elem *p = esecuzione;
+	proc_elem *p = execution;
 	distruggi_processo(p);
 	processi--;
 	flog(sev, "Processo %d %s", p->id, mode);
@@ -1087,11 +1139,16 @@ extern "C" void c_terminate_p()
 	term_cur_proc(LOG_INFO, "terminato");
 }
 
-// come la terminate_p, ma invia anche un warning al log (da invocare quando si
-// vuole terminare un processo segnalando che c'e' stato un errore)
+/**
+ * Aborts the process currently pointed by 'execution'.
+ *
+ * The only difference with c_terminate_p is that an additionally warning log is
+ * also sent whem using this method. Must be used when a process is aborted as a
+ * result of an occurring error.
+ */
 extern "C" void c_abort_p()
 {
-	term_cur_proc(LOG_WARN, "abortito");
+	term_cur_proc(LOG_WARN, "Current execution process aborted.");
 }
 // )
 
@@ -1157,7 +1214,7 @@ bool scollega(des_frame* df)	//
 	set_P(e, false);
 	if (occorre_salvare)
 		set_ZERO(e, false);
-	if (df->processo == esecuzione->id)
+	if (df->processo == execution->id)
 		invalida_entrata_TLB(df->ind_virtuale);
 	return occorre_salvare;	//
 }
@@ -1211,7 +1268,7 @@ void stat();
 bool c_routine_pf()
 {
 	vaddr ind_virt = readCR2();
-	natl proc = esecuzione->id;
+	natl proc = execution->id;
 
 	stat();
 
@@ -1372,7 +1429,7 @@ bool crea_spazio_condiviso()
 
 	// ( copiamo i descrittori relativi allo spazio condiviso anche nel direttorio
 	//   corrente, in modo che vengano ereditati dai processi che creeremo in seguito
-	faddr my_dir = des_p(esecuzione->id)->cr3;
+	faddr my_dir = des_p(execution->id)->cr3;
 	copy_des(dummy_dir, my_dir, I_MIO_C, N_MIO_C);
 	copy_des(dummy_dir, my_dir, I_UTN_C, N_UTN_C);
 	// )
@@ -1389,7 +1446,9 @@ const natq HEAP_START = 1*MiB;
 extern "C" natq start;
 const natq HEAP_SIZE = (natq)&start - HEAP_START;
 
-
+/**
+ * Initial process.
+ */
 proc_elem init;
 
 // creazione del processo dummy iniziale (usata in fase di inizializzazione del sistema)
@@ -1404,7 +1463,7 @@ void dd(int i)
 
 natl crea_dummy()
 {
-	proc_elem* di = crea_processo(dd, 0, DUMMY_PRIORITY, LIV_SISTEMA, true);
+	proc_elem* di = crea_processo(dd, 0, DUMMY_PRIORITY, LEV_SYSTEM, true);
 	if (di == 0) {
 		flog(LOG_ERR, "Impossibile creare il processo dummy");
 		return 0xFFFFFFFF;
@@ -1413,17 +1472,24 @@ natl crea_dummy()
 	processi++;
 	return di->id;
 }
+
 void main_sistema(int n);
+
 natl crea_main_sistema()
 {
-	proc_elem* m = crea_processo(main_sistema, 0, MAX_PRIORITY, LIV_SISTEMA, false);
-	if (m == 0) {
-		flog(LOG_ERR, "Impossibile creare il processo main_sistema");
-		return 0xFFFFFFFF;
-	}
-	inserimento_lista(pronti, m);
-	processi++;
-	return m->id;
+    proc_elem* m = crea_processo(main_sistema, 0, MAX_PRIORITY, LEV_SYSTEM, false);
+
+    if (m == 0)
+    {
+        flog(LOG_ERR, "Impossibile creare il processo main_sistema");
+        return 0xFFFFFFFF;
+    }
+
+    inserimento_lista(pronti, m);
+
+    processi++;
+
+    return m->id;
 }
 
 // ( [P_EXTERN_PROC]
@@ -1454,7 +1520,7 @@ bool aggiungi_pe(proc_elem *p, natb irq)
 extern "C" void c_activate_pe(void f(int), int a, natl prio, natl liv, natb type)
 {
 	proc_elem	*p;			// proc_elem per il nuovo processo
-	des_proc *self = des_p(esecuzione->id);
+	des_proc *self = des_p(execution->id);
 
 	if (prio < MIN_PRIORITY) {
 		flog(LOG_WARN, "priorita' non valida: %d", prio);
@@ -1484,7 +1550,7 @@ error1:
 bool is_accessible(vaddr a)
 {
 	for (int i = 4; i > 0; i--) {
-		natq d = get_des(esecuzione->id, i, a);
+		natq d = get_des(execution->id, i, a);
 		bool bitP = extr_P(d);
 		if (!bitP)
 			return false;
@@ -1499,7 +1565,7 @@ void process_dump(natl id, log_sev sev)
 	des_proc *p = des_p(id);
 	natq *pila = (natq*)p->contesto[I_RSP];
 
-	flog(sev, "  RIP=%lx CPL=%s", pila[0], pila[1] == SEL_CODICE_UTENTE ? "LIV_UTENTE" : "LIV_SISTEMA");
+	flog(sev, "  RIP=%lx CPL=%s", pila[0], pila[1] == SEL_CODICE_UTENTE ? "LEV_USER" : "LEV_SYSTEM");
 	natq rflags = pila[2];
         flog(sev, "  RFLAGS=%lx [%s %s %s %s %s %s %s %s %s %s, IOPL=%s]",
 		rflags,
@@ -1567,12 +1633,12 @@ extern "C" void c_panic(const char *msg)
 	in_panic = 1;
 
 	flog(LOG_ERR, "PANIC: %s", msg);
-	if (esecuzione->id)
-		process_dump(esecuzione->id, LOG_ERR);
+	if (execution->id)
+		process_dump(execution->id, LOG_ERR);
 	flog(LOG_ERR, "  processi utente: %d", processi - 1);
 	for (natl id = MIN_PROC_ID; id < MAX_PROC_ID; id += 16) {
 		des_proc *p = des_p(id);
-		if (p && p->cpl == LIV_UTENTE) {
+		if (p && p->cpl == LEV_USER) {
 			vaddr v_eip = fin_sis_p - 5 * sizeof(natq);
 			natq dp = get_des(id, 1, v_eip);
 			natq ind_fis_pag = (natq)extr_IND_FISICO(dp);
@@ -1595,7 +1661,7 @@ extern "C" faddr c_trasforma(vaddr ind_virt)
 {
 	natq d;
 	for (int liv = 4; liv > 0; liv--) {
-		d = get_des(esecuzione->id, liv, ind_virt);
+		d = get_des(execution->id, liv, ind_virt);
 		if (!extr_P(d)) {
 			flog(LOG_WARN, "impossibile trasformare %lx: non presente a livello %d",
 				ind_virt, liv);
@@ -1610,67 +1676,91 @@ extern "C" faddr c_trasforma(vaddr ind_virt)
 	return extr_IND_FISICO(d) | (ind_virt & 0xfff);
 }
 
-// ( [P_IOAPIC]
-
+/**
+ *
+ */
 void apic_fill()
 {
-	apic_set_VECT(0, VETT_0);
-	apic_set_VECT(1, VETT_1);
-	apic_set_VECT(2, VETT_2);
-	apic_set_VECT(3, VETT_3);
-	apic_set_VECT(4, VETT_4);
-	apic_set_VECT(5, VETT_5);
-	apic_set_VECT(6, VETT_6);
-	apic_set_VECT(7, VETT_7);
-	apic_set_VECT(8, VETT_8);
-	apic_set_VECT(9, VETT_9);
-	apic_set_VECT(10, VETT_10);
-	apic_set_VECT(11, VETT_11);
-	apic_set_VECT(12, VETT_12);
-	apic_set_VECT(13, VETT_13);
-	apic_set_VECT(14, VETT_14);
-	apic_set_VECT(15, VETT_15);
-	apic_set_VECT(16, VETT_16);
-	apic_set_VECT(17, VETT_17);
-	apic_set_VECT(18, VETT_18);
-	apic_set_VECT(19, VETT_19);
-	apic_set_VECT(20, VETT_20);
-	apic_set_VECT(21, VETT_21);
-	apic_set_VECT(22, VETT_22);
-	apic_set_VECT(23, VETT_23);
+    apic_set_VECT(0, VETT_0);
+    apic_set_VECT(1, VETT_1);
+    apic_set_VECT(2, VETT_2);
+    apic_set_VECT(3, VETT_3);
+    apic_set_VECT(4, VETT_4);
+    apic_set_VECT(5, VETT_5);
+    apic_set_VECT(6, VETT_6);
+    apic_set_VECT(7, VETT_7);
+    apic_set_VECT(8, VETT_8);
+    apic_set_VECT(9, VETT_9);
+    apic_set_VECT(10, VETT_10);
+    apic_set_VECT(11, VETT_11);
+    apic_set_VECT(12, VETT_12);
+    apic_set_VECT(13, VETT_13);
+    apic_set_VECT(14, VETT_14);
+    apic_set_VECT(15, VETT_15);
+    apic_set_VECT(16, VETT_16);
+    apic_set_VECT(17, VETT_17);
+    apic_set_VECT(18, VETT_18);
+    apic_set_VECT(19, VETT_19);
+    apic_set_VECT(20, VETT_20);
+    apic_set_VECT(21, VETT_21);
+    apic_set_VECT(22, VETT_22);
+    apic_set_VECT(23, VETT_23);
 }
 
-// )
-
-// timer
+/**
+ *
+ */
 extern "C" void attiva_timer(natl count);
+
+/**
+ *
+ */
 const natl DELAY = 59659;
+
+/**
+ * Initializes the GDT.
+ */
 extern "C" void init_gdt();
 
+/**
+ *
+ */
 extern "C" void salta_a_main();
+
+/**
+ * C++ STARTUP.
+ * Called after the execution of _start:, start: defined in system.s.
+ * The stack and the IDT have been initialized at this point.
+ */
 extern "C" void cmain()
 {
-	natl mid;
+    natl mid;
 
-	// (* anche se il primo processo non e' completamente inizializzato,
-	//    gli diamo un identificatore, in modo che compaia nei log
-	init.id = 0xFFFFFFFF;
-	init.precedenza = MAX_PRIORITY;
-	esecuzione = &init;
-	// *)
+    // even though the first initial process is not yet completely initialized
+    // we set its ID and priority in order to be able to identify it
+    init.id = 0xFFFFFFFF;
+    init.precedenza = MAX_PRIORITY;
 
-	flog(LOG_INFO, "Nucleo di Calcolatori Elettronici, v5.12.6");
-	init_gdt();
-	flog(LOG_INFO, "gdt inizializzata");
+    // set current process in execution
+    execution = &init;
+
+    // print welcome log message
+    flog(LOG_INFO, "QEMU Linux Kernel, v5.12.6");
+
+    // initialize GDT
+    init_gdt();
+
+    // log gdt initialized
+    flog(LOG_INFO, "GDT Initialized.");
 
 	// (* Assegna allo heap di sistema HEAP_SIZE byte nel secondo MiB
 	heap_init((addr)HEAP_START, HEAP_SIZE);
-	flog(LOG_INFO, "Heap di sistema: %x B @%x", HEAP_SIZE, HEAP_START);
+	flog(LOG_INFO, "System heap: %x B @%x", HEAP_SIZE, HEAP_START);
 	// *)
 
 	// ( il resto della memoria e' per i frame (parte M2)
 	init_des_frame();
-	flog(LOG_INFO, "Pagine fisiche: %d", N_DF);
+	flog(LOG_INFO, "Physical pages: %d", N_DF);
 	// )
 
 	flog(LOG_INFO, "sis/cond [%p, %p)", ini_sis_c, fin_sis_c);
@@ -1683,18 +1773,26 @@ extern "C" void cmain()
 
 	if(!crea_finestra_FM(inittab4))
 			goto error;
+
 	loadCR3(inittab4);
 	flog(LOG_INFO, "Caricato CR3");
 
-	apic_init(); // in libce
-	apic_reset(); // in libce
+    // [libqlk]: 
+	apic_init();
+
+    // [libqlk]: 
+	apic_reset();
+
+    // 
 	apic_fill();
-	flog(LOG_INFO, "APIC inizializzato");
+
+	flog(LOG_INFO, "APIC Initialized.");
 
 	// ( inizializzazione dello swap, che comprende la lettura
 	//   degli entry point di start_io e start_utente
 	if (!swap_init())
 			goto error;
+
 	flog(LOG_INFO, "sb: blocks = %d", swap_dev.sb.blocks);
 	flog(LOG_INFO, "sb: user   = %p/%p",
 			swap_dev.sb.user_entry,
@@ -1726,13 +1824,14 @@ extern "C" void cmain()
 	// )
 
 error:
-	c_panic("Errore di inizializzazione");
+	c_panic("Initialization Error.");
 }
 
 void gdb_breakpoint() {}
 
 extern "C" natl activate_p(void f(int), int a, natl prio, natl liv); //
-extern "C" void terminate_p();	//
+extern "C" void terminate_p();
+
 void main_sistema(int n)
 {
 	natl sync_io;
@@ -1755,7 +1854,7 @@ void main_sistema(int n)
 	}
 	// occupiamo l'entrata del timer
 	aggiungi_pe(ESTERN_BUSY, 2);
-	if (activate_p(swap_dev.sb.io_entry, sync_io, MAX_PRIORITY, LIV_SISTEMA) == 0xFFFFFFFF) {
+	if (activate_p(swap_dev.sb.io_entry, sync_io, MAX_PRIORITY, LEV_SYSTEM) == 0xFFFFFFFF) {
 		flog(LOG_ERR, "impossibile creare il processo main I/O");
 		goto error;
 	}
@@ -1765,7 +1864,7 @@ void main_sistema(int n)
 
 	// ( creazione del processo start_utente
 	flog(LOG_INFO, "creazione del processo start_utente...");
-	if (activate_p(swap_dev.sb.user_entry, 0, MAX_PRIORITY, LIV_UTENTE) == 0xFFFFFFFF) {
+	if (activate_p(swap_dev.sb.user_entry, 0, MAX_PRIORITY, LEV_USER) == 0xFFFFFFFF) {
 		flog(LOG_ERR, "impossibile creare il processo main utente");
 		goto error;
 	}

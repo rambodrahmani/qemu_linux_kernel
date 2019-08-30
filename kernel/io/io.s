@@ -1,5 +1,13 @@
-#include "costanti.h"
+#*******************************************************************************
+# File: io.s
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 30/08/2019.
+#*******************************************************************************
 
+#-------------------------------------------------------------------------------
+#include "constants.h"
+#-------------------------------------------------------------------------------
 param_err:
 	.asciz "indirizzo non valido: %p"
 
@@ -8,7 +16,7 @@ param_err:
 	movq $\gate, %rdi
 	movabs $\off, %rax
 	movq %rax, %rsi
-	movq $LIV_UTENTE, %rdx
+	movq $LEV_USER, %rdx
 	call fill_gate
 .endm
 
@@ -493,7 +501,9 @@ hd_write_address:
 	leave
 	ret
 
+#-------------------------------------------------------------------------------
 .global			hd_write_command
+#-------------------------------------------------------------------------------
 hd_write_command:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -505,15 +515,19 @@ hd_write_command:
 	leave
 	ret
 
-
+#-------------------------------------------------------------------------------
 .global		hd_go_inout
+#-------------------------------------------------------------------------------
 hd_go_inout:		#...
 	movw %di, %dx		// ind. di DEV_CTL in edx
 	movb $0x08,%al
 	outb %al, %dx			// abilitazione dell' interfaccia a
 					// generare interruzioni
 	ret
+
+#-------------------------------------------------------------------------------
 .global			hd_halt_inout
+#-------------------------------------------------------------------------------
 hd_halt_inout:
 	movw %di, %dx		// ind. di DEV_CTL in edx
 	movb $0x0A,%al
@@ -539,31 +553,45 @@ ms_out:	movw %si,%dx
 	leave
 	ret
 
+#-------------------------------------------------------------------------------
 .global		readhd_n
+#-------------------------------------------------------------------------------
 readhd_n:
 		.cfi_startproc
 		int		$IO_TIPO_HDR
 		ret
 		.cfi_endproc
+
+#-------------------------------------------------------------------------------
 .global		writehd_n
+#-------------------------------------------------------------------------------
 writehd_n:	
 		.cfi_startproc
 		int		$IO_TIPO_HDW
 		ret
 		.cfi_endproc
+
+#-------------------------------------------------------------------------------
 .global		dmareadhd_n
+#-------------------------------------------------------------------------------
 dmareadhd_n:	
 		.cfi_startproc
 		int		$IO_TIPO_DMAHDR
 		ret
 		.cfi_endproc
+
+#-------------------------------------------------------------------------------
 .global		dmawritehd_n
+#-------------------------------------------------------------------------------
 dmawritehd_n:	
 		.cfi_startproc
 		int		$IO_TIPO_DMAHDW
 		ret
 		.cfi_endproc
+
+#-------------------------------------------------------------------------------
 .extern		c_readhd_n
+#-------------------------------------------------------------------------------
 a_readhd_n:	# routine INT $io_tipo_hdr
 		.cfi_startproc
 		.cfi_def_cfa_offset 40
@@ -576,7 +604,9 @@ a_readhd_n:	# routine INT $io_tipo_hdr
 		iretq
 		.cfi_endproc
 
+#-------------------------------------------------------------------------------
 .EXTERN		c_writehd_n
+#-------------------------------------------------------------------------------
 a_writehd_n:	# routine INT $io_tipo_hdw
 		.cfi_startproc
 		.cfi_def_cfa_offset 40
@@ -589,8 +619,10 @@ a_writehd_n:	# routine INT $io_tipo_hdw
 		iretq
 		.cfi_endproc
 
-.EXTERN		c_dmareadhd_n
-a_dmareadhd_n: 	# routine INT $dma_tipob_r
+#-------------------------------------------------------------------------------
+.EXTERN c_dmareadhd_n
+#-------------------------------------------------------------------------------
+a_dmareadhd_n:                      # routine INT $dma_tipob_r
 		.cfi_startproc
 		.cfi_def_cfa_offset 40
 		.cfi_offset rip, -40
@@ -602,8 +634,10 @@ a_dmareadhd_n: 	# routine INT $dma_tipob_r
 		iretq
 		.cfi_endproc
 
-.EXTERN		c_dmawritehd_n
-a_dmawritehd_n:	# routine INT $dma_tipob_w
+#-------------------------------------------------------------------------------
+.EXTERN c_dmawritehd_n
+#-------------------------------------------------------------------------------
+a_dmawritehd_n:                     # routine INT $dma_tipob_w
 		.cfi_startproc
 		.cfi_def_cfa_offset 40
 		.cfi_offset rip, -40
@@ -614,4 +648,5 @@ a_dmawritehd_n:	# routine INT $dma_tipob_w
 		call	c_dmawritehd_n
 		iretq
 		.cfi_endproc
+#*******************************************************************************
 

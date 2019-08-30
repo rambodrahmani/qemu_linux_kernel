@@ -1,42 +1,56 @@
-// sistema.s
+#*******************************************************************************
+# File: system.s
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 30/09/2019.
+#*******************************************************************************
 
-#include "costanti.h"
+#-------------------------------------------------------------------------------
+#include "constants.h"
 
-//////////////////////////////////////////////////////////////////////////
-// AVVIO                                                                  //
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                                  STARTUP                                   //
+////////////////////////////////////////////////////////////////////////////////
 
-#define STACK_SIZE                      0x1000
+#-------------------------------------------------------------------------------
+# Define stack memory space size.
+#define  STACK_SIZE  0x1000
 
-.globl  _start, start
-_start:				// entry point
+#-------------------------------------------------------------------------------
+.GLOBAL _start, start                      # global entry points for the linker
+#-------------------------------------------------------------------------------
+_start:
 start:
-	// usiamo la pila che abbiamo messo da parte
-	movq $(stack + STACK_SIZE), %rsp
-	// inizializziamo la IDT
-	call init_idt
-	// Il C++ prevede che si possa eseguire del codice prima di main (per
-	// es. nei costruttori degli oggetti globali). gcc organizza questo
-	// codice in una serie di funzioni di cui raccoglie i puntatori
-	// nell'array __init_array_start. Il C++ run time deve poi chiamare
-	// tutte queste funzioni prima di saltare a main.  Poiche' abbiamo
-	// compilato il modulo con -nostdlib, dobbiamo provvedere da soli a
-	// chiamare queste funzioni, altrimenti gli oggetti globali non saranno
-	// inizializzati correttamente.
-	movabs $__init_array_start, %rax
-	movq %rax, %rbx
-1:	cmpq $__init_array_end, %rbx
-	je 2f
-	call *(%rbx)
-	addq $8, %rbx
-	jmp 1b
-	// il resto dell'inizializzazione e' scritto in C++
-2:	call cmain
-	// se arrivamo qui c'e' stato un errore, fermiamo la macchina
-	hlt
+# set new address for the stack pointer register:
+    movq $(stack + STACK_SIZE), %rsp
+
+    call init_idt                       # initialize IDT
+
+# C++ allows for certain functions to be called before and after the main()
+# method. These functions are stored in the __init_array_start array. Since we
+# will be compiling our modules with the -nostdlib option enabled, we have to
+# call this methods manually because the standard library is not there to take
+# care of it.
+    movabs $__init_array_start, %rax   # copy first address in %rax
+    movq   %rax, %rbx                  # %rax -> %rbx
+
+# loop through the address in __init_array_start:
+1:  cmpq   $__init_array_end, %rbx     # check if the last address was reached
+    je     2f                          # exit loop
+    call   *(%rbx)                     # call method
+    addq   $8, %rbx                    # increase %rbx address (next method)
+    jmp    1b                          # loop again
+
+# the remaining part of the startup is written in C++:
+2:  call   cmain
+
+# execution should never reach this point, if it happens then an error has
+# occurred
+    hlt
+
 
 // macro per estrarre la base da un descrittore di TSS
-// si aspetta l'indirizzo del segmento in %rax e
+// si aspetta l indirizzo del segmento in %rax e
 // lascia il risultato in %rbx
 .macro estrai_base
 	movl 8(%eax), %ebx
@@ -52,7 +66,7 @@ start:
 	addq $(des_tss - gdt), %rbx
 .endm
 
-// offset dei vari registri all'interno di des_proc
+// offset dei vari registri all interno di des_proc
 .set CR3,104
 .set RAX,CR3+8
 .set RCX,CR3+16
@@ -72,7 +86,7 @@ start:
 .set R15,CR3+128
 
 // copia lo stato dei registri generali nel des_proc del
-// processo puntato da esecuzione.
+// processo puntato da execution.
 // Nessun registro viene sporcato.
 salva_stato:
 	// salviamo lo stato di un paio di registri
@@ -89,7 +103,7 @@ salva_stato:
 	.cfi_offset rax, -24
 
 	// ricaviamo il puntatore al des_proc
-	movq esecuzione,%rax
+	movq execution,%rax
 	movq $0, %rbx
 	movw (%rax),%bx		// campo id dal proc_elem
 	conv_id_tss		// conversione id -> offset in GDT
@@ -137,14 +151,14 @@ salva_stato:
 
 
 // carica nei registri del processore lo stato contenuto nel des_proc del
-// processo puntato da esecuzione.
+// processo puntato da execution.
 // Questa funzione sporca tutti i registri.
 carica_stato:
 	.cfi_startproc
 	.cfi_def_cfa_offset 8
-	// otteniamo la base del des_proc del processo in esecuzione
+	// otteniamo la base del des_proc del processo in execution
 	// (come per salva_stato)
-	movq esecuzione, %rdx
+	movq execution, %rdx
 	movq $0, %rbx
 	movw (%rdx), %bx
 	conv_id_tss
@@ -152,12 +166,12 @@ carica_stato:
 	leaq gdt(%rbx), %rax
 	estrai_base
 
-	// carichiamo TR con l'id del nuovo processo
+	// carichiamo TR con l id del nuovo processo
 	// (in modo che il meccanismo delle interruzioni usi la
 	// pila sistema del nuovo processo)
 	andb $0b11111101, 5(%rax)	// reset del bit BUSY
 					// (richiesto dal processore
-					// per compatibilita' con il modo
+					// per compatibilita* con il modo
 					// a 32 bit)
 	ltr %cx
 
@@ -177,9 +191,9 @@ carica_stato:
 
 	// anche se abbiamo cambiato cr3 siamo sicuri che
 	// l'esecuzione prosegue da qui, perche' ci troviamo dentro
-	// la finestra FM che e' comune a tutti i processi
+	// la finestra FM che e* comune a tutti i processi
 	movq RSP(%rbx), %rsp    //cambiamo pila
-	pushq %rcx              //rimettiamo l'indirizzo di ritorno
+	pushq %rcx              //rimettiamo l indirizzo di ritorno
 	.cfi_adjust_cfa_offset 8
 	.cfi_offset rip, -8
 
@@ -227,7 +241,7 @@ iter_tss:
 	// usiamo il bit di presenza nel descrittore per
 	// distiunguere i descrittori liberi da quelli allocati
 	testb $pres_bit, 5(%rdx)
-	jz set_entry_tss	// libero, saltiamo all'inizializzazione
+	jz set_entry_tss	// libero, saltiamo all inizializzazione
 	addq $16, %rdx		// occupato, passiamo al prossimo
 	cmpq $end_gdt, %rdx
 	jne advance_tss
@@ -260,7 +274,7 @@ end_tss:
 
 // rilascia_tss: usata alla terminazione di un processo
 // rende nuovamente libero il descrittore TSS associato al processo
-// il cui identificatore e' passato come argomento
+// il cui identificatore e* passato come argomento
 	.global rilascia_tss
 rilascia_tss:
 	.cfi_startproc
@@ -270,7 +284,7 @@ rilascia_tss:
 	retq
 	.cfi_endproc
 
-// dato l'identificatore di un processo,
+// dato l identificatore di un processo,
 // ne restituisce il puntatore al descrittore
 // (0 se non allocato)
 	.global des_p
@@ -324,7 +338,7 @@ tss_to_id:
 	ret
 	.cfi_endproc
 
-// dato un indirizzo virtuale (come parametro) usa l'istruzione invlpg per
+// dato un indirizzo virtuale (come parametro) usa l istruzione invlpg per
 // eliminare la corrispondente traduzione dal TLB
 	.global invalida_entrata_TLB //
 invalida_entrata_TLB:
@@ -344,7 +358,7 @@ violazione:
 	call carica_stato
 	iretq
 
-// controlla che l'indirizzo virtuale op sia accessibile dal
+// controlla che l indirizzo virtuale op sia accessibile dal
 // livello di privilegio del chiamante della INT. Abortisce il
 // processo in caso contrario.
 .macro cavallo_di_troia reg
@@ -367,7 +381,7 @@ violazione:
 	jc violazione
 .endm
 
-// come sopra, ma la dimensione e' in settori
+// come sopra, ma la dimensione e* in settori
 .macro cavallo_di_troia3 base sec
 
 	movq \base, %rax
@@ -376,134 +390,138 @@ violazione:
 	jc violazione
 .endm
 
-// Carica un gate della IDT
-// num: indice (a partire da 0) in IDT del gate da caricare
-// routine: indirizzo della routine da associare al gate
-// dpl: dpl del gate (LIV_SISTEMA o LIV_UTENTE)
-// NOTA: la macro si limita a chiamare la routine init_gate
-//       con gli stessi parametri. Verra' utilizzata per
-//       motivi puramente estetici
-.macro carica_gate num routine dpl
+#-------------------------------------------------------------------------------
+# Loads a gate into the IDT.
+# Parameters:
+#   num:     IDT gate index (starts from 0) to load
+#   routine: address of the subroutine to load in the IDT gate
+#   dpl:     Descriptor Priviege Level of the gate
 
-	movq $\num, %rdi
-	movq $\routine, %rsi
-	movq $\dpl, %rdx
-	call init_gate
+.macro load_gate num routine dpl
+    movq  $\num, %rdi
+	movq  $\routine, %rsi
+    movq  $\dpl, %rdx
+	call  init_gate
 .endm
-
-
-// carica la idt
-// le prime 20 entrate sono definite dall'Intel e corrispondono
-// alle possibili eccezioni.
-.global init_idt
+#-------------------------------------------------------------------------------
+# Initializes the IDT entries.
+.GLOBAL init_idt
+#-------------------------------------------------------------------------------
 init_idt:
-	//		indice		routine			dpl
-	// gestori eccezioni:
-	carica_gate	0 		divide_error 	LIV_SISTEMA
-	carica_gate	1 		debug 		LIV_SISTEMA
-	carica_gate	2 		nmi 		LIV_SISTEMA
-	carica_gate	3 		breakpoint 	LIV_SISTEMA
-	carica_gate	4 		overflow 	LIV_SISTEMA
-	carica_gate	5 		bound_re 	LIV_SISTEMA
-	carica_gate	6 		invalid_opcode	LIV_SISTEMA
-	carica_gate	7 		dev_na 		LIV_SISTEMA
-	carica_gate	8 		double_fault 	LIV_SISTEMA
-	carica_gate	9 		coproc_so 	LIV_SISTEMA
-	carica_gate	10 		invalid_tss 	LIV_SISTEMA
-	carica_gate	11 		segm_fault 	LIV_SISTEMA
-	carica_gate	12 		stack_fault 	LIV_SISTEMA
-	carica_gate	13 		prot_fault 	LIV_SISTEMA
-	carica_gate	14 		int_tipo_pf 	LIV_SISTEMA
-	carica_gate	16 		fp_exc 		LIV_SISTEMA
-	carica_gate	17 		ac_exc 		LIV_SISTEMA
-	carica_gate	18 		mc_exc 		LIV_SISTEMA
-	carica_gate	19 		simd_exc 	LIV_SISTEMA
-	// le entrate fino alla 31 sono riservate
+    //         index     routine         dpl
 
-	// driver/handler
-	carica_gate	VETT_0 		driver_td	LIV_SISTEMA
-	carica_gate	VETT_1 		handler_1	LIV_SISTEMA
-	carica_gate	VETT_2 		driver_td	LIV_SISTEMA
-	carica_gate	VETT_3 		handler_3	LIV_SISTEMA
-	carica_gate	VETT_4 		handler_4	LIV_SISTEMA
-	carica_gate	VETT_5 		handler_5	LIV_SISTEMA
-	carica_gate	VETT_6 		handler_6	LIV_SISTEMA
-	carica_gate	VETT_7 		handler_7	LIV_SISTEMA
-	carica_gate	VETT_8 		handler_8	LIV_SISTEMA
-	carica_gate	VETT_9 		handler_9	LIV_SISTEMA
-	carica_gate	VETT_10		handler_10	LIV_SISTEMA
-	carica_gate	VETT_11		handler_11	LIV_SISTEMA
-	carica_gate	VETT_12		handler_12	LIV_SISTEMA
-	carica_gate	VETT_13		handler_13	LIV_SISTEMA
-	carica_gate	VETT_14 	handler_14 	LIV_SISTEMA
-	carica_gate	VETT_15 	handler_15 	LIV_SISTEMA
-	carica_gate	VETT_16		handler_16	LIV_SISTEMA
-	carica_gate	VETT_17		handler_17	LIV_SISTEMA
-	carica_gate	VETT_18		handler_18	LIV_SISTEMA
-	carica_gate	VETT_19		handler_19	LIV_SISTEMA
-	carica_gate	VETT_20		handler_20	LIV_SISTEMA
-	carica_gate	VETT_21		handler_21	LIV_SISTEMA
-	carica_gate	VETT_22		handler_22	LIV_SISTEMA
-	carica_gate	VETT_23		handler_23	LIV_SISTEMA
-	carica_gate	VETT_S		handler_24	LIV_SISTEMA
+    // exceptions:
+    load_gate  0         divide_error    LEV_SYSTEM
+    load_gate  1         debug           LEV_SYSTEM
+    load_gate  2         nmi             LEV_SYSTEM
+    load_gate  3         breakpoint      LEV_SYSTEM
+    load_gate  4         overflow        LEV_SYSTEM
+    load_gate  5         bound_re        LEV_SYSTEM
+    load_gate  6         invalid_opcode  LEV_SYSTEM
+    load_gate  7         dev_na          LEV_SYSTEM
+    load_gate  8         double_fault    LEV_SYSTEM
+    load_gate  9         coproc_so       LEV_SYSTEM
+    load_gate  10        invalid_tss     LEV_SYSTEM
+    load_gate  11        segm_fault      LEV_SYSTEM
+    load_gate  12        stack_fault     LEV_SYSTEM
+    load_gate  13        prot_fault      LEV_SYSTEM
+    load_gate  14        int_tipo_pf     LEV_SYSTEM
+    load_gate  16        fp_exc          LEV_SYSTEM
+    load_gate  17        ac_exc          LEV_SYSTEM
+    load_gate  18        mc_exc          LEV_SYSTEM
+    load_gate  19        simd_exc        LEV_SYSTEM
+    // 19-31 reserved
 
-	//primitive
-	carica_gate	TIPO_A		a_activate_p	LIV_UTENTE
-	carica_gate	TIPO_T		a_terminate_p	LIV_UTENTE
-	carica_gate	TIPO_SI		a_sem_ini	LIV_UTENTE
-	carica_gate	TIPO_W		a_sem_wait	LIV_UTENTE
-	carica_gate	TIPO_S		a_sem_signal	LIV_UTENTE
-	carica_gate	TIPO_D		a_delay		LIV_UTENTE
-	carica_gate	TIPO_L		a_log		LIV_UTENTE
+    // drivers, handlers
+    load_gate  VETT_0    driver_td       LEV_SYSTEM
+    load_gate  VETT_1    handler_1       LEV_SYSTEM
+    load_gate  VETT_2    driver_td       LEV_SYSTEM
+    load_gate  VETT_3    handler_3       LEV_SYSTEM
+    load_gate  VETT_4    handler_4       LEV_SYSTEM
+    load_gate  VETT_5    handler_5       LEV_SYSTEM
+    load_gate  VETT_6    handler_6       LEV_SYSTEM
+    load_gate  VETT_7    handler_7       LEV_SYSTEM
+    load_gate  VETT_8    handler_8       LEV_SYSTEM
+    load_gate  VETT_9    handler_9       LEV_SYSTEM
+    load_gate  VETT_10   handler_10      LEV_SYSTEM
+    load_gate  VETT_11   handler_11      LEV_SYSTEM
+    load_gate  VETT_12   handler_12      LEV_SYSTEM
+    load_gate  VETT_13   handler_13      LEV_SYSTEM
+    load_gate  VETT_14   handler_14      LEV_SYSTEM
+    load_gate  VETT_15   handler_15      LEV_SYSTEM
+    load_gate  VETT_16   handler_16      LEV_SYSTEM
+    load_gate  VETT_17   handler_17      LEV_SYSTEM
+    load_gate  VETT_18   handler_18      LEV_SYSTEM
+    load_gate  VETT_19   handler_19      LEV_SYSTEM
+    load_gate  VETT_20   handler_20      LEV_SYSTEM
+    load_gate  VETT_21   handler_21      LEV_SYSTEM
+    load_gate  VETT_22   handler_22      LEV_SYSTEM
+    load_gate  VETT_23   handler_23      LEV_SYSTEM
+    load_gate  VETT_S    handler_24      LEV_SYSTEM
 
-	// primitive per il livello I/O
-	carica_gate	TIPO_APE	a_activate_pe	LIV_SISTEMA
-	carica_gate	TIPO_WFI	a_wfi		LIV_SISTEMA
-	carica_gate	TIPO_FG		a_fill_gate	LIV_SISTEMA
-	carica_gate	TIPO_P		a_panic		LIV_SISTEMA
-	carica_gate	TIPO_AB		a_abort_p	LIV_SISTEMA
-	carica_gate	TIPO_TRA	a_trasforma	LIV_SISTEMA
+    // primitives
+    load_gate  TIPO_A    a_activate_p    LEV_USER
+    load_gate  TIPO_T    a_terminate_p   LEV_USER
+    load_gate  TIPO_SI   a_sem_ini       LEV_USER
+    load_gate  TIPO_W    a_sem_wait      LEV_USER
+    load_gate  TIPO_S    a_sem_signal    LEV_USER
+    load_gate  TIPO_D    a_delay         LEV_USER
+    load_gate  TIPO_L    a_log           LEV_USER
 
-	lidt idt_pointer
-	ret
+    // I/O primitives
+    load_gate  TIPO_APE  a_activate_pe   LEV_SYSTEM
+    load_gate  TIPO_WFI  a_wfi           LEV_SYSTEM
+    load_gate  TIPO_FG   a_fill_gate     LEV_SYSTEM
+    load_gate  TIPO_P    a_panic         LEV_SYSTEM
+    load_gate  TIPO_AB   a_abort_p       LEV_SYSTEM
+    load_gate  TIPO_TRA  a_trasforma     LEV_SYSTEM
 
-// carica un gate nella IDT
-// parametri: (vedere la macro carica_gate)
-init_gate: //rdi = indice nella idt; rsi = offset della routine; rdx = dpl
-	movq $idt, %r11
-	movq %rsi, %rax		// offset della routine
+    # load new IDT pointer
+    lidt  idt_pointer
+    ret
 
-	shlq $4, %rdi	//indice moltiplicato la grandezza del gate (16)
-	movw %ax, (%r11, %rdi)  	// primi 16 bit dell'offset
-	movw $SEL_CODICE_SISTEMA, 2(%r11, %rdi)
+#-------------------------------------------------------------------------------
+# Creates and IDT gate at the given index with the given subroutine and DPL.
+#  %rdi: IDT entry index;
+#  %rsi: subroutine address;
+#  %rdx: DPL;
+init_gate:
+    movq $idt, %r11
+    movq %rsi, %rax
 
-	movw $0, %ax
-	movb $0b10001110, %ah 	        // byte di accesso
-					// (presente, 32bit, tipo interrupt)
-	movb %dl, %al		// DPL
-	shlb $5, %al			// posizione del DPL nel byte di accesso
-	orb  %al, %ah			// byte di accesso con DPL in %ah
-	movb $0, %al			// la parte bassa deve essere 0
-	movl %eax, 4(%r11, %rdi)	// 16 bit piu' sign. dell'offset
-					// e byte di accesso
-	shrq $32, %rax			//estensione a 64 bit dell'offset
-	movl %eax, 8(%r11,%rdi)
-	movl $0, 12(%r11,%rdi) 	//riservato
+    shlq $4, %rdi
+    movw %ax, (%r11, %rdi)
+    movw $SEL_CODICE_SISTEMA, 2(%r11, %rdi)
 
-	ret
+    movw $0, %ax
+    movb $0b10001110, %ah
 
+    movb %dl, %al
+    shlb $5, %al
+    orb  %al, %ah
+    movb $0, %al
+    movl %eax, 4(%r11, %rdi)
 
+    shrq $32, %rax
+    movl %eax, 8(%r11,%rdi)
+    movl $0, 12(%r11,%rdi)
 
-	.global init_gdt
+    ret
+
+#-------------------------------------------------------------------------------
+.GLOBAL init_gdt
+#-------------------------------------------------------------------------------
 init_gdt:
-	lgdt gdt_pointer
+    lgdt gdt_pointer
+    retq
 
-	retq
+////////////////////////////////////////////////////////////////////////////////
+//                      a_[primitive] DEFINITIONS                             //
+////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////
-// a_primitive                                        //
-////////////////////////////////////////////////////////
-        .extern c_activate_p
+#-------------------------------------------------------------------------------
+.extern c_activate_p
+#-------------------------------------------------------------------------------
 a_activate_p:	// routine int $tipo_a
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -883,7 +901,7 @@ prot_fault:
 	iretq
 	.cfi_endproc
 
-// l'eccezione di page fault la trattiamo a parte. Vogliamo, infatti, gestirla
+// l eccezione di page fault la trattiamo a parte. Vogliamo, infatti, gestirla
 // per realizzare la memoria virtuale.
 int_tipo_pf:
 	.cfi_startproc
@@ -997,7 +1015,7 @@ handler_1:
 
 	movq $1, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1013,7 +1031,7 @@ handler_2:
 
 	movq $2, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1029,7 +1047,7 @@ handler_3:
 
 	movq $3, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1045,7 +1063,7 @@ handler_4:
 
 	movq $4, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1061,7 +1079,7 @@ handler_5:
 
 	movq $5, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1077,7 +1095,7 @@ handler_6:
 
 	movq $6, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1093,7 +1111,7 @@ handler_7:
 
 	movq $7, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1109,7 +1127,7 @@ handler_8:
 
 	movq $8, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1125,7 +1143,7 @@ handler_9:
 
 	movq $9, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1141,7 +1159,7 @@ handler_10:
 
 	movq $10, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1157,7 +1175,7 @@ handler_11:
 
 	movq $11, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1173,7 +1191,7 @@ handler_12:
 
 	movq $12, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1189,7 +1207,7 @@ handler_13:
 
 	movq $13, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1205,7 +1223,7 @@ handler_14:
 
 	movq $14, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1221,7 +1239,7 @@ handler_15:
 
 	movq $15, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1237,7 +1255,7 @@ handler_16:
 
 	movq $16, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1253,7 +1271,7 @@ handler_17:
 
 	movq $17, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1269,7 +1287,7 @@ handler_18:
 
 	movq $18, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1285,7 +1303,7 @@ handler_19:
 
 	movq $19, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1301,7 +1319,7 @@ handler_20:
 
 	movq $20, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1317,7 +1335,7 @@ handler_21:
 
 	movq $21, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1333,7 +1351,7 @@ handler_22:
 
 	movq $22, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1349,7 +1367,7 @@ handler_23:
 
 	movq $23, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1365,7 +1383,7 @@ handler_24:
 
 	movq $24, %rcx
 	movq a_p(, %rcx, 8), %rax
-	movq %rax, esecuzione
+	movq %rax, execution
 
 	call carica_stato
 	iretq
@@ -1473,31 +1491,49 @@ end_program:
        lidt triple_fault_idt
        int $1
 
-////////////////////////////////////////////////////////////////
-// sezione dati: tabelle e stack			      //
-////////////////////////////////////////////////////////////////
-.data
-.global		fine_codice_sistema
+////////////////////////////////////////////////////////////////////////////////
+//                               DATA SECTION                                 //
+////////////////////////////////////////////////////////////////////////////////
+.DATA
+.GLOBAL  fine_codice_sistema
+#_------------------------------------------------------------------------------
 fine_codice_sistema:
-	.quad etext
-	// puntatori alle tabelle GDT e IDT
-	// nel formato richiesto dalle istruzioni LGDT e LIDT
-gdt_pointer:
-	.word end_gdt-gdt		 	// limite della GDT
-	.quad gdt			// base della GDT
-idt_pointer:
-	.word 0xFFF			// limite della IDT (256 entrate)
-	.quad idt			// base della IDT
-triple_fault_idt:
-	.word 0
-	.quad 0
-param_err:
-	.asciz "indirizzo non valido: %p"
+	.QUAD etext
 
-.balign 8
-.global gdt
+#-------------------------------------------------------------------------------
+# GDT memory space location as required by Assembly LGDT instruction: 'The
+# source operand specifies a 6-byte memory location that contains the base
+# address (a linear address) and the limit (size of table in bytes) of the
+# global descriptor table (GDT)'.
+gdt_pointer:
+    .WORD end_gdt - gdt       # GDT top
+    .QUAD gdt               # GDT base
+
+#-------------------------------------------------------------------------------
+# IDT memory space location as required by Assembly IDT instruction: 'The source
+# operand specifies a 6-byte memory location that contains the base address (a
+# linear address) and the limit (size of table in bytes) of the interrupt
+# descriptor table (IDT)'.
+idt_pointer:
+    .WORD 0xFFF             # IDT top: 256 entries
+    .QUAD idt               # IDT base
+
+#-------------------------------------------------------------------------------
+triple_fault_idt:
+    .WORD 0
+    .QUAD 0
+
+#-------------------------------------------------------------------------------
+param_err:
+    .ASCIZ "Invalid address: %p"
+
+#-------------------------------------------------------------------------------
+# GDT 
+.BALIGN 8
+.GLOBAL gdt
+#-------------------------------------------------------------------------------
 gdt:
-	.quad 0		//segmento nullo
+    .quad 0             # null segment
 code_sys_seg:
 	.word 0b0           //limit[15:0]   not used
 	.word 0b0           //base[15:0]    not used
@@ -1532,9 +1568,12 @@ exc_error:
 .balign 16
 idt:
 	// spazio per 256 gate
-	// verra' riempita a tempo di esecuzione
+	// verra riempita a tempo di esecuzione
 	.space 16 * 256, 0
 end_idt:
 
+#-------------------------------------------------------------------------------
+# Reserve stack memory space
 stack:
-	.space STACK_SIZE, 0
+    .space STACK_SIZE, 0
+#*************************************************************************************

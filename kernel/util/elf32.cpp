@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#include "costanti.h"
+#include "constants.h"
 #include "interp.h"
 #include "elf32.h"
 

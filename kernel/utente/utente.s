@@ -1,6 +1,6 @@
 # utente.s
 #
-#include <costanti.h>
+#include <constants.h>
 
 	.global _start, start
 _start:

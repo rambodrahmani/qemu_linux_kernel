@@ -10,7 +10,7 @@ You can do whatever you want with it.
 #include <dpmi.h> /* __dpmi_regs, __dpmi_int() */
 #include <go32.h> /* _go32_info_block, __tb, dosmemget(), dosmemput() */
 #include <string.h>
-#include "costanti.h"
+#include "constants.h"
 #include "swap.h"
 
 #define	BPS	512	/* bytes per sector for disk */

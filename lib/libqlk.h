@@ -409,7 +409,7 @@ void dealloca(void* p);
  *
  * @return
  */
-size_t disponibile();
+size_t available_heap();
 
 /*
  * Advanced utility functions.

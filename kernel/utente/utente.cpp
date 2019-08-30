@@ -79,9 +79,9 @@ int main()
 {
 	mailbox_piena = sem_ini(0);
 	mailbox_vuota = sem_ini(1);
-	scrittore1 = activate_p(pms, 1, 5, LIV_UTENTE);
-	scrittore2 = activate_p(pms, 2, 5, LIV_UTENTE);
-	lettore = activate_p(pml, 0, 5, LIV_UTENTE);
+	scrittore1 = activate_p(pms, 1, 5, LEV_USER);
+	scrittore2 = activate_p(pms, 2, 5, LEV_USER);
+	lettore = activate_p(pml, 0, 5, LEV_USER);
 
 	terminate_p();
 }
