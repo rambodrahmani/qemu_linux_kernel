@@ -19,9 +19,9 @@ echo "Completed."
 
 # clean up QEMU folder
 echo ""
-echo "*****************************"
-echo "*  Cleaning up QEMU folder  *"
-echo "*****************************"
+echo "*********************************"
+echo "*  Cleaning up the QEMU folder  *"
+echo "*********************************"
 cd qemu-lk
 rm -rf qemu*
 cd ..
@@ -72,6 +72,19 @@ rm -f compile
 rm -f debug
 rm -f boot
 cd ..
+cd ..
+echo "Completed."
+
+# clean up kernel folder
+echo ""
+echo "***********************************"
+echo "*  Cleaning up the Kernel folder  *"
+echo "***********************************"
+cd kernel
+rm -f sistema/*.o io/*.o utente/*.o util/*.o
+rm -f util/start.mk util/start.gdb util/start.pl
+rm -f build/*
+rm swap.img
 cd ..
 echo "Completed."
 
