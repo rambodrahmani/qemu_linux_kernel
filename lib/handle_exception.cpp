@@ -13,6 +13,6 @@
  */
 extern "C" void handle_exception(line type, line err, void* eip)
 {
-    flog(LOG_WARN, "Exception %ld, error = %lx, EIP = %p\n", type,  err, eip);
+    flog(LOG_WARN, "Exception %ld, error = %lx, EIP = %p\n", type, err, eip);
 }
 

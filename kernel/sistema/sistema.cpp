@@ -300,41 +300,65 @@ extern "C" void panic(cstr msg) __attribute__ (( noreturn ));
 // implementazione in [P_PANIC]
 // *)
 
-/////////////////////////////////////////////////////////////////////////////////
-//                         ECCEZIONI                                           //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                                 EXCEPTIONS                                 //
+////////////////////////////////////////////////////////////////////////////////
 
-static const char *eccezioni[] = {
-	"errore di divisione", 		// 0
-	"debug",			// 1
-	"interrupt non mascherabile",	// 2
-	"breakpoint",			// 3
-	"overflow",			// 4
-	"bound check",			// 5
-	"codice operativo non valido",	// 6
-	"dispositivo non disponibile",	// 7
-	"doppio fault",			// 8
-	"coprocessor segment overrun",	// 9
-	"TSS non valido",		// 10
-	"segmento non presente",	// 11
-	"errore sul segmento stack",	// 12
-	"errore di protezione",		// 13
-	"page fault",			// 14
-	"riservato",			// 15
-	"errore su virgola mobile",	// 16
-	"errore di allineamento",	// 17
-	"errore interno",		// 18
-	"errore SIMD",			// 19
-};
-// gestore generico di eccezioni (chiamata da tutti i gestori di eccezioni in
-// sistema.s, tranne il gestore di page fault e di non-maskable-interrupt)
-void process_dump(natl id, log_sev sev);
-extern "C" void gestore_eccezioni(int tipo, natq errore, addr rip)
+/**
+ * Descriptive string for the exceptions.
+ *
+ * The processor will sometimes need to signal your kernel. Something major may
+ * have happened, such as a divide-by-zero, or a page fault. To do this, it uses
+ * the first 32 interrupts. It is therefore doubly important that all of these
+ * are mapped and non-NULL - else the CPU will triple-fault and reset (bochs
+ * will panic with an 'unhandled exception' error).
+ */
+static const char *exceptions[] =
 {
-	flog(LOG_WARN, "Eccezione %d (%s), errore %x", tipo, eccezioni[tipo], errore);
-	process_dump(execution->id, LOG_WARN);
-	c_abort_p();
+    "Division by zero exception",   // 0
+    "Debug exception",              // 1
+    "Non maskable interrupt",       // 2
+    "Breakpoint exception",         // 3
+    "Overflow exception",           // 4
+    "Out of bounds exception",      // 5
+    "Invalid opcode exception",     // 6
+    "No coprocessor exception",     // 7
+    "Double fault",                 // 8, pushes an error code
+    "Coprocessor segment overrun",  // 9
+    "Bad TSS",                      // 10, pushes an error code
+    "Segment not present",          // 11, pushes an error code
+    "Stack fault",                  // 12, pushes an error code
+    "General protection fault",     // 13, pushes an error code
+    "Page fault",                   // 14, pushes an error code
+    "Unknown interrupt exception",  // 15
+    "Coprocessor fault",            // 16
+    "Alignment check exception",    // 17
+    "Machine check exception",      // 18
+    "SIMD exception",               // 19
+};
+
+/**
+ * Dumps the current process data.
+ */
+void process_dump(natl id, log_sev sev);
+
+/**
+ * All exception are handled in the same way. This function writes a log message
+ * containing info about the handled exception, dumps the current process data 
+ * which caused the exception data and aborts it.
+ */
+extern "C" void handle_exception(int type, natq err, addr eip)
+{
+    // log warning message about the Exception
+    flog(LOG_WARN, "Exception %ld, error = %lx, EIP = %p\n", type, err, eip);
+
+    // dump current process info
+    process_dump(execution->id, LOG_WARN);
+
+    // abort current process
+    c_abort_p();
 }
+
 // (*il microprogramma di gestione delle eccezioni di page fault lascia in cima
 //   alla pila (oltre ai valori consueti) una parola quadrupla i cui 4 bit meno
 //   significativi specificano piu' precisamente il motivo per cui si e'
@@ -351,7 +375,8 @@ extern "C" void gestore_eccezioni(int tipo, natq errore, addr rip)
 //   - res: uno dei bit riservati nel descrittore di pagina o di tabella non
 //   avevano il valore richiesto (il bit D deve essere 0 per i descrittori di
 //   tabella, e il bit pgsz deve essere 0 per i descrittori di pagina)
-struct pf_error {
+struct pf_error
+{
 	natq prot  : 1;
 	natq write : 1;
 	natq user  : 1;
@@ -361,15 +386,20 @@ struct pf_error {
 // *)
 
 bool c_routine_pf();
+
 extern "C" vaddr readCR2();
+
 extern "C" faddr readCR3();
+
 extern "C" natq end;	// ultimo indirizzo del codice sistema (fornito dal collegatore)
+
 bool in_pf = false;	//* true mentre stiamo gestendo un page fault
 // (* c_pre_routine_pf() e' la routine che viene chiamata in caso di page
 //    fault. Effettua dei controlli aggiuntivi prima di chiamare la
 //    routine c_routine_pf() che provvede a caricare le tabelle e pagine
 //    mancanti
 // *)
+
 extern "C" void c_pre_routine_pf(
 		int tipo,		/* 14 */
 		pf_error errore,	/* vedi sopra */
@@ -425,16 +455,16 @@ out:
 	in_pf = false;	//* fine della gestione del page fault
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////
-//                         FRAME					       //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                                   FRAME                                    //
+////////////////////////////////////////////////////////////////////////////////
 
 // avremo un descrittore di frame per ogni frame della parte M2.  Lo scopo del
 // descrittore e' di contenere alcune informazioni relative al contenuto del
 // frame corrispondente. Tali informazioni servono principalmente a
 // facilitare o rendere possibile il rimpiazzamento del contenuto stesso.
-struct des_frame {
+struct des_frame
+{
 	int	livello;	// 0=pagina, -1=libera, >0=livello tabella
 	bool	residente;	// pagina residente o meno
 	// identificatore del processo a cui appartiene l'entita'
@@ -492,13 +522,13 @@ natq allinea(natq a, natq m)
 	return (a + m - 1) & ~(m - 1);
 }
 
-// ( [P_MEM_PHYS]
-// init_des_frame viene chiamata in fase di inizalizzazione.  Tutta la
-// memoria non ancora occupata viene usata per i frame.  La funzione
-// si preoccupa anche di allocare lo spazio per i descrittori di frame
-// e di inizializzarli in modo che tutti frame risultino liberi
-// &end e' l'indirizzo del primo byte non occupato dal modulo sistema
-// (e' calcolato dal collegatore).
+/**
+ * Called during initialization. All the available memory not yet occupied is
+ * used to allocate page frames. A page, memory page, or virtual page is a
+ * fixed-length contiguous block of virtual memory. Similarly, a page frame is
+ * the smallest fixed-length contiguous block of physical memory into which
+ * memory pages are mapped by the operating system.
+ */
 bool init_des_frame()
 {
 	faddr vdf_start;
@@ -826,7 +856,9 @@ faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
 	return indirizzo_frame(dp) + DIM_PAGINA;
 }
 
-
+/**
+ *
+ */
 faddr crea_tab4()
 {
 	des_frame* df = alloca_frame_libero();
@@ -1438,12 +1470,23 @@ bool crea_spazio_condiviso()
 	return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-//                   INIZIALIZZAZIONE                                            //
-///////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                              INITIALIZATION                                //
+////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * 1 MiB Heap Memory Space.
+ */
 const natq HEAP_START = 1*MiB;
+
+/**
+ * Heap memory space start address.
+ */
 extern "C" natq start;
+
+/**
+ * Heap memory space size.
+ */
 const natq HEAP_SIZE = (natq)&start - HEAP_START;
 
 /**
@@ -1452,7 +1495,8 @@ const natq HEAP_SIZE = (natq)&start - HEAP_START;
 proc_elem init;
 
 // creazione del processo dummy iniziale (usata in fase di inizializzazione del sistema)
-extern "C" void end_program();	//
+extern "C" void end_program();
+
 // corpo del processo dummy	//
 void dd(int i)
 {
@@ -1560,6 +1604,7 @@ bool is_accessible(vaddr a)
 
 // indirizzo del primo byte che non contiene codice di sistema (vedi "sistema.s")
 extern "C" addr fine_codice_sistema;
+
 void process_dump(natl id, log_sev sev)
 {
 	des_proc *p = des_p(id);
@@ -1753,89 +1798,92 @@ extern "C" void cmain()
     // log gdt initialized
     flog(LOG_INFO, "GDT Initialized.");
 
-	// (* Assegna allo heap di sistema HEAP_SIZE byte nel secondo MiB
-	heap_init((addr)HEAP_START, HEAP_SIZE);
-	flog(LOG_INFO, "System heap: %x B @%x", HEAP_SIZE, HEAP_START);
-	// *)
+    // Initialize system heap memory space
+    heap_init((addr)HEAP_START, HEAP_SIZE);
 
-	// ( il resto della memoria e' per i frame (parte M2)
-	init_des_frame();
-	flog(LOG_INFO, "Physical pages: %d", N_DF);
-	// )
-
-	flog(LOG_INFO, "sis/cond [%p, %p)", ini_sis_c, fin_sis_c);
-	flog(LOG_INFO, "sis/priv [%p, %p)", ini_sis_p, fin_sis_p);
-	flog(LOG_INFO, "io /cond [%p, %p)", ini_mio_c, fin_mio_c);
-	flog(LOG_INFO, "usr/cond [%p, %p)", ini_utn_c, fin_utn_c);
-	flog(LOG_INFO, "usr/priv [%p, %p)", ini_utn_p, fin_utn_p);
-
-	faddr inittab4 = crea_tab4();
-
-	if(!crea_finestra_FM(inittab4))
-			goto error;
-
-	loadCR3(inittab4);
-	flog(LOG_INFO, "Caricato CR3");
-
-    // [libqlk]: 
-	apic_init();
-
-    // [libqlk]: 
-	apic_reset();
+    // log heap memory space initialized
+    flog(LOG_INFO, "System heap: %x B @%x", HEAP_SIZE, HEAP_START);
 
     // 
-	apic_fill();
+    init_des_frame();
+    flog(LOG_INFO, "Physical pages: %d", N_DF);
 
-	flog(LOG_INFO, "APIC Initialized.");
+    // log system initialized parameters
+    flog(LOG_INFO, "sis/cond [%p, %p)", ini_sis_c, fin_sis_c);
+    flog(LOG_INFO, "sis/priv [%p, %p)", ini_sis_p, fin_sis_p);
+    flog(LOG_INFO, "io /cond [%p, %p)", ini_mio_c, fin_mio_c);
+    flog(LOG_INFO, "usr/cond [%p, %p)", ini_utn_c, fin_utn_c);
+    flog(LOG_INFO, "usr/priv [%p, %p)", ini_utn_p, fin_utn_p);
 
-	// ( inizializzazione dello swap, che comprende la lettura
-	//   degli entry point di start_io e start_utente
-	if (!swap_init())
-			goto error;
+    faddr inittab4 = crea_tab4();
 
-	flog(LOG_INFO, "sb: blocks = %d", swap_dev.sb.blocks);
-	flog(LOG_INFO, "sb: user   = %p/%p",
-			swap_dev.sb.user_entry,
-			swap_dev.sb.user_end);
-	flog(LOG_INFO, "sb: io     = %p/%p",
-			swap_dev.sb.io_entry,
-			swap_dev.sb.io_end);
-	// )
-	//
-	// ( creazione del processo main_sistema
-	mid = crea_main_sistema();
-	if (mid == 0xFFFFFFFF)
-		goto error;
-	flog(LOG_INFO, "Creato il processo main_sistema (id = %d)", mid);
-	// )
+    if (!crea_finestra_FM(inittab4))
+        goto error;
 
-	// ( creazione del processo dummy
-	dummy_proc = crea_dummy();
-	if (dummy_proc == 0xFFFFFFFF)
-		goto error;
-	flog(LOG_INFO, "Creato il processo dummy (id = %d)", dummy_proc);
-	// )
+    loadCR3(inittab4);
+    flog(LOG_INFO, "Caricato CR3");
 
-	// (* selezioniamo main_sistema
-	schedulatore();
-	// *)
-	// ( esegue CALL carica_stato; IRETQ (vedi "sistema.S")
-	salta_a_main();
-	// )
+    // [libqlk]: 
+    apic_init();
+
+    // [libqlk]: 
+    apic_reset();
+
+    // 
+    apic_fill();
+
+    flog(LOG_INFO, "APIC Initialized.");
+
+    // ( inizializzazione dello swap, che comprende la lettura
+    //   degli entry point di start_io e start_utente
+    if (!swap_init())
+        goto error;
+
+    flog(LOG_INFO, "sb: blocks = %d", swap_dev.sb.blocks);
+    flog(LOG_INFO, "sb: user   = %p/%p", swap_dev.sb.user_entry, swap_dev.sb.user_end);
+    flog(LOG_INFO, "sb: io     = %p/%p", swap_dev.sb.io_entry, swap_dev.sb.io_end);
+
+    mid = crea_main_sistema();
+    if (mid == 0xFFFFFFFF)
+        goto error;
+
+    flog(LOG_INFO, "Creato il processo main_sistema (id = %d)", mid);
+
+    dummy_proc = crea_dummy();
+    if (dummy_proc == 0xFFFFFFFF)
+        goto error;
+
+    flog(LOG_INFO, "Creato il processo dummy (id = %d)", dummy_proc);
+
+    schedulatore();
+
+    salta_a_main();
 
 error:
-	c_panic("Initialization Error.");
+    c_panic("Initialization Error.");
 }
 
+/**
+ *
+ */
 void gdb_breakpoint() {}
 
+/**
+ *
+ */
 extern "C" natl activate_p(void f(int), int a, natl prio, natl liv); //
+
+/**
+ *
+ */
 extern "C" void terminate_p();
 
+/**
+ *
+ */
 void main_sistema(int n)
 {
 	natl sync_io;
-
 
 	// ( caricamento delle tabelle e pagine residenti degli spazi condivisi ()
 	flog(LOG_INFO, "creazione o lettura delle tabelle e pagine residenti condivise...");

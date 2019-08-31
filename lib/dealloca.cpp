@@ -26,9 +26,9 @@ void dealloca(void* p)
     if (des->next != reinterpret_cast<des_mem*>(0xdeadbeef))
         panic("free() errata");
 
-    // la zona viene liberata tramite la funzione "free_interna", che ha
+    // la zona viene liberata tramite la funzione "internal_free", che ha
     // bisogno dell'indirizzo di partenza e della dimensione della zona
     // comprensiva del suo descrittore
-    free_interna(des, des->size + sizeof(des_mem));
+    internal_free(des, des->size + sizeof(des_mem));
 }
 

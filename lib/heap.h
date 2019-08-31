@@ -38,6 +38,8 @@ extern des_mem* free_heap;
 
 /**
  *
+ * @param  address
+ * @param  size
  */
-void free_interna(addr indirizzo, size_t quanti);
+void internal_free(addr address, size_t size);
 

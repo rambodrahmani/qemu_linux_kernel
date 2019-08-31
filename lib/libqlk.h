@@ -387,9 +387,11 @@ extern "C" void delay(natl num);
 size_t allinea(size_t v, size_t a);
 
 /**
+ * Initializes the heap memory space starting from start with a dimension of
+ * 'siize'.
  *
- * @param   start
- * @param   size
+ * @param  start  heap memory space start address;
+ * @param  size   heap memory space size.
  */
 void heap_init(void* start, size_t size);
 

@@ -1,5 +1,6 @@
 /**
  * File: heap_init.cpp
+ *       Initializes the heap memory space with the given parameters.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 06/07/2019.
@@ -10,6 +11,6 @@
 
 void heap_init(void *start, size_t size)
 {
-    free_interna(start, size);
+    internal_free(start, size);
 }
 
