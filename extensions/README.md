@@ -6,8 +6,7 @@ code your own for the Kernel.
 
 ## TO-DO
 
-- [x] Finish my changes
-- [ ] Push my commits to GitHub
+- [x] Finish implementing available extensions.
 - [ ] Open a pull request
 
 
