@@ -88,7 +88,7 @@ program and then those coded using the `flog` function.
 
 # TO-DO
 - [ ] Finish writing the README file
-- [ ] Finish comment the source code files
+- [ ] Finish commenting the source code files
 - [ ] Split up `io` and `system` source files into multiple source files
 
 --
