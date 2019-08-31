@@ -5,7 +5,11 @@ development for the Kernel in order to provide some user program showing how to
 code your own for the Kernel.
 
 ## TO-DO
-- [] Implement all available extensions
+
+- [x] Finish my changes
+- [ ] Push my commits to GitHub
+- [ ] Open a pull request
+
 
 --
 
