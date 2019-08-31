@@ -7,7 +7,6 @@ code your own for the Kernel.
 ## TO-DO
 
 - [x] Finish implementing available extensions.
-- [ ] Open a pull request
 
 
 --
