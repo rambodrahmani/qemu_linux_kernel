@@ -308,6 +308,9 @@ make --no-print-directory --quiet BUILD_DIR=/home/rambodrahmani/DevOps/qemu_linu
         done
 ```
 
+# TO-DO
+Please refer to the TO-DO section of each sub-folder.
+
 --
 
 Originally seen here: [Calcolatori Elettronici - Unipi - Ing. Informatica](http://calcolatori.iet.unipi.it/)

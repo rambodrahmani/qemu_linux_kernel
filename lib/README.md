@@ -90,6 +90,10 @@ hardware support.
 ##### Paging
 ##### Multitasking
 
+# TO-DO
+- [ ] Finish writing the README file
+- [ ] Finish comment the source code files
+
 --
 
 Originally seen here: [Calcolatori Elettronici - Unipi - Ing. Informatica](http://calcolatori.iet.unipi.it/)

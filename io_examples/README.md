@@ -50,6 +50,10 @@ Make sure you go through the I/O examples in the following order:
 16. interrupt-timer-1
 17. interrupt-timer-2
 
+# TO-DO
+
+- [ ] Add I/O examples `mem1` and `mem2`
+
 --
 
 Originally seen here: [Calcolatori Elettronici - Unipi - Ing. Informatica](http://calcolatori.iet.unipi.it/)
