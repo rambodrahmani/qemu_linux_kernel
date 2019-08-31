@@ -51,8 +51,8 @@ Make sure you go through the I/O examples in the following order:
 17. interrupt-timer-2
 
 # TO-DO
-
 - [ ] Add I/O examples `mem1` and `mem2`
+- [ ] Update README file examples list
 
 --
 
