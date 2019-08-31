@@ -92,7 +92,7 @@ hardware support.
 
 # TO-DO
 - [ ] Finish writing the README file
-- [ ] Finish comment the source code files
+- [ ] Finish commenting the source code files
 
 --
 
