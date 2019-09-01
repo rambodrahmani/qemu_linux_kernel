@@ -623,7 +623,7 @@ a_wfi:		// routine int $tipo_wfi
 	.cfi_offset rsp, -16
 	call salva_stato
 	call apic_send_EOI
-	call schedulatore
+	call schedule
 	call carica_stato
 	iretq
 	.cfi_endproc

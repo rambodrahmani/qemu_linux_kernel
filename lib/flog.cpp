@@ -17,7 +17,7 @@
 extern "C" void do_log(log_sev sev, const char* buf, natl size);
 
 /**
- *
+ * When using this method, keep in mind that % is a special character.
  */
 extern "C" void flog(log_sev sev, const char* fmt, ...)
 {

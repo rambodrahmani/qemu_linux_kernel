@@ -77,8 +77,10 @@ struct des_proc
     natl cpl;
 };
 
-// numero di processi utente attivi
-volatile natl processi;
+/**
+ * Number of active user processes.
+ */
+volatile natl user_processes;
 
 /**
  * Destroys the process currently pointed by execution.
@@ -164,13 +166,14 @@ extern "C" void inspronti()
 // )
 }
 
-// sceglie il prossimo processo da mettere in execution
-extern "C" void schedulatore(void)
+/**
+ * Selects the next process to be placed under execution. Since the processes
+ * list is ordered according to priority we can just remove the process on the
+ * top of the list.
+ */
+extern "C" void schedule(void)
 {
-// ( poiche' la lista e' gia' ordinata in base alla priorita',
-//   e' sufficiente estrarre l'elemento in testa
-	rimozione_lista(pronti, execution);
-// )
+    rimozione_lista(pronti, execution);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -211,7 +214,7 @@ extern "C" void c_sem_wait(natl sem)
 
 	if ((s->counter) < 0) {
 		inserimento_lista(s->pointer, execution);
-		schedulatore();
+		schedule();
 	}
 }
 
@@ -235,7 +238,7 @@ extern "C" void c_sem_signal(natl sem)
 		rimozione_lista(s->pointer, lavoro);
 		inspronti();	// preemption
 		inserimento_lista(pronti, lavoro);
-		schedulatore();	// preemption
+		schedule();	// preemption
 	}
 }
 
@@ -263,7 +266,7 @@ extern "C" void c_delay(natl n)
 	p->pp = execution;
 
 	inserimento_lista_attesa(p);
-	schedulatore();
+	schedule();
 }
 
 // inserisce P nella coda delle richieste al timer
@@ -1071,7 +1074,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 
 	if (p != 0) {
 		inserimento_lista(pronti, p);
-		processi++;
+		user_processes++;
 		id = p->id;			// id del processo creato
 						// (allocato da crea_processo)
 		flog(LOG_INFO, "proc=%d entry=%p(%d) prio=%d liv=%d", id, f, a, prio, liv);
@@ -1092,20 +1095,34 @@ extern "C" void distruggi_pila_precedente() {
 	rilascia_frame(descrittore_frame(ultimo_terminato));
 	ultimo_terminato = 0;
 }
-void distruggi_processo(proc_elem* p)
-{
-	des_proc* pdes_proc = des_p(p->id);
 
-	faddr tab4 = pdes_proc->cr3;
-	riassegna_tutto(p->id, tab4, I_MIO_C, N_MIO_C);
-	riassegna_tutto(p->id, tab4, I_UTN_C, N_UTN_C);
-	rilascia_tutto(tab4, I_UTN_P, N_UTN_P);
-	ultimo_terminato = tab4;
-	if (p != execution) {
-		distruggi_pila_precedente();
-	}
-	rilascia_tss(id_to_tss(p->id));
-	dealloca(pdes_proc);
+/**
+ * Destroys the given process.
+ *
+ * @param  p  the process to be destroyed.
+ */
+void destroy_process(proc_elem* p)
+{
+    des_proc* pdes_proc = des_p(p->id);
+
+    faddr tab4 = pdes_proc->cr3;
+
+    riassegna_tutto(p->id, tab4, I_MIO_C, N_MIO_C);
+
+    riassegna_tutto(p->id, tab4, I_UTN_C, N_UTN_C);
+
+    rilascia_tutto(tab4, I_UTN_P, N_UTN_P);
+
+    ultimo_terminato = tab4;
+
+    if (p != execution)
+    {
+        distruggi_pila_precedente();
+    }
+
+    rilascia_tss(id_to_tss(p->id));
+
+    dealloca(pdes_proc);
 }
 
 // rilascia ntab tabelle (con tutte le pagine da esse puntate) a partire da
@@ -1155,20 +1172,37 @@ void riassegna_tutto(natl proc, faddr tab4, natl i, natl n)
 	riassegna_ric(proc, tab4, 4, i, n);
 }
 
+/**
+ * Aborts the current process in execution.
+ *
+ * @param  sev  log message severity;
+ * @param  mode
+ */
 void term_cur_proc(log_sev sev, const char *mode)
 {
-	proc_elem *p = execution;
-	distruggi_processo(p);
-	processi--;
-	flog(sev, "Processo %d %s", p->id, mode);
-	dealloca(p);
-	schedulatore();
+    // retrive current process
+    proc_elem *p = execution;
+
+    // destroy the current process
+    destroy_process(p);
+
+    // descrease active user processes counter
+    user_processes--;
+
+    // print log message
+    flog(sev, "Process %d %s", p->id, mode);
+
+    // dealloc memory space
+    dealloca(p);
+
+    // schedule next process
+    schedule();
 }
 
 // parte "C++" della terminate_p
 extern "C" void c_terminate_p()
 {
-	term_cur_proc(LOG_INFO, "terminato");
+	term_cur_proc(LOG_INFO, "aborted");
 }
 
 /**
@@ -1202,7 +1236,8 @@ extern "C" void c_driver_td(void)
 		dealloca(p);
 	}
 
-	schedulatore();
+    // schedule next process
+    schedule();
 }
 
 void scrivi_swap(addr src, natl blocco);
@@ -1500,7 +1535,7 @@ extern "C" void end_program();
 // corpo del processo dummy	//
 void dd(int i)
 {
-	while (processi != 1)
+	while (user_processes != 1)
 		;
 	end_program();
 }
@@ -1513,7 +1548,7 @@ natl crea_dummy()
 		return 0xFFFFFFFF;
 	}
 	inserimento_lista(pronti, di);
-	processi++;
+	user_processes++;
 	return di->id;
 }
 
@@ -1531,7 +1566,7 @@ natl crea_main_sistema()
 
     inserimento_lista(pronti, m);
 
-    processi++;
+    user_processes++;
 
     return m->id;
 }
@@ -1585,7 +1620,7 @@ extern "C" void c_activate_pe(void f(int), int a, natl prio, natl liv, natb type
 	self->contesto[I_RAX] = p->id;
 	return;
 
-error2:	distruggi_processo(p);
+error2:	destroy_process(p);
 error1:
 	self->contesto[I_RAX] = 0xFFFFFFFF;
 	return;
@@ -1680,7 +1715,7 @@ extern "C" void c_panic(const char *msg)
 	flog(LOG_ERR, "PANIC: %s", msg);
 	if (execution->id)
 		process_dump(execution->id, LOG_ERR);
-	flog(LOG_ERR, "  processi utente: %d", processi - 1);
+	flog(LOG_ERR, "  active user processes: %d", user_processes - 1);
 	for (natl id = MIN_PROC_ID; id < MAX_PROC_ID; id += 16) {
 		des_proc *p = des_p(id);
 		if (p && p->cpl == LEV_USER) {
@@ -1855,7 +1890,8 @@ extern "C" void cmain()
 
     flog(LOG_INFO, "Creato il processo dummy (id = %d)", dummy_proc);
 
-    schedulatore();
+    // schedule next process
+    schedule();
 
     salta_a_main();
 
@@ -1883,12 +1919,15 @@ extern "C" void terminate_p();
  */
 void main_sistema(int n)
 {
-	natl sync_io;
+    natl sync_io;
 
-	// ( caricamento delle tabelle e pagine residenti degli spazi condivisi ()
-	flog(LOG_INFO, "creazione o lettura delle tabelle e pagine residenti condivise...");
-	if (!crea_spazio_condiviso())
-		goto error;
+    // ( caricamento delle tabelle e pagine residenti degli spazi condivisi ()
+    flog(LOG_INFO, "creazione o lettura delle tabelle e pagine residenti condivise...");
+    
+    if (!crea_spazio_condiviso())
+    {
+        goto error;
+    }
  	// )
 
 	gdb_breakpoint();
@@ -1919,10 +1958,10 @@ void main_sistema(int n)
 	// )
 	// (* attiviamo il timer
 	attiva_timer(DELAY);
-	flog(LOG_INFO, "attivato timer (DELAY=%d)", DELAY);
+	flog(LOG_INFO, "Timer initialized (DELAY=%d)", DELAY);
 	// *)
 	// ( terminazione
-	flog(LOG_INFO, "passo il controllo al processo utente...");
+	flog(LOG_INFO, "Switching to use process.");
 	terminate_p();
 	// )
 error:

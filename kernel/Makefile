@@ -1,9 +1,16 @@
+################################################################################
+# File:	Makefile
+#
+# Author: Rambod Rahmani <rambodrahmani@autistici.org>
+#         Created on 01/09/2019
+################################################################################
+
 LIBCECONF ?= $(firstword $(wildcard /usr/local/etc/libqlk.conf) $(wildcard /etc/libqlk.conf) $(wildcard $(HOME)/QEMU_LINUX_KERNEL/etc/libqlk.conf))
 $(if $(LIBCECONF),,$(error libqlk not found))
 include $(LIBCECONF)
 
-START_SISTEMA=   0x0000000000200000
-SWAP=		 swap.img
+START_SISTEMA = 0x0000000000200000
+SWAP = swap.img
 -include util/start.mk
 
 NCC ?= g++
