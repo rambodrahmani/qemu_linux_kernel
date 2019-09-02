@@ -11,15 +11,18 @@
 param_err:
 	.asciz "indirizzo non valido: %p"
 
-// Chiama fill_gate con i parametri specificati
+#-------------------------------------------------------------------------------
+# Calls fill_gate with the specified arguments. All I/O primitives have user
+# level DPL
 .macro fill_io_gate gate off
-	movq $\gate, %rdi
-	movabs $\off, %rax
-	movq %rax, %rsi
-	movq $LEV_USER, %rdx
-	call fill_gate
+    movq $\gate, %rdi           # set IDT gate index
+    movabs $\off, %rax          # set subroutine address
+    movq %rax, %rsi
+    movq $LEV_USER, %rdx        # set IDT gate DPL
+    call fill_gate
 .endm
 
+#-------------------------------------------------------------------------------
 violazione:
 	movq $2, %rdi
 	movabs $param_err, %rsi
@@ -28,11 +31,11 @@ violazione:
 	call flog
 	int $TIPO_AB
 
-// controlla che l'indirizzo virtuale op sia accessibile dal
-// livello di privilegio del chiamante della INT. Abortisce il
-// processo in caso contrario.
+#-------------------------------------------------------------------------------
+# controlla che l'indirizzo virtuale op sia accessibile dal
+# livello di privilegio del chiamante della INT. Abortisce il
+# processo in caso contrario.
 .macro cavallo_di_troia reg
-
 	cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
 	je 1f
 	movabs $0xffff000000000000, %rax
@@ -43,68 +46,83 @@ violazione:
 1:	
 .endm
 
-// controlla che base+dim non causi un wrap-around
+#-------------------------------------------------------------------------------
+# controlla che base+dim non causi un wrap-around
 .macro cavallo_di_troia2 base dim
-
 	movq \base, %rax
 	addq \dim, %rax
 	jc violazione
 .endm
 
-// come sopra, ma la dimensione e' in settori
+#-------------------------------------------------------------------------------
+# come sopra, ma la dimensione e' in settori
 .macro cavallo_di_troia3 base sec
-
 	movq \base, %rax
 	shlq $9, %rax
 	addq \sec, %rax
 	jc violazione
 .endm
 
-	.text
-.global _start, start
+#-------------------------------------------------------------------------------
+.TEXT
+.GLOBAL _start, start                                   # I/O Module Entry Point
+#-------------------------------------------------------------------------------
 _start:
-start:	jmp cmain
+start:
+    jmp  cmain
 
 ////////////////////////////////////////////////////////////////////////////////
-//                          CHIAMATE DI SISTEMA                               //
+//                                  SYSTEM CALLS                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-	.global activate_p
+#-------------------------------------------------------------------------------
+.global activate_p
+#-------------------------------------------------------------------------------
 activate_p:
-	.cfi_startproc
+    .cfi_startproc
 	int $TIPO_A
 	ret
 	.cfi_endproc
 
-	.global terminate_p //
+#-------------------------------------------------------------------------------
+.global terminate_p
+#-------------------------------------------------------------------------------
 terminate_p:
 	.cfi_startproc
 	int $TIPO_T
 	ret
 	.cfi_endproc
 
-	.global sem_ini
+#-------------------------------------------------------------------------------
+.global sem_ini
+#-------------------------------------------------------------------------------
 sem_ini:
 	.cfi_startproc
 	int $TIPO_SI
 	ret
 	.cfi_endproc
 
-	.global sem_wait	//
+#-------------------------------------------------------------------------------
+.global sem_wait
+#-------------------------------------------------------------------------------
 sem_wait:
 	.cfi_startproc
 	int $TIPO_W
 	ret
 	.cfi_endproc
 
-	.global sem_signal	//
+#-------------------------------------------------------------------------------
+.global sem_signal
+#-------------------------------------------------------------------------------
 sem_signal:
 	.cfi_startproc
 	int $TIPO_S
 	ret
 	.cfi_endproc
 
-	.global trasforma
+#-------------------------------------------------------------------------------
+.global trasforma
+#-------------------------------------------------------------------------------
 trasforma:
 	.cfi_startproc
 	int $TIPO_TRA
@@ -112,59 +130,75 @@ trasforma:
 	.cfi_endproc
 
 ////////////////////////////////////////////////////////////////////////////////
-//                     INTERFACCIA VERSO IL MODULO SISTEMA                    //
+//                      INTERFACE TO THE SYSTEM MODULE                        //
 ////////////////////////////////////////////////////////////////////////////////
 
-	.global activate_pe
-activate_pe:	//
+#-------------------------------------------------------------------------------
+.global activate_pe
+#-------------------------------------------------------------------------------
+activate_pe:
 	.cfi_startproc
 	int $TIPO_APE
 	ret
 	.cfi_endproc
 
-	.global wfi	//
+#-------------------------------------------------------------------------------
+.global wfi
+#-------------------------------------------------------------------------------
 wfi:
 	.cfi_startproc
 	int $TIPO_WFI
 	ret
 	.cfi_endproc
 
-	.global panic
+#-------------------------------------------------------------------------------
+.global panic
+#-------------------------------------------------------------------------------
 panic:
 	.cfi_startproc
 	int $TIPO_P
 	ret
 	.cfi_endproc
 
-	.global abort_p
+#-------------------------------------------------------------------------------
+.global abort_p
+#-------------------------------------------------------------------------------
 abort_p:
 	.cfi_startproc
 	int $TIPO_AB
 	ret
 	.cfi_endproc
 
-	.global fill_gate
+#-------------------------------------------------------------------------------
+.GLOBAL fill_gate                              # Interface to system.s/init_gate
+#-------------------------------------------------------------------------------
 fill_gate:
-	.cfi_startproc
-	int $TIPO_FG
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    int $TIPO_FG
+    ret
+    .cfi_endproc
 
-	.global delay
+#-------------------------------------------------------------------------------
+.global delay
+#-------------------------------------------------------------------------------
 delay:
 	.cfi_startproc
 	int $TIPO_D
 	ret
 	.cfi_endproc
 
-	.global do_log
+#-------------------------------------------------------------------------------
+.global do_log
+#-------------------------------------------------------------------------------
 do_log:
 	.cfi_startproc
 	int $TIPO_L
 	ret
 	.cfi_endproc
 
-	.global writevid
+#-------------------------------------------------------------------------------
+.global writevid
+#-------------------------------------------------------------------------------
 writevid:
 	.cfi_startproc
 	int $IO_TIPO_WCON
@@ -172,11 +206,13 @@ writevid:
 	.cfi_endproc
 
 ////////////////////////////////////////////////////////////////////////////////
-//                         FUNZIONI DI SUPPORTO                               //
+//                              UTILITY FUNCTIONS                             //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Inizio dell' ingresso da una interfaccia seriale
-	.global go_inputse
+#-------------------------------------------------------------------------------
+# Inizio dell' ingresso da una interfaccia seriale
+.global go_inputse
+#-------------------------------------------------------------------------------
 go_inputse:
 	movw %di, %dx		// ind. di IER in edx
 	inb %dx, %al
@@ -185,8 +221,10 @@ go_inputse:
 	outb %al, %dx
 	ret
 
-// Fine dell' ingresso da un' interfaccia seriale
-	.global halt_inputse
+#-------------------------------------------------------------------------------
+# Fine dell' ingresso da un' interfaccia seriale
+.global halt_inputse
+#-------------------------------------------------------------------------------
 halt_inputse:
 	movw %di, %dx		// ind. di IER in edx
 	inb %dx, %al
@@ -195,8 +233,10 @@ halt_inputse:
 				//  di interruzioni
 	ret
 
-// Inizio dell' uscita su interfaccia seriale
-	.global go_outputse
+#-------------------------------------------------------------------------------
+# Inizio dell' uscita su interfaccia seriale
+.global go_outputse
+#-------------------------------------------------------------------------------
 go_outputse:
 	movw %di, %dx		// ind. di IER in edx
 	inb %dx, %al
@@ -204,8 +244,10 @@ go_outputse:
 	outb %al, %dx
 	ret
 
-// Fine dell' uscita su interfaccia seriale
-	.global halt_outputse
+#-------------------------------------------------------------------------------
+# Fine dell' uscita su interfaccia seriale
+.global halt_outputse
+#-------------------------------------------------------------------------------
 halt_outputse:
 	movw %di, %dx		// ind. di IER in edx
 	inb %dx, %al
@@ -213,19 +255,22 @@ halt_outputse:
 	outb %al, %dx
 	ret
 
-// Indirizzi delle porte delle interfacce seriali
-.set LCR1, 0x03fb
-.set LCR2, 0x02fb
-.set DLR_LSB1, 0x03f8
-.set DLR_LSB2, 0x02f8
-.set DLR_MSB1, 0x03f9
-.set DLR_MSB2, 0x02f9
-.set IER1, 0x03f9
-.set IER2, 0x02f9
-.set RBR1, 0x03f8
-.set RBR2, 0x02f8
-.set MCR1, 0x03fc
-.set MCR2, 0x02fc
+////////////////////////////////////////////////////////////////////////////////
+//                         I/O SERIAL INTERFACES                              //
+////////////////////////////////////////////////////////////////////////////////
+
+.set  LCR1,     0x03fb
+.set  LCR2,     0x02fb
+.set  DLR_LSB1, 0x03f8
+.set  DLR_LSB2, 0x02f8
+.set  DLR_MSB1, 0x03f9
+.set  DLR_MSB2, 0x02f9
+.set  IER1,     0x03f9
+.set  IER2,     0x02f9
+.set  RBR1,     0x03f8
+.set  RBR2,     0x02f8
+.set  MCR1,     0x03fc
+.set  MCR2,     0x02fc
 
 
 // Inizializzazione delle interfacce seriali
@@ -357,29 +402,32 @@ cursore:
 	leave
 	retq
 
-// Inizializzazione dei gate per le primitive di IO
-	.global fill_io_gates
+#-------------------------------------------------------------------------------
+# IDT I/O Primitive Gates initialization
+.GLOBAL fill_io_gates
+#-------------------------------------------------------------------------------
 fill_io_gates:
-	pushq %rbp
-	movq %rsp, %rbp
+    pushq %rbp
+    movq %rsp, %rbp
 
-	fill_io_gate	IO_TIPO_RSEN	a_readse_n
-	fill_io_gate	IO_TIPO_RSELN	a_readse_ln
-	fill_io_gate	IO_TIPO_WSEN	a_writese_n
-	fill_io_gate	IO_TIPO_WSE0	a_writese_0
-	fill_io_gate	IO_TIPO_RCON	a_readconsole
-	fill_io_gate	IO_TIPO_WCON	a_writeconsole
-	fill_io_gate	IO_TIPO_INIC	a_iniconsole
-	fill_io_gate	IO_TIPO_HDR	a_readhd_n
-	fill_io_gate	IO_TIPO_HDW	a_writehd_n
-	fill_io_gate	IO_TIPO_DMAHDR	a_dmareadhd_n
-	fill_io_gate	IO_TIPO_DMAHDW	a_dmawritehd_n
+# call fill_io_gate for each I/O primitive
+    fill_io_gate    IO_TIPO_RSEN     a_readse_n
+    fill_io_gate    IO_TIPO_RSELN    a_readse_ln
+    fill_io_gate    IO_TIPO_WSEN     a_writese_n
+    fill_io_gate    IO_TIPO_WSE0     a_writese_0
+    fill_io_gate    IO_TIPO_RCON     a_readconsole
+    fill_io_gate    IO_TIPO_WCON     a_writeconsole
+    fill_io_gate    IO_TIPO_INIC     a_iniconsole
+    fill_io_gate    IO_TIPO_HDR      a_readhd_n
+    fill_io_gate    IO_TIPO_HDW      a_writehd_n
+    fill_io_gate    IO_TIPO_DMAHDR   a_dmareadhd_n
+    fill_io_gate    IO_TIPO_DMAHDW   a_dmawritehd_n
 
-	leave
-	ret
+    leave
+    ret
 
 ////////////////////////////////////////////////////////////////////////////////
-//                              PRIMITIVE DI IO                               //
+//                                 I/O PRIMITIVES                             //
 ////////////////////////////////////////////////////////////////////////////////
 
 	.extern c_readse_n

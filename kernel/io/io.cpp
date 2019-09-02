@@ -1269,32 +1269,53 @@ void mem_free(void* p)
 //                        I/O SUBSYSTEM INITIALIZATION                        //
 ////////////////////////////////////////////////////////////////////////////////
 
-// inizializza i gate usati per le chiamate di IO
-//
+/**
+ * Initializes and IDT gate for an I/O primitive.
+ */
 extern "C" void fill_io_gates(void);
 
+/**
+ *
+ */
 extern "C" natl end;
-// eseguita in fase di inizializzazione
-//
+
+/**
+ * C++ implementation of the I/O subsystem initialization.
+ */
 extern "C" void cmain(int sem_io)
 {
-	fill_io_gates();
+    // initialize I/O IDT gates
+    fill_io_gates();
 
-	mem_mutex = sem_ini(1);
-	if (mem_mutex == 0xFFFFFFFF) {
-		flog(LOG_ERR, "impossible creare semaforo mem_mutex");
-		abort_p();
+    mem_mutex = sem_ini(1);
+
+    if (mem_mutex == 0xFFFFFFFF)
+    {
+        // log error message
+        flog(LOG_ERR, "I/O Subsystem initialization: unable to create mem_mutex semaphore");
+
+        // abort the current process under execution
+        abort_p();
 	}
-	unsigned long long end_ = (unsigned long long)&end;
-	end_ = (end_ + DIM_PAGINA - 1) & ~(DIM_PAGINA - 1);
-	heap_init((void *)end_, DIM_IO_HEAP);
-	if (!console_init())
-		abort_p();
-	if (!com_init())
-		abort_p();
-	if (!hd_init())
-		abort_p();
-	sem_signal(sem_io);
-	terminate_p();
+
+    unsigned long long end_ = (unsigned long long)&end;
+
+    end_ = (end_ + DIM_PAGINA - 1) & ~(DIM_PAGINA - 1);
+
+    heap_init((void *)end_, DIM_IO_HEAP);
+
+    if (!console_init())
+        abort_p();
+
+    if (!com_init())
+        abort_p();
+
+    if (!hd_init())
+        abort_p();
+
+    sem_signal(sem_io);
+
+    // 
+    terminate_p();
 }
 

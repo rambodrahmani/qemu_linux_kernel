@@ -9,7 +9,7 @@
 #include "constants.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                  STARTUP                                   //
+//                         SYSTEM MODULE STARTUP                              //
 ////////////////////////////////////////////////////////////////////////////////
 
 #-------------------------------------------------------------------------------
@@ -600,22 +600,24 @@ a_delay:	// routine int $tipo_d
 	.cfi_endproc
 
 
-//
-// Interfaccia offerta al modulo di IO, inaccessibile dal livello utente
-//
+////////////////////////////////////////////////////////////////////////////////
+//                  INTERFACE AVAILABLE TO THE I/O MODULE                     //
+////////////////////////////////////////////////////////////////////////////////
 
-	.extern c_activate_pe
+#-------------------------------------------------------------------------------
+.EXTERN c_activate_pe
+#-------------------------------------------------------------------------------
 a_activate_pe:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	cavallo_di_troia %rdi
-        call c_activate_pe
+    call c_activate_pe
 	iretq
 	.cfi_endproc
 
-
+#-------------------------------------------------------------------------------
 a_wfi:		// routine int $tipo_wfi
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -628,6 +630,7 @@ a_wfi:		// routine int $tipo_wfi
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 a_fill_gate:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -637,33 +640,39 @@ a_fill_gate:
 	iretq
 	.cfi_endproc
 
-	.extern c_panic
-a_panic:	// routine int $tipo_p
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	//cavallo_di_troia 1
-	movq %rsp, %rsi
-	call c_panic
-1:	nop
-	jmp 1b
-	.cfi_endproc
+#-------------------------------------------------------------------------------
+.EXTERN c_panic                            # Interrupt TIPO_P C++ primitive body
+#-------------------------------------------------------------------------------
+a_panic:                                   # Interrupt TIPO_P primitive
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    //cavallo_di_troia 1
+    movq %rsp, %rsi
+    call c_panic
+1:  nop
+    jmp 1b
+    .cfi_endproc
 
-	.extern c_abort_p
-a_abort_p:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-        call c_abort_p
-	call carica_stato
-	iretq
-	.cfi_endproc
+#-------------------------------------------------------------------------------
+.EXTERN c_abort_p                         # Interrupt TIPO_AB C++ primitive body
+#-------------------------------------------------------------------------------
+a_abort_p:                                # Interrupt TIPO_AB primitive
+    .cfi_startproc  
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    call c_abort_p
+    call carica_stato
+    iretq
+    .cfi_endproc
 
-	.extern c_trasforma
+#-------------------------------------------------------------------------------
+.EXTERN c_trasforma
+#-------------------------------------------------------------------------------
 a_trasforma:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -673,6 +682,8 @@ a_trasforma:
 	iretq
 	.cfi_endproc
 	.extern c_log
+
+#-------------------------------------------------------------------------------
 a_log:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
