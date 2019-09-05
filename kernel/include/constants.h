@@ -46,8 +46,20 @@
 
 // dimensione in byte della parte hardware del descrittore di processo
 #define  DIM_DESP    104
+
+/**
+ * Maximum number of semaphores.
+ */
 #define  MAX_SEM     4096
+
+/**
+ *
+ */
 #define  DIM_PAGINA  4096UL
+
+/**
+ *
+ */
 #define  MAX_PRD     16
 
 #define  MEM_TOT        (8*MiB)

@@ -259,18 +259,18 @@ halt_outputse:
 //                         I/O SERIAL INTERFACES                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-.set  LCR1,     0x03fb
-.set  LCR2,     0x02fb
+.set  LCR1, 0x03fb
+.set  LCR2, 0x02fb
 .set  DLR_LSB1, 0x03f8
 .set  DLR_LSB2, 0x02f8
 .set  DLR_MSB1, 0x03f9
 .set  DLR_MSB2, 0x02f9
-.set  IER1,     0x03f9
-.set  IER2,     0x02f9
-.set  RBR1,     0x03f8
-.set  RBR2,     0x02f8
-.set  MCR1,     0x03fc
-.set  MCR2,     0x02fc
+.set  IER1,  0x03f9
+.set  IER2,  0x02f9
+.set  RBR1,  0x03f8
+.set  RBR2,  0x02f8
+.set  MCR1,  0x03fc
+.set  MCR2,  0x02fc
 
 
 // Inizializzazione delle interfacce seriali
@@ -630,16 +630,13 @@ dmareadhd_n:
 
 #-------------------------------------------------------------------------------
 .global		dmawritehd_n
-#-------------------------------------------------------------------------------
-dmawritehd_n:	
-		.cfi_startproc
-		int		$IO_TIPO_DMAHDW
-		ret
-		.cfi_endproc
+dmawritehd_n:
+    .cfi_startproc
+    int $IO_TIPO_DMAHDW
+    ret
+    .cfi_endproc
 
-#-------------------------------------------------------------------------------
 .extern		c_readhd_n
-#-------------------------------------------------------------------------------
 a_readhd_n:	# routine INT $io_tipo_hdr
 		.cfi_startproc
 		.cfi_def_cfa_offset 40
@@ -652,9 +649,7 @@ a_readhd_n:	# routine INT $io_tipo_hdr
 		iretq
 		.cfi_endproc
 
-#-------------------------------------------------------------------------------
 .EXTERN		c_writehd_n
-#-------------------------------------------------------------------------------
 a_writehd_n:	# routine INT $io_tipo_hdw
 		.cfi_startproc
 		.cfi_def_cfa_offset 40

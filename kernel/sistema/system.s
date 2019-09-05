@@ -17,7 +17,7 @@
 #define  STACK_SIZE  0x1000
 
 #-------------------------------------------------------------------------------
-.GLOBAL _start, start                      # global entry points for the linker
+.GLOBAL _start, start                               # System Mmodule Entry Point
 #-------------------------------------------------------------------------------
 _start:
 start:
@@ -85,9 +85,9 @@ start:
 .set R14,CR3+120
 .set R15,CR3+128
 
-// copia lo stato dei registri generali nel des_proc del
-// processo puntato da execution.
-// Nessun registro viene sporcato.
+#-------------------------------------------------------------------------------
+# Copies the content of the des_proc element currently pointed by execution. No
+# register content will be corrupted.
 salva_stato:
 	// salviamo lo stato di un paio di registri
 	// in modo da poterli temporaneamente riutilizzare
@@ -95,7 +95,7 @@ salva_stato:
 	// e %rbx come puntatore al des_proc.
 	.cfi_startproc
 	.cfi_def_cfa_offset 8
-	pushq %rbx
+	pushq %rbx                              # pointer to the execution des_proc
 	.cfi_adjust_cfa_offset 8
 	.cfi_offset rbx, -16
 	pushq %rax
@@ -149,7 +149,7 @@ salva_stato:
 	ret
 	.cfi_endproc
 
-
+#-------------------------------------------------------------------------------
 // carica nei registri del processore lo stato contenuto nel des_proc del
 // processo puntato da execution.
 // Questa funzione sporca tutti i registri.
@@ -225,7 +225,7 @@ carica_stato:
 	retq
 	.cfi_endproc
 
-
+#-------------------------------------------------------------------------------
 // alloca_tss: usata alla creazione di un processo
 // cerca un descrittore di TSS libero, lo inizializza
 // ponendo come base l'indirizzo del des_proc passato
@@ -527,78 +527,87 @@ init_gdt:
 ////////////////////////////////////////////////////////////////////////////////
 
 #-------------------------------------------------------------------------------
-.extern c_activate_p
+.extern c_activate_p                                    # INT $TIPO_A Subroutine
 #-------------------------------------------------------------------------------
-a_activate_p:	// routine int $tipo_a
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	cavallo_di_troia %rdi
-        call c_activate_p
-	call carica_stato
-        iretq
-	.cfi_endproc
+a_activate_p:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    cavallo_di_troia %rdi
+    call c_activate_p
+    call carica_stato
+    iretq
+    .cfi_endproc
 
-        .extern c_terminate_p
-a_terminate_p:	// routine int $tipo_t
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-        call c_terminate_p
-	call carica_stato
-	iretq
-	.cfi_endproc
+#-------------------------------------------------------------------------------
+.extern c_terminate_p                                   # INT $TIPO_T Subroutine
+#-------------------------------------------------------------------------------
+a_terminate_p:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    call c_terminate_p
+    call carica_stato
+    iretq
+    .cfi_endproc
 
-	.extern c_sem_ini
-a_sem_ini:	// routine int $tipo_si
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call c_sem_ini
-	iretq
-	.cfi_endproc
+#-------------------------------------------------------------------------------
+.extern c_sem_ini                                      # INT $TIPO_SI Subroutine
+#-------------------------------------------------------------------------------
+a_sem_ini:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call c_sem_ini
+    iretq
+    .cfi_endproc
 
-	.extern c_sem_wait
-a_sem_wait:	// routine int $tipo_w
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	call c_sem_wait
-	call carica_stato
-	iretq
-	.cfi_endproc
+#-------------------------------------------------------------------------------
+.extern c_sem_wait                                      # INT $TIPO_W Subroutine
+#-------------------------------------------------------------------------------
+a_sem_wait:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    call c_sem_wait
+    call carica_stato
+    iretq
+    .cfi_endproc
 
-	.extern c_sem_signal
-a_sem_signal:	// routine int $tipo_s
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	call c_sem_signal
-	call carica_stato
-	iretq
-	.cfi_endproc
+#-------------------------------------------------------------------------------
+.extern c_sem_signal                                    # INT $TIPO_S Subroutine
+#-------------------------------------------------------------------------------
+a_sem_signal:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    call c_sem_signal
+    call carica_stato
+    iretq
+    .cfi_endproc
 
-	.extern c_delay
-a_delay:	// routine int $tipo_d
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	call c_delay
-	call carica_stato
-	iretq
-	.cfi_endproc
-
+#-------------------------------------------------------------------------------
+.extern c_delay                                         # INT $TIPO_D Subroutine
+#-------------------------------------------------------------------------------
+a_delay:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato
+    call c_delay
+    call carica_stato
+    iretq
+    .cfi_endproc
 
 ////////////////////////////////////////////////////////////////////////////////
 //                  INTERFACE AVAILABLE TO THE I/O MODULE                     //
@@ -1306,7 +1315,7 @@ handler_1:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $1, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1322,7 +1331,7 @@ handler_2:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $2, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1338,7 +1347,7 @@ handler_3:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $3, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1354,7 +1363,7 @@ handler_4:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $4, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1370,7 +1379,7 @@ handler_5:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $5, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1386,7 +1395,7 @@ handler_6:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $6, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1402,7 +1411,7 @@ handler_7:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $7, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1418,7 +1427,7 @@ handler_8:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $8, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1434,7 +1443,7 @@ handler_9:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $9, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1450,7 +1459,7 @@ handler_10:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $10, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1466,7 +1475,7 @@ handler_11:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $11, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1482,7 +1491,7 @@ handler_12:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $12, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1498,7 +1507,7 @@ handler_13:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $13, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1514,7 +1523,7 @@ handler_14:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $14, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1530,7 +1539,7 @@ handler_15:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $15, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1546,7 +1555,7 @@ handler_16:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $16, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1562,7 +1571,7 @@ handler_17:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ins_ready_proc
 
 	movq $17, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1578,7 +1587,7 @@ handler_18:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $18, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1594,7 +1603,7 @@ handler_19:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $19, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1610,7 +1619,7 @@ handler_20:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $20, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1626,7 +1635,7 @@ handler_21:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $21, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1642,7 +1651,7 @@ handler_22:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $22, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1658,7 +1667,7 @@ handler_23:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $23, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1674,7 +1683,7 @@ handler_24:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call salva_stato
-	call inspronti
+	call ready_proc
 
 	movq $24, %rcx
 	movq a_p(, %rcx, 8), %rax
@@ -1736,59 +1745,76 @@ attiva_timer:
 	retq
 	.cfi_endproc
 
-//////////////////////////////////////////////////////////
-// primitive richiamate dal nucleo stesso	        //
-//////////////////////////////////////////////////////////
-	.global sem_ini
+////////////////////////////////////////////////////////////////////////////////
+//                             KERNEL PRIMITIVES                              //
+////////////////////////////////////////////////////////////////////////////////
+
+#-------------------------------------------------------------------------------
+.GLOBAL sem_ini
+#-------------------------------------------------------------------------------
 sem_ini:
-	.cfi_startproc
-	int $TIPO_SI
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    int $TIPO_SI
+    ret
+    .cfi_endproc
 
-	.global sem_wait
+#-------------------------------------------------------------------------------
+.GLOBAL sem_wait
+#-------------------------------------------------------------------------------
 sem_wait:
-	.cfi_startproc
-	int $TIPO_W
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    int $TIPO_W
+    ret
+    .cfi_endproc
 
-	.global activate_p
+#-------------------------------------------------------------------------------
+.GLOBAL activate_p
+#-------------------------------------------------------------------------------
 activate_p:
-	.cfi_startproc
-	int $TIPO_A
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    int $TIPO_A
+    ret
+    .cfi_endproc
 
-	.global terminate_p
+#-------------------------------------------------------------------------------
+.GLOBAL terminate_p
+#-------------------------------------------------------------------------------
 terminate_p:
-	.cfi_startproc
-	int $TIPO_T
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    int $TIPO_T
+    ret
+    .cfi_endproc
 
-	.global panic
+#-------------------------------------------------------------------------------
+.global panic
+#-------------------------------------------------------------------------------
 panic:
-	.cfi_startproc
-	int $TIPO_P
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    int $TIPO_P
+    ret
+    .cfi_endproc
 
-	.global salta_a_main
+#-------------------------------------------------------------------------------
+.global salta_a_main
+#-------------------------------------------------------------------------------
 salta_a_main:
-	.cfi_startproc
-	call carica_stato		// carichiamo tr
-	iretq				// torniamo al chiamante "trasformati" in processo
-	.cfi_endproc
+    .cfi_startproc
+    call carica_stato		// carichiamo tr
+    iretq				// torniamo al chiamante "trasformati" in processo
+    .cfi_endproc
 
-	.global end_program
+#-------------------------------------------------------------------------------
+.global end_program
+#-------------------------------------------------------------------------------
 end_program:
-       lidt triple_fault_idt
-       int $1
+    lidt triple_fault_idt
+    int $1
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               DATA SECTION                                 //
 ////////////////////////////////////////////////////////////////////////////////
+
+#-------------------------------------------------------------------------------
 .DATA
 .GLOBAL  fine_codice_sistema
 #_------------------------------------------------------------------------------

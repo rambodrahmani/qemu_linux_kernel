@@ -167,7 +167,7 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 {
     natl entry;
 	
-    // intialize serial interface COM1
+    // intialize serial interface COM1: needed for logging
     init_COM1();
 
     // print info log message

@@ -72,7 +72,7 @@ extern "C" void panic(const char* msg)
 }
 
 /**
- *
+ * Memory mutex.
  */
 natl mem_mutex;
 
@@ -101,7 +101,7 @@ void mem_free(void* p)
 }
 
 /**
- *
+ * User heap memory space end.
  */
 extern "C" natl end;
 
@@ -110,9 +110,16 @@ extern "C" natl end;
  */
 extern "C" void lib_init()
 {
+    // retrieve user heap memory space end address
     unsigned long long end_ = (unsigned long long)&end;
+
+    // allocate memory mutex
     mem_mutex = sem_ini(1);
+
+    //
     end_ = (end_ + DIM_PAGINA - 1) & ~(DIM_PAGINA - 1);
+
+    // allocate user heap memory space
     heap_init((void *)end_, DIM_USR_HEAP);
 }
 

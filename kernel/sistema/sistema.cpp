@@ -15,24 +15,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- *
+ * Maximum process priority.
  */
 const natl MAX_PRIORITY	= 0xfffffff;
 
 /**
- *
+ * Minimum process priority.
  */
 const natl MIN_PRIORITY	= 0x0000001;
 
 /**
- *
+ * Dummy processo priority.
  */
 const natl DUMMY_PRIORITY = 0x0000000;
 
 /**
- *
+ * Number of registers of the contest array field of the des_proc struct.
  */
-const int N_REG = 16; // numero di registri nel campo contesto
+const int N_REG = 16;
 
 /**
  * Memory Virtual Address.
@@ -87,17 +87,41 @@ volatile natl user_processes;
  */
 extern "C" void c_abort_p();
 
-// dato un id, restiusce il puntatore al corrispondente des_proc
-// (definita in sistema.s)
+/**
+ * Returns the process descriptor for the given process id.
+ * See system.s.
+ *
+ * @param  id  the process ID.
+ */
 extern "C" des_proc *des_p(natl id);
-// id del procsso dummy (creato durante l'inizializzazione)
+
+/**
+ * Dummy process ID, created during initialization.
+ */
 natl dummy_proc;
 
-//indici nell'array contesto
-enum { I_RAX, I_RCX, I_RDX, I_RBX,
-	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,
-	I_R11, I_R12, I_R13, I_R14, I_R15 };
-// )
+/**
+ * indici dell'array contesto
+ */
+enum
+{
+    I_RAX,
+    I_RCX,
+    I_RDX,
+    I_RBX,
+    I_RSP,
+    I_RBP,
+    I_RSI,
+    I_RDI,
+    I_R8,
+    I_R9,
+    I_R10,
+    I_R11,
+    I_R12,
+    I_R13,
+    I_R14,
+    I_R15
+};
 
 /**
  * Can be used to represent a process in a queue.
@@ -105,65 +129,97 @@ enum { I_RAX, I_RCX, I_RDX, I_RBX,
 struct proc_elem
 {
     natl id;
-    natl precedenza;
-    proc_elem *puntatore;
+    natl priority;
+    proc_elem *next;
 };
 
 /**
- * Current Process at any given time.
+ * Current Process under execution at any given time.
  */
 proc_elem *execution;
 
 /**
- * 
+ * List of processes ready to be executed.
  */
-proc_elem *pronti;
+proc_elem *ready_proc;
 
-void inserimento_lista(proc_elem *&p_lista, proc_elem *p_elem)
+/**
+ * Inserts the given process element in the given processes list. The list is
+ * ordered based on each process priority.
+ *
+ * @param  p_list   processes list where to insert the given process;
+ * @param  p_elem   process to be inserted.
+ */
+void inserimento_lista(proc_elem *&p_list, proc_elem *p_elem)
 {
-// ( inserimento in una lista semplice ordinata
-//   (tecnica dei due puntatori)
-	proc_elem *pp, *prevp;
+    proc_elem *pp, *prevp;
+    
+    // point to the top of the list
+    pp = p_list;
 
-	pp = p_lista;
-	prevp = 0;
-	while (pp != 0 && pp->precedenza >= p_elem->precedenza) {
-		prevp = pp;
-		pp = pp->puntatore;
+    prevp = 0;
+
+    // loop through the processes list
+    while (pp != 0 && pp->priority >= p_elem->priority)
+    {
+        prevp = pp;
+        pp = pp->next;
 	}
 
-	p_elem->puntatore = pp;
+    // insert in the ordered list
+    p_elem->next = pp;
 
-	if (prevp == 0)
-		p_lista = p_elem;
-	else
-		prevp->puntatore = p_elem;
-
-// )
+    // check if it is the top of the list
+    if (prevp == 0)
+	{
+        // insert process in the top
+        p_list = p_elem;
+    }
+    else
+    {
+        // change previous process next element pointer
+        prevp->next = p_elem;
+    }
 }
 
-// rimuove da p_lista il processo a piu' altra priorita' e
-// lo restituisce in p_elem
-void rimozione_lista(proc_elem *&p_lista, proc_elem *&p_elem)
+/**
+ * Removes from the given processes list the process having the highest priority
+ * and returns it using p_elem.
+ * Because the processes list is kept ordered based on each process element
+ * priority, the only thing we have to do is to remove the process placed on the
+ * top of the list.
+ *
+ * @param  p_list  the processes list where to remove the process from;
+ * @param  p_elem  pointer to the process elem removed from the list.
+ */
+void rimozione_lista(proc_elem *&p_list, proc_elem *&p_elem)
 {
-// ( estrazione dalla testa
-	p_elem = p_lista;  	// 0 se la lista e' vuota
+    // pointer to the top of the list: 0 if the list is empty
+    p_elem = p_list;
 
-	if (p_lista)
-		p_lista = p_lista->puntatore;
+    // chekc if the list is not empty
+    if (p_list)
+    {
+        // remove top element
+        p_list = p_list->next;
+    }
 
-	if (p_elem)
-		p_elem->puntatore = 0;
-// )
+    // check if the removed element is not 0
+    if (p_elem)
+    {
+        // remove next pointer
+        p_elem->next = 0;
+    }
 }
 
-// inserisce execution in testa alla lista pronti
-extern "C" void inspronti()
+/**
+ * Inserts the process currently under execution at the top of the ready_proc
+ * list.
+ */
+extern "C" void ins_ready_proc()
 {
-// (
-	execution->puntatore = pronti;
-	pronti = execution;
-// )
+    execution->next = ready_proc;
+    ready_proc = execution;
 }
 
 /**
@@ -173,20 +229,26 @@ extern "C" void inspronti()
  */
 extern "C" void schedule(void)
 {
-    rimozione_lista(pronti, execution);
+    // remove process from the top of 'ready_proc' and place it in 'execution'
+    rimozione_lista(ready_proc, execution);
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-//                     SEMAFORI                                                //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                                 SEMAPHORES                                 //
+////////////////////////////////////////////////////////////////////////////////
 
-// descrittore di semaforo
-struct des_sem {
-	int counter;
-	proc_elem *pointer;
+/**
+ * Semaphore element descriptor.
+ */
+struct des_sem
+{
+    int counter;
+    proc_elem *pointer;
 };
 
-// vettore dei descrittori di semaforo
+/**
+ * Available semaphore descriptors.
+ */
 des_sem array_dess[MAX_SEM];
 
 // - per sem_ini, si veda [P_SEM_ALLOC] avanti
@@ -236,26 +298,28 @@ extern "C" void c_sem_signal(natl sem)
 
 	if ((s->counter) <= 0) {
 		rimozione_lista(s->pointer, lavoro);
-		inspronti();	// preemption
-		inserimento_lista(pronti, lavoro);
+		ins_ready_proc();	// preemption
+		inserimento_lista(ready_proc, lavoro);
 		schedule();	// preemption
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-//                         TIMER                                               //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                                   TIMER                                    //
+////////////////////////////////////////////////////////////////////////////////
 
 // richiesta al timer
-struct richiesta {
-	natl d_attesa;
-	richiesta *p_rich;
-	proc_elem *pp;
+struct richiesta
+{
+    natl d_attesa;
+    richiesta *p_rich;
+    proc_elem *pp;
 };
 
 richiesta *p_sospesi;
 
 void inserimento_lista_attesa(richiesta *p);
+
 // parte "C++" della primitiva delay
 extern "C" void c_delay(natl n)
 {
@@ -280,12 +344,14 @@ void inserimento_lista_attesa(richiesta *p)
 	ins = false;
 
 	while (r != 0 && !ins)
+    {
 		if (p->d_attesa > r->d_attesa) {
 			p->d_attesa -= r->d_attesa;
 			precedente = r;
 			r = r->p_rich;
 		} else
 			ins = true;
+    }
 
 	p->p_rich = r;
 	if (precedente != 0)
@@ -924,8 +990,8 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 	p = static_cast<proc_elem*>(alloca(sizeof(proc_elem)));
         if (p == 0) goto errore3;
         p->id = identifier;
-        p->precedenza = prio;
-	p->puntatore = 0;
+        p->priority = prio;
+	p->next = 0;
 	// )
 
 	// ( creazione della tab4 del processo (vedi
@@ -1044,7 +1110,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 
 	// (* non possiamo accettare una priorita' minore di quella di dummy
 	//    o maggiore di quella del processo chiamante
-	if (prio < MIN_PRIORITY || prio > execution->precedenza) {
+	if (prio < MIN_PRIORITY || prio > execution->priority) {
 		flog(LOG_WARN, "priorita' non valida: %d", prio);
 		c_abort_p();
 		return;
@@ -1073,7 +1139,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 	// *)
 
 	if (p != 0) {
-		inserimento_lista(pronti, p);
+		inserimento_lista(ready_proc, p);
 		user_processes++;
 		id = p->id;			// id del processo creato
 						// (allocato da crea_processo)
@@ -1223,14 +1289,14 @@ extern "C" void c_driver_td(void)
 {
 	richiesta *p;
 
-	inspronti();
+	ins_ready_proc();
 
 	if (p_sospesi != 0) {
 		p_sospesi->d_attesa--;
 	}
 
 	while (p_sospesi != 0 && p_sospesi->d_attesa == 0) {
-		inserimento_lista(pronti, p_sospesi->pp);
+		inserimento_lista(ready_proc, p_sospesi->pp);
 		p = p_sospesi;
 		p_sospesi = p_sospesi->p_rich;
 		dealloca(p);
@@ -1547,7 +1613,7 @@ natl crea_dummy()
 		flog(LOG_ERR, "Impossibile creare il processo dummy");
 		return 0xFFFFFFFF;
 	}
-	inserimento_lista(pronti, di);
+	inserimento_lista(ready_proc, di);
 	user_processes++;
 	return di->id;
 }
@@ -1564,7 +1630,7 @@ natl crea_main_sistema()
         return 0xFFFFFFFF;
     }
 
-    inserimento_lista(pronti, m);
+    inserimento_lista(ready_proc, m);
 
     user_processes++;
 
@@ -1757,7 +1823,7 @@ extern "C" faddr c_trasforma(vaddr ind_virt)
 }
 
 /**
- *
+ * Sets the interrupt type for the first 23 pins of the APIC.
  */
 void apic_fill()
 {
@@ -1819,7 +1885,7 @@ extern "C" void cmain()
     // even though the first initial process is not yet completely initialized
     // we set its ID and priority in order to be able to identify it
     init.id = 0xFFFFFFFF;
-    init.precedenza = MAX_PRIORITY;
+    init.priority = MAX_PRIORITY;
 
     // set current process in execution
     execution = &init;
@@ -1833,7 +1899,7 @@ extern "C" void cmain()
     // log gdt initialized
     flog(LOG_INFO, "GDT Initialized.");
 
-    // Initialize system heap memory space
+    // initialize system heap memory space
     heap_init((addr)HEAP_START, HEAP_SIZE);
 
     // log heap memory space initialized
@@ -2093,22 +2159,37 @@ bool swap_init()
 	hdd_read(swap_dev.sb.bm_start * 8, pages * 8, reinterpret_cast<natw*>(swap_dev.free));
 	return true;
 }
-// )
-// ( [P_SEM_ALLOC]
-// I semafori non vengono mai deallocati, quindi e' possibile allocarli
-// sequenzialmente. Per far questo, e' sufficiente ricordare quanti ne
-// abbiamo allocati
-natl sem_allocati = 0;
+
+/**
+ * Semaphore are never deallocated and they can therefore be allocated
+ * sequentially. In order to do so we will gave to keep track of the number
+ * of allocated ones.
+ */
+natl allocated_sems = 0;
+
+/**
+ * Allocates a new semaphore and returns its number.
+ *
+ * @return  the number of the allocated semaphore.
+ */
 natl alloca_sem()
 {
-	natl i;
+    natl i;
 
-	if (sem_allocati >= MAX_SEM)
-		return 0xFFFFFFFF;
+    // check if maximum number of allocable semaphore has been reached
+    if (allocated_sems >= MAX_SEM)
+    {
+        return 0xFFFFFFFF;
+    }
 
-	i = sem_allocati;
-	sem_allocati++;
-	return i;
+    // set semaphore number
+    i = allocated_sems;
+
+    // increment number of semaphores
+    allocated_sems++;
+
+    // return semaphore number
+    return i;
 }
 
 // dal momento che i semafori non vengono mai deallocati,
@@ -2119,15 +2200,21 @@ bool sem_valido(natl sem)
 	return sem < sem_allocati;
 }
 
-// parte "C++" della primitiva sem_ini
+/**
+ * C++ body implementation for the a_sem_ini primitive.
+ * Together they implement the sem_init kernel primitive.
+ */
 extern "C" natl c_sem_ini(int val)
 {
-	natl i = alloca_sem();
+    // allocate semaphore
+    natl i = alloca_sem();
 
-	if (i != 0xFFFFFFFF)
-		array_dess[i].counter = val;
+    if (i != 0xFFFFFFFF)
+    {
+        array_dess[i].counter = val;
+    }
 
-	return i;
+    return i;
 }
 // )
 #ifdef AUTOCORR

@@ -46,7 +46,7 @@ find_boot()
         [ -f "$QEMU_BOOT" ] && return
     done
 
-    echo "non riesco a trovare boot.bin (libce e' installata?)"
+    echo "Can't find boot.bin (is libqlk installed?)"
     exit 1
 }
 
