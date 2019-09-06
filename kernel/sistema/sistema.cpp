@@ -1,5 +1,6 @@
 /**
  * File: sistema.cpp
+ *       System Module C++ implementation.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 30/08/2019.
@@ -50,7 +51,12 @@ typedef natq faddr;
 typedef natq tab_entry;
 
 /**
- * Process Descriptor.
+ * Process Descriptor. Each process has its own process descriptor, a system
+ * stack and its own memory (which contains its code, data and user stack).
+ * In order to be able to switch between processes and allow for a little
+ * parallel execution we will have to take a full snapshot of the system state
+ * (CPU, memory, devices etc..) in order to be able to come back to the
+ * execution where it has been left.
  */
 struct des_proc
 {
@@ -58,7 +64,21 @@ struct des_proc
     struct __attribute__ ((packed))
     {
         natl riservato1;
-        vaddr punt_nucleo;
+
+        /**
+         * Each process has its own system stack and the way the system stack is
+         * changed moving from one process to another is up to the hardware
+         * interrupt mechanism. We will place this pointer to the process system
+         * stack where we know the hardware will look for it. When the process
+         * is started, the CPU will save in this stack the pointer to the
+         * previous stack, the content of the RFLAGS register, the previous
+         * privilege level, and the address of the next instruction to be
+         * executed.
+         * When a process is at user level its system stack is always empty. The
+         * system stack will be filled when moving to the system level and
+         * emptied out when returning to user level.
+         */
+        vaddr system_stack;
 
         // due quad  a disposizione (puntatori alle pile ring 1 e 2)
         natq disp1[2];
@@ -73,7 +93,10 @@ struct des_proc
 
     // custom data
     faddr cr3;
-    natq contesto[N_REG];
+
+    // process context: contains a copy of the CPU registers content
+    natq context[N_REG];
+
     natl cpl;
 };
 
@@ -97,11 +120,17 @@ extern "C" des_proc *des_p(natl id);
 
 /**
  * Dummy process ID, created during initialization.
+ * The dummy process is the process with the lowest priority among the ready
+ * processes and it is used to avoid deadlock conditions where no process is
+ * available to go under execution. The dummy process, when executed only checks
+ * the number of process currently active in the system. If all the process are
+ * terminate the dummy process will eventually shutdown the system.
  */
 natl dummy_proc;
 
 /**
- * indici dell'array contesto
+ * Indexes for the context[] array in the des_proc struct.
+ * Each CPU register has its own index.
  */
 enum
 {
@@ -128,7 +157,19 @@ enum
  */
 struct proc_elem
 {
+    /**
+     * Every time a process is created an entry in the GDT must be filled with
+     * the pointer to the process descriptor. The offset of the GDT entry used
+     * will also be used as the process id.
+     */
     natl id;
+
+    /**
+     * There are many types of process queueing criterias. We will base our
+     * processes queues on the processes priority. At any given time the process
+     * under execution (pointed by 'execution') is the process with the highest
+     * priority.
+     */
     natl priority;
     proc_elem *next;
 };
@@ -147,13 +188,13 @@ proc_elem *ready_proc;
  * Inserts the given process element in the given processes list. The list is
  * ordered based on each process priority.
  *
- * @param  p_list   processes list where to insert the given process;
- * @param  p_elem   process to be inserted.
+ * @param  p_list  processes list where to insert the given process;
+ * @param  p_elem  process to be inserted.
  */
 void inserimento_lista(proc_elem *&p_list, proc_elem *p_elem)
 {
     proc_elem *pp, *prevp;
-    
+
     // point to the top of the list
     pp = p_list;
 
@@ -164,7 +205,7 @@ void inserimento_lista(proc_elem *&p_list, proc_elem *p_elem)
     {
         prevp = pp;
         pp = pp->next;
-	}
+    }
 
     // insert in the ordered list
     p_elem->next = pp;
@@ -944,13 +985,34 @@ faddr crea_tab4()
 	return tab4;
 }
 
+/**
+ * Allocates a TSS for the given process descriptor.
+ */
+extern "C" natl allocate_tss(des_proc*);
 
-extern "C" natl alloca_tss(des_proc*);
+/**
+ *
+ */
 extern "C" void rilascia_tss(int indice);
+
+/**
+ *
+ */
 const natl BIT_IF = 1L << 9;
+
+/**
+ * Retrieves a valid process id using the given process TSS offset.
+ */
 extern "C" natl tss_to_id(natl tss_off);
+
+/**
+ *
+ */
 extern "C" natl id_to_tss(natl id);
 
+/**
+ *
+ */
 void crea_tab4(faddr dest)
 {
 	faddr pdir = readCR3();
@@ -962,41 +1024,102 @@ void crea_tab4(faddr dest)
 	copy_des(pdir, dest, I_UTN_C, N_UTN_C);
 }
 
+/**
+ *
+ */
 void rilascia_tutto(faddr tab4, natl i, natl n);
+
+/**
+ * Creates a new process with the given parameters.
+ * For each process a des_proc, proc_elem and system stack must be allocated.
+ * Once a process has been initialized it will be inserted in the ready_proc
+ * queue and will eventually be scheduled and executed sooner or later. The
+ * execution will take place when the process is pointed by 'execution' which
+ * will result in a call to the load_state and a final iretq.
+ *
+ * @param  f
+ * @param  a
+ * @param  prio
+ * @param  liv
+ * @param  IF
+ *
+ * @return a pointer to the newly created process.
+ */
 proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 {
-	proc_elem	*p;			// proc_elem per il nuovo processo
-	natl		tss_off;		// offset del descrittore tss nella gdt
-	natl 		identifier;		// identificatore del processo
-	des_proc	*pdes_proc;		// descrittore di processo
-	des_frame*	dpf_tab4;		// tab4 del processo
-	faddr		pila_sistema;
+    // new process element
+    proc_elem *p;
 
-	// ( allocazione (e azzeramento preventivo) di un des_proc
-	//   (parte del punto 3 in)
-	pdes_proc = static_cast<des_proc*>(alloca(sizeof(des_proc)));
-	if (pdes_proc == 0) goto errore1;
-	memset(pdes_proc, 0, sizeof(des_proc));
-	// )
+    // tss offset for the gdt
+    natl tss_off;
 
-	// ( selezione di un identificatore (punto 1 in)
-	tss_off = alloca_tss(pdes_proc);
-	if (tss_off == 0) goto errore2;
-	identifier = tss_to_id(tss_off);
-	// )
+    // process identifier
+    natl identifier;
 
-	// ( allocazione e inizializzazione di un proc_elem
-	//   (punto 3 in)
-	p = static_cast<proc_elem*>(alloca(sizeof(proc_elem)));
-        if (p == 0) goto errore3;
-        p->id = identifier;
-        p->priority = prio;
-	p->next = 0;
-	// )
+    // process descriptor
+    des_proc *pdes_proc;
 
-	// ( creazione della tab4 del processo (vedi
-	dpf_tab4 = alloca_frame(p->id, 4, 0);
-	if (dpf_tab4 == 0) goto errore4;
+    // process tab4
+    des_frame* dpf_tab4;
+
+    // system stack
+    faddr pila_sistema;
+
+	// allocate a new process descriptor
+    pdes_proc = static_cast<des_proc*>(alloca(sizeof(des_proc)));
+
+    // check if the space was correctly allocated
+    if (pdes_proc == 0)
+    {
+        // otherwise go to error #1
+        goto error1;
+    }
+
+    // zero out the process descriptor
+    memset(pdes_proc, 0, sizeof(des_proc));
+
+    // allocate TSS for the process and save the tss offset
+	tss_off = allocate_tss(pdes_proc);
+
+    // check if the tss offset if valid
+    if (tss_off == 0)
+    {
+        // otherwise go to error #2
+        goto error2;
+    }
+
+    // retrieve process id using process tss offset
+    identifier = tss_to_id(tss_off);
+
+    // allocate a new proc_elem
+    p = static_cast<proc_elem*>(alloca(sizeof(proc_elem)));
+
+    // check if the proc_elem was correctly allocated
+    if (p == 0)
+    {
+        // otherwise go to error #3
+        goto error3;
+    }
+
+    // set process identifier
+    p->id = identifier;
+
+    // set process priority
+    p->priority = prio;
+
+    // set process next element
+    p->next = 0;
+
+    // process tab4 creation
+    dpf_tab4 = alloca_frame(p->id, 4, 0);
+
+    // check if the process tab4 was correctly allocated
+    if (dpf_tab4 == 0)
+    {
+        // otherwise go to error #4
+        goto error4;
+    }
+
 	dpf_tab4->livello = 4;
 	dpf_tab4->residente = true;
 	dpf_tab4->processo = identifier;
@@ -1004,15 +1127,20 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 	crea_tab4(pdes_proc->cr3);
 	// )
 
-	// ( creazione della pila sistema .
-	if (!crea_pila(p->id, fin_sis_p, DIM_SYS_STACK, LEV_SYSTEM))
-		goto errore5;
+    // create process system stack
+    if (!crea_pila(p->id, fin_sis_p, DIM_SYS_STACK, LEV_SYSTEM))
+    {
+        // in case of errors go to error #5
+        goto error5;
+    }
+
 	pila_sistema = carica_pila_sistema(p->id, fin_sis_p, DIM_SYS_STACK);
 	if (pila_sistema == 0)
-		goto errore6;
-	// )
+		goto error6;
 
-	if (liv == LEV_USER) {
+    // check process level
+    if (liv == LEV_USER)
+    {
 		// ( inizializziamo la pila sistema.
 		natq* pl = reinterpret_cast<natq*>(pila_sistema);
 
@@ -1029,25 +1157,25 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 		// ( creazione della pila utente
 		if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER)) {
 			flog(LOG_WARN, "creazione pila utente fallita");
-			goto errore6;
+			goto error6;
 		}
 		// )
 
 		// ( infine, inizializziamo il descrittore di processo
 		//   indirizzo del bottom della pila sistema, che verra' usato
 		//   dal meccanismo delle interruzioni
-		pdes_proc->punt_nucleo = fin_sis_p;
+		pdes_proc->system_stack = fin_sis_p;
 
 		//   inizialmente, il processo si trova a livello sistema, come
 		//   se avesse eseguito una istruzione INT, con la pila sistema
 		//   che contiene le 5 parole lunghe preparate precedentemente
-		pdes_proc->contesto[I_RSP] = fin_sis_p - 5 * sizeof(natq);
+		pdes_proc->context[I_RSP] = fin_sis_p - 5 * sizeof(natq);
 
 		//   il registro RDI deve contenere il parametro da passare
 		//   alla funzione f
-		pdes_proc->contesto[I_RDI] = a;
-		//pdes_proc->contesto[I_FPU_CR] = 0x037f;
-		//pdes_proc->contesto[I_FPU_TR] = 0xffff;
+		pdes_proc->context[I_RDI] = a;
+		//pdes_proc->context[I_FPU_CR] = 0x037f;
+		//pdes_proc->context[I_FPU_TR] = 0xffff;
 		pdes_proc->cpl = LEV_USER;
 	
 		//   il campo iomap_base contiene l'offset (nel TSS) dell'inizio 
@@ -1080,11 +1208,11 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 		// )
 
 		// ( inizializziamo il descrittore di processo
-		pdes_proc->contesto[I_RSP] = fin_sis_p - 6 * sizeof(natq);
-		pdes_proc->contesto[I_RDI] = a;
+		pdes_proc->context[I_RSP] = fin_sis_p - 6 * sizeof(natq);
+		pdes_proc->context[I_RDI] = a;
 
-		//pdes_proc->contesto[I_FPU_CR] = 0x037f;
-		//pdes_proc->contesto[I_FPU_TR] = 0xffff;
+		//pdes_proc->context[I_FPU_CR] = 0x037f;
+		//pdes_proc->context[I_FPU_TR] = 0xffff;
 		pdes_proc->cpl = LEV_SYSTEM;
 
 		//   tutti gli altri campi valgono 0
@@ -1093,12 +1221,23 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 
 	return p;
 
-errore6:	rilascia_tutto(indirizzo_frame(dpf_tab4), I_SIS_P, N_SIS_P);
-errore5:	rilascia_frame(dpf_tab4);
-errore4:	dealloca(p);
-errore3:	rilascia_tss(tss_off);
-errore2:	dealloca(pdes_proc);
-errore1:	return 0;
+//
+error6:	rilascia_tutto(indirizzo_frame(dpf_tab4), I_SIS_P, N_SIS_P);
+
+//
+error5:	rilascia_frame(dpf_tab4);
+
+//
+error4:	dealloca(p);
+
+//
+error3:	rilascia_tss(tss_off);
+
+//
+error2:	dealloca(pdes_proc);
+
+// just return
+error1:	return 0;
 }
 
 // parte "C++" della activate_p, descritta in
@@ -1147,7 +1286,7 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 	}
 
 	des_proc *self = des_p(execution->id);
-	self->contesto[I_RAX] = id;
+	self->context[I_RAX] = id;
 }
 
 void rilascia_tutto(addr tab4, natl i, natl n);
@@ -1595,27 +1734,52 @@ const natq HEAP_SIZE = (natq)&start - HEAP_START;
  */
 proc_elem init;
 
-// creazione del processo dummy iniziale (usata in fase di inizializzazione del sistema)
+/**
+ *
+ */
 extern "C" void end_program();
 
-// corpo del processo dummy	//
+/**
+ * Dummy process body.
+ */
 void dd(int i)
 {
-	while (user_processes != 1)
-		;
-	end_program();
+    // wait until there is only one active user process (the dummy process)
+    while (user_processes != 1)
+    {}
+
+    // shutdown
+    end_program();
 }
 
-natl crea_dummy()
+/**
+ * Creates the dummy process. Called at the end of initialization in  cmain().
+ *
+ * @return the dummy process id.
+ */
+natl create_dummy()
 {
-	proc_elem* di = crea_processo(dd, 0, DUMMY_PRIORITY, LEV_SYSTEM, true);
-	if (di == 0) {
-		flog(LOG_ERR, "Impossibile creare il processo dummy");
-		return 0xFFFFFFFF;
-	}
-	inserimento_lista(ready_proc, di);
-	user_processes++;
-	return di->id;
+    // create dummy process
+    proc_elem* dummy_elem = crea_processo(dd, 0, DUMMY_PRIORITY, LEV_SYSTEM, true);
+    
+    // check if the dummy process was correctly created
+    if (dummy_elem == 0)
+    {
+        // otherwise log error message
+        flog(LOG_ERR, "Unable to create dummy process.");
+
+        // return error code
+        return 0xFFFFFFFF;
+    }
+
+    // insert dummy process in the processes list
+    inserimento_lista(ready_proc, dummy_elem);
+
+    // increment user processes counter
+    user_processes++;
+
+    // return dummy process id
+    return dummy_elem->id;
 }
 
 void main_sistema(int n);
@@ -1683,12 +1847,12 @@ extern "C" void c_activate_pe(void f(int), int a, natl prio, natl liv, natb type
 	flog(LOG_INFO, "estern=%d entry=%p(%d) prio=%d liv=%d type=%d",
 			p->id, f, a, prio, liv, type);
 
-	self->contesto[I_RAX] = p->id;
+	self->context[I_RAX] = p->id;
 	return;
 
 error2:	destroy_process(p);
 error1:
-	self->contesto[I_RAX] = 0xFFFFFFFF;
+	self->context[I_RAX] = 0xFFFFFFFF;
 	return;
 }
 
@@ -1706,14 +1870,42 @@ bool is_accessible(vaddr a)
 // indirizzo del primo byte che non contiene codice di sistema (vedi "sistema.s")
 extern "C" addr fine_codice_sistema;
 
+/**
+ * Dumps the information related to the given log to console output.
+ *
+ * @param  id       the id of the process to be dumped;
+ * @param  log_sev  the log priority to be used when logging process info.
+ */
 void process_dump(natl id, log_sev sev)
 {
-	des_proc *p = des_p(id);
-	natq *pila = (natq*)p->contesto[I_RSP];
+    // check if the given process id is valid
+    if (!id)
+    {
+        flog(sev, "Invalid process id: %d.", id);
+        return;
+    }
 
-	flog(sev, "  RIP=%lx CPL=%s", pila[0], pila[1] == SEL_CODICE_UTENTE ? "LEV_USER" : "LEV_SYSTEM");
-	natq rflags = pila[2];
-        flog(sev, "  RFLAGS=%lx [%s %s %s %s %s %s %s %s %s %s, IOPL=%s]",
+    // retrieve process to be dumped
+    des_proc *p = des_p(id);
+
+    // check if the retrieved process is valid
+    if (!p)
+    {
+        flog(sev, "Process %d not found.", id);
+        return;
+    }
+
+    // retrieve process stack pointer
+    natq *pila = (natq*)p->context[I_RSP];
+
+    // log process stack
+    flog(sev, "  RIP=%lx CPL=%s", pila[0], pila[1] == SEL_CODICE_UTENTE ? "LEV_USER" : "LEV_SYSTEM");
+
+    // retrieve process rflags register
+    natq rflags = pila[2];
+
+    // log process rflags register content
+    flog(sev, "  RFLAGS=%lx [%s %s %s %s %s %s %s %s %s %s, IOPL=%s]",
 		rflags,
 		(rflags & 1U << 14) ? "NT" : "nt",
 		(rflags & 1U << 11) ? "OF" : "of",
@@ -1725,49 +1917,67 @@ void process_dump(natl id, log_sev sev)
 		(rflags & 1U << 4)  ? "AF" : "af",
 		(rflags & 1U << 2)  ? "PF" : "pf",
 		(rflags & 1U << 0)  ? "CF" : "cf",
-		(rflags & 0x3000) == 0x3000 ? "UTENTE" : "SISTEMA");
-	if (!id)
-		return;
-	if (!p) {
-		flog(sev, "  processo %d non trovato", id);
-		return;
-	}
-	flog(sev, "  RAX=%lx RBX=%lx RCX=%lx RDX=%lx",
-			p->contesto[I_RAX],
-			p->contesto[I_RBX],
-			p->contesto[I_RCX],
-			p->contesto[I_RDX]);
-	flog(sev, "  RDI=%lx RSI=%lx RBP=%lx RSP=%lx",
-			p->contesto[I_RDI],
-			p->contesto[I_RSI],
-			p->contesto[I_RBP],
-			pila[3] + 8);
-	flog(sev, "  R8 =%lx R9 =%lx R10=%lx R11=%lx",
-			p->contesto[I_R8],
-			p->contesto[I_R9],
-			p->contesto[I_R10],
-			p->contesto[I_R11]);
-	flog(sev, "  R12=%lx R13=%lx R14=%lx R15=%lx",
-			p->contesto[I_R12],
-			p->contesto[I_R13],
-			p->contesto[I_R14],
-			p->contesto[I_R15]);
-	flog(sev, "  backtrace:");
-	natq rbp = p->contesto[I_RBP];
-	for (;;) {
-		natq* acsite = ((natq *)rbp + 1);
-		if (((natq)acsite & 0x7) || !is_accessible((vaddr)acsite)) {
-			flog(sev, "  ! %lx", rbp);
-			break;
-		}
-		addr csite = (addr)(*acsite - 5);
-		if (csite < &start || csite >= fine_codice_sistema)
-			break;
-		flog(sev, "  > %lx", *((natq *)rbp + 1) - 5);
-		rbp = *(natq *)rbp;
-	}
+		(rflags & 0x3000) == 0x3000 ? "USER" : "SYSTEM");
+
+    // log %rax, %rbx, %rcx, %rdx registers content
+    flog(sev, "  RAX=%lx RBX=%lx RCX=%lx RDX=%lx",
+            p->context[I_RAX],
+            p->context[I_RBX],
+            p->context[I_RCX],
+            p->context[I_RDX]);
+
+    // log %rdi, %rsi, %rbp, %rsp registers content
+    flog(sev, "  RDI=%lx RSI=%lx RBP=%lx RSP=%lx",
+            p->context[I_RDI],
+            p->context[I_RSI],
+            p->context[I_RBP],
+            pila[3] + 8);
+
+    // log %r8, %r9, %r10, %r11 registers content
+    flog(sev, "  R8 =%lx R9 =%lx R10=%lx R11=%lx",
+            p->context[I_R8],
+            p->context[I_R9],
+            p->context[I_R10],
+            p->context[I_R11]);
+    
+    // log %r12, %r13, %r14, %r15 registers content
+    flog(sev, "  R12=%lx R13=%lx R14=%lx R15=%lx",
+            p->context[I_R12],
+            p->context[I_R13],
+            p->context[I_R14],
+            p->context[I_R15]);
+
+    // log process backtrace
+    flog(sev, "  backtrace:");
+
+    natq rbp = p->context[I_RBP];
+
+    for (;;)
+    {
+        natq* acsite = ((natq *)rbp + 1);
+        
+        if (((natq)acsite & 0x7) || !is_accessible((vaddr)acsite))
+        {
+            flog(sev, "  ! %lx", rbp);
+            break;
+        }
+        
+        addr csite = (addr)(*acsite - 5);
+        
+        if (csite < &start || csite >= fine_codice_sistema)
+        {
+            break;
+        }
+
+        flog(sev, "  > %lx", *((natq *)rbp + 1) - 5);
+        
+        rbp = *(natq *)rbp;
+    }
 }
 
+/**
+ *
+ */
 extern "C" void c_panic(const char *msg)
 {
 	static int in_panic = 0;
@@ -1950,11 +2160,18 @@ extern "C" void cmain()
 
     flog(LOG_INFO, "Creato il processo main_sistema (id = %d)", mid);
 
-    dummy_proc = crea_dummy();
-    if (dummy_proc == 0xFFFFFFFF)
-        goto error;
+    // create dummy process
+    dummy_proc = create_dummy();
 
-    flog(LOG_INFO, "Creato il processo dummy (id = %d)", dummy_proc);
+    // check if the dummy process was corretly allocated
+    if (dummy_proc == 0xFFFFFFFF)
+    {
+        // otherwise go to error
+        goto error;
+    }
+
+    // log dummy process id
+    flog(LOG_INFO, "Dummy processo created: (id = %d)", dummy_proc);
 
     // schedule next process
     schedule();
@@ -2197,7 +2414,7 @@ natl alloca_sem()
 // al numero dei semafori allocati
 bool sem_valido(natl sem)
 {
-	return sem < sem_allocati;
+	return sem < allocated_sems;
 }
 
 /**

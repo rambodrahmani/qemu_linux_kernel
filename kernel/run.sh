@@ -2,6 +2,16 @@
 
 ################################################################################
 # File: run.sh
+#       Once the System module is compiled and the swap.img file containing the
+#       I/O and User modules is ready, the system can be executed using this
+#       bash script. At the very beginning, the processor will start up in
+#       16-bit not-protected mode (the so called 'real mode') and must move, via
+#       software, to 32-bit protected mode. This is usually done by the
+#       bootstrap. As far as it concerns the QEMU Linux Kernel this is done by
+#       the emulator itself. We will have to handle by ourself how to move to
+#       the 64-bit mode: the 64-bit mode really is just a sub-mode of the memory
+#       paging and the only thing we have to do is to implement virtual memory
+#       for our system.
 #
 # Usage: ./run
 #

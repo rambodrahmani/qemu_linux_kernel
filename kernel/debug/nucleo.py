@@ -206,7 +206,7 @@ registers = [ 'RAX', 'RCX', 'RDX', 'RBX', 'RSP', 'RBP', 'RSI', 'RDI', 'R8', 'R9'
 def process_dump(proc, indent=0, verbosity=3):
     write_key("type", "user" if proc['cpl'] == gdb.Value(3) else "system", indent)
     if (proc['cpl'] == gdb.Value(3) and verbosity > 2):
-        write_key("kstack base", str(proc['punt_nucleo']), indent)
+        write_key("kstack base", str(proc['system_stack']), indent)
     vstack = toi(proc['contesto'][4])
     stack = v2p(proc, vstack)
     if (verbosity > 2):

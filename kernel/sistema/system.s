@@ -1,5 +1,6 @@
 #*******************************************************************************
 # File: system.s
+#       System Module Assembly implementation.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 30/09/2019.
@@ -48,25 +49,27 @@ start:
 # occurred
     hlt
 
-
+#-------------------------------------------------------------------------------
 // macro per estrarre la base da un descrittore di TSS
 // si aspetta l indirizzo del segmento in %rax e
 // lascia il risultato in %rbx
 .macro estrai_base
-	movl 8(%eax), %ebx
-	shlq $32, %rbx      	// bit 63:32 nella parte alta di %rbx
-	movb 7(%eax), %bh	// bit 31:24 della base in %bh
-	movb 4(%eax), %bl	// bit 23:16 della base in %bl
-	shll $16, %ebx		// bit 31:16 nella parte alta di %ebx
-	movw 2(%eax), %bx	// bit 15:0 nella parte basse di %ebx
+    movl 8(%eax), %ebx
+    shlq $32, %rbx      	// bit 63:32 nella parte alta di %rbx
+    movb 7(%eax), %bh	// bit 31:24 della base in %bh
+    movb 4(%eax), %bl	// bit 23:16 della base in %bl
+    shll $16, %ebx		// bit 31:16 nella parte alta di %ebx
+    movw 2(%eax), %bx	// bit 15:0 nella parte basse di %ebx
 .endm
 
+#-------------------------------------------------------------------------------
 .macro conv_id_tss
-	shlq $4, %rbx
-	addq $(des_tss - gdt), %rbx
+    shlq $4, %rbx
+    addq $(des_tss - gdt), %rbx
 .endm
 
-// offset dei vari registri all interno di des_proc
+#-------------------------------------------------------------------------------
+# Registers offsets inside the process descriptor.
 .set CR3,104
 .set RAX,CR3+8
 .set RCX,CR3+16
@@ -86,9 +89,11 @@ start:
 .set R15,CR3+128
 
 #-------------------------------------------------------------------------------
-# Copies the content of the des_proc element currently pointed by execution. No
-# register content will be corrupted.
-salva_stato:
+# Saves the CPU state to the process descriptor relative to the process
+# currently pointed by 'execution' (system/system.cpp). No register content will
+# be corrupted. All modules accessing the system modules using the interrupt
+# mechanism must go through this function.
+save_state:
 	// salviamo lo stato di un paio di registri
 	// in modo da poterli temporaneamente riutilizzare
 	// In particolare, useremo %rax come registro di lavoro
@@ -150,14 +155,15 @@ salva_stato:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-// carica nei registri del processore lo stato contenuto nel des_proc del
-// processo puntato da execution.
-// Questa funzione sporca tutti i registri.
-carica_stato:
+# Loads to the CPU registers the content found in the process descriptor
+# relative to the process currently pointed by 'execution' (system/system.cpp).
+# All processes returning from the system module after an interrupt must go
+# through this function. All CPU registers will be affected by this method.
+load_state:
 	.cfi_startproc
 	.cfi_def_cfa_offset 8
 	// otteniamo la base del des_proc del processo in execution
-	// (come per salva_stato)
+	// (come per save_state)
 	movq execution, %rdx
 	movq $0, %rbx
 	movw (%rdx), %bx
@@ -226,31 +232,33 @@ carica_stato:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-// alloca_tss: usata alla creazione di un processo
-// cerca un descrittore di TSS libero, lo inizializza
-// ponendo come base l'indirizzo del des_proc passato
-// come argomento. Restituisce l'offset del descrittore
-// TSS allocato, che funge da identificatore del processo
+# Used when creating a new process, allocates a new empty TSS descriptor,
+# initializes the TSS using the given process descriptor and returns the offset
+# of the newly allocated TSS which can be used to identify the process.
 .set p_dpl_type, 0b10001001 //p=1,dpl=00,type=1001=tss ready
 .set pres_bit,   0b10000000
-	.global alloca_tss
-alloca_tss:
-	movq last_tss, %rdx
+.GLOBAL allocate_tss
+#-------------------------------------------------------------------------------
+allocate_tss:
+    movq last_tss, %rdx
+
 iter_tss:
-	.cfi_startproc
-	// usiamo il bit di presenza nel descrittore per
-	// distiunguere i descrittori liberi da quelli allocati
-	testb $pres_bit, 5(%rdx)
+    .cfi_startproc
+    // usiamo il bit di presenza nel descrittore per
+    // distiunguere i descrittori liberi da quelli allocati
+    testb $pres_bit, 5(%rdx)
 	jz set_entry_tss	// libero, saltiamo all inizializzazione
 	addq $16, %rdx		// occupato, passiamo al prossimo
 	cmpq $end_gdt, %rdx
 	jne advance_tss
 	movq $des_tss, %rdx
+
 advance_tss:
 	cmpq last_tss, %rdx
 	jne iter_tss
 	movq $0, %rax		// terminati, restituiamo 0
 	jmp end_tss
+
 set_entry_tss:
 	movq %rdx, last_tss
 	movw $DIM_DESP, (%rdx) 	//[15:0] = limit[15:0]
@@ -268,14 +276,17 @@ set_entry_tss:
 
 	movq %rdx,%rax
 	subq $gdt, %rax
+
 end_tss:
 	retq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 // rilascia_tss: usata alla terminazione di un processo
 // rende nuovamente libero il descrittore TSS associato al processo
 // il cui identificatore e* passato come argomento
-	.global rilascia_tss
+.global rilascia_tss
+#-------------------------------------------------------------------------------
 rilascia_tss:
 	.cfi_startproc
 	movq $0, gdt(%rdi)
@@ -284,10 +295,12 @@ rilascia_tss:
 	retq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 // dato l identificatore di un processo,
 // ne restituisce il puntatore al descrittore
 // (0 se non allocato)
-	.global des_p
+.global des_p
+#-------------------------------------------------------------------------------
 des_p:
 	.cfi_startproc
 	.cfi_def_cfa_offset 8
@@ -313,7 +326,9 @@ des_p:
 	retq
 	.cfi_endproc
 
-	.global id_to_tss
+#-------------------------------------------------------------------------------
+.global id_to_tss
+#-------------------------------------------------------------------------------
 id_to_tss:
 	.cfi_startproc
 	.cfi_def_cfa_offset 8
@@ -329,18 +344,23 @@ id_to_tss:
 	ret
 	.cfi_endproc
 
-	.global tss_to_id
+#-------------------------------------------------------------------------------
+# Provides a process ID for the given TSS offset.
+.GLOBAL tss_to_id
+#-------------------------------------------------------------------------------
 tss_to_id:
-	.cfi_startproc
-	movq %rdi, %rax
-	subq $(des_tss - gdt), %rax
-	shrq $4, %rax
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    movq %rdi, %rax                     # TSS offset -> %rax
+    subq $(des_tss - gdt), %rax         
+    shrq $4, %rax
+    ret
+    .cfi_endproc
 
+#-------------------------------------------------------------------------------
 // dato un indirizzo virtuale (come parametro) usa l istruzione invlpg per
 // eliminare la corrispondente traduzione dal TLB
-	.global invalida_entrata_TLB //
+.global invalida_entrata_TLB //
+#-------------------------------------------------------------------------------
 invalida_entrata_TLB:
 	.cfi_startproc
 	invlpg (%rdi)
@@ -355,14 +375,14 @@ violazione:
 	xorq %rax, %rax
 	call flog
 	call c_abort_p
-	call carica_stato
+	call load_state
 	iretq
 
+#-------------------------------------------------------------------------------
 // controlla che l indirizzo virtuale op sia accessibile dal
 // livello di privilegio del chiamante della INT. Abortisce il
 // processo in caso contrario.
 .macro cavallo_di_troia reg
-
 	cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
 	je 1f
 	movabs $0xffff000000000000, %rax
@@ -373,17 +393,17 @@ violazione:
 1:
 .endm
 
+#-------------------------------------------------------------------------------
 // controlla che base+dim non causi un wrap-around
 .macro cavallo_di_troia2 base dim
-
 	movq \base, %rax
 	addq \dim, %rax
 	jc violazione
 .endm
 
+#-------------------------------------------------------------------------------
 // come sopra, ma la dimensione e* in settori
 .macro cavallo_di_troia3 base sec
-
 	movq \base, %rax
 	shlq $9, %rax
 	addq \sec, %rax
@@ -396,13 +416,13 @@ violazione:
 #   num:     IDT gate index (starts from 0) to load
 #   routine: address of the subroutine to load in the IDT gate
 #   dpl:     Descriptor Priviege Level of the gate
-
 .macro load_gate num routine dpl
     movq  $\num, %rdi
 	movq  $\routine, %rsi
     movq  $\dpl, %rdx
 	call  init_gate
 .endm
+
 #-------------------------------------------------------------------------------
 # Initializes the IDT entries. The first 32 entries of the IDT are reserved for
 # exceptions. Exception handling is the process of responding to the occurrence,
@@ -534,10 +554,10 @@ a_activate_p:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     cavallo_di_troia %rdi
     call c_activate_p
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 
@@ -549,9 +569,9 @@ a_terminate_p:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     call c_terminate_p
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 
@@ -575,9 +595,9 @@ a_sem_wait:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     call c_sem_wait
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 
@@ -589,9 +609,9 @@ a_sem_signal:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     call c_sem_signal
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 
@@ -603,9 +623,9 @@ a_delay:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     call c_delay
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 
@@ -632,10 +652,10 @@ a_wfi:		// routine int $tipo_wfi
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call apic_send_EOI
 	call schedule
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
@@ -657,7 +677,7 @@ a_panic:                                   # Interrupt TIPO_P primitive
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     //cavallo_di_troia 1
     movq %rsp, %rsi
     call c_panic
@@ -673,9 +693,9 @@ a_abort_p:                                # Interrupt TIPO_AB primitive
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     call c_abort_p
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 
@@ -698,11 +718,11 @@ a_log:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	//cavallo_di_troia 1
 	//cavallo_di_troia2 1 2
 	call c_log
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
@@ -734,12 +754,12 @@ divide_error:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $0, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -764,12 +784,12 @@ debug:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $1, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -785,9 +805,9 @@ nmi:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     call  c_nmi
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -811,12 +831,12 @@ breakpoint:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $3, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -836,12 +856,12 @@ overflow:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $4, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -858,12 +878,12 @@ bound_re:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $5, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -883,12 +903,12 @@ invalid_opcode:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $6, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -908,12 +928,12 @@ dev_na:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $7, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -964,12 +984,12 @@ double_fault:
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
     popq  exc_error
-    call  salva_stato
+    call  save_state
     movq  $8, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -985,16 +1005,15 @@ coproc_so:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  salva_stato
+    call  save_state
     movq  $9, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
-
 
 #*******************************************************************************
 # Interrupt 10 -- Invalid TSS
@@ -1043,12 +1062,12 @@ invalid_tss:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  salva_stato
+    call  save_state
     movq  $10, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1076,12 +1095,12 @@ segm_fault:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  salva_stato
+    call  save_state
     movq  $11, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1114,12 +1133,12 @@ stack_fault:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  salva_stato
+    call  save_state
     movq  $12, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1168,12 +1187,12 @@ prot_fault:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  salva_stato
+    call  save_state
     movq  $13, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
     call  handle_exception
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1196,12 +1215,12 @@ int_tipo_pf:
     .cfi_offset rsp, -16
     pop  exc_error
     .cfi_adjust_cfa_offset -8
-    call  salva_stato
+    call  save_state
     movq  $14, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
     call  c_pre_routine_pf
-    call  carica_stato
+    call  load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1224,12 +1243,12 @@ fp_exc:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     movq $16, %rdi
     movq $0, %rsi
     movq (%rsp), %rdx
     call handle_exception
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1244,12 +1263,12 @@ ac_exc:
     .cfi_offset rsp, -16
     pop exc_error
     .cfi_adjust_cfa_offset -8
-    call salva_stato
+    call save_state
     movq $13, %rdi
     movq exc_error, %rsi
     movq (%rsp), %rdx
     call handle_exception
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1262,12 +1281,12 @@ mc_exc:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     movq $18, %rdi
     movq $0, %rsi
     movq (%rsp), %rdx
     call handle_exception
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -1280,12 +1299,12 @@ simd_exc:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call salva_stato
+    call save_state
     movq $19, %rdi
     movq $0, %rsi
     movq (%rsp), %rdx
     call handle_exception
-    call carica_stato
+    call load_state
     iretq
     .cfi_endproc
 #----------------------------------------------------------------------------
@@ -1294,407 +1313,434 @@ simd_exc:
 //                              HANDLERS / DRIVERS                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+#-------------------------------------------------------------------------------
 // driver del timer
-	.extern c_driver_td
+.extern c_driver_td
+#-------------------------------------------------------------------------------
 driver_td:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call c_driver_td
 	call apic_send_EOI
-	call carica_stato
+	call load_state
 
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_1:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $1, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_2:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $2, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_3:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $3, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_4:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $4, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_5:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $5, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_6:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $6, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_7:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $7, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_8:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $8, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_9:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $9, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_10:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $10, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_11:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $11, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_12:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $12, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_13:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $13, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_14:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $14, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_15:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $15, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_16:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $16, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_17:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ins_ready_proc
 
 	movq $17, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_18:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $18, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_19:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $19, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_20:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $20, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_21:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $21, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_22:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $22, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_23:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $23, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 handler_24:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	call salva_stato
+	call save_state
 	call ready_proc
 
 	movq $24, %rcx
 	movq a_p(, %rcx, 8), %rax
 	movq %rax, execution
 
-	call carica_stato
+	call load_state
 	iretq
 	.cfi_endproc
 
-
-	.global invalida_TLB  //
+#-------------------------------------------------------------------------------
+.global invalida_TLB
+#-------------------------------------------------------------------------------
 invalida_TLB:
 	.cfi_startproc
 	movq %cr3, %rax
@@ -1702,33 +1748,39 @@ invalida_TLB:
 	retq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 // carica il registro cr3
 // parametri: indirizzo fisico del nuovo direttorio
-	.global loadCR3
+.global loadCR3
+#-------------------------------------------------------------------------------
 loadCR3:
 	.cfi_startproc
 	movq %rdi, %cr3
 	retq
 	.cfi_endproc
 
+#-------------------------------------------------------------------------------
 // restituisce in %eax il contenuto di cr3
-	.global readCR3
+.global readCR3
+#-------------------------------------------------------------------------------
 readCR3:
 	.cfi_startproc
 	movq %cr3, %rax
 	retq
 	.cfi_endproc
 
-
+#-------------------------------------------------------------------------------
 //TIMER
 .set CWR,     0x43
 .set CTR_LSB, 0x40
 .set CTR_MSB, 0x40
 
+#-------------------------------------------------------------------------------
 // attiva il timer di sistema
 // parametri: il valore da caricare nel registro CTR del timer
 .extern apic_set_MIRQ
-	.global attiva_timer
+.global attiva_timer
+#-------------------------------------------------------------------------------
 attiva_timer:
 	.cfi_startproc
 	movb $0x36, %al
@@ -1799,12 +1851,13 @@ panic:
 #-------------------------------------------------------------------------------
 salta_a_main:
     .cfi_startproc
-    call carica_stato		// carichiamo tr
+    call load_state     // carichiamo tr
     iretq				// torniamo al chiamante "trasformati" in processo
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global end_program
+# Called by the dummy process when no more user processes are active.
+.GLOBAL end_program
 #-------------------------------------------------------------------------------
 end_program:
     lidt triple_fault_idt
@@ -1849,7 +1902,12 @@ param_err:
     .ASCIZ "Invalid address: %p"
 
 #-------------------------------------------------------------------------------
-# GDT 
+# GDT
+# Some of the entries in the GDT won't be taken into account for simplicity.
+# Each active process has its own TSS (Task State Segment). Each entry in the
+# GDT points to a TSS for a certain process.. Many TSS pointers are present in
+# the GDT at any given time, however only one is active and is pointed by the
+# Task Register (TR).
 .BALIGN 8
 .GLOBAL gdt
 #-------------------------------------------------------------------------------
@@ -1897,4 +1955,5 @@ end_idt:
 # Reserve stack memory space
 stack:
     .space STACK_SIZE, 0
-#*************************************************************************************
+#*******************************************************************************
+

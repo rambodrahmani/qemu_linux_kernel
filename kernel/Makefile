@@ -46,7 +46,7 @@ endif
 all: \
      build/sistema \
      build/parse   \
-     build/creatimg \
+     build/createimg \
      utente/prog \
      util/start.gdb
 
@@ -110,19 +110,19 @@ util/swap.o: include/constants.h util/swap.h util/swap.cpp
 util/fswap.o: include/constants.h util/swap.h util/fswap.cpp
 	g++ -c -g -Iinclude -o util/fswap.o util/fswap.cpp
 
-util/creatimg.o: include/constants.h util/interp.h util/swap.h util/creatimg.cpp
-	g++ -c -g -Iinclude -o util/creatimg.o util/creatimg.cpp
+util/createimg.o: include/constants.h util/interp.h util/swap.h util/createimg.cpp
+	g++ -c -g -Iinclude -o util/createimg.o util/createimg.cpp
 
-build/creatimg: util/creatimg.o util/elf32.o util/elf64.o util/coff.o util/interp.o util/swap.o util/fswap.o
-	g++ -g -o build/creatimg util/creatimg.o util/elf32.o util/elf64.o util/coff.o util/interp.o util/swap.o util/fswap.o
+build/createimg: util/createimg.o util/elf32.o util/elf64.o util/coff.o util/interp.o util/swap.o util/fswap.o
+	g++ -g -o build/createimg util/createimg.o util/elf32.o util/elf64.o util/coff.o util/interp.o util/swap.o util/fswap.o
 
 # creazione del file di swap
 $(SWAP): util/start.mk
 	truncate -s $(SWAP_SIZE) $(SWAP)
 
 .PHONY: swap clean reset
-swap: build/creatimg build/io build/utente $(SWAP)
-	build/creatimg $(SWAP) build/io build/utente && ln -fs $(SWAP) .swap
+swap: build/createimg build/io build/utente $(SWAP)
+	build/createimg $(SWAP) build/io build/utente && ln -fs $(SWAP) .swap
 
 clean:
 	rm -f sistema/*.o io/*.o utente/*.o util/*.o

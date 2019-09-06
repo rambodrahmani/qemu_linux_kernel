@@ -1,5 +1,9 @@
 #*******************************************************************************
 # File: utente.s
+#       User Module Assembly implementation.
+#       The User Module only contains the user.s source code file which contains
+#       the assembly implementation for the primitives available to the user
+#       module and the lib.cpp containing utility methods.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 31/08/2019.

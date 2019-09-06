@@ -24,17 +24,17 @@ enum log_sev
  * Formats the given log message and writes it to the serial interface COM1
  * using the do_log utility function.
  *
- * @param   sev   log severity level
- * @param   fmt   log message char array
+ * @param   sev   log severity level;
+ * @param   fmt   log message char array.
  */
 extern "C" void flog(log_sev sev, const char* fmt, ...);
 
 /**
  * Writes the given log message to the serial interface COM1.
  *
- * @param   sev       log severity level
- * @param   message   log message buffer
- * @param   length    log message buffer length
+ * @param   sev       log severity level;
+ * @param   message   log message buffer;
+ * @param   length    log message buffer length.
  */
-extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
+extern "C" void do_log(log_sev sev, const char* message, natl length);
 

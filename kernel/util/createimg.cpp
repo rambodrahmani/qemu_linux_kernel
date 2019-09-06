@@ -1,3 +1,19 @@
+/**
+ * File: createimg.cpp
+ *       The System module must be loaded by the bootstrap loader which can read
+ *       and understand ELF files and the host machine file system as well. The
+ *       compiler will therefore produce for the System module an executable
+ *       file. The I/O and User module must instead be loaded by the system
+ *       module which can not handle ELF files nor access the host machine file
+ *       system. We will therefore have to compile these two modules and move
+ *       them to the virtual machine hard disk drive. This is the purpose of the
+ *       createimg utility program which creates the swap.img file. The swap.img
+ *       is the hard disk driver for our virtual machine. (precisely the swap
+ *       area).
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 07/09/2019.
+ */
 #include <stdint.h>
 
 #include <cstdlib>

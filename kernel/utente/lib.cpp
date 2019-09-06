@@ -1,5 +1,7 @@
 /**
  * File: lib.cpp
+ *       User Module library. The utility methods defined here will be executed
+ *       at user level.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 31/08/2019.

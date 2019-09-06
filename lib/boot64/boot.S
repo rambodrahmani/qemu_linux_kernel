@@ -105,7 +105,7 @@ readCR3:
 
 #-------------------------------------------------------------------------------
 // attiva la paginazione
-	.global attiva_paginazione
+.global attiva_paginazione
 attiva_paginazione:
 	cli
 
@@ -152,6 +152,7 @@ attiva_paginazione:
 	// entrate successive: traduzione identita'
 	addl $8, %ebx
 	movl $0x200183, %edx	// 2a entrata: P, R/W, PS, G
+
 ciclo_tab_liv2_1:
 	movl %edx, (%ebx)
 	addl $0x200000, %edx
@@ -193,6 +194,7 @@ ciclo_tab_liv2_4:
 	// entrate successive: traduzione identita'
 	movl $0x1103, %edx	// P, R/W, G
 	addl $8, %ebx
+
 ciclo_tab_liv1:
 	movl %edx, (%ebx)
 	addl $0x1000, %edx
@@ -226,8 +228,7 @@ ciclo_tab_liv1:
 	lgdt gdt64_ptr
 	ljmp $8, $long_mode
 
-	
-
+#-------------------------------------------------------------------------------
 .code64
 long_mode:
 	pushq $0
@@ -265,4 +266,5 @@ jmp_off:
 jmp_off_rel:
 	nop
 .code32
+#*******************************************************************************
 

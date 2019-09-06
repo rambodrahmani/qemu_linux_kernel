@@ -1,5 +1,6 @@
 #*******************************************************************************
 # File: io.s
+#       I/O Module Assembly implementation.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 30/08/2019.
@@ -132,6 +133,12 @@ trasforma:
 ////////////////////////////////////////////////////////////////////////////////
 //                      INTERFACE TO THE SYSTEM MODULE                        //
 ////////////////////////////////////////////////////////////////////////////////
+# Every access to the System module through the interrupt mechanism will result
+# in a change in the privilege level. Right after the end of the processes
+# implemented by the interrupt mechanism, the save_state function
+# (system/system.s) jumps in. On the pther hand, leaving the system module using
+# the iretq instruction must go through the load_state function
+# (system/system.s).
 
 #-------------------------------------------------------------------------------
 .global activate_pe
