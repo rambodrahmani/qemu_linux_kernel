@@ -285,7 +285,7 @@ end_tss:
 // rilascia_tss: usata alla terminazione di un processo
 // rende nuovamente libero il descrittore TSS associato al processo
 // il cui identificatore e* passato come argomento
-.global rilascia_tss
+.GLOBAL rilascia_tss
 #-------------------------------------------------------------------------------
 rilascia_tss:
 	.cfi_startproc
@@ -299,7 +299,7 @@ rilascia_tss:
 // dato l identificatore di un processo,
 // ne restituisce il puntatore al descrittore
 // (0 se non allocato)
-.global des_p
+.GLOBAL des_p
 #-------------------------------------------------------------------------------
 des_p:
 	.cfi_startproc
@@ -327,7 +327,7 @@ des_p:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global id_to_tss
+.GLOBAL id_to_tss
 #-------------------------------------------------------------------------------
 id_to_tss:
 	.cfi_startproc
@@ -359,7 +359,7 @@ tss_to_id:
 #-------------------------------------------------------------------------------
 // dato un indirizzo virtuale (come parametro) usa l istruzione invlpg per
 // eliminare la corrispondente traduzione dal TLB
-.global invalida_entrata_TLB //
+.GLOBAL invalida_entrata_TLB //
 #-------------------------------------------------------------------------------
 invalida_entrata_TLB:
 	.cfi_startproc
@@ -547,7 +547,7 @@ init_gdt:
 ////////////////////////////////////////////////////////////////////////////////
 
 #-------------------------------------------------------------------------------
-.extern c_activate_p                                    # INT $TIPO_A Subroutine
+.EXTERN c_activate_p                                    # INT $TIPO_A Subroutine
 #-------------------------------------------------------------------------------
 a_activate_p:
     .cfi_startproc
@@ -562,7 +562,7 @@ a_activate_p:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.extern c_terminate_p                                   # INT $TIPO_T Subroutine
+.EXTERN c_terminate_p                                   # INT $TIPO_T Subroutine
 #-------------------------------------------------------------------------------
 a_terminate_p:
     .cfi_startproc
@@ -576,7 +576,7 @@ a_terminate_p:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.extern c_sem_ini                                      # INT $TIPO_SI Subroutine
+.EXTERN c_sem_ini                                      # INT $TIPO_SI Subroutine
 #-------------------------------------------------------------------------------
 a_sem_ini:
     .cfi_startproc
@@ -588,7 +588,7 @@ a_sem_ini:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.extern c_sem_wait                                      # INT $TIPO_W Subroutine
+.EXTERN c_sem_wait                                      # INT $TIPO_W Subroutine
 #-------------------------------------------------------------------------------
 a_sem_wait:
     .cfi_startproc
@@ -602,7 +602,7 @@ a_sem_wait:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.extern c_sem_signal                                    # INT $TIPO_S Subroutine
+.EXTERN c_sem_signal                                    # INT $TIPO_S Subroutine
 #-------------------------------------------------------------------------------
 a_sem_signal:
     .cfi_startproc
@@ -616,7 +616,7 @@ a_sem_signal:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.extern c_delay                                         # INT $TIPO_D Subroutine
+.EXTERN c_delay                                         # INT $TIPO_D Subroutine
 #-------------------------------------------------------------------------------
 a_delay:
     .cfi_startproc
@@ -710,7 +710,7 @@ a_trasforma:
 	call c_trasforma
 	iretq
 	.cfi_endproc
-	.extern c_log
+	.EXTERN c_log
 
 #-------------------------------------------------------------------------------
 a_log:
@@ -1227,7 +1227,7 @@ int_tipo_pf:
 
 #*******************************************************************************
 #*******************************************************************************
-.global readCR2
+.GLOBAL readCR2
 readCR2:
     .cfi_startproc
     movq %cr2, %rax
@@ -1315,7 +1315,7 @@ simd_exc:
 
 #-------------------------------------------------------------------------------
 // driver del timer
-.extern c_driver_td
+.EXTERN c_driver_td
 #-------------------------------------------------------------------------------
 driver_td:
 	.cfi_startproc
@@ -1739,7 +1739,7 @@ handler_24:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global invalida_TLB
+.GLOBAL invalida_TLB
 #-------------------------------------------------------------------------------
 invalida_TLB:
 	.cfi_startproc
@@ -1751,7 +1751,7 @@ invalida_TLB:
 #-------------------------------------------------------------------------------
 // carica il registro cr3
 // parametri: indirizzo fisico del nuovo direttorio
-.global loadCR3
+.GLOBAL loadCR3
 #-------------------------------------------------------------------------------
 loadCR3:
 	.cfi_startproc
@@ -1761,7 +1761,7 @@ loadCR3:
 
 #-------------------------------------------------------------------------------
 // restituisce in %eax il contenuto di cr3
-.global readCR3
+.GLOBAL readCR3
 #-------------------------------------------------------------------------------
 readCR3:
 	.cfi_startproc
@@ -1778,8 +1778,8 @@ readCR3:
 #-------------------------------------------------------------------------------
 // attiva il timer di sistema
 // parametri: il valore da caricare nel registro CTR del timer
-.extern apic_set_MIRQ
-.global attiva_timer
+.EXTERN apic_set_MIRQ
+.GLOBAL attiva_timer
 #-------------------------------------------------------------------------------
 attiva_timer:
 	.cfi_startproc
@@ -1838,7 +1838,7 @@ terminate_p:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global panic
+.GLOBAL panic
 #-------------------------------------------------------------------------------
 panic:
     .cfi_startproc
@@ -1847,7 +1847,7 @@ panic:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global salta_a_main
+.GLOBAL salta_a_main
 #-------------------------------------------------------------------------------
 salta_a_main:
     .cfi_startproc

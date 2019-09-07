@@ -1,5 +1,11 @@
 ################################################################################
 # File:	Makefile
+# 		Makefile for the make utility.
+#
+# 		Provides the following utilities:
+# 		 - make:       compiles the System module;
+# 		 - make swap:  compiles the I/O and User module into the swap.img file;
+# 		 - make clean: cleans up compilation result files.
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 01/09/2019

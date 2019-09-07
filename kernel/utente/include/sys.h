@@ -3,6 +3,23 @@
  *       Contains method declarations for the System and I/O modules interface
  *       primitives.
  *
+ *       The Kernel provides to the I/O and User modules some primitives to be
+ *       used to carry on operations (under control) that are not allowed at
+ *       the user level. The basic idea behind this is that no user program
+ *       must be trusted to work properly and therefore the system must not
+ *       relay on them. The systme must guarantee that the processes, the memory
+ *       and the I/O device will work correctly but the same time must allow the
+ *       user programs to operate with them. In order to obtain such a result
+ *       the system follows the following guidelines:
+ *          - all user programs must be executed with user level privileges;
+ *          - all critical data structures are hidden at user level privilege;
+ *          - the system developer provides utility functions to the user in
+ *            order to be able to execute system level operations (e.g. creating
+ *            a process);
+ *          - these functions can be access from the user module only from the
+ *            IDT gates (the interrupt mechanism) which move the CPU to operate
+ *            at system level.
+ *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 07/09/2019.
  */

@@ -77,7 +77,7 @@ start:
 ////////////////////////////////////////////////////////////////////////////////
 
 #-------------------------------------------------------------------------------
-.global activate_p
+.GLOBAL activate_p
 #-------------------------------------------------------------------------------
 activate_p:
     .cfi_startproc
@@ -86,7 +86,7 @@ activate_p:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global terminate_p
+.GLOBAL terminate_p
 #-------------------------------------------------------------------------------
 terminate_p:
 	.cfi_startproc
@@ -95,7 +95,7 @@ terminate_p:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global sem_ini
+.GLOBAL sem_ini
 #-------------------------------------------------------------------------------
 sem_ini:
 	.cfi_startproc
@@ -104,7 +104,7 @@ sem_ini:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global sem_wait
+.GLOBAL sem_wait
 #-------------------------------------------------------------------------------
 sem_wait:
 	.cfi_startproc
@@ -113,7 +113,7 @@ sem_wait:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global sem_signal
+.GLOBAL sem_signal
 #-------------------------------------------------------------------------------
 sem_signal:
 	.cfi_startproc
@@ -122,7 +122,7 @@ sem_signal:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global trasforma
+.GLOBAL trasforma
 #-------------------------------------------------------------------------------
 trasforma:
 	.cfi_startproc
@@ -141,7 +141,7 @@ trasforma:
 # (system/system.s).
 
 #-------------------------------------------------------------------------------
-.global activate_pe
+.GLOBAL activate_pe
 #-------------------------------------------------------------------------------
 activate_pe:
 	.cfi_startproc
@@ -150,7 +150,7 @@ activate_pe:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global wfi
+.GLOBAL wfi
 #-------------------------------------------------------------------------------
 wfi:
 	.cfi_startproc
@@ -159,7 +159,7 @@ wfi:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global panic
+.GLOBAL panic
 #-------------------------------------------------------------------------------
 panic:
 	.cfi_startproc
@@ -168,7 +168,7 @@ panic:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global abort_p
+.GLOBAL abort_p
 #-------------------------------------------------------------------------------
 abort_p:
 	.cfi_startproc
@@ -186,7 +186,7 @@ fill_gate:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global delay
+.GLOBAL delay
 #-------------------------------------------------------------------------------
 delay:
 	.cfi_startproc
@@ -195,7 +195,7 @@ delay:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global do_log
+.GLOBAL do_log
 #-------------------------------------------------------------------------------
 do_log:
 	.cfi_startproc
@@ -204,7 +204,7 @@ do_log:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global writevid
+.GLOBAL writevid
 #-------------------------------------------------------------------------------
 writevid:
 	.cfi_startproc
@@ -218,7 +218,7 @@ writevid:
 
 #-------------------------------------------------------------------------------
 # Inizio dell' ingresso da una interfaccia seriale
-.global go_inputse
+.GLOBAL go_inputse
 #-------------------------------------------------------------------------------
 go_inputse:
 	movw %di, %dx		// ind. di IER in edx
@@ -230,7 +230,7 @@ go_inputse:
 
 #-------------------------------------------------------------------------------
 # Fine dell' ingresso da un' interfaccia seriale
-.global halt_inputse
+.GLOBAL halt_inputse
 #-------------------------------------------------------------------------------
 halt_inputse:
 	movw %di, %dx		// ind. di IER in edx
@@ -242,7 +242,7 @@ halt_inputse:
 
 #-------------------------------------------------------------------------------
 # Inizio dell' uscita su interfaccia seriale
-.global go_outputse
+.GLOBAL go_outputse
 #-------------------------------------------------------------------------------
 go_outputse:
 	movw %di, %dx		// ind. di IER in edx
@@ -253,7 +253,7 @@ go_outputse:
 
 #-------------------------------------------------------------------------------
 # Fine dell' uscita su interfaccia seriale
-.global halt_outputse
+.GLOBAL halt_outputse
 #-------------------------------------------------------------------------------
 halt_outputse:
 	movw %di, %dx		// ind. di IER in edx
@@ -281,7 +281,7 @@ halt_outputse:
 
 
 // Inizializzazione delle interfacce seriali
-	.global com_setup
+.GLOBAL com_setup
 com_setup:
 	movb $0x80, %al
 	movw $LCR1, %dx
@@ -336,7 +336,7 @@ com_setup:
 	jnz 1b
 .endm
 
-	.global go_inputkbd
+	.GLOBAL go_inputkbd
 go_inputkbd:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -358,7 +358,7 @@ go_inputkbd:
 
 	ret
 
-	.global halt_inputkbd
+	.GLOBAL halt_inputkbd
 halt_inputkbd:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -385,7 +385,7 @@ halt_inputkbd:
 
 
 // visualizza il cursore nella posizione passata come parametro
-	.global cursore
+	.GLOBAL cursore
 cursore:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -437,7 +437,7 @@ fill_io_gates:
 //                                 I/O PRIMITIVES                             //
 ////////////////////////////////////////////////////////////////////////////////
 
-	.extern c_readse_n
+	.EXTERN c_readse_n
 a_readse_n:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -450,7 +450,7 @@ a_readse_n:
 	iretq
 	.cfi_endproc
 
-	.extern c_readse_ln
+	.EXTERN c_readse_ln
 a_readse_ln:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -465,7 +465,7 @@ a_readse_ln:
 	iretq
 	.cfi_endproc
 
-	.extern c_writese_n
+	.EXTERN c_writese_n
 a_writese_n:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -477,7 +477,7 @@ a_writese_n:
 	iretq
 	.cfi_endproc
 
-	.extern c_writese_0	// non c_writese_ln, che va lo stesso
+	.EXTERN c_writese_0	// non c_writese_ln, che va lo stesso
 a_writese_0:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -492,7 +492,7 @@ a_writese_0:
 	iretq
 	.cfi_endproc
 
-	.extern c_readconsole
+	.EXTERN c_readconsole
 a_readconsole:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -507,7 +507,7 @@ a_readconsole:
 	iretq
 	.cfi_endproc
 
-	.extern c_writeconsole
+	.EXTERN c_writeconsole
 a_writeconsole:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -518,7 +518,7 @@ a_writeconsole:
 	iretq
 	.cfi_endproc
 
-	.extern c_iniconsole
+	.EXTERN c_iniconsole
 a_iniconsole:
 	.cfi_startproc
 	.cfi_def_cfa_offset 40
@@ -531,7 +531,7 @@ a_iniconsole:
 
 # interface ATA
 
-.global			hd_write_address
+.GLOBAL			hd_write_address
 hd_write_address:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -557,7 +557,7 @@ hd_write_address:
 	ret
 
 #-------------------------------------------------------------------------------
-.global			hd_write_command
+.GLOBAL			hd_write_command
 #-------------------------------------------------------------------------------
 hd_write_command:
 	pushq %rbp
@@ -571,7 +571,7 @@ hd_write_command:
 	ret
 
 #-------------------------------------------------------------------------------
-.global		hd_go_inout
+.GLOBAL		hd_go_inout
 #-------------------------------------------------------------------------------
 hd_go_inout:		#...
 	movw %di, %dx		// ind. di DEV_CTL in edx
@@ -581,7 +581,7 @@ hd_go_inout:		#...
 	ret
 
 #-------------------------------------------------------------------------------
-.global			hd_halt_inout
+.GLOBAL			hd_halt_inout
 #-------------------------------------------------------------------------------
 hd_halt_inout:
 	movw %di, %dx		// ind. di DEV_CTL in edx
@@ -591,7 +591,7 @@ hd_halt_inout:
 	ret
 
 // Seleziona uno dei due drive di un canale ATA
-	.global hd_select_device
+	.GLOBAL hd_select_device
 hd_select_device:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -609,7 +609,7 @@ ms_out:	movw %si,%dx
 	ret
 
 #-------------------------------------------------------------------------------
-.global		readhd_n
+.GLOBAL		readhd_n
 #-------------------------------------------------------------------------------
 readhd_n:
 		.cfi_startproc
@@ -618,7 +618,7 @@ readhd_n:
 		.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global		writehd_n
+.GLOBAL		writehd_n
 #-------------------------------------------------------------------------------
 writehd_n:	
 		.cfi_startproc
@@ -627,7 +627,7 @@ writehd_n:
 		.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global		dmareadhd_n
+.GLOBAL		dmareadhd_n
 #-------------------------------------------------------------------------------
 dmareadhd_n:	
 		.cfi_startproc
@@ -636,14 +636,14 @@ dmareadhd_n:
 		.cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global		dmawritehd_n
+.GLOBAL		dmawritehd_n
 dmawritehd_n:
     .cfi_startproc
     int $IO_TIPO_DMAHDW
     ret
     .cfi_endproc
 
-.extern		c_readhd_n
+.EXTERN		c_readhd_n
 a_readhd_n:	# routine INT $io_tipo_hdr
 		.cfi_startproc
 		.cfi_def_cfa_offset 40
