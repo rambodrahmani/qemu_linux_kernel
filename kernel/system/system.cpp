@@ -194,7 +194,7 @@ proc_elem *ready_proc;
  * @param  p_list  processes list where to insert the given process;
  * @param  p_elem  process to be inserted.
  */
-void inserimento_lista(proc_elem *&p_list, proc_elem *p_elem)
+void list_insert(proc_elem *&p_list, proc_elem *p_elem)
 {
     proc_elem *pp, *prevp;
 
@@ -236,7 +236,7 @@ void inserimento_lista(proc_elem *&p_list, proc_elem *p_elem)
  * @param  p_list  the processes list where to remove the process from;
  * @param  p_elem  pointer to the process elem removed from the list.
  */
-void rimozione_lista(proc_elem *&p_list, proc_elem *&p_elem)
+void list_remove(proc_elem *&p_list, proc_elem *&p_elem)
 {
     // pointer to the top of the list: 0 if the list is empty
     p_elem = p_list;
@@ -274,7 +274,7 @@ extern "C" void ins_ready_proc()
 extern "C" void schedule(void)
 {
     // remove process from the top of 'ready_proc' and place it in 'execution'
-    rimozione_lista(ready_proc, execution);
+    list_remove(ready_proc, execution);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ extern "C" void c_sem_wait(natl sem)
     if ((s->counter) < 0)
     {
         // insert process in the waiting list
-        inserimento_lista(s->pointer, execution);
+        list_insert(s->pointer, execution);
 
         // schedule next process
         schedule();
@@ -398,13 +398,13 @@ extern "C" void c_sem_signal(natl sem)
     if ((s->counter) <= 0)
     {
         // remove a process from the semaphore wait list into 'proc'
-        rimozione_lista(s->pointer, proc);
+        list_remove(s->pointer, proc);
 
         // preemption: insert current process into the ready processes list
         ins_ready_proc();
 
         // preemption: insert retrieved process into the ready processes list
-        inserimento_lista(ready_proc, proc);
+        list_insert(ready_proc, proc);
 
         // schedule: both the current process and the process retrieved from the
         // semaphore wai list must be inserted in the ready processes list and
@@ -1444,7 +1444,7 @@ extern "C" void c_activate_p(void f(int), int a, natl prio, natl liv)
 	// *)
 
 	if (p != 0) {
-		inserimento_lista(ready_proc, p);
+		list_insert(ready_proc, p);
 		user_processes++;
 		id = p->id;			// id del processo creato
 						// (allocato da crea_processo)
@@ -1647,7 +1647,7 @@ extern "C" void c_driver_td(void)
 	}
 
 	while (p_sospesi != 0 && p_sospesi->d_attesa == 0) {
-		inserimento_lista(ready_proc, p_sospesi->pp);
+		list_insert(ready_proc, p_sospesi->pp);
 		p = p_sospesi;
 		p_sospesi = p_sospesi->p_rich;
 		dealloca(p);
@@ -2025,7 +2025,7 @@ natl create_dummy()
     }
 
     // insert dummy process in the processes list
-    inserimento_lista(ready_proc, dummy_elem);
+    list_insert(ready_proc, dummy_elem);
 
     // increment user processes counter
     user_processes++;
@@ -2052,7 +2052,7 @@ natl crea_main_sistema()
         return 0xFFFFFFFF;
     }
 
-    inserimento_lista(ready_proc, m);
+    list_insert(ready_proc, m);
 
     user_processes++;
 

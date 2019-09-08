@@ -11,7 +11,6 @@
 ################################################################################
 
 # clean up QEMU folder
-echo ""
 echo "*********************************"
 echo "*  Cleaning up the QEMU folder  *"
 echo "*********************************"
@@ -74,7 +73,7 @@ echo "***********************************"
 echo "*  Cleaning up the Kernel folder  *"
 echo "***********************************"
 cd kernel
-rm -f sistema/*.o io/*.o utente/*.o util/*.o
+rm -f system/*.o io/*.o user/*.o util/*.o
 rm -f util/start.mk util/start.gdb util/start.pl
 rm -f build/*
 rm swap.img
@@ -82,6 +81,7 @@ cd ..
 echo "Completed."
 
 # clean up home folder
+echo ""
 echo "*************************************"
 echo "*  Cleaning up the QLK home folder  *"
 echo "*************************************"
