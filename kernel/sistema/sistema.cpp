@@ -280,13 +280,31 @@ extern "C" void schedule(void)
 ////////////////////////////////////////////////////////////////////////////////
 //                                 SEMAPHORES                                 //
 ////////////////////////////////////////////////////////////////////////////////
+// We will be using sempagores for two main reasons: mutual exclusion (mutex)
+// and synchronization. Semaphores are allocated once and never deallocated: the
+// assumption we make is that there is a finite number of avilable sempahore
+// which can be used by the user program (multiple processes program) to share
+// a given area of memory (each process also has its own memory space).
+// Each semaphore is descripted by the des_sem struct.
 
 /**
  * Semaphore element descriptor.
  */
 struct des_sem
 {
+    /**
+     * When the sempahore is used for mutual exclusion it is a positive number
+     * and represents the number of simultaneously active process. Each process
+     * receiving the mutex lock must decrement this of 1.
+     *
+     * When the semaphore is used for synchronization must be initialized to a
+     * value lower or equal to 0 (<= 0). In this case one process is waiting for
+     * other processes to be activated before executing and each of these
+     * processes will increment counter by 1.
+     */
     int counter;
+
+    // processes waiting for this semaphore
     proc_elem *pointer;
 };
 
@@ -295,68 +313,114 @@ struct des_sem
  */
 des_sem array_dess[MAX_SEM];
 
-// - per sem_ini, si veda [P_SEM_ALLOC] avanti
+/**
+ * Initializes a semaphore with the given value for the counter field and
+ * returns the initialized semaphore ID.
+ */
 extern "C" natl sem_ini(int);
 
-// sem_valido: restituisce true se sem e' un semaforo effettivamente allocato
+/**
+ * Checks if the given semaphore ID is valid (belongs to an allocated
+ * semaphore).
+ */
 bool sem_valido(natl sem);
 
 /**
- *
+ * Waits for the semaphore identified by the given id.
  */
 extern "C" void c_sem_wait(natl sem)
 {
-	des_sem *s;
+    // semaphore pointer
+    des_sem *s;
 
-// (* una primitiva non deve mai fidarsi dei parametri
-	if (!sem_valido(sem)) {
-		flog(LOG_WARN, "semaforo errato: %d", sem);
-		c_abort_p();
-		return;
-	}
-// *)
+    // check if the given semaphore id is valid
+    if (!sem_valido(sem))
+    {
+        // if not, print a warning log message
+        flog(LOG_WARN, "Invalid semaphore: %d", sem);
 
-	s = &array_dess[sem];
-	(s->counter)--;
+        // abort current process under execution
+        c_abort_p();
 
-	if ((s->counter) < 0) {
-		inserimento_lista(s->pointer, execution);
-		schedule();
-	}
+        // just return to the calling function
+        return;
+    }
+
+    // otherwise, retrieve pointer to the specified semaphore
+    s = &array_dess[sem];
+
+    // decrease semaphore counter
+    (s->counter)--;
+
+    // if the semaphore counter is lower than zero
+    if ((s->counter) < 0)
+    {
+        // insert process in the waiting list
+        inserimento_lista(s->pointer, execution);
+
+        // schedule next process
+        schedule();
+    }
 }
 
 /**
- *
+ * This method is called by a process to notify all waiting processes that he
+ * has unlocked the reference object.
  */
 extern "C" void c_sem_signal(natl sem)
 {
-	des_sem *s;
-	proc_elem *lavoro;
+    // semaphore pointer
+    des_sem *s;
 
-// (* una primitiva non deve mai fidarsi dei parametri
-	if (!sem_valido(sem)) {
-		flog(LOG_WARN, "semaforo errato: %d", sem);
-		c_abort_p();
-		return;
-	}
-// *)
+    // process pointer
+    proc_elem *proc;
 
-	s = &array_dess[sem];
-	(s->counter)++;
+    // check if the given semaphore id is valid
+    if (!sem_valido(sem))
+    {
+        // if not, print a warning message to the console
+        flog(LOG_WARN, "Invalid semaphore: %d", sem);
 
-	if ((s->counter) <= 0) {
-		rimozione_lista(s->pointer, lavoro);
-		ins_ready_proc();	// preemption
-		inserimento_lista(ready_proc, lavoro);
-		schedule();	// preemption
-	}
+        // abort current process under execution
+        c_abort_p();
+
+        // just return to the calling function
+        return;
+    }
+
+    // retrieve semaphore identified by the given id
+    s = &array_dess[sem];
+
+    // increment semaphore counter
+    (s->counter)++;
+
+    // check if the semaphore counter is below or equal to zero
+    if ((s->counter) <= 0)
+    {
+        // remove a process from the semaphore wait list into 'proc'
+        rimozione_lista(s->pointer, proc);
+
+        // preemption: insert current process into the ready processes list
+        ins_ready_proc();
+
+        // preemption: insert retrieved process into the ready processes list
+        inserimento_lista(ready_proc, proc);
+
+        // schedule: both the current process and the process retrieved from the
+        // semaphore wai list must be inserted in the ready processes list and
+        // the system must reschedule again in order to make sure that at any
+        // given time the process with the highest priority is under execution
+        schedule();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                   TIMER                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-// richiesta al timer
+/**
+ * Timer request.
+ */
 struct richiesta
 {
     natl d_attesa;
@@ -2606,26 +2670,34 @@ natl alloca_sem()
 
 // dal momento che i semafori non vengono mai deallocati,
 // un semaforo e' valido se e solo se il suo indice e' inferiore
-// al numero dei semafori allocati
+// al numero dei semafori allocat
+/**
+ * Checks if the given semaphore ID is valid: since semaphore are never
+ * deallocated it only checks if the given id is lower than the number of
+ * allocated semaphores.
+ */
 bool sem_valido(natl sem)
 {
-	return sem < allocated_sems;
+    return sem < allocated_sems;
 }
 
 /**
  * C++ body implementation for the a_sem_ini primitive.
- * Together they implement the sem_init kernel primitive.
+ * Together they implement the sem_ini kernel primitive.
  */
 extern "C" natl c_sem_ini(int val)
 {
     // allocate semaphore
     natl i = alloca_sem();
 
+    // check if there are still available semaphores
     if (i != 0xFFFFFFFF)
     {
+        // set semaphore counter value
         array_dess[i].counter = val;
     }
 
+    // return semaphore id
     return i;
 }
 // )
