@@ -1,5 +1,5 @@
 /**
- * File: sistema.cpp
+ * File: system.cpp
  *       System Module C++ implementation.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>

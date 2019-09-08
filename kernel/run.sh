@@ -78,7 +78,7 @@ fi
 
 cmd="$QEMU_PRE_CMD $QEMU \
 	-kernel $QEMU_BOOT \
-	-initrd build/sistema \
+	-initrd build/system \
 	-drive file=.swap,format=raw,index=0,cache=unsafe \
 	-no-reboot \
 	$QEMU_EXTRA_OPTIONS \

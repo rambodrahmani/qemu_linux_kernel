@@ -50,7 +50,7 @@ ifdef AUTOCORR
 endif
 
 all: \
-     build/sistema \
+     build/system \
      build/parse   \
      build/createimg \
      utente/prog \
@@ -58,8 +58,8 @@ all: \
 
 toparse := $(wildcard utente/prog/*)
 
-build/sistema: sistema/sist_s.o sistema/sist_cpp.o
-	$(NLD) $(NLDFLAGS) -o build/sistema -Ttext $(START_SISTEMA) sistema/sist_s.o sistema/sist_cpp.o $(NLDLIBS)
+build/system: system/sist_s.o system/sist_cpp.o
+	$(NLD) $(NLDFLAGS) -o build/system -Ttext $(START_SISTEMA) system/sist_s.o system/sist_cpp.o $(NLDLIBS)
 
 build/io: io/io_s.o io/io_cpp.o
 	$(NLD) $(NLDFLAGS) -o build/io -Ttext $(START_IO) io/io_s.o io/io_cpp.o $(NLDLIBS)
@@ -67,14 +67,14 @@ build/io: io/io_s.o io/io_cpp.o
 build/utente: utente/uten_s.o utente/lib.o utente/uten_cpp.o
 	$(NLD) $(NLDFLAGS) -o build/utente -Ttext $(START_UTENTE) utente/uten_cpp.o utente/uten_s.o utente/lib.o $(NLDLIBS)
 
-# compilazione di system.s e sistema.cpp
-sistema/sist_s.o: sistema/system.s include/constants.h
-	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c sistema/system.s -o sistema/sist_s.o
+# system.s and system.cpp compilation
+system/sist_s.o: system/system.s include/constants.h
+	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c system/system.s -o system/sist_s.o
 
-sistema/sist_cpp.o: sistema/sistema.cpp include/constants.h
-	$(NCC) $(NCFLAGS) -c sistema/sistema.cpp -o sistema/sist_cpp.o
+system/sist_cpp.o: system/system.cpp include/constants.h
+	$(NCC) $(NCFLAGS) -c system/system.cpp -o system/sist_cpp.o
 
-# compilazione di io.s e io.cpp
+# io.s and io.cpp compilation
 io/io_s.o: io/io.s include/constants.h
 	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c io/io.s -o io/io_s.o
 
@@ -131,7 +131,7 @@ swap: build/createimg build/io build/utente $(SWAP)
 	build/createimg $(SWAP) build/io build/utente && ln -fs $(SWAP) .swap
 
 clean:
-	rm -f sistema/*.o io/*.o utente/*.o util/*.o
+	rm -f system/*.o io/*.o utente/*.o util/*.o
 	rm -f util/start.mk util/start.gdb util/start.pl
 
 reset: clean
