@@ -121,5 +121,12 @@ extern "C" void dmareadhd_n(natw vetti[], natl primo, natb quanti, natb &errore)
  */
 extern "C" void dmawritehd_n(const natw vetto[], natl primo, natb quanti, natb& errore);
 
+// USER-PRIMITIVE-EXAMPLE
+/**
+ * Returns the ID of the process under execution.
+ */
+extern "C" natl getid();
+// USER-PRIMITIVE-EXAMPLE
+
 #endif
 

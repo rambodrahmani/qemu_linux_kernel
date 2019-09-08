@@ -54,12 +54,12 @@ char pause_buf[1];
 natl pause_len = 1;
 
 /**
- *
+ * Prints a pause message to the video output and waits for the ENTER key.
  */
 void pause()
 {
     #ifndef AUTOCORR
-        writeconsole("Premere INVIO per continuare");
+        writeconsole("Press ENTER to continue.");
         readconsole(pause_buf, pause_len);
     #endif
 }

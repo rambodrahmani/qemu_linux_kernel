@@ -100,7 +100,7 @@
 #define  VETT_S   0x4F
 
 /**
- * Primitive Types.
+ * User Module System Primitives Types.
  */
 #define  TIPO_A    0x42  // activate_p
 #define  TIPO_T    0x43  // terminate_p
@@ -108,6 +108,14 @@
 #define  TIPO_W    0x45  // sem_wait
 #define  TIPO_S    0x46  // sem_signal
 #define  TIPO_D    0x49  // delay
+
+// USER-PRIMITIVE-EXAMPLE
+#define  TIPO_GETID  0x59  // getid
+// USER-PRIMITIVE-EXAMPLE
+
+/**
+ * I/O Module Primitives Types.
+ */
 #define  TIPO_RE   0x4b  // resident
 #define  TIPO_APE  0x52  // activate_pe
 #define  TIPO_WFI  0x53  // wfi
@@ -117,6 +125,9 @@
 #define  TIPO_L    0x57  // *log
 #define  TIPO_TRA  0x58  // trasforma
 
+/**
+ * User Modile I/O Primitives Types.
+ */
 #define  IO_TIPO_HDR     0x62  // readhd_n
 #define  IO_TIPO_HDW     0x63  // writehd_n
 #define  IO_TIPO_DMAHDR  0x64  // dmareadhd_n

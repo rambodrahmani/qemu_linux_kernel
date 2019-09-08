@@ -36,7 +36,7 @@ violazione:
 # controlla che l'indirizzo virtuale op sia accessibile dal
 # livello di privilegio del chiamante della INT. Abortisce il
 # processo in caso contrario.
-.macro cavallo_di_troia reg
+.macro trojan_horse reg
 	cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
 	je 1f
 	movabs $0xffff000000000000, %rax
@@ -49,7 +49,7 @@ violazione:
 
 #-------------------------------------------------------------------------------
 # controlla che base+dim non causi un wrap-around
-.macro cavallo_di_troia2 base dim
+.macro trojan_horse2 base dim
 	movq \base, %rax
 	addq \dim, %rax
 	jc violazione
@@ -57,7 +57,7 @@ violazione:
 
 #-------------------------------------------------------------------------------
 # come sopra, ma la dimensione e' in settori
-.macro cavallo_di_troia3 base sec
+.macro trojan_horse3 base sec
 	movq \base, %rax
 	shlq $9, %rax
 	addq \sec, %rax
@@ -443,9 +443,9 @@ a_readse_n:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rsi
-	cavallo_di_troia2 %rsi %rdx
-	cavallo_di_troia %rcx
+	trojan_horse %rsi
+	trojan_horse2 %rsi %rdx
+	trojan_horse %rcx
 	call c_readse_n
 	iretq
 	.cfi_endproc
@@ -456,11 +456,11 @@ a_readse_ln:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rsi
-	cavallo_di_troia %rdx
-	cavallo_di_troia2 %rdx $4
-	cavallo_di_troia2 %rsi (%rdx)
-	cavallo_di_troia %rcx
+	trojan_horse %rsi
+	trojan_horse %rdx
+	trojan_horse2 %rdx $4
+	trojan_horse2 %rsi (%rdx)
+	trojan_horse %rcx
 	call c_readse_ln
 	iretq
 	.cfi_endproc
@@ -471,8 +471,8 @@ a_writese_n:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rdi
-	cavallo_di_troia2 %rdi %rdx
+	trojan_horse %rdi
+	trojan_horse2 %rdi %rdx
 	call c_writese_n
 	iretq
 	.cfi_endproc
@@ -483,11 +483,11 @@ a_writese_0:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rsi
-	cavallo_di_troia %rdx
-	cavallo_di_troia2 %rdx $4
+	trojan_horse %rsi
+	trojan_horse %rdx
+	trojan_horse2 %rdx $4
 	movslq (%rdx), %r8
-	cavallo_di_troia2 %rsi %r8
+	trojan_horse2 %rsi %r8
 	call c_writese_0
 	iretq
 	.cfi_endproc
@@ -498,11 +498,11 @@ a_readconsole:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rdi
-	cavallo_di_troia %rsi
-	cavallo_di_troia2 %rsi $4
+	trojan_horse %rdi
+	trojan_horse %rsi
+	trojan_horse2 %rsi $4
 	movslq (%rsi), %r8
-	cavallo_di_troia2 %rdi %r8
+	trojan_horse2 %rdi %r8
 	call c_readconsole
 	iretq
 	.cfi_endproc
@@ -513,7 +513,7 @@ a_writeconsole:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rdi
+	trojan_horse %rdi
 	call c_writeconsole
 	iretq
 	.cfi_endproc
@@ -649,9 +649,9 @@ a_readhd_n:	# routine INT $io_tipo_hdr
 		.cfi_def_cfa_offset 40
 		.cfi_offset rip, -40
 		.cfi_offset rsp, -16
-		cavallo_di_troia %rdi
-		cavallo_di_troia3 %rdi %rdx
-		cavallo_di_troia %rcx
+		trojan_horse %rdi
+		trojan_horse3 %rdi %rdx
+		trojan_horse %rcx
 		call	c_readhd_n
 		iretq
 		.cfi_endproc
@@ -662,9 +662,9 @@ a_writehd_n:	# routine INT $io_tipo_hdw
 		.cfi_def_cfa_offset 40
 		.cfi_offset rip, -40
 		.cfi_offset rsp, -16
-		cavallo_di_troia %rdi
-		cavallo_di_troia3 %rdi %rdx
-		cavallo_di_troia %rcx
+		trojan_horse %rdi
+		trojan_horse3 %rdi %rdx
+		trojan_horse %rcx
 		call	c_writehd_n
 		iretq
 		.cfi_endproc
@@ -677,9 +677,9 @@ a_dmareadhd_n:                      # routine INT $dma_tipob_r
 		.cfi_def_cfa_offset 40
 		.cfi_offset rip, -40
 		.cfi_offset rsp, -16
-		cavallo_di_troia %rdi
-		cavallo_di_troia3 %rdi %rdx
-		cavallo_di_troia %rcx
+		trojan_horse %rdi
+		trojan_horse3 %rdi %rdx
+		trojan_horse %rcx
 		call	c_dmareadhd_n
 		iretq
 		.cfi_endproc
@@ -692,9 +692,9 @@ a_dmawritehd_n:                     # routine INT $dma_tipob_w
 		.cfi_def_cfa_offset 40
 		.cfi_offset rip, -40
 		.cfi_offset rsp, -16
-		cavallo_di_troia %rdi
-		cavallo_di_troia3 %rdi %rdx
-		cavallo_di_troia %rcx
+		trojan_horse %rdi
+		trojan_horse3 %rdi %rdx
+		trojan_horse %rcx
 		call	c_dmawritehd_n
 		iretq
 		.cfi_endproc

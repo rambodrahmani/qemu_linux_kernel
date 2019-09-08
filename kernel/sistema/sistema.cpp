@@ -106,7 +106,9 @@ struct des_proc
 volatile natl user_processes;
 
 /**
- * Destroys the process currently pointed by execution.
+ * Destroys the process currently pointed by 'execution' and jumps to a new
+ * process. Keep in mind that it won't return to the calling function, but only
+ * abort the current process and schedule a new one.
  */
 extern "C" void c_abort_p();
 
@@ -186,7 +188,8 @@ proc_elem *ready_proc;
 
 /**
  * Inserts the given process element in the given processes list. The list is
- * ordered based on each process priority.
+ * ordered based on each process priority. For processes with the same priority
+ * the new process will be inserted at the end.
  *
  * @param  p_list  processes list where to insert the given process;
  * @param  p_elem  process to be inserted.
@@ -295,11 +298,12 @@ des_sem array_dess[MAX_SEM];
 // - per sem_ini, si veda [P_SEM_ALLOC] avanti
 extern "C" natl sem_ini(int);
 
-//   sem_valido: restituisce true se sem e' un semaforo effettivamente allocato
+// sem_valido: restituisce true se sem e' un semaforo effettivamente allocato
 bool sem_valido(natl sem);
-// )
 
-
+/**
+ *
+ */
 extern "C" void c_sem_wait(natl sem)
 {
 	des_sem *s;
@@ -321,6 +325,9 @@ extern "C" void c_sem_wait(natl sem)
 	}
 }
 
+/**
+ *
+ */
 extern "C" void c_sem_signal(natl sem)
 {
 	des_sem *s;
@@ -357,8 +364,14 @@ struct richiesta
     proc_elem *pp;
 };
 
+/**
+ *
+ */
 richiesta *p_sospesi;
 
+/**
+ *
+ */
 void inserimento_lista_attesa(richiesta *p);
 
 // parte "C++" della primitiva delay
@@ -493,14 +506,25 @@ struct pf_error
 	natq res   : 1;
 	natq pad   : 60; // bit non significativi
 };
-// *)
 
+/**
+ *
+ */
 bool c_routine_pf();
 
+/**
+ *
+ */
 extern "C" vaddr readCR2();
 
+/**
+ *
+ */
 extern "C" faddr readCR3();
 
+/**
+ *
+ */
 extern "C" natq end;	// ultimo indirizzo del codice sistema (fornito dal collegatore)
 
 bool in_pf = false;	//* true mentre stiamo gestendo un page fault
@@ -684,11 +708,16 @@ void rilascia_frame(des_frame* df)
 	df->prossimo_libero = frame_liberi;
 	frame_liberi = df;
 }
-// *)
 
+/**
+ *
+ */
 des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virtuale); // piu' avanti
+
+/**
+ *
+ */
 des_frame* alloca_frame(natl proc, int livello, vaddr ind_virt); // piu' avanti
-// )
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               MEMORY PAGING                                //
@@ -762,32 +791,57 @@ const natq ADDR_MASK  = 0x7FFFFFFFFFFFF000; // maschera per l'indirizzo
 const natq INDMASS_MASK = 0x7FFFFFFFFFFFF000; // maschera per l'indirizzo in mem. di massa
 const natq INDMASS_SHIFT = 12;	    // primo bit che contiene l'ind. in mem. di massa
 
-// )
-
+/**
+ *
+ */
 bool  extr_P(tab_entry descrittore)
 { // (
 	return (descrittore & BIT_P); // )
 }
+
+/**
+ *
+ */
 bool extr_D(tab_entry descrittore)
 { // (
 	return (descrittore & BIT_D); // )
 }
+
+/**
+ *
+ */
 bool extr_A(tab_entry descrittore)
 { // (
 	return (descrittore & BIT_A); // )
 }
+
+/**
+ *
+ */
 bool extr_ZERO(tab_entry descrittore)
 { // (
 	return (descrittore & BIT_ZERO); // )
 }
+
+/**
+ *
+ */
 faddr extr_IND_FISICO(tab_entry descrittore)
 { // (
 	return descrittore & ADDR_MASK; // )
 }
+
+/**
+ *
+ */
 natq extr_IND_MASSA(tab_entry descrittore)
 { // (
 	return (descrittore & INDMASS_MASK) >> INDMASS_SHIFT; // )
 }
+
+/**
+ *
+ */
 void set_P(tab_entry& descrittore, bool bitP)
 { // (
 	if (bitP)
@@ -795,6 +849,10 @@ void set_P(tab_entry& descrittore, bool bitP)
 	else
 		descrittore &= ~BIT_P; // )
 }
+
+/**
+ *
+ */
 void set_A(tab_entry& descrittore, bool bitA)
 { // (
 	if (bitA)
@@ -802,6 +860,10 @@ void set_A(tab_entry& descrittore, bool bitA)
 	else
 		descrittore &= ~BIT_A; // )
 }
+
+/**
+ *
+ */
 void set_ZERO(tab_entry& descrittore, bool bitZERO)
 {
 	if (bitZERO)
@@ -809,35 +871,49 @@ void set_ZERO(tab_entry& descrittore, bool bitZERO)
 	else
 		descrittore &= ~BIT_ZERO;
 }
+
 // (* definiamo anche la seguente funzione:
 //    clear_IND_M: azzera il campo M (indirizzo in memoria di massa)
 void clear_IND_MASSA(tab_entry& descrittore)
 {
 	descrittore &= ~INDMASS_MASK;
 }
-// *)
+
+/**
+ *
+ */
 void  set_IND_FISICO(tab_entry& descrittore, faddr ind_fisico) //
 { // (
 	clear_IND_MASSA(descrittore);
 	descrittore |= ind_fisico & ADDR_MASK; // )
 }
-void set_IND_MASSA(tab_entry& descrittore, natq ind_massa) //
+
+/**
+ *
+ */
+void set_IND_MASSA(tab_entry& descrittore, natq ind_massa)
 { // (
 	clear_IND_MASSA(descrittore);
 	descrittore |= (ind_massa << INDMASS_SHIFT); // )
 }
 
-void set_D(tab_entry& descrittore, bool bitD) //
-{ // (
+/**
+ *
+ */
+void set_D(tab_entry& descrittore, bool bitD)
+{
 	if (bitD)
 		descrittore |= BIT_D;
 	else
-		descrittore &= ~BIT_D; // )
+		descrittore &= ~BIT_D;
 }
 
+/**
+ *
+ */
 bool  extr_PS(tab_entry descrittore)
-{ // (
-	return (descrittore & BIT_PS); // )
+{
+	return (descrittore & BIT_PS);
 }
 
 // dato un indirizzo virtuale 'ind_virt' ne restituisce
@@ -848,6 +924,7 @@ int i_tab(vaddr ind_virt, int liv)
 	natq mask = 0x1ffUL << shift;
 	return (ind_virt & mask) >> shift;
 }
+
 // dato l'indirizzo di una tabella e un indice, restituisce un
 // riferimento alla corrispondente entrata
 tab_entry& get_entry(faddr tab, natl index)
@@ -878,9 +955,6 @@ tab_entry& get_des(natl processo, int livello, vaddr ind_virt)
 	return get_entry(tab, i_tab(ind_virt, livello));
 }
 
-
-// ( [P_MEM_VIRT]
-
 // carica un nuovo valore in cr3 [vedi sistema.S]
 extern "C" void loadCR3(faddr dir);
 
@@ -899,13 +973,29 @@ bool crea_finestra_FM(faddr tab4)
 	return true;
 }
 
-// )
+/**
+ *
+ */
 const natl MAX_IRQ  = 24;
-proc_elem *a_p[MAX_IRQ];  //
-// )
 
+/**
+ *
+ */
+proc_elem *a_p[MAX_IRQ];
+
+/**
+ *
+ */
 natq alloca_blocco();
+
+/**
+ *
+ */
 des_frame* swap(natl proc, int livello, vaddr ind_virt);
+
+/**
+ *
+ */
 bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
 {
 	tab_entry& dt = get_des(proc, liv + 1, ind_virt);
@@ -935,6 +1025,9 @@ bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
 	return true;
 }
 
+/**
+ *
+ */
 bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
 {
 	for (int i = 3; i >= 0; i--) {
@@ -944,6 +1037,9 @@ bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
 	return true;
 }
 
+/**
+ *
+ */
 bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
 {
 	size = allinea(size, DIM_PAGINA);
@@ -954,6 +1050,9 @@ bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
 	return true;
 }
 
+/**
+ *
+ */
 faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
 {
 	des_frame *dp = 0;
@@ -1241,8 +1340,11 @@ error1:	return 0;
 }
 
 // parte "C++" della activate_p, descritta in
-extern "C" void
-c_activate_p(void f(int), int a, natl prio, natl liv)
+/**
+ * C++ implementation for a_activate_p defined in system/system.s.
+ * User Modile Primitive activate_p().
+ */
+extern "C" void c_activate_p(void f(int), int a, natl prio, natl liv)
 {
 	proc_elem *p;			// proc_elem per il nuovo processo
 	natl id = 0xFFFFFFFF;		// id da restituire in caso di fallimento
@@ -1289,13 +1391,40 @@ c_activate_p(void f(int), int a, natl prio, natl liv)
 	self->context[I_RAX] = id;
 }
 
+
+/**
+ * USER-PRIMITIVE-EXAMPLE.
+ * C++ implementation for the a_getid assembly subroutine.
+ */
+extern "C" natl c_getid()
+{
+    return execution->id;
+}
+
+/**
+ *
+ */
 void rilascia_tutto(addr tab4, natl i, natl n);
+
+/**
+ *
+ */
 void riassegna_tutto(natl proc, faddr tab4, natl i, natl n);
+
+/**
+ *
+ */
 void dealloca_blocco(natl blocco);
+
 // rilascia tutte le strutture dati private associate al processo puntato da
 // "p" (tranne il proc_elem puntato da "p" stesso)
 faddr ultimo_terminato;
-extern "C" void distruggi_pila_precedente() {
+
+/**
+ *
+ */
+extern "C" void distruggi_pila_precedente()
+{
 	rilascia_tutto(ultimo_terminato, I_SIS_P, N_SIS_P);
 	rilascia_frame(descrittore_frame(ultimo_terminato));
 	ultimo_terminato = 0;
@@ -1352,26 +1481,45 @@ void rilascia_ric(faddr tab, int liv, natl i, natl n)
 	}
 }
 
+/**
+ *
+ */
 void rilascia_tutto(faddr tab4, natl i, natl n)
 {
 	rilascia_ric(tab4, 4, i, n);
 }
 
+/**
+ *
+ */
 void riassegna_ric(natl proc, faddr tab, int liv, natl i, natl n)
 {
-	for (natl j = i; j < i + n && j < 512; j++) {
-		tab_entry& dt = get_entry(tab, j);
-		if (extr_P(dt)) {
-			faddr sub = extr_IND_FISICO(dt);
-			if (liv > 1)
-				riassegna_ric(proc, sub, liv - 1, 0, 512);
-			des_frame *df = descrittore_frame(sub);
-			if (df->processo == proc)
-				df->processo = dummy_proc;
-		}
-	}
+    for (natl j = i; j < i + n && j < 512; j++)
+    {
+        tab_entry& dt = get_entry(tab, j);
+        
+        if (extr_P(dt))
+        {
+            faddr sub = extr_IND_FISICO(dt);
+            
+            if (liv > 1)
+            {
+                riassegna_ric(proc, sub, liv - 1, 0, 512);
+            }
+
+            des_frame *df = descrittore_frame(sub);
+            
+            if (df->processo == proc)
+            {
+                df->processo = dummy_proc;
+            }
+        }
+    }
 }
 
+/**
+ *
+ */
 void riassegna_tutto(natl proc, faddr tab4, natl i, natl n)
 {
 	riassegna_ric(proc, tab4, 4, i, n);
@@ -1411,7 +1559,8 @@ extern "C" void c_terminate_p()
 }
 
 /**
- * Aborts the process currently pointed by 'execution'.
+ * Aborts the process currently pointed by 'execution'. A new process will be
+ * scheduled without returning to the calling function.
  *
  * The only difference with c_terminate_p is that an additionally warning log is
  * also sent whem using this method. Must be used when a process is aborted as a
@@ -1421,7 +1570,6 @@ extern "C" void c_abort_p()
 {
 	term_cur_proc(LOG_WARN, "Current execution process aborted.");
 }
-// )
 
 // driver del timer
 extern "C" void c_driver_td(void)
@@ -1445,11 +1593,20 @@ extern "C" void c_driver_td(void)
     schedule();
 }
 
+/**
+ *
+ */
 void scrivi_swap(addr src, natl blocco);
+
+/**
+ *
+ */
 void leggi_swap(addr dest, natl blocco);
 
-
-void carica(des_frame* df) //
+/**
+ *
+ */
+void carica(des_frame* df)
 {
 	tab_entry& e = get_des(df->processo, df->livello + 1, df->ind_virtuale);
 	if (extr_ZERO(e)) {
@@ -1459,14 +1616,20 @@ void carica(des_frame* df) //
 	}
 }
 
-void scarica(des_frame* df) //
+/**
+ *
+ */
+void scarica(des_frame* df)
 {
 	scrivi_swap((addr)indirizzo_frame(df), df->ind_massa);
 	tab_entry& e = get_des(df->processo, df->livello + 1, df->ind_virtuale);
 	set_D(e, false);
 }
 
-void collega(des_frame *df)	//
+/**
+ *
+ */
+void collega(des_frame *df)
 {
 	tab_entry& e = get_des(df->processo, df->livello + 1, df->ind_virtuale);
 	set_IND_FISICO(e, indirizzo_frame(df));
@@ -1475,8 +1638,15 @@ void collega(des_frame *df)	//
 	set_A(e, false);
 }
 
-extern "C" void invalida_entrata_TLB(vaddr ind_virtuale); //
-bool scollega(des_frame* df)	//
+/**
+ *
+ */
+extern "C" void invalida_entrata_TLB(vaddr ind_virtuale);
+
+/**
+ *
+ */
+bool scollega(des_frame* df)
 {
 	bool bitD;
 	tab_entry& e = get_des(df->processo, df->livello + 1, df->ind_virtuale);
@@ -1536,7 +1706,14 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt)
 	return df;
 }
 
+/**
+ *
+ */
 void stat();
+
+/**
+ *
+ */
 bool c_routine_pf()
 {
 	vaddr ind_virt = readCR2();
@@ -1556,6 +1733,9 @@ bool c_routine_pf()
 	return true;
 }
 
+/**
+ *
+ */
 bool vietato(des_frame* df, natl proc, int liv, vaddr ind_virt)
 {
 	if (df->livello > liv && df->processo == proc &&
@@ -1564,6 +1744,9 @@ bool vietato(des_frame* df, natl proc, int liv, vaddr ind_virt)
 	return false;
 }
 
+/**
+ *
+ */
 des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virt)
 {
 	des_frame *df, *df_vittima;
@@ -1586,6 +1769,9 @@ des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virt)
 	return df_vittima;
 }
 
+/**
+ *
+ */
 void stat()
 {
 	des_frame *df1, *df2;
@@ -1614,7 +1800,6 @@ void stat()
 	}
 	invalida_TLB();
 }
-
 
 // funzione di supporto per carica_tutto()
 bool carica_ric(natl proc, faddr tab, int liv, vaddr ind, natl n)
@@ -1649,10 +1834,9 @@ bool carica_tutto(natl proc, natl i, natl n)
 	return carica_ric(proc, p->cr3, 3, norm(i * dim_region(3)), n);
 }
 
-
-
 // super blocco (vedi e [P_SWAP] avanti)
-struct superblock_t {
+struct superblock_t
+{
 	char	magic[8];
 	natq	bm_start;
 	natq	blocks;
@@ -1665,17 +1849,21 @@ struct superblock_t {
 };
 
 // descrittore di swap (vedi [P_SWAP] avanti)
-struct des_swap {
+struct des_swap
+{
 	natl *free;		// bitmap dei blocchi liberi
 	superblock_t sb;	// contenuto del superblocco
 } swap_dev; 	// c'e' un unico oggetto swap
+
+/**
+ *
+ */
 bool swap_init();
 
 // chiamata in fase di inizializzazione, carica in memoria fisica
 // tutte le parti condivise di livello IO e utente.
 bool crea_spazio_condiviso()
 {
-
 	// ( lettura del direttorio principale dallo swap
 	flog(LOG_INFO, "lettura del direttorio principale...");
 	addr tmp = alloca(DIM_PAGINA);
@@ -1782,8 +1970,14 @@ natl create_dummy()
     return dummy_elem->id;
 }
 
+/**
+ *
+ */
 void main_sistema(int n);
 
+/**
+ *
+ */
 natl crea_main_sistema()
 {
     proc_elem* m = crea_processo(main_sistema, 0, MAX_PRIORITY, LEV_SYSTEM, false);
@@ -1804,6 +1998,7 @@ natl crea_main_sistema()
 // ( [P_EXTERN_PROC]
 // Registrazione processi esterni
 proc_elem* const ESTERN_BUSY = (proc_elem*)1;
+
 // primitiva di nucleo usata dal nucleo stesso
 extern "C" void wfi();
 

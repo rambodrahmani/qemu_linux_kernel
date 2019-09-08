@@ -367,22 +367,34 @@ invalida_entrata_TLB:
 	ret
 	.cfi_endproc
 
-// codice comune alle macro cavallo_di_troia*
-violazione:
-	movq $2, %rdi
-	movabs $param_err, %rsi
-	movq %rax, %rdx
-	xorq %rax, %rax
-	call flog
-	call c_abort_p
-	call load_state
-	iretq
+////////////////////////////////////////////////////////////////////////////////
+//                                TROJAN HORSES                               //
+////////////////////////////////////////////////////////////////////////////////
+# As we said, the user programs must never be trusted by the system and the
+# system primitives must always check the parameters they are given before
+# execution. In case of pointer and references the primitives must always check
+# the addressed memory to make sure it belongs to the user memory space and not
+# to the system memory space.
 
 #-------------------------------------------------------------------------------
-// controlla che l indirizzo virtuale op sia accessibile dal
-// livello di privilegio del chiamante della INT. Abortisce il
-// processo in caso contrario.
-.macro cavallo_di_troia reg
+# Process shutdown in case of trojan horse.
+violazione:
+    movq   $2, %rdi
+    movabs $param_err, %rsi
+    movq   %rax, %rdx
+    xorq   %rax, %rax
+    call   flog
+    call   c_abort_p
+    call   load_state
+    iretq
+
+#-------------------------------------------------------------------------------
+# Checks if the given address contained in reg is accessible from the privilege
+# level the INT instruction was called from. If it is not, the process will be
+# aborted.
+# Parameters:
+#  - reg: assembly operand containing the address to be checked.
+.macro trojan_horse reg
 	cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
 	je 1f
 	movabs $0xffff000000000000, %rax
@@ -394,8 +406,12 @@ violazione:
 .endm
 
 #-------------------------------------------------------------------------------
-// controlla che base+dim non causi un wrap-around
-.macro cavallo_di_troia2 base dim
+# Works like trojan_horse with the only difference that a memory interval must
+# be defined with a start address and a length.
+# Parameters:
+#  - base: memory space to be checked base address;
+#  - dim:  memory space to be cheked  size.
+.macro trojan_horse2 base dim
 	movq \base, %rax
 	addq \dim, %rax
 	jc violazione
@@ -403,7 +419,7 @@ violazione:
 
 #-------------------------------------------------------------------------------
 // come sopra, ma la dimensione e* in settori
-.macro cavallo_di_troia3 base sec
+.macro trojan_horse3 base sec
 	movq \base, %rax
 	shlq $9, %rax
 	addq \sec, %rax
@@ -435,9 +451,9 @@ violazione:
 .GLOBAL init_idt
 #-------------------------------------------------------------------------------
 init_idt:
-    //         index     routine         dpl
+    #          index     routine         dpl
 
-    // exceptions:
+    # exceptions:
     load_gate  0         divide_error    LEV_SYSTEM
     load_gate  1         debug           LEV_SYSTEM
     load_gate  2         nmi             LEV_SYSTEM
@@ -457,9 +473,9 @@ init_idt:
     load_gate  17        ac_exc          LEV_SYSTEM
     load_gate  18        mc_exc          LEV_SYSTEM
     load_gate  19        simd_exc        LEV_SYSTEM
-    // 19-31 reserved
+    # 19-31 reserved
 
-    // drivers, handlers
+    # drivers, handlers
     load_gate  VETT_0    driver_td       LEV_SYSTEM
     load_gate  VETT_1    handler_1       LEV_SYSTEM
     load_gate  VETT_2    driver_td       LEV_SYSTEM
@@ -486,7 +502,7 @@ init_idt:
     load_gate  VETT_23   handler_23      LEV_SYSTEM
     load_gate  VETT_S    handler_24      LEV_SYSTEM
 
-    // primitives
+    # user module primitives
     load_gate  TIPO_A    a_activate_p    LEV_USER
     load_gate  TIPO_T    a_terminate_p   LEV_USER
     load_gate  TIPO_SI   a_sem_ini       LEV_USER
@@ -495,7 +511,11 @@ init_idt:
     load_gate  TIPO_D    a_delay         LEV_USER
     load_gate  TIPO_L    a_log           LEV_USER
 
-    // I/O primitives
+    # USER-PRIMITIVE-EXAMPLE
+    load_gate  TIPO_GETID  a_getid       LEV_USER
+    # USER-PRIMITIVE-EXAMPLE
+
+    # I/O primitives
     load_gate  TIPO_APE  a_activate_pe   LEV_SYSTEM
     load_gate  TIPO_WFI  a_wfi           LEV_SYSTEM
     load_gate  TIPO_FG   a_fill_gate     LEV_SYSTEM
@@ -543,7 +563,7 @@ init_gdt:
     retq
 
 ////////////////////////////////////////////////////////////////////////////////
-//                      a_[primitive] DEFINITIONS                             //
+//                      USER MODULE SYSTEM PRIMITIVES                         //
 ////////////////////////////////////////////////////////////////////////////////
 
 #-------------------------------------------------------------------------------
@@ -554,11 +574,11 @@ a_activate_p:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
-    cavallo_di_troia %rdi
-    call c_activate_p
-    call load_state
-    iretq
+    call save_state             # save process state before switching processes
+    trojan_horse %rdi           # check for trojan_horse
+    call c_activate_p           # call C++ subroutine implementation
+    call load_state             # load new process state
+    iretq                       # return from interrupt
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
@@ -569,10 +589,10 @@ a_terminate_p:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
-    call c_terminate_p
-    call load_state
-    iretq
+    call save_state             # save process state before switching processes
+    call c_terminate_p          # call C++ subroutine implementation
+    call load_state             # load new process state
+    iretq                       # return from interrupt
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
@@ -583,8 +603,8 @@ a_sem_ini:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call c_sem_ini
-    iretq
+    call c_sem_ini              # call C++ subroutine implementation
+    iretq                       # return from interrupt
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
@@ -595,10 +615,10 @@ a_sem_wait:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
-    call c_sem_wait
-    call load_state
-    iretq
+    call save_state             # save process state before switching processes
+    call c_sem_wait             # call C++ subroutine implementation
+    call load_state             # load new process state
+    iretq                       # return from interrupt
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
@@ -609,10 +629,10 @@ a_sem_signal:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
-    call c_sem_signal
-    call load_state
-    iretq
+    call save_state             # save process state before switching processes
+    call c_sem_signal           # call C++ subroutine implementation
+    call load_state             # load new process state
+    iretq                       # return from interrupt
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
@@ -623,11 +643,18 @@ a_delay:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
-    call c_delay
-    call load_state
-    iretq
+    call save_state             # save process state before switching processes
+    call c_delay                # call C++ subroutine implementation
+    call load_state             # load new process state
+    iretq                       # return from interrupt
     .cfi_endproc
+
+#-------------------------------------------------------------------------------
+.EXTERN c_getid                                      # INT TIPO_GETID Subroutine
+#-------------------------------------------------------------------------------
+a_getid:
+    call c_getid            # call C++ subroutine implementation
+    iretq                   # return from interrupt
 
 ////////////////////////////////////////////////////////////////////////////////
 //                  INTERFACE AVAILABLE TO THE I/O MODULE                     //
@@ -641,7 +668,7 @@ a_activate_pe:
 	.cfi_def_cfa_offset 40
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
-	cavallo_di_troia %rdi
+	trojan_horse %rdi
     call c_activate_pe
 	iretq
 	.cfi_endproc
@@ -678,7 +705,7 @@ a_panic:                                   # Interrupt TIPO_P primitive
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
     call save_state
-    //cavallo_di_troia 1
+    //trojan_horse 1
     movq %rsp, %rsi
     call c_panic
 1:  nop
@@ -710,8 +737,9 @@ a_trasforma:
 	call c_trasforma
 	iretq
 	.cfi_endproc
-	.EXTERN c_log
 
+#-------------------------------------------------------------------------------
+.EXTERN c_log
 #-------------------------------------------------------------------------------
 a_log:
 	.cfi_startproc
@@ -719,8 +747,8 @@ a_log:
 	.cfi_offset rip, -40
 	.cfi_offset rsp, -16
 	call save_state
-	//cavallo_di_troia 1
-	//cavallo_di_troia2 1 2
+	//trojan_horse 1
+	//trojan_horse2 1 2
 	call c_log
 	call load_state
 	iretq
