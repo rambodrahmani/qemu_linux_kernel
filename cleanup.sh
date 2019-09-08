@@ -10,13 +10,6 @@
 #         Created on 07/07/2019
 ################################################################################
 
-# clean up home folder
-echo "*************************************"
-echo "*  Cleaning up the QLK home folder  *"
-echo "*************************************"
-rm -rf "$HOME/QEMU_LINUX_KERNEL"
-echo "Completed."
-
 # clean up QEMU folder
 echo ""
 echo "*********************************"
@@ -88,6 +81,14 @@ rm swap.img
 cd ..
 echo "Completed."
 
+# clean up home folder
+echo "*************************************"
+echo "*  Cleaning up the QLK home folder  *"
+echo "*************************************"
+rm -rf "$HOME/QEMU_LINUX_KERNEL"
+echo "Completed."
+
+# all clean ups terminated
 echo ""
 echo "************************************"
 echo "*  Cleanup successfully completed  *"

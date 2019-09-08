@@ -7,7 +7,7 @@
  *       Because the CPU is handling a trap exception, it must save in the stack
  *       the address of the next instruction. After compiling this user program,
  *       use the command:
- *          objdump -d | grep -C 1 utente.cpp
+ *          objdump -d | grep -C 1 user.cpp
  *       which will provide an output similar to
  *
  *       After copying this file into user/user.cpp compile and run using

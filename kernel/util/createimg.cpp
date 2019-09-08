@@ -24,7 +24,11 @@
 #include "interp.h"
 #include "swap.h"
 
-class verbose {
+/**
+ *
+ */
+class verbose
+{
 	bool v;
 public:
 	void set_verbose(bool v_) {
@@ -39,13 +43,26 @@ public:
 	}
 };
 
+/**
+ *
+ */
 verbose Log;
 
+/**
+ *
+ */
 const uint32_t UPB = DIM_PAGINA / sizeof(uint64_t);
+
+/**
+ *
+ */
 const uint32_t BPU = sizeof(uint64_t) * 8;
 
-
-union entrata {
+/**
+ *
+ */
+union entrata
+{
 	// caso di pagina presente
 	struct {
 		// byte di accesso
@@ -85,17 +102,27 @@ union entrata {
 	} a;
 };
 
+/**
+ *
+ */
 struct tabella {
 	entrata e[512];
 };
 
-struct pagina {
+/**
+ *
+ */
+struct pagina
+{
 	union {
 		uint8_t byte[DIM_PAGINA];
 		uint64_t parole_lunghe[DIM_PAGINA / sizeof(uint64_t)];
 	};
 };
 
+/**
+ *
+ */
 int i_tabella(uint64_t ind_virt, int liv)
 {
 	int shift = 12 + (liv - 1) * 9;
@@ -103,36 +130,58 @@ int i_tabella(uint64_t ind_virt, int liv)
 	return (ind_virt & mask) >> shift;
 }
 
-
+/**
+ *
+ */
 tabella *tabella_puntata(entrata *e)
 {
 	return reinterpret_cast<tabella*>(e->p.address << 12);
 }
 
-pagina* pagina_puntata(entrata* e) {
+/**
+ *
+ */
+pagina* pagina_puntata(entrata* e)
+{
 	return reinterpret_cast<pagina*>(e->p.address << 12);
 }
 
-struct bm_t {
+/**
+ *
+ */
+struct bm_t
+{
 	uint64_t *vect;
 	uint64_t size;
 };
 
+/**
+ *
+ */
 inline uint64_t bm_isset(bm_t *bm, uint64_t pos)
 {
 	return !(bm->vect[pos / 64] & (1UL << (pos % 64)));
 }
 
+/**
+ *
+ */
 inline void bm_set(bm_t *bm, uint64_t pos)
 {
 	bm->vect[pos / 64] &= ~(1UL << (pos % 64));
 }
 
+/**
+ *
+ */
 inline void bm_clear(bm_t *bm, uint64_t pos)
 {
 	bm->vect[pos / 64] |= (1UL << (pos % 64));
 }
 
+/**
+ *
+ */
 void bm_create(bm_t *bm, uint64_t *buffer, uint64_t size)
 {
 	bm->vect = buffer;
@@ -143,7 +192,9 @@ void bm_create(bm_t *bm, uint64_t *buffer, uint64_t size)
 		bm->vect[i] = 0;
 }
 
-
+/**
+ *
+ */
 bool bm_alloc(bm_t *bm, uint64_t& pos)
 {
 	int i, l;
@@ -160,6 +211,9 @@ bool bm_alloc(bm_t *bm, uint64_t& pos)
 	return true;
 }
 
+/**
+ *
+ */
 void bm_free(bm_t *bm, uint64_t pos)
 {
 	bm_clear(bm, pos);
@@ -179,7 +233,11 @@ bm_t blocks;
 pagina pag;
 Swap* swap = NULL;
 
-class TabCache {
+/**
+ *
+ */
+class TabCache
+{
 	bool dirty[3];
 	bool valid[3];
 	block_t block[3];
@@ -237,7 +295,9 @@ public:
 	}
 };
 
-
+/**
+ *
+ */
 void do_map(char* fname, int liv, uint64_t& entry_point, uint64_t& last_address)
 {
 	FILE* file;
@@ -339,8 +399,8 @@ void do_map(char* fname, int liv, uint64_t& entry_point, uint64_t& last_address)
 	fclose(file);
 }
 
-
-/* prepara le tabelle per uno heap di dimensione dim a partire
+/**
+ * prepara le tabelle per uno heap di dimensione dim a partire
  * da start_adddr. start_addr deve essere allineato alla pagina
  */
 void do_heap(const char *name, int liv, uint64_t start_addr, uint64_t dim) {
@@ -393,8 +453,15 @@ void do_heap(const char *name, int liv, uint64_t start_addr, uint64_t dim) {
 	}
 }
 
-
-int main(int argc, char* argv[])
+/**
+ * Entry point.
+ *
+ * @param  argc  command line arguments counter.
+ * @param  argv  command line arguments.
+ *
+ * @return       execution exit code.
+ */
+int main(int argc, char * argv[])
 {
 	if (argc >= 2 && std::string(argv[1]) == "-v") {
 		Log.set_verbose(true);
@@ -402,8 +469,9 @@ int main(int argc, char* argv[])
 		argv++;
 	}
 
-	if (argc < 3) {
-		fprintf(stderr, "Utilizzo: %s [-v] <swap> <modulo io> <modulo utente>\n", argv[0]);
+	if (argc < 3)
+    {
+		fprintf(stderr, "Usage: %s [-v] <swap> <io module> <user module>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -483,7 +551,4 @@ int main(int argc, char* argv[])
 	}
 	return EXIT_SUCCESS;
 }
-
-
-
 

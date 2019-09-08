@@ -53,10 +53,10 @@ all: \
      build/system \
      build/parse   \
      build/createimg \
-     utente/prog \
+     user/prog \
      util/start.gdb
 
-toparse := $(wildcard utente/prog/*)
+toparse := $(wildcard user/prog/*)
 
 build/system: system/sist_s.o system/sist_cpp.o
 	$(NLD) $(NLDFLAGS) -o build/system -Ttext $(START_SISTEMA) system/sist_s.o system/sist_cpp.o $(NLDLIBS)
@@ -64,8 +64,8 @@ build/system: system/sist_s.o system/sist_cpp.o
 build/io: io/io_s.o io/io_cpp.o
 	$(NLD) $(NLDFLAGS) -o build/io -Ttext $(START_IO) io/io_s.o io/io_cpp.o $(NLDLIBS)
 
-build/utente: utente/uten_s.o utente/lib.o utente/uten_cpp.o
-	$(NLD) $(NLDFLAGS) -o build/utente -Ttext $(START_UTENTE) utente/uten_cpp.o utente/uten_s.o utente/lib.o $(NLDLIBS)
+build/user: user/uten_s.o user/lib.o user/uten_cpp.o
+	$(NLD) $(NLDFLAGS) -o build/user -Ttext $(START_UTENTE) user/uten_cpp.o user/uten_s.o user/lib.o $(NLDLIBS)
 
 # system.s and system.cpp compilation
 system/sist_s.o: system/system.s include/constants.h
@@ -81,18 +81,18 @@ io/io_s.o: io/io.s include/constants.h
 io/io_cpp.o: io/io.cpp include/constants.h
 	$(NCC) $(NCFLAGS) -fpic -c io/io.cpp -o io/io_cpp.o
 
-# compilazione di utente.s e utente.cpp
-utente/uten_s.o: utente/utente.s include/constants.h
-	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c utente/utente.s -o utente/uten_s.o
+# compilazione di user.s e user.cpp
+user/uten_s.o: user/user.s include/constants.h
+	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c user/user.s -o user/uten_s.o
 
-utente/utente.cpp: build/parse utente/include/* utente/prog $(toparse)
-	build/parse -o utente/utente.cpp $(toparse)
+user/user.cpp: build/parse user/include/* user/prog $(toparse)
+	build/parse -o user/user.cpp $(toparse)
 
-utente/uten_cpp.o: utente/utente.cpp
-	$(NCC) $(NCFLAGS) -fpic -Iutente/include -c utente/utente.cpp -o utente/uten_cpp.o
+user/uten_cpp.o: user/user.cpp
+	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/user.cpp -o user/uten_cpp.o
 
-utente/lib.o: utente/lib.cpp utente/include/lib.h
-	$(NCC) $(NCFLAGS) -fpic -Iutente/include -c utente/lib.cpp -o utente/lib.o
+user/lib.o: user/lib.cpp user/include/lib.h
+	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/lib.cpp -o user/lib.o
 
 # creazione di parse e createimg
 build/parse: util/parse.c util/src.h
@@ -127,11 +127,11 @@ $(SWAP): util/start.mk
 	truncate -s $(SWAP_SIZE) $(SWAP)
 
 .PHONY: swap clean reset
-swap: build/createimg build/io build/utente $(SWAP)
-	build/createimg $(SWAP) build/io build/utente && ln -fs $(SWAP) .swap
+swap: build/createimg build/io build/user $(SWAP)
+	build/createimg $(SWAP) build/io build/user && ln -fs $(SWAP) .swap
 
 clean:
-	rm -f system/*.o io/*.o utente/*.o util/*.o
+	rm -f system/*.o io/*.o user/*.o util/*.o
 	rm -f util/start.mk util/start.gdb util/start.pl
 
 reset: clean
@@ -140,7 +140,7 @@ reset: clean
 build:
 	mkdir -p $@
 
-utente/prog:
+user/prog:
 	mkdir -p $@
 
 build/mkstart: include/constants.h util/mkstart.cpp
@@ -149,7 +149,7 @@ build/mkstart: include/constants.h util/mkstart.cpp
 util/start.mk: include/constants.h include/type.h build/mkstart
 	build/mkstart
 
-util/start.gdb: build/io build/utente
+util/start.gdb: build/io build/user
 	objdump -h build/io | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_IO=%u\n",hex($$F[3]);}' > $@
-	objdump -h build/utente | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_UTENTE=%u\n",hex($$F[3]);}' >> $@
+	objdump -h build/user | perl -nae '$$F[1] eq ".text" && do { printf "set \$$START_UTENTE=%u\n",hex($$F[3]);}' >> $@
 

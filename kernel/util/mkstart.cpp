@@ -1,3 +1,10 @@
+/**
+ * File: mkstart.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 08/09/2019.
+ */
+
 #include <fstream>
 #include <iomanip>
 #include <constants.h>

@@ -1,6 +1,10 @@
-/*
- * parse.c
- * NOTA: snprintf non disponibile sotto windows (libc del djgpp di calcolatori)
+/**
+ * File: parse.c
+ *       NOTA: snprintf non disponibile sotto windows (libc del djgpp di
+ *       calcolatori)
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 08/09/2019.
  */
 #include <ctype.h>
 #include <stdio.h>
@@ -23,7 +27,7 @@ char ultima_riga[LUN_RIGA];
 
 const char* currfile;
 int line_needed = 0;
-const char* outname = "utente.cpp";
+const char* outname = "user.cpp";
 int riga_out = 1;
 
 /*
@@ -68,8 +72,20 @@ void errore(const char *msg)
  * Legge il carattere successivo dall' ingresso
  */
 void emetti_line();
+
+/**
+ *
+ */
 void emetti_line2();
+
+/**
+ *
+ */
 void emetti(const char *t);
+
+/**
+ *
+ */
 void leggi_car()
 {
 	look = fgetc(input);
@@ -234,6 +250,9 @@ void emetti(const char *t)
 		riga_out++;
 }
 
+/**
+ *
+ */
 void emetti_line()
 {
 	char linep[LUN_RIGA];
@@ -241,6 +260,9 @@ void emetti_line()
 	emetti(linep);
 }
 
+/**
+ *
+ */
 void emetti_line2()
 {
 	char linep[LUN_RIGA];
@@ -261,16 +283,30 @@ void *xmalloc(size_t s)
 	return rv;
 }
 
-struct file_elem {
+/**
+ *
+ */
+struct file_elem
+{
 	char *testo;
 	struct file_elem *succ;
 };
 
 struct file_elem *utente[2], *fine[2];
 
+/**
+ *
+ */
 #define GLOB 0
+
+/**
+ *
+ */
 #define MAIN 1
 
+/**
+ *
+ */
 void agg_riga(int sez, char *r)
 {
 	struct file_elem *n;
@@ -292,6 +328,9 @@ void agg_riga(int sez, char *r)
 	}
 }
 
+/**
+ *
+ */
 void rilascia_righe()
 {
 	struct file_elem *ep;
@@ -318,6 +357,9 @@ void rilascia_righe()
 #define MAIN_TAIL "\n\tterminate_p();\n}\n"
 #endif
 
+/**
+ *
+ */
 void scrivi_utente()
 {
 	struct file_elem *ep;
@@ -337,11 +379,24 @@ void scrivi_utente()
 	emetti(MAIN_TAIL);
 }
 
+/**
+ *
+ */
 #define GLOB_FMT "short %s;\n"
+
+/**
+ *
+ */
 #define PROC_FMT "\t%s = activate_p(%s, %d, %d, %s);\n"
 
+/**
+ *
+ */
 #define MAX_INT_LEN 12
 
+/**
+ *
+ */
 void agg_proc(const char *nome_proc, const char *corpo_proc, int par_att,
 	int prio, int liv)
 {
@@ -377,9 +432,19 @@ void agg_proc(const char *nome_proc, const char *corpo_proc, int par_att,
 	free(buf);
 }
 
+/**
+ *
+ */
 #define INT_FMT "int %s;\n"
+
+/**
+ *
+ */
 #define SEM_FMT "\t%s = sem_ini(%d);\n"
 
+/**
+ *
+ */
 void agg_sem(const char *nome_sem, int valore)
 {
 	char *buf;
@@ -455,6 +520,9 @@ void process()
 	agg_proc(nome_proc, corpo_proc, pa, prio, liv);
 }
 
+/**
+ *
+ */
 void avanza()
 {
 	int cnt = 0;
@@ -482,6 +550,9 @@ void avanza()
 	}
 }
 
+/**
+ *
+ */
 void process_body()
 {
 	emetti("void ");
@@ -511,6 +582,9 @@ void process_body()
 	trova('}', 1);
 }
 
+/**
+ *
+ */
 void semaphore()
 {
 	char nome_sem[LUN_NOME];
@@ -532,6 +606,9 @@ void semaphore()
 	agg_sem(nome_sem, valore);
 }
 
+/**
+ *
+ */
 void parse_file(const char* inname, FILE* output)
 {
 	if(!(input = fopen(inname, "r")))
@@ -564,11 +641,25 @@ void parse_file(const char* inname, FILE* output)
 	fclose(input);
 }
 
+/**
+ *
+ */
 #define LUN_OGGETTI 4096
+
+/**
+ *
+ */
 char oggetti[LUN_OGGETTI];
 
-
-int main(int argc, char* argv[])
+/**
+ * Entry point.
+ *
+ * @param  argc  command line arguments counter.
+ * @param  argv  command line arguments.
+ *
+ * @return       execution exit code.
+ */
+int main(int argc, char * argv[])
 {
 	int i;
 

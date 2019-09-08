@@ -1,4 +1,4 @@
-#line 1 "utente/prog/primitive.in"
+#line 1 "user/prog/primitive.in"
 /**
  * File: primitive.in
  *       This user program example shows how to add a new primitive to the
@@ -49,14 +49,14 @@
  * User Level process implemented by sample_body.
  */
 
-#line 52 "utente/prog/primitive.in"
+#line 52 "user/prog/primitive.in"
 /**
  * Developer harness test shows how to use the getid() primitive.
  *
  * @param  a  
  */
 void sample_body(int a)
-#line 58 "utente/prog/primitive.in"
+#line 58 "user/prog/primitive.in"
 {
     // char buffer
     char buf[10];
@@ -81,7 +81,7 @@ void sample_body(int a)
 	terminate_p();
 }
 short sample;
-#line 85 "utente/utente.cpp"
+#line 85 "user/user.cpp"
 
 int main()
 {

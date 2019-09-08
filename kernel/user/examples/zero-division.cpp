@@ -11,7 +11,7 @@
  *         ./run
  *
  *       Expected outout:
- *         INF	0	proc=7 entry=start [utente.s:9](0) prio=268435455 liv=3
+ *         INF	0	proc=7 entry=start [user.s:9](0) prio=268435455 liv=3
  *         INF	0	Timer initialized (DELAY=59659)
  *         INF	0	Switching to use process.
  *         INF	0	Processo 0 aborted
