@@ -1288,7 +1288,6 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 	dpf_tab4->processo = identifier;
 	pdes_proc->cr3 = indirizzo_frame(dpf_tab4);
 	crea_tab4(pdes_proc->cr3);
-	// )
 
     // create process system stack
     if (!crea_pila(p->id, fin_sis_p, DIM_SYS_STACK, LEV_SYSTEM))
@@ -1403,23 +1402,32 @@ error2:	dealloca(pdes_proc);
 error1:	return 0;
 }
 
-// parte "C++" della activate_p, descritta in
 /**
  * C++ implementation for a_activate_p defined in system/system.s.
  * User Modile Primitive activate_p().
+ * Copies the given process from the swap partition to the M2 memory space.
  */
 extern "C" void c_activate_p(void f(int), int a, natl prio, natl liv)
 {
-	proc_elem *p;			// proc_elem per il nuovo processo
-	natl id = 0xFFFFFFFF;		// id da restituire in caso di fallimento
+    // new proc_elem
+    proc_elem *p;
 
-	// (* non possiamo accettare una priorita' minore di quella di dummy
-	//    o maggiore di quella del processo chiamante
-	if (prio < MIN_PRIORITY || prio > execution->priority) {
-		flog(LOG_WARN, "priorita' non valida: %d", prio);
-		c_abort_p();
-		return;
-	}
+    // id to be returned in case of failure
+	natl id = 0xFFFFFFFF;
+
+    // a priority lower than the one of the dummy process or higher than the one
+    // of the calling process can not be used
+    if (prio < MIN_PRIORITY || prio > execution->priority)
+    {
+        // print warning log message
+        flog(LOG_WARN, "Invalid process priority: %d", prio);
+
+        // abort current process
+        c_abort_p();
+
+        // just return to the calling function
+        return;
+    }
 	// *)
 
 	// (* controlliamo che 'liv' contenga un valore ammesso
@@ -2063,7 +2071,9 @@ natl crea_main_sistema()
 // Registrazione processi esterni
 proc_elem* const ESTERN_BUSY = (proc_elem*)1;
 
-// primitiva di nucleo usata dal nucleo stesso
+/**
+ * Sends the EOI (end of interrupt) to the APIC and schedules a new process.
+ */
 extern "C" void wfi();
 
 // associa il processo esterno puntato da "p" all'interrupt "irq".
@@ -2085,31 +2095,61 @@ bool aggiungi_pe(proc_elem *p, natb irq)
 	return true;
 }
 
+/**
+ * Creates a new process for an external PCI device. The process is also
+ * associated to the interrupts coming from the external device.
+ *
+ * @param  f     
+ * @param  a     
+ * @param  prio  process priority to be used;
+ * @param  liv   
+ * @param  type  
+ */
 extern "C" void c_activate_pe(void f(int), int a, natl prio, natl liv, natb type)
 {
-	proc_elem	*p;			// proc_elem per il nuovo processo
-	des_proc *self = des_p(execution->id);
+    // proc_elem for the new process
+    proc_elem	*p;
 
-	if (prio < MIN_PRIORITY) {
-		flog(LOG_WARN, "priorita' non valida: %d", prio);
-		c_abort_p();
-		return;
-	}
+    // retrieve current process descriptor
+    des_proc *self = des_p(execution->id);
 
-	p = crea_processo(f, a, prio, liv, true);
-	if (p == 0)
-		goto error1;
+    // the given process priority can not be higher than the calling process
+    if (prio < MIN_PRIORITY)
+    {
+        // print warning log message
+        flog(LOG_WARN, "Invalid process priority: %d", prio);
 
-	if (!aggiungi_pe(p, type) )
-		goto error2;
+        // abort current process
+        c_abort_p();
 
-	flog(LOG_INFO, "estern=%d entry=%p(%d) prio=%d liv=%d type=%d",
-			p->id, f, a, prio, liv, type);
+        // just return to the calling function
+        return;
+    }
 
-	self->context[I_RAX] = p->id;
+    // create new process with the given parameters: IF = true
+    p = crea_processo(f, a, prio, liv, true);
+
+    // check if the processo was correctly created
+    if (p == 0)
+    {
+        goto error1;
+    }
+
+    // associate external device interrupts
+    if ( !aggiungi_pe(p, type) )
+    {
+        // in case of failure go to error #2
+        goto error2;
+    }
+
+    // log data of the newly created process for the external PCI device
+    flog(LOG_INFO, "estern=%d entry=%p(%d) prio=%d liv=%d type=%d", p->id, f, a, prio, liv, type);
+
+    self->context[I_RAX] = p->id;
 	return;
 
-error2:	destroy_process(p);
+error2:
+    destroy_process(p);
 error1:
 	self->context[I_RAX] = 0xFFFFFFFF;
 	return;
@@ -2449,7 +2489,7 @@ void gdb_breakpoint() {}
 /**
  *
  */
-extern "C" natl activate_p(void f(int), int a, natl prio, natl liv); //
+extern "C" natl activate_p(void f(int), int a, natl prio, natl liv);
 
 /**
  *
