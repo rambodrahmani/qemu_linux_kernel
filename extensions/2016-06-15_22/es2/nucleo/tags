@@ -1,0 +1,1531 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+A	util/creatimg.cpp	/^		uint64_t A:		1;	\/\/ Accessed$/;"	m	struct:entrata::__anon20	file:
+A	util/decode.c	/^		uint64_t A:		1;	\/\/ Accessed$/;"	m	struct:entrata::__anon15	file:
+ACCB_MASK	sistema/sistema.cpp	/^const natq ACCB_MASK  = 0x00000000000000FF; \/\/ maschera per il byte di accesso$/;"	v
+ADDR_MASK	sistema/sistema.cpp	/^const natq ADDR_MASK  = 0x7FFFFFFFFFFFF000; \/\/ maschera per l'indirizzo$/;"	v
+AOUTHDR	util/coff.h	/^AOUTHDR;$/;"	t	typeref:struct:__anon1
+AOUTSZ	util/coff.h	77;"	d
+AUXENT	util/coff.h	214;"	d
+AUXESZ	util/coff.h	215;"	d
+BIT_A	sistema/sistema.cpp	/^const natq BIT_A    = 1U << 5; \/\/ il bit di accesso$/;"	v
+BIT_D	sistema/sistema.cpp	/^const natq BIT_D    = 1U << 6; \/\/ il bit "dirty"$/;"	v
+BIT_IF	sistema/sistema.cpp	/^const natl BIT_IF = 1L << 9;$/;"	v
+BIT_P	sistema/sistema.cpp	/^const natq BIT_P    = 1U << 0; \/\/ il bit di presenza$/;"	v
+BIT_PCD	sistema/sistema.cpp	/^const natq BIT_PCD  = 1U << 4; \/\/ il bit Page Cache Disable$/;"	v
+BIT_PWT	sistema/sistema.cpp	/^const natq BIT_PWT  = 1U << 3; \/\/ il bit Page Wright Through$/;"	v
+BIT_RW	sistema/sistema.cpp	/^const natq BIT_RW   = 1U << 1; \/\/ il bit di lettura\/scrittura$/;"	v
+BIT_SEGNO	sistema/sistema.cpp	/^static const natq BIT_SEGNO = (1UL << 47);$/;"	v	file:
+BIT_US	sistema/sistema.cpp	/^const natq BIT_US   = 1U << 2; \/\/ il bit utente\/sistema(*)$/;"	v
+BIT_ZERO	sistema/sistema.cpp	/^const natq BIT_ZERO = 1U << 7; \/\/ (* nuova pagina, da azzerare *)$/;"	v
+BLOCK_SIZE	util/showb.c	4;"	d	file:
+BPS	util/doswap.cpp	16;"	d	file:
+BPU	util/creatimg.cpp	/^const uint32_t BPU = sizeof(uint32_t) * 8;$/;"	v
+BTYPE	util/coff.h	259;"	d
+CHECKSW	util/creatimg.cpp	150;"	d	file:
+COLS	io/io.cpp	/^const natl COLS = 80; 	\/\/$/;"	v
+COL_BLACK	utente/include/colors.h	1;"	d
+COL_BLUE	utente/include/colors.h	2;"	d
+COL_BROWN	utente/include/colors.h	7;"	d
+COL_CYAN	utente/include/colors.h	4;"	d
+COL_DARKGRAY	utente/include/colors.h	9;"	d
+COL_GREEN	utente/include/colors.h	3;"	d
+COL_LIGHGREEN	utente/include/colors.h	11;"	d
+COL_LIGHMAGENTA	utente/include/colors.h	14;"	d
+COL_LIGHTBLUE	utente/include/colors.h	10;"	d
+COL_LIGHTCYAN	utente/include/colors.h	12;"	d
+COL_LIGHTGRAY	utente/include/colors.h	8;"	d
+COL_LIGHTRED	utente/include/colors.h	13;"	d
+COL_MAGENTA	utente/include/colors.h	6;"	d
+COL_RED	utente/include/colors.h	5;"	d
+COL_WHITE	utente/include/colors.h	16;"	d
+COL_YELLOW	utente/include/colors.h	15;"	d
+COMM_CFLAGS	Makefile	/^COMM_CFLAGS=$(CFLAGS) \\$/;"	m
+COMM_LDFLAGS	Makefile	/^COMM_LDFLAGS=\\$/;"	m
+COMM_LDLIBS	Makefile	/^COMM_LDLIBS=$/;"	m
+C_ALIAS	util/coff.h	297;"	d
+C_ARG	util/coff.h	280;"	d
+C_AUTO	util/coff.h	272;"	d
+C_AUTOARG	util/coff.h	290;"	d
+C_BLOCK	util/coff.h	292;"	d
+C_EFCN	util/coff.h	270;"	d
+C_ENTAG	util/coff.h	286;"	d
+C_EOS	util/coff.h	294;"	d
+C_EXT	util/coff.h	273;"	d
+C_EXTDEF	util/coff.h	276;"	d
+C_FCN	util/coff.h	293;"	d
+C_FIELD	util/coff.h	289;"	d
+C_FILE	util/coff.h	295;"	d
+C_HIDDEN	util/coff.h	298;"	d
+C_LABEL	util/coff.h	277;"	d
+C_LASTENT	util/coff.h	291;"	d
+C_LINE	util/coff.h	296;"	d
+C_MOE	util/coff.h	287;"	d
+C_MOS	util/coff.h	279;"	d
+C_MOU	util/coff.h	282;"	d
+C_NULL	util/coff.h	271;"	d
+C_REG	util/coff.h	275;"	d
+C_REGPARM	util/coff.h	288;"	d
+C_STAT	util/coff.h	274;"	d
+C_STRTAG	util/coff.h	281;"	d
+C_TPDEF	util/coff.h	284;"	d
+C_ULABEL	util/coff.h	278;"	d
+C_UNTAG	util/coff.h	283;"	d
+C_USTATIC	util/coff.h	285;"	d
+D	util/creatimg.cpp	/^		uint64_t D:		1;	\/\/ Dirty$/;"	m	struct:entrata::__anon20	file:
+D	util/decode.c	/^		uint64_t D:		1;	\/\/ Dirty$/;"	m	struct:entrata::__anon15	file:
+DECREF	util/coff.h	265;"	d
+DEFAULT_BSS_SECTION_ALIGNMENT	util/coff.h	318;"	d
+DEFAULT_DATA_SECTION_ALIGNMENT	util/coff.h	317;"	d
+DEFAULT_SECTION_ALIGNMENT	util/coff.h	321;"	d
+DEFAULT_TEXT_SECTION_ALIGNMENT	util/coff.h	319;"	d
+DEF_PRIO	util/parse.c	11;"	d	file:
+DELAY	sistema/sistema.cpp	/^const natl DELAY = 59659;$/;"	v
+DIM_BLOCK	include/costanti.h	30;"	d
+DIM_DESP	include/costanti.h	20;"	d
+DIM_PAGINA	include/costanti.h	22;"	d
+DIM_SWAP	include/costanti.h	29;"	d
+DIM_SYS_STACK	include/costanti.h	28;"	d
+DIM_USR_HEAP	include/costanti.h	26;"	d
+DIM_USR_STACK	include/costanti.h	27;"	d
+DOS_EXE	util/dos.h	/^struct DOS_EXE {$/;"	s
+DOS_H_	util/dos.h	2;"	d
+DOS_MAGIC	util/dos.h	/^const unsigned short DOS_MAGIC = 0x5a4D;$/;"	v
+DOSwap	util/doswap.cpp	/^	DOSwap(const partizione *p_, int d) : p(*p_), bios_disk(d) {}$/;"	f	class:DOSwap
+DOSwap	util/doswap.cpp	/^class DOSwap: public Swap$/;"	c	file:
+DT_ARY	util/coff.h	257;"	d
+DT_FCN	util/coff.h	256;"	d
+DT_NON	util/coff.h	254;"	d
+DT_PTR	util/coff.h	255;"	d
+DUMMY_PRIORITY	sistema/sistema.cpp	/^const natl DUMMY_PRIORITY = 0x0000000;$/;"	v
+EI_CLASS	include/elf.h	27;"	d
+EI_DATA	include/elf.h	28;"	d
+EI_MAG0	include/elf.h	23;"	d
+EI_MAG1	include/elf.h	24;"	d
+EI_MAG2	include/elf.h	25;"	d
+EI_MAG3	include/elf.h	26;"	d
+EI_NIDENT	include/elf.h	31;"	d
+EI_PAD	include/elf.h	30;"	d
+EI_VERSION	include/elf.h	29;"	d
+ELF32_H_	util/elf32.h	2;"	d
+ELF64_H_	include/elf64.h	2;"	d
+ELFCLASS32	include/elf.h	39;"	d
+ELFCLASS64	include/elf.h	40;"	d
+ELFCLASSNONE	include/elf.h	38;"	d
+ELFDATA2LSB	include/elf.h	43;"	d
+ELFDATA2MSB	include/elf.h	44;"	d
+ELFDATANONE	include/elf.h	42;"	d
+ELFMAG0	include/elf.h	33;"	d
+ELFMAG1	include/elf.h	34;"	d
+ELFMAG2	include/elf.h	35;"	d
+ELFMAG3	include/elf.h	36;"	d
+ELF_H_	include/elf.h	2;"	d
+EM_386	include/elf.h	15;"	d
+EM_68K	include/elf.h	16;"	d
+EM_860	include/elf.h	18;"	d
+EM_88K	include/elf.h	17;"	d
+EM_AMD64	include/elf.h	20;"	d
+EM_M32	include/elf.h	13;"	d
+EM_MIPS	include/elf.h	19;"	d
+EM_NONE	include/elf.h	12;"	d
+EM_SPARC	include/elf.h	14;"	d
+ESTERN_BUSY	sistema/sistema.cpp	/^proc_elem* const ESTERN_BUSY = (proc_elem*)1;$/;"	v
+ET_CORE	include/elf.h	8;"	d
+ET_DYN	include/elf.h	7;"	d
+ET_EXEC	include/elf.h	6;"	d
+ET_HIPROC	include/elf.h	10;"	d
+ET_LOPROC	include/elf.h	9;"	d
+ET_NONE	include/elf.h	4;"	d
+ET_REL	include/elf.h	5;"	d
+E_DIMNUM	util/coff.h	144;"	d
+E_FILNMLEN	util/coff.h	143;"	d
+E_SYMNMLEN	util/coff.h	142;"	d
+Elem	util/interp.h	/^		Elem(Interprete* in_, Elem* next_ = NULL):$/;"	f	struct:ListaInterpreti::Elem
+Elem	util/interp.h	/^	struct Elem {$/;"	s	class:ListaInterpreti
+Elem	util/swap.h	/^		Elem(TipoSwap* in_, Elem* next_ = NULL):$/;"	f	struct:ListaTipiSwap::Elem
+Elem	util/swap.h	/^	struct Elem {$/;"	s	class:ListaTipiSwap
+Elf32_Addr	util/elf32.h	/^typedef uint32_t   Elf32_Addr;$/;"	t
+Elf32_Ehdr	util/elf32.h	/^} Elf32_Ehdr;$/;"	t	typeref:struct:__anon17
+Elf32_Half	util/elf32.h	/^typedef uint16_t   Elf32_Half;$/;"	t
+Elf32_Off	util/elf32.h	/^typedef uint32_t   Elf32_Off;$/;"	t
+Elf32_Phdr	util/elf32.h	/^} Elf32_Phdr;$/;"	t	typeref:struct:__anon18
+Elf32_Shdr	util/elf32.h	/^} Elf32_Shdr;$/;"	t	typeref:struct:__anon19
+Elf32_Word	util/elf32.h	/^typedef uint32_t   Elf32_Word;$/;"	t
+Elf64_Addr	include/elf64.h	/^typedef uint64_t   Elf64_Addr;$/;"	t
+Elf64_Ehdr	include/elf64.h	/^} Elf64_Ehdr;$/;"	t	typeref:struct:__anon23
+Elf64_Half	include/elf64.h	/^typedef uint16_t   Elf64_Half;$/;"	t
+Elf64_Off	include/elf64.h	/^typedef uint64_t   Elf64_Off;$/;"	t
+Elf64_Phdr	include/elf64.h	/^} Elf64_Phdr;$/;"	t	typeref:struct:__anon24
+Elf64_Shdr	include/elf64.h	/^} Elf64_Shdr;$/;"	t	typeref:struct:__anon25
+Elf64_Word	include/elf64.h	/^typedef uint32_t   Elf64_Word;$/;"	t
+Elf64_XWord	include/elf64.h	/^typedef unsigned long long Elf64_XWord;$/;"	t
+Eseguibile	util/interp.h	/^class Eseguibile {$/;"	c
+EseguibileCoff_go32	util/coff.cpp	/^EseguibileCoff_go32::EseguibileCoff_go32(FILE* pexe_)$/;"	f	class:EseguibileCoff_go32
+EseguibileCoff_go32	util/coff.cpp	/^class EseguibileCoff_go32: public Eseguibile {$/;"	c	file:
+EseguibileElf32	util/elf32.cpp	/^EseguibileElf32::EseguibileElf32(FILE* pexe_)$/;"	f	class:EseguibileElf32
+EseguibileElf32	util/elf32.cpp	/^class EseguibileElf32: public Eseguibile {$/;"	c	file:
+EseguibileElf64	util/elf64.cpp	/^EseguibileElf64::EseguibileElf64(FILE* pexe_)$/;"	f	class:EseguibileElf64
+EseguibileElf64	util/elf64.cpp	/^class EseguibileElf64: public Eseguibile {$/;"	c	file:
+FILHDR	util/coff.h	45;"	d
+FILHSZ	util/coff.h	46;"	d
+F_EXEC	util/coff.h	34;"	d
+F_LNNO	util/coff.h	35;"	d
+F_LSYMS	util/coff.h	36;"	d
+F_RELFLG	util/coff.h	33;"	d
+FileSwap	util/fswap.cpp	/^	FileSwap(FILE* img): img(img) {}$/;"	f	class:FileSwap
+FileSwap	util/fswap.cpp	/^class FileSwap: public Swap {$/;"	c	file:
+GLOB	util/parse.c	271;"	d	file:
+GLOB_FMT	util/parse.c	340;"	d	file:
+GNU_AOUT	util/coff.h	/^	} GNU_AOUT;$/;"	t	typeref:struct:gnu_aout
+GiB	include/costanti.h	17;"	d
+HD_IRQ	io/io.cpp	/^const natb HD_IRQ = 15;$/;"	v
+HEAP_SIZE	sistema/sistema.cpp	/^const natq HEAP_SIZE = (natq)&start - HEAP_START;$/;"	v
+HEAP_START	sistema/sistema.cpp	/^const natq HEAP_START = 1*MiB;$/;"	v
+I386AIXMAGIC	util/coff.h	41;"	d
+I386BADMAG	util/coff.h	42;"	d
+I386MAGIC	util/coff.h	40;"	d
+INDMASS_MASK	sistema/sistema.cpp	/^const natq INDMASS_MASK = 0x7FFFFFFFFFFFF000; \/\/ maschera per l'indirizzo in mem. di massa$/;"	v
+INDMASS_SHIFT	sistema/sistema.cpp	/^const natq INDMASS_SHIFT = 12;	    \/\/ primo bit che contiene l'ind. in mem. di massa$/;"	v
+INTERP_H__	util/interp.h	2;"	d
+INT_FMT	util/parse.c	380;"	d	file:
+IO_TIPO_CEREAD	include/costanti.h	89;"	d
+IO_TIPO_DMAHDR	include/costanti.h	79;"	d
+IO_TIPO_DMAHDW	include/costanti.h	80;"	d
+IO_TIPO_HDR	include/costanti.h	77;"	d
+IO_TIPO_HDW	include/costanti.h	78;"	d
+IO_TIPO_INIC	include/costanti.h	87;"	d
+IO_TIPO_RCON	include/costanti.h	85;"	d
+IO_TIPO_RSELN	include/costanti.h	82;"	d
+IO_TIPO_RSEN	include/costanti.h	81;"	d
+IO_TIPO_WCON	include/costanti.h	86;"	d
+IO_TIPO_WSE0	include/costanti.h	84;"	d
+IO_TIPO_WSEN	include/costanti.h	83;"	d
+ISARY	util/coff.h	263;"	d
+ISFCN	util/coff.h	262;"	d
+ISPTR	util/coff.h	261;"	d
+ISTAG	util/coff.h	264;"	d
+I_MIO_C	include/costanti.h	104;"	d
+I_R10	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_R11	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anon27	file:
+I_R12	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anon27	file:
+I_R13	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anon27	file:
+I_R14	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anon27	file:
+I_R15	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anon27	file:
+I_R8	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_R9	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_RAX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anon27	file:
+I_RBP	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_RBX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anon27	file:
+I_RCX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anon27	file:
+I_RDI	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_RDX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anon27	file:
+I_RSI	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_RSP	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anon27	file:
+I_SIS_C	include/costanti.h	102;"	d
+I_SIS_P	include/costanti.h	103;"	d
+I_UTN_C	include/costanti.h	105;"	d
+I_UTN_P	include/costanti.h	106;"	d
+Interprete	util/interp.cpp	/^Interprete::Interprete()$/;"	f	class:Interprete
+Interprete	util/interp.h	/^class Interprete {$/;"	c
+InterpreteCoff_go32	util/coff.cpp	/^InterpreteCoff_go32::InterpreteCoff_go32()$/;"	f	class:InterpreteCoff_go32
+InterpreteCoff_go32	util/coff.cpp	/^class InterpreteCoff_go32: public Interprete {$/;"	c	file:
+InterpreteElf32	util/elf32.cpp	/^InterpreteElf32::InterpreteElf32()$/;"	f	class:InterpreteElf32
+InterpreteElf32	util/elf32.cpp	/^class InterpreteElf32: public Interprete {$/;"	c	file:
+InterpreteElf64	util/elf64.cpp	/^InterpreteElf64::InterpreteElf64()$/;"	f	class:InterpreteElf64
+InterpreteElf64	util/elf64.cpp	/^class InterpreteElf64: public Interprete {$/;"	c	file:
+KBD_0	utente/include/keycodes.h	12;"	d
+KBD_1	utente/include/keycodes.h	3;"	d
+KBD_102ND	utente/include/keycodes.h	85;"	d
+KBD_2	utente/include/keycodes.h	4;"	d
+KBD_3	utente/include/keycodes.h	5;"	d
+KBD_4	utente/include/keycodes.h	6;"	d
+KBD_5	utente/include/keycodes.h	7;"	d
+KBD_6	utente/include/keycodes.h	8;"	d
+KBD_7	utente/include/keycodes.h	9;"	d
+KBD_8	utente/include/keycodes.h	10;"	d
+KBD_9	utente/include/keycodes.h	11;"	d
+KBD_A	utente/include/keycodes.h	31;"	d
+KBD_APOSTROPHE	utente/include/keycodes.h	41;"	d
+KBD_B	utente/include/keycodes.h	49;"	d
+KBD_BACKSLASH	utente/include/keycodes.h	44;"	d
+KBD_BACKSPACE	utente/include/keycodes.h	15;"	d
+KBD_C	utente/include/keycodes.h	47;"	d
+KBD_CAPSLOCK	utente/include/keycodes.h	59;"	d
+KBD_COMMA	utente/include/keycodes.h	52;"	d
+KBD_D	utente/include/keycodes.h	33;"	d
+KBD_DELETE	utente/include/keycodes.h	104;"	d
+KBD_DOT	utente/include/keycodes.h	53;"	d
+KBD_DOWN	utente/include/keycodes.h	101;"	d
+KBD_E	utente/include/keycodes.h	19;"	d
+KBD_END	utente/include/keycodes.h	100;"	d
+KBD_ENTER	utente/include/keycodes.h	29;"	d
+KBD_EQUAL	utente/include/keycodes.h	14;"	d
+KBD_ESC	utente/include/keycodes.h	2;"	d
+KBD_F	utente/include/keycodes.h	34;"	d
+KBD_F1	utente/include/keycodes.h	60;"	d
+KBD_F10	utente/include/keycodes.h	69;"	d
+KBD_F11	utente/include/keycodes.h	86;"	d
+KBD_F12	utente/include/keycodes.h	87;"	d
+KBD_F2	utente/include/keycodes.h	61;"	d
+KBD_F3	utente/include/keycodes.h	62;"	d
+KBD_F4	utente/include/keycodes.h	63;"	d
+KBD_F5	utente/include/keycodes.h	64;"	d
+KBD_F6	utente/include/keycodes.h	65;"	d
+KBD_F7	utente/include/keycodes.h	66;"	d
+KBD_F8	utente/include/keycodes.h	67;"	d
+KBD_F9	utente/include/keycodes.h	68;"	d
+KBD_FAKELSHIFT	utente/include/keycodes.h	90;"	d
+KBD_FAKERSHIFT	utente/include/keycodes.h	92;"	d
+KBD_G	utente/include/keycodes.h	35;"	d
+KBD_GRAVE	utente/include/keycodes.h	42;"	d
+KBD_H	utente/include/keycodes.h	36;"	d
+KBD_HOME	utente/include/keycodes.h	95;"	d
+KBD_I	utente/include/keycodes.h	24;"	d
+KBD_INSERT	utente/include/keycodes.h	103;"	d
+KBD_IRQ	io/io.cpp	/^const int KBD_IRQ = 1;$/;"	v
+KBD_J	utente/include/keycodes.h	37;"	d
+KBD_K	utente/include/keycodes.h	38;"	d
+KBD_KP0	utente/include/keycodes.h	83;"	d
+KBD_KP1	utente/include/keycodes.h	80;"	d
+KBD_KP2	utente/include/keycodes.h	81;"	d
+KBD_KP3	utente/include/keycodes.h	82;"	d
+KBD_KP4	utente/include/keycodes.h	76;"	d
+KBD_KP5	utente/include/keycodes.h	77;"	d
+KBD_KP6	utente/include/keycodes.h	78;"	d
+KBD_KP7	utente/include/keycodes.h	72;"	d
+KBD_KP8	utente/include/keycodes.h	73;"	d
+KBD_KP9	utente/include/keycodes.h	74;"	d
+KBD_KPASTERISK	utente/include/keycodes.h	56;"	d
+KBD_KPDOT	utente/include/keycodes.h	84;"	d
+KBD_KPENTER	utente/include/keycodes.h	88;"	d
+KBD_KPMINUS	utente/include/keycodes.h	75;"	d
+KBD_KPPLUS	utente/include/keycodes.h	79;"	d
+KBD_KPSLASH	utente/include/keycodes.h	91;"	d
+KBD_L	utente/include/keycodes.h	39;"	d
+KBD_LEFT	utente/include/keycodes.h	98;"	d
+KBD_LEFTALT	utente/include/keycodes.h	57;"	d
+KBD_LEFTBRACE	utente/include/keycodes.h	27;"	d
+KBD_LEFTCTRL	utente/include/keycodes.h	30;"	d
+KBD_LEFTSHIFT	utente/include/keycodes.h	43;"	d
+KBD_LEFTWIN	utente/include/keycodes.h	105;"	d
+KBD_M	utente/include/keycodes.h	51;"	d
+KBD_MENU	utente/include/keycodes.h	107;"	d
+KBD_MINUS	utente/include/keycodes.h	13;"	d
+KBD_N	utente/include/keycodes.h	50;"	d
+KBD_NUMLOCK	utente/include/keycodes.h	70;"	d
+KBD_O	utente/include/keycodes.h	25;"	d
+KBD_P	utente/include/keycodes.h	26;"	d
+KBD_PAGEDOWN	utente/include/keycodes.h	102;"	d
+KBD_PAGEUP	utente/include/keycodes.h	97;"	d
+KBD_PAUSE	utente/include/keycodes.h	108;"	d
+KBD_Q	utente/include/keycodes.h	17;"	d
+KBD_R	utente/include/keycodes.h	20;"	d
+KBD_RESERVED	utente/include/keycodes.h	1;"	d
+KBD_RIGHT	utente/include/keycodes.h	99;"	d
+KBD_RIGHTALT	utente/include/keycodes.h	94;"	d
+KBD_RIGHTBRACE	utente/include/keycodes.h	28;"	d
+KBD_RIGHTCTRL	utente/include/keycodes.h	89;"	d
+KBD_RIGHTSHIFT	utente/include/keycodes.h	55;"	d
+KBD_RIGHTWIN	utente/include/keycodes.h	106;"	d
+KBD_S	utente/include/keycodes.h	32;"	d
+KBD_SCROLLLOCK	utente/include/keycodes.h	71;"	d
+KBD_SEMICOLON	utente/include/keycodes.h	40;"	d
+KBD_SLASH	utente/include/keycodes.h	54;"	d
+KBD_SPACE	utente/include/keycodes.h	58;"	d
+KBD_SYSRQ	utente/include/keycodes.h	93;"	d
+KBD_T	utente/include/keycodes.h	21;"	d
+KBD_TAB	utente/include/keycodes.h	16;"	d
+KBD_U	utente/include/keycodes.h	23;"	d
+KBD_UP	utente/include/keycodes.h	96;"	d
+KBD_V	utente/include/keycodes.h	48;"	d
+KBD_W	utente/include/keycodes.h	18;"	d
+KBD_X	utente/include/keycodes.h	46;"	d
+KBD_Y	utente/include/keycodes.h	22;"	d
+KBD_Z	utente/include/keycodes.h	45;"	d
+KiB	include/costanti.h	15;"	d
+LIBCE	Makefile	/^LIBCE ?= $(HOME)\/CE$/;"	m
+LINENO	util/coff.h	136;"	d
+LINESZ	util/coff.h	137;"	d
+LIV	io/io.cpp	/^const natl LIV = LIV_SISTEMA;$/;"	v
+LIV_SISTEMA	include/costanti.h	8;"	d
+LIV_UTENTE	include/costanti.h	7;"	d
+LUN_NOME	util/parse.c	18;"	d	file:
+LUN_OGGETTI	util/parse.c	567;"	d	file:
+LUN_RIGA	util/parse.c	21;"	d	file:
+ListaInterpreti	util/interp.h	/^	ListaInterpreti() : testa(NULL), curr(NULL) {}$/;"	f	class:ListaInterpreti
+ListaInterpreti	util/interp.h	/^class ListaInterpreti {$/;"	c
+ListaTipiSwap	util/swap.h	/^	ListaTipiSwap() : testa(NULL), curr(NULL) {}$/;"	f	class:ListaTipiSwap
+ListaTipiSwap	util/swap.h	/^class ListaTipiSwap {$/;"	c
+MAIN	util/parse.c	272;"	d	file:
+MAIN_HEAD	util/parse.c	313;"	d	file:
+MAIN_TAIL	util/parse.c	316;"	d	file:
+MAIN_TAIL	util/parse.c	318;"	d	file:
+MASCHERA_MODULO	sistema/sistema.cpp	/^static const natq MASCHERA_MODULO = BIT_SEGNO - 1;$/;"	v	file:
+MAX_CE	io/io.cpp	/^static const int MAX_CE = 16;$/;"	v	file:
+MAX_CODE	io/io.cpp	/^const natl MAX_CODE = 40; \/\/$/;"	v
+MAX_DISCHI	util/doswap.cpp	/^	static const int MAX_DISCHI = 8;$/;"	m	class:TipoDOSwap	file:
+MAX_INT_LEN	util/parse.c	343;"	d	file:
+MAX_IRQ	sistema/sistema.cpp	/^const natl MAX_IRQ  = 24;$/;"	v
+MAX_LOG	sistema/sistema.cpp	/^int MAX_LOG = 4;$/;"	v
+MAX_LOG	sistema/sistema.cpp	/^int MAX_LOG = 5;$/;"	v
+MAX_PRD	include/costanti.h	23;"	d
+MAX_PRIORITY	sistema/sistema.cpp	/^const natl MAX_PRIORITY	= 0xfffffff;$/;"	v
+MAX_PROC_ID	include/costanti.h	11;"	d
+MAX_SEM	include/costanti.h	21;"	d
+MEM_TOT	include/costanti.h	25;"	d
+MIN_PRIORITY	sistema/sistema.cpp	/^const natl MIN_PRIORITY	= 0x0000001;$/;"	v
+MIN_PROC_ID	include/costanti.h	10;"	d
+MSG_SIZE	utente/utente.cpp	/^const int MSG_SIZE = 60;$/;"	v
+MiB	include/costanti.h	16;"	d
+NCC	Makefile	/^NCC ?= g++$/;"	m
+NCFLAGS	Makefile	/^NCFLAGS=$(COMM_CFLAGS) -m64 -mcmodel=small -fpic$/;"	m
+NLD	Makefile	/^NLD ?= ld$/;"	m
+NLDFLAGS	Makefile	/^NLDFLAGS=$(COMM_LDLIBS) -melf_x86_64 -L$(LIBCE)\/lib64\/ce$/;"	m
+NLDLIBS	Makefile	/^NLDLIBS=$(COMM_LDLIBS) -lce64$/;"	m
+NMESG	utente/utente.cpp	/^const int NMESG = 1;$/;"	v
+NUM_TSS	include/costanti.h	9;"	d
+NX	util/creatimg.cpp	/^		uint64_t NX:	1;$/;"	m	struct:entrata::__anon20	file:
+NX	util/creatimg.cpp	/^		uint64_t NX:	1;$/;"	m	struct:entrata::__anon21	file:
+NX	util/decode.c	/^		uint64_t NX:		1;$/;"	m	struct:entrata::__anon15	file:
+NX	util/decode.c	/^		uint64_t NX:		1;$/;"	m	struct:entrata::__anon16	file:
+N_ABS	util/coff.h	225;"	d
+N_BTMASK	util/coff.h	162;"	d
+N_BTSHFT	util/coff.h	164;"	d
+N_DEBUG	util/coff.h	226;"	d
+N_DPF	sistema/sistema.cpp	/^natq N_DPF;$/;"	v
+N_MIO_C	include/costanti.h	110;"	d
+N_REG	sistema/sistema.cpp	/^const int N_REG = 16;	\/\/$/;"	v
+N_SIS_C	include/costanti.h	108;"	d
+N_SIS_P	include/costanti.h	109;"	d
+N_TMASK	util/coff.h	163;"	d
+N_TSHIFT	util/coff.h	165;"	d
+N_TV	util/coff.h	227;"	d
+N_UNDEF	util/coff.h	224;"	d
+N_UTN_C	include/costanti.h	111;"	d
+N_UTN_P	include/costanti.h	112;"	d
+OMAGIC	util/coff.h	79;"	d
+P	util/creatimg.cpp	/^		uint64_t P:		1;	\/\/ bit di presenza$/;"	m	struct:entrata::__anon20	file:
+P	util/creatimg.cpp	/^		uint64_t P:	1;$/;"	m	struct:entrata::__anon21	file:
+P	util/decode.c	/^		uint64_t P:		1;	\/\/ bit di presenza$/;"	m	struct:entrata::__anon15	file:
+P	util/decode.c	/^		uint64_t P:		1;$/;"	m	struct:entrata::__anon16	file:
+PAT	util/creatimg.cpp	/^		uint64_t PAT:	1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon20	file:
+PAT	util/decode.c	/^		uint64_t PAT:		1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon15	file:
+PCD	util/creatimg.cpp	/^		uint64_t PCD:	1;	\/\/ Page Cache Disable$/;"	m	struct:entrata::__anon20	file:
+PCD	util/creatimg.cpp	/^		uint64_t PCD:	1;$/;"	m	struct:entrata::__anon21	file:
+PCD	util/decode.c	/^		uint64_t PCD:		1;	\/\/ Page Cache Disable$/;"	m	struct:entrata::__anon15	file:
+PCD	util/decode.c	/^		uint64_t PCD:		1;$/;"	m	struct:entrata::__anon16	file:
+PF_R	include/elf.h	46;"	d
+PF_W	include/elf.h	47;"	d
+PF_X	include/elf.h	48;"	d
+PRIO	io/io.cpp	/^const natl PRIO = 1000;$/;"	v
+PROC_FMT	util/parse.c	341;"	d	file:
+PT_DYNAMIC	include/elf.h	51;"	d
+PT_HIPROC	include/elf.h	57;"	d
+PT_INTERP	include/elf.h	52;"	d
+PT_LOAD	include/elf.h	50;"	d
+PT_LOPROC	include/elf.h	56;"	d
+PT_NOTE	include/elf.h	53;"	d
+PT_NULL	include/elf.h	49;"	d
+PT_PHDR	include/elf.h	55;"	d
+PT_SHLIB	include/elf.h	54;"	d
+PWT	util/creatimg.cpp	/^		uint64_t PWT:	1;	\/\/ Page Write Through$/;"	m	struct:entrata::__anon20	file:
+PWT	util/creatimg.cpp	/^		uint64_t PWT:	1;$/;"	m	struct:entrata::__anon21	file:
+PWT	util/decode.c	/^		uint64_t PWT:		1;	\/\/ Page Write Through$/;"	m	struct:entrata::__anon15	file:
+PWT	util/decode.c	/^		uint64_t PWT:		1;$/;"	m	struct:entrata::__anon16	file:
+P_TV	util/coff.h	228;"	d
+READ_DMA	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+READ_SECT	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+RELOC	util/coff.h	311;"	d
+RELOC_ADDR32	util/coff.h	315;"	d
+RELOC_REL32	util/coff.h	314;"	d
+RELSZ	util/coff.h	312;"	d
+ROWS	io/io.cpp	/^const natl ROWS = 25;	\/\/$/;"	v
+RW	util/creatimg.cpp	/^		uint64_t RW:	1;	\/\/ Read\/Write$/;"	m	struct:entrata::__anon20	file:
+RW	util/creatimg.cpp	/^		uint64_t RW:	1;$/;"	m	struct:entrata::__anon21	file:
+RW	util/decode.c	/^		uint64_t RW:		1;	\/\/ Read\/Write$/;"	m	struct:entrata::__anon15	file:
+RW	util/decode.c	/^		uint64_t RW:		1;$/;"	m	struct:entrata::__anon16	file:
+S	io/io.cpp	/^const natl S = 2;$/;"	v
+SCNHDR	util/coff.h	101;"	d
+SCNHSZ	util/coff.h	102;"	d
+SEL_CODICE_SISTEMA	include/costanti.h	4;"	d
+SEL_CODICE_UTENTE	include/costanti.h	5;"	d
+SEL_DATI_UTENTE	include/costanti.h	6;"	d
+SEM_FMT	util/parse.c	381;"	d	file:
+SHF_ALLOC	include/elf.h	77;"	d
+SHF_EXECINSTR	include/elf.h	78;"	d
+SHF_MASKPROC	include/elf.h	79;"	d
+SHF_WRITE	include/elf.h	76;"	d
+SHMAGIC	util/coff.h	82;"	d
+SHT_DYNAMIC	include/elf.h	64;"	d
+SHT_DYNSYM	include/elf.h	69;"	d
+SHT_HASH	include/elf.h	63;"	d
+SHT_HIPROC	include/elf.h	71;"	d
+SHT_HIUSER	include/elf.h	73;"	d
+SHT_LOPROC	include/elf.h	70;"	d
+SHT_LOUSER	include/elf.h	72;"	d
+SHT_NOBITS	include/elf.h	66;"	d
+SHT_NOTE	include/elf.h	65;"	d
+SHT_NULL	include/elf.h	58;"	d
+SHT_PROGBITS	include/elf.h	59;"	d
+SHT_REL	include/elf.h	67;"	d
+SHT_RELA	include/elf.h	62;"	d
+SHT_SHLIB	include/elf.h	68;"	d
+SHT_STRTAB	include/elf.h	61;"	d
+SHT_SYMTAB	include/elf.h	60;"	d
+STACK_SIZE	sistema/sistema.s	/^#define STACK_SIZE                      0x1000$/;"	d
+START_SISTEMA	Makefile	/^START_SISTEMA=   0x0000000000200200$/;"	m
+STMAGIC	util/coff.h	81;"	d
+STYP_BSS	util/coff.h	118;"	d
+STYP_DATA	util/coff.h	117;"	d
+STYP_TEXT	util/coff.h	116;"	d
+SWAP	Makefile	/^SWAP=		 swap.img$/;"	m
+SWAP_H__	util/swap.h	2;"	d
+SYMENT	util/coff.h	212;"	d
+SYMESZ	util/coff.h	213;"	d
+SYS_H_	utente/include/sys.h	6;"	d
+Segmento	util/interp.h	/^class Segmento {$/;"	c
+SegmentoCoff_go32	util/coff.cpp	/^	class SegmentoCoff_go32: public Segmento {$/;"	c	class:EseguibileCoff_go32	file:
+SegmentoCoff_go32	util/coff.cpp	/^EseguibileCoff_go32::SegmentoCoff_go32::SegmentoCoff_go32(EseguibileCoff_go32* padre_, SCNHDR* ph_)$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+SegmentoElf32	util/elf32.cpp	/^	class SegmentoElf32: public Segmento {$/;"	c	class:EseguibileElf32	file:
+SegmentoElf32	util/elf32.cpp	/^EseguibileElf32::SegmentoElf32::SegmentoElf32(EseguibileElf32* padre_, Elf32_Phdr* ph_)$/;"	f	class:EseguibileElf32::SegmentoElf32
+SegmentoElf64	util/elf64.cpp	/^	class SegmentoElf64: public Segmento {$/;"	c	class:EseguibileElf64	file:
+SegmentoElf64	util/elf64.cpp	/^EseguibileElf64::SegmentoElf64::SegmentoElf64(EseguibileElf64* padre_, Elf64_Phdr* ph_)$/;"	f	class:EseguibileElf64::SegmentoElf64
+Swap	util/swap.h	/^class Swap {$/;"	c
+TIPO_A	include/costanti.h	61;"	d
+TIPO_AB	include/costanti.h	73;"	d
+TIPO_APE	include/costanti.h	69;"	d
+TIPO_D	include/costanti.h	66;"	d
+TIPO_EP	include/costanti.h	68;"	d
+TIPO_FG	include/costanti.h	71;"	d
+TIPO_H_	utente/include/tipo.h	2;"	d
+TIPO_L	include/costanti.h	74;"	d
+TIPO_P	include/costanti.h	72;"	d
+TIPO_RE	include/costanti.h	67;"	d
+TIPO_S	include/costanti.h	65;"	d
+TIPO_SI	include/costanti.h	63;"	d
+TIPO_T	include/costanti.h	62;"	d
+TIPO_TRA	include/costanti.h	75;"	d
+TIPO_W	include/costanti.h	64;"	d
+TIPO_WFI	include/costanti.h	70;"	d
+T_CHAR	util/coff.h	235;"	d
+T_DOUBLE	util/coff.h	240;"	d
+T_ENUM	util/coff.h	243;"	d
+T_FLOAT	util/coff.h	239;"	d
+T_INT	util/coff.h	237;"	d
+T_LNGDBL	util/coff.h	249;"	d
+T_LONG	util/coff.h	238;"	d
+T_MOE	util/coff.h	244;"	d
+T_NULL	util/coff.h	233;"	d
+T_SHORT	util/coff.h	236;"	d
+T_STRUCT	util/coff.h	241;"	d
+T_UCHAR	util/coff.h	245;"	d
+T_UINT	util/coff.h	247;"	d
+T_ULONG	util/coff.h	248;"	d
+T_UNION	util/coff.h	242;"	d
+T_USHORT	util/coff.h	246;"	d
+T_VOID	util/coff.h	234;"	d
+TabCache	util/creatimg.cpp	/^	TabCache() {$/;"	f	class:TabCache
+TabCache	util/creatimg.cpp	/^class TabCache {$/;"	c	file:
+TipoDOSwap	util/doswap.cpp	/^TipoDOSwap::TipoDOSwap()$/;"	f	class:TipoDOSwap
+TipoDOSwap	util/doswap.cpp	/^class TipoDOSwap: public TipoSwap$/;"	c	file:
+TipoFileSwap	util/fswap.cpp	/^	TipoFileSwap() {}$/;"	f	class:TipoFileSwap
+TipoFileSwap	util/fswap.cpp	/^class TipoFileSwap: public TipoSwap$/;"	c	file:
+TipoSwap	util/swap.cpp	/^TipoSwap::TipoSwap()$/;"	f	class:TipoSwap
+TipoSwap	util/swap.h	/^class TipoSwap {$/;"	c
+UPB	util/creatimg.cpp	/^const uint32_t UPB = DIM_PAGINA \/ sizeof(uint32_t);$/;"	v
+US	util/creatimg.cpp	/^		uint64_t US:	1;	\/\/ User\/Supervisor$/;"	m	struct:entrata::__anon20	file:
+US	util/creatimg.cpp	/^		uint64_t US:	1;$/;"	m	struct:entrata::__anon21	file:
+US	util/decode.c	/^		uint64_t US:		1;	\/\/ User\/Supervisor$/;"	m	struct:entrata::__anon15	file:
+US	util/decode.c	/^		uint64_t US:		1;$/;"	m	struct:entrata::__anon16	file:
+VETT_0	include/costanti.h	34;"	d
+VETT_1	include/costanti.h	35;"	d
+VETT_10	include/costanti.h	44;"	d
+VETT_11	include/costanti.h	45;"	d
+VETT_12	include/costanti.h	46;"	d
+VETT_13	include/costanti.h	47;"	d
+VETT_14	include/costanti.h	48;"	d
+VETT_15	include/costanti.h	49;"	d
+VETT_16	include/costanti.h	50;"	d
+VETT_17	include/costanti.h	51;"	d
+VETT_18	include/costanti.h	52;"	d
+VETT_19	include/costanti.h	53;"	d
+VETT_2	include/costanti.h	36;"	d
+VETT_20	include/costanti.h	54;"	d
+VETT_21	include/costanti.h	55;"	d
+VETT_22	include/costanti.h	56;"	d
+VETT_23	include/costanti.h	57;"	d
+VETT_3	include/costanti.h	37;"	d
+VETT_4	include/costanti.h	38;"	d
+VETT_5	include/costanti.h	39;"	d
+VETT_6	include/costanti.h	40;"	d
+VETT_7	include/costanti.h	41;"	d
+VETT_8	include/costanti.h	42;"	d
+VETT_9	include/costanti.h	43;"	d
+VETT_S	include/costanti.h	58;"	d
+VIDEO_SIZE	io/io.cpp	/^const natl VIDEO_SIZE = COLS * ROWS;	\/\/$/;"	v
+WRITE_DMA	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+WRITE_SECT	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+ZMAGIC	util/coff.h	80;"	d
+_BSS	util/coff.h	109;"	d
+_COMMENT	util/coff.h	110;"	d
+_DATA	util/coff.h	108;"	d
+_ETEXT	util/coff.h	218;"	d
+_LIB	util/coff.h	111;"	d
+_LIB_H_	utente/include/lib.h	2;"	d
+_TEXT	util/coff.h	107;"	d
+__dj_include_coff_h_	util/coff.h	3;"	d
+_start	io/io.s	/^_start:$/;"	l
+_start	sistema/sistema.s	/^_start:				\/\/ entry point$/;"	l
+_start	utente/utente.s	/^_start:$/;"	l
+a	util/creatimg.cpp	/^	} a;$/;"	m	union:entrata	typeref:struct:entrata::__anon21	file:
+a	util/decode.c	/^	} a;	$/;"	m	union:entrata	typeref:struct:entrata::__anon16	file:
+a_abort_p	sistema/sistema.s	/^a_abort_p:$/;"	l
+a_activate_p	sistema/sistema.s	/^a_activate_p:	\/\/ routine int $tipo_a$/;"	l
+a_activate_pe	sistema/sistema.s	/^a_activate_pe:$/;"	l
+a_cedmaread	io/io.s	/^a_cedmaread:$/;"	l
+a_delay	sistema/sistema.s	/^a_delay:	\/\/ routine int $tipo_d$/;"	l
+a_dmareadhd_n	io/io.s	/^a_dmareadhd_n: 	# routine INT $dma_tipob_r$/;"	l
+a_dmawritehd_n	io/io.s	/^a_dmawritehd_n:	# routine INT $dma_tipob_w$/;"	l
+a_end_program	sistema/sistema.s	/^a_end_program:$/;"	l
+a_fill_gate	sistema/sistema.s	/^a_fill_gate:$/;"	l
+a_iniconsole	io/io.s	/^a_iniconsole:$/;"	l
+a_log	sistema/sistema.s	/^a_log:$/;"	l
+a_p	sistema/sistema.cpp	/^proc_elem *a_p[MAX_IRQ];  \/\/$/;"	v
+a_p_save	sistema/sistema.cpp	/^proc_elem *a_p_save[MAX_IRQ];$/;"	v
+a_panic	sistema/sistema.s	/^a_panic:	\/\/ routine int $tipo_p$/;"	l
+a_readconsole	io/io.s	/^a_readconsole:$/;"	l
+a_readhd_n	io/io.s	/^a_readhd_n:	# routine INT $io_tipo_hdr$/;"	l
+a_readse_ln	io/io.s	/^a_readse_ln:$/;"	l
+a_readse_n	io/io.s	/^a_readse_n:$/;"	l
+a_sem_ini	sistema/sistema.s	/^a_sem_ini:	\/\/ routine int $tipo_si$/;"	l
+a_sem_signal	sistema/sistema.s	/^a_sem_signal:	\/\/ routine int $tipo_s$/;"	l
+a_sem_wait	sistema/sistema.s	/^a_sem_wait:	\/\/ routine int $tipo_w$/;"	l
+a_terminate_p	sistema/sistema.s	/^a_terminate_p:	\/\/ routine int $tipo_t$/;"	l
+a_trasforma	sistema/sistema.s	/^a_trasforma:$/;"	l
+a_wfi	sistema/sistema.s	/^a_wfi:		\/\/ routine int $tipo_wfi$/;"	l
+a_writeconsole	io/io.s	/^a_writeconsole:$/;"	l
+a_writehd_n	io/io.s	/^a_writehd_n:	# routine INT $io_tipo_hdw$/;"	l
+a_writese_0	io/io.s	/^a_writese_0:$/;"	l
+a_writese_n	io/io.s	/^a_writese_n:$/;"	l
+abort_p	io/io.s	/^abort_p:$/;"	l
+abort_p	sistema/sistema.s	/^abort_p:$/;"	l
+ac_exc	sistema/sistema.s	/^ac_exc:$/;"	l
+activate_p	io/io.s	/^activate_p:$/;"	l
+activate_p	sistema/sistema.s	/^activate_p:$/;"	l
+activate_p	utente/utente.s	/^activate_p:$/;"	l
+activate_pe	io/io.s	/^activate_pe:	\/\/$/;"	l
+addr	include/tipo.h	/^typedef void* addr; \/\/ indirizzo virtuale e indirizzo fisico nello spazio di memoria$/;"	t
+addr	utente/include/tipo.h	/^typedef void* addr;$/;"	t
+address	util/creatimg.cpp	/^		uint64_t address:	40;	\/\/ indirizzo fisico$/;"	m	struct:entrata::__anon20	file:
+address	util/decode.c	/^		uint64_t address:	40;	\/\/ indirizzo fisico$/;"	m	struct:entrata::__anon15	file:
+agg_proc	util/parse.c	/^void agg_proc(const char *nome_proc, const char *corpo_proc, int par_att,$/;"	f
+agg_riga	util/parse.c	/^void agg_riga(int sez, char *r)$/;"	f
+agg_sem	util/parse.c	/^void agg_sem(const char *nome_sem, int valore)$/;"	f
+aggiungi	util/interp.h	/^	void aggiungi(Interprete* in) { testa = new Elem(in, testa); }$/;"	f	class:ListaInterpreti
+aggiungi	util/swap.h	/^	void aggiungi(TipoSwap* in) { testa = new Elem(in, testa); }$/;"	f	class:ListaTipiSwap
+aggiungi_pe	sistema/sistema.cpp	/^bool aggiungi_pe(proc_elem *p, natb irq)$/;"	f
+ah	util/coff.cpp	/^	AOUTHDR ah;$/;"	m	class:EseguibileCoff_go32	file:
+allinea	sistema/sistema.cpp	/^addr allinea(addr a, natq m)$/;"	f
+alloca_blocco	sistema/sistema.cpp	/^natq alloca_blocco()$/;"	f
+alloca_pagina_fisica	sistema/sistema.cpp	/^des_pf* alloca_pagina_fisica(natl proc, int livello, addr ind_virt)$/;"	f
+alloca_pagina_fisica_libera	sistema/sistema.cpp	/^des_pf* alloca_pagina_fisica_libera()$/;"	f
+alloca_sem	sistema/sistema.cpp	/^natl alloca_sem()$/;"	f
+alloca_tss	sistema/sistema.s	/^alloca_tss:$/;"	l
+ancora	util/elf32.cpp	/^		uint32_t ancora;$/;"	m	class:EseguibileElf32::SegmentoElf32	file:
+ancora	util/elf64.cpp	/^		uint32_t ancora;$/;"	m	class:EseguibileElf64::SegmentoElf64	file:
+ancora	util/interp.h	/^	bool ancora() { return curr != NULL; }$/;"	f	class:ListaInterpreti
+ancora	util/swap.h	/^	bool ancora() { return curr != NULL; }$/;"	f	class:ListaTipiSwap
+apic_fill	sistema/sistema.cpp	/^void apic_fill()$/;"	f
+apri	util/doswap.cpp	/^Swap* TipoDOSwap::apri(const char *nome)$/;"	f	class:TipoDOSwap
+apri	util/fswap.cpp	/^Swap* TipoFileSwap::apri(const char *nome)$/;"	f	class:TipoFileSwap
+array_ce	io/io.cpp	/^des_ce array_ce[MAX_CE];$/;"	v
+array_dess	sistema/sistema.cpp	/^des_sem array_dess[MAX_SEM];$/;"	v
+atteso	util/parse.c	/^void atteso(const char *msg, char c)$/;"	f
+attiva_timer	sistema/sistema.s	/^attiva_timer:$/;"	l
+attr	io/io.cpp	/^	natw attr;$/;"	m	struct:des_vid	file:
+avail	util/creatimg.cpp	/^		uint64_t avail:	3;	\/\/ non usati$/;"	m	struct:entrata::__anon20	file:
+avail	util/decode.c	/^		uint64_t avail:		3;	\/\/ non usati$/;"	m	struct:entrata::__anon15	file:
+avail2	util/creatimg.cpp	/^		uint64_t avail2:	11;$/;"	m	struct:entrata::__anon20	file:
+avail2	util/decode.c	/^		uint64_t avail2:	11;$/;"	m	struct:entrata::__anon15	file:
+avanza	util/parse.c	/^void avanza()$/;"	f
+base	sistema/sistema.cpp	/^static inline addr base(addr a, int liv)$/;"	f	file:
+bios_disk	util/doswap.cpp	/^	int bios_disk;$/;"	m	class:DOSwap	file:
+block	util/creatimg.cpp	/^		uint64_t block:	51;$/;"	m	struct:entrata::__anon21	file:
+block	util/creatimg.cpp	/^	block_t block[3];$/;"	m	class:TabCache	file:
+block	util/decode.c	/^		uint64_t block:		51;$/;"	m	struct:entrata::__anon16	file:
+block_t	util/decode.c	/^typedef uint64_t block_t;$/;"	t	file:
+block_t	util/swap.h	/^typedef uint64_t block_t;$/;"	t
+blocks	sistema/sistema.cpp	/^	natq	blocks;$/;"	m	struct:superblock_t	file:
+blocks	util/creatimg.cpp	/^bm_t blocks;$/;"	v
+blocks	util/decode.c	/^	uint64_t	blocks;$/;"	m	struct:superblock_t	file:
+blocks	util/swap.h	/^	uint64_t	blocks;$/;"	m	struct:superblock_t
+blocks_in_file	util/dos.h	/^  unsigned short blocks_in_file;$/;"	m	struct:DOS_EXE
+bm_alloc	util/creatimg.cpp	/^bool bm_alloc(bm_t *bm, uint64_t& pos)$/;"	f
+bm_clear	util/creatimg.cpp	/^inline void bm_clear(bm_t *bm, uint64_t pos)$/;"	f
+bm_create	util/creatimg.cpp	/^void bm_create(bm_t *bm, uint64_t *buffer, uint64_t size)$/;"	f
+bm_free	util/creatimg.cpp	/^void bm_free(bm_t *bm, uint64_t pos)$/;"	f
+bm_isset	util/creatimg.cpp	/^inline uint64_t bm_isset(bm_t *bm, uint64_t pos)$/;"	f
+bm_set	util/creatimg.cpp	/^inline void bm_set(bm_t *bm, uint64_t pos)$/;"	f
+bm_start	sistema/sistema.cpp	/^	natq	bm_start;$/;"	m	struct:superblock_t	file:
+bm_start	util/decode.c	/^	block_t		bm_start;$/;"	m	struct:superblock_t	file:
+bm_start	util/swap.h	/^	block_t		bm_start;$/;"	m	struct:superblock_t
+bm_t	util/creatimg.cpp	/^struct bm_t {$/;"	s	file:
+bound_re	sistema/sistema.s	/^bound_re:$/;"	l
+breakpoint	sistema/sistema.s	/^breakpoint:$/;"	l
+bsize	util/coff.h	/^	unsigned long bsize;$/;"	m	struct:gnu_aout
+bsize	util/coff.h	/^  unsigned long	bsize;		\/* uninitialized data "   "		*\/$/;"	m	struct:__anon1
+buf	io/io.cpp	/^	char *buf;$/;"	m	struct:des_ce	file:
+buf	utente/utente.cpp	/^char buf[2][MSG_SIZE * 100];$/;"	v
+bus_master	io/io.cpp	/^	pci_ata bus_master;$/;"	m	struct:des_ata	file:
+byte	util/creatimg.cpp	/^		uint8_t byte[DIM_PAGINA];$/;"	m	union:pagina::__anon22	file:
+bytes_in_last_block	util/dos.h	/^  unsigned short bytes_in_last_block;$/;"	m	struct:DOS_EXE
+c_abort_p	sistema/sistema.cpp	/^extern "C" void c_abort_p()$/;"	f
+c_activate_p	sistema/sistema.cpp	/^c_activate_p(void f(int), int a, natl prio, natl liv)$/;"	f
+c_activate_pe	sistema/sistema.cpp	/^extern "C" natl c_activate_pe(void f(int), int a, natl prio, natl liv, natb type)$/;"	f
+c_cedmaread	io/io.cpp	/^extern "C" void c_cedmaread(natl id, char *buf, natl quanti)$/;"	f
+c_delay	sistema/sistema.cpp	/^extern "C" void c_delay(natl n)$/;"	f
+c_dmareadhd_n	io/io.cpp	/^extern "C" void c_dmareadhd_n(natw vetti[], natl primo, natb quanti,$/;"	f
+c_dmawritehd_n	io/io.cpp	/^extern "C" void c_dmawritehd_n(natw vetto[], natl primo, natb quanti,$/;"	f
+c_driver_td	sistema/sistema.cpp	/^extern "C" void c_driver_td(void)$/;"	f
+c_iniconsole	io/io.cpp	/^extern "C" void c_iniconsole(natb cc)$/;"	f
+c_log	sistema/sistema.cpp	/^extern "C" void c_log(log_sev sev, const char* buf, natl quanti)$/;"	f
+c_nmi	sistema/sistema.cpp	/^extern "C" void c_nmi()$/;"	f
+c_panic	sistema/sistema.cpp	/^extern "C" void c_panic(const char *msg, addr rsp)$/;"	f
+c_pre_routine_pf	sistema/sistema.cpp	/^extern "C" void c_pre_routine_pf(	\/\/$/;"	f
+c_readconsole	io/io.cpp	/^extern "C" void c_readconsole(str buff, natl& quanti) \/\/$/;"	f
+c_readhd_n	io/io.cpp	/^extern "C" void c_readhd_n(natw vetti[], natl primo,$/;"	f
+c_readse_ln	io/io.cpp	/^extern "C" void c_readse_ln(natl serial, natb vetti[], int& quanti, natb& errore)$/;"	f
+c_readse_n	io/io.cpp	/^extern "C" void c_readse_n(natl serial, natb vetti[], natl quanti, natb& errore) \/\/ [9.2.1]$/;"	f
+c_routine_pf	sistema/sistema.cpp	/^void c_routine_pf()	\/\/$/;"	f
+c_sem_ini	sistema/sistema.cpp	/^extern "C" natl c_sem_ini(int val)$/;"	f
+c_sem_signal	sistema/sistema.cpp	/^extern "C" void c_sem_signal(natl sem)$/;"	f
+c_sem_wait	sistema/sistema.cpp	/^extern "C" void c_sem_wait(natl sem)$/;"	f
+c_terminate_p	sistema/sistema.cpp	/^extern "C" void c_terminate_p()$/;"	f
+c_trasforma	sistema/sistema.cpp	/^extern "C" addr c_trasforma(addr ind_virt)$/;"	f
+c_writeconsole	io/io.cpp	/^extern "C" void c_writeconsole(cstr buff) \/\/$/;"	f
+c_writehd_n	io/io.cpp	/^extern "C" void c_writehd_n(natw vetto[], natl primo,$/;"	f
+c_writese_0	io/io.cpp	/^extern "C" void c_writese_0(natl serial, natb vetto[], natl &quanti)$/;"	f
+c_writese_n	io/io.cpp	/^extern "C" void c_writese_n(natl serial, natb vetto[], natl quanti)	\/\/ [9.2.2]$/;"	f
+carica	sistema/sistema.cpp	/^void carica(des_pf* ppf) \/\/$/;"	f
+carica_pila	sistema/sistema.cpp	/^addr carica_pila(natl proc, natb *bottom, natq size)$/;"	f
+carica_ric	sistema/sistema.cpp	/^bool carica_ric(natl proc, addr tab, int liv, addr ind, natl n)$/;"	f
+carica_stato	sistema/sistema.s	/^carica_stato:$/;"	l
+carica_tutto	sistema/sistema.cpp	/^bool carica_tutto(natl proc, natl i, natl n)$/;"	f
+ce_init	io/io.cpp	/^bool ce_init()$/;"	f
+cedmaread	utente/utente.s	/^cedmaread:$/;"	l
+ceild	sistema/sistema.cpp	/^natl ceild(natl v, natl q)$/;"	f
+checksum	sistema/sistema.cpp	/^	int	checksum;$/;"	m	struct:superblock_t	file:
+checksum	util/decode.c	/^	uint64_t	checksum;$/;"	m	struct:superblock_t	file:
+checksum	util/dos.h	/^  unsigned short checksum;$/;"	m	struct:DOS_EXE
+checksum	util/swap.h	/^	uint64_t	checksum;$/;"	m	struct:superblock_t
+clear_IND_MASSA	sistema/sistema.cpp	/^void clear_IND_MASSA(natq& descrittore)$/;"	f
+clear_intr	ce1.pl	/^sub clear_intr {$/;"	s
+cmain	io/io.cpp	/^extern "C" void cmain(int sem_io)$/;"	f
+cmain	sistema/sistema.cpp	/^extern "C" void cmain()$/;"	f
+code_sys_seg	sistema/sistema.s	/^code_sys_seg:$/;"	l
+code_usr_seg	sistema/sistema.s	/^code_usr_seg:$/;"	l
+collega	sistema/sistema.cpp	/^void collega(des_pf *ppf)	\/\/$/;"	f
+colonna	util/parse.c	/^int riga, colonna, pos;		\/* posizione corrente *\/$/;"	v
+com	io/io.cpp	/^des_se com[S] = {$/;"	v
+com_init	io/io.cpp	/^bool com_init()$/;"	f
+com_irq	io/io.cpp	/^int com_irq[S] = { 4, 3 };$/;"	v
+com_setup	io/io.s	/^com_setup:$/;"	l
+comando	io/io.cpp	/^	hd_cmd comando;$/;"	m	struct:des_ata	file:
+comm_exc	sistema/sistema.s	/^comm_exc:$/;"	l
+console	io/io.cpp	/^des_console console = {$/;"	v
+console_init	io/io.cpp	/^bool console_init()$/;"	f
+cont	io/io.cpp	/^	natb cont;$/;"	m	struct:des_ata	file:
+cont	io/io.cpp	/^	natl cont;$/;"	m	struct:des_kbd	file:
+cont	io/io.cpp	/^	natl cont;$/;"	m	struct:des_se	file:
+contatore	sistema/sistema.cpp	/^	natl	contatore;	\/\/ contatore per le statistiche$/;"	m	struct:des_pf	file:
+contesto	sistema/sistema.cpp	/^	natq contesto[N_REG];$/;"	m	struct:des_proc	file:
+converti	io/io.cpp	/^natb converti(des_kbd* p_des, natb c) { \/\/$/;"	f
+copia_car	util/parse.c	/^void copia_car()$/;"	f
+copia_nome	util/parse.c	/^void copia_nome()$/;"	f
+copia_pagina	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::copia_pagina(void* dest)$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+copia_pagina	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::copia_pagina(void* dest)$/;"	f	class:EseguibileElf32::SegmentoElf32
+copia_pagina	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::copia_pagina(void* dest)$/;"	f	class:EseguibileElf64::SegmentoElf64
+coproc_so	sistema/sistema.s	/^coproc_so:$/;"	l
+copy_des	sistema/sistema.cpp	/^void copy_des(addr src, addr dst, natl i, natl n)$/;"	f
+corpo	utente/utente.cpp	/^	char corpo[MSG_SIZE];$/;"	m	struct:mess	file:
+counter	sistema/sistema.cpp	/^	int counter;$/;"	m	struct:des_sem	file:
+cpl	sistema/sistema.cpp	/^	natl cpl;$/;"	m	struct:des_proc	file:
+cr3	sistema/sistema.cpp	/^	addr cr3;$/;"	m	struct:des_proc	file:
+crea	sistema/sistema.cpp	/^bool crea(natl proc, addr ind_virt, int liv, natl priv)$/;"	f
+crea_dummy	sistema/sistema.cpp	/^natl crea_dummy()$/;"	f
+crea_finestra_FM	sistema/sistema.cpp	/^bool crea_finestra_FM(addr tab4)$/;"	f
+crea_main_sistema	sistema/sistema.cpp	/^bool crea_main_sistema(natl dummy_proc)$/;"	f
+crea_pagina	sistema/sistema.cpp	/^bool crea_pagina(natl proc, addr ind_virt, natl priv)$/;"	f
+crea_pila	sistema/sistema.cpp	/^bool crea_pila(natl proc, natb *bottom, natq size, natl priv)$/;"	f
+crea_processo	sistema/sistema.cpp	/^proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)$/;"	f
+crea_spazio_condiviso	sistema/sistema.cpp	/^bool crea_spazio_condiviso(natl dummy_proc)$/;"	f
+crea_tab4	sistema/sistema.cpp	/^addr crea_tab4()$/;"	f
+crea_tab4	sistema/sistema.cpp	/^void crea_tab4(addr dest)$/;"	f
+cs	util/dos.h	/^  unsigned short cs;$/;"	m	struct:DOS_EXE
+cstr	include/tipo.h	/^typedef const void* cstr;$/;"	t
+curr	util/coff.cpp	/^		size_t curr;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+curr	util/elf32.cpp	/^		uint32_t curr;$/;"	m	class:EseguibileElf32::SegmentoElf32	file:
+curr	util/elf64.cpp	/^		uint64_t curr;$/;"	m	class:EseguibileElf64::SegmentoElf64	file:
+curr	util/interp.h	/^	} *testa, *curr;$/;"	m	class:ListaInterpreti	typeref:struct:ListaInterpreti::Elem
+curr	util/swap.h	/^	} *testa, *curr;$/;"	m	class:ListaTipiSwap	typeref:struct:ListaTipiSwap::Elem
+curr_offset	util/coff.cpp	/^		uint curr_offset;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+curr_offset	util/elf32.cpp	/^		uint32_t curr_offset;$/;"	m	class:EseguibileElf32::SegmentoElf32	file:
+curr_offset	util/elf64.cpp	/^		uint64_t curr_offset;$/;"	m	class:EseguibileElf64::SegmentoElf64	file:
+curr_seg	util/coff.cpp	/^	int curr_seg;$/;"	m	class:EseguibileCoff_go32	file:
+curr_seg	util/elf32.cpp	/^	int curr_seg;$/;"	m	class:EseguibileElf32	file:
+curr_seg	util/elf64.cpp	/^	int curr_seg;$/;"	m	class:EseguibileElf64	file:
+curr_vaddr	util/coff.cpp	/^		uint curr_vaddr;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+currfile	util/parse.c	/^const char* currfile;$/;"	v
+cursore	io/io.s	/^cursore:$/;"	l
+d_attesa	sistema/sistema.cpp	/^	natl d_attesa;$/;"	m	struct:richiesta	file:
+da_leggere	util/coff.cpp	/^		uint da_leggere;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+da_leggere	util/elf32.cpp	/^		uint32_t da_leggere;$/;"	m	class:EseguibileElf32::SegmentoElf32	file:
+da_leggere	util/elf64.cpp	/^		uint32_t da_leggere;$/;"	m	class:EseguibileElf64::SegmentoElf64	file:
+data_start	util/coff.h	/^  unsigned long 	data_start;	\/* base of data used for this file *\/$/;"	m	struct:__anon1
+data_usr_seg	sistema/sistema.s	/^data_usr_seg:$/;"	l
+dbg	ce1.pl	/^sub dbg {$/;"	s
+dd	sistema/sistema.cpp	/^void dd(int i)$/;"	f
+dealloca_blocco	sistema/sistema.cpp	/^void dealloca_blocco(natl blocco)$/;"	f
+debug	sistema/sistema.s	/^debug:$/;"	l
+decodeAddr	util/show_log.pl	/^	sub decodeAddr($) {$/;"	s
+delay	io/io.s	/^delay:$/;"	l
+delay	sistema/sistema.s	/^delay:$/;"	l
+delay	utente/utente.s	/^delay:$/;"	l
+des_ata	io/io.cpp	/^struct des_ata {$/;"	s	file:
+des_ce	io/io.cpp	/^struct des_ce {$/;"	s	file:
+des_console	io/io.cpp	/^struct des_console { \/\/$/;"	s	file:
+des_kbd	io/io.cpp	/^struct des_kbd { \/\/$/;"	s	file:
+des_p	sistema/sistema.s	/^des_p:$/;"	l
+des_pf	sistema/sistema.cpp	/^struct des_pf {$/;"	s	file:
+des_proc	sistema/sistema.cpp	/^struct des_proc {$/;"	s	file:
+des_se	io/io.cpp	/^struct des_se {		\/\/$/;"	s	file:
+des_sem	sistema/sistema.cpp	/^struct des_sem {$/;"	s	file:
+des_swap	sistema/sistema.cpp	/^struct des_swap {$/;"	s	file:
+des_tss	sistema/sistema.s	/^des_tss:$/;"	l
+des_vid	io/io.cpp	/^struct des_vid {	\/\/$/;"	s	file:
+descrittore_pf	sistema/sistema.cpp	/^des_pf* descrittore_pf(addr indirizzo_pf)$/;"	f
+dev_na	sistema/sistema.s	/^dev_na:$/;"	l
+dim	util/doswap.cpp	/^	unsigned int dim;	\/\/ dimensione in settori$/;"	m	struct:partizione	file:
+dim_pag	sistema/sistema.cpp	/^static inline natq dim_pag(int liv)$/;"	f	file:
+dimensione	util/coff.cpp	/^uint64_t EseguibileCoff_go32::SegmentoCoff_go32::dimensione() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+dimensione	util/doswap.cpp	/^unsigned int DOSwap::dimensione() const$/;"	f	class:DOSwap
+dimensione	util/elf32.cpp	/^uint64_t EseguibileElf32::SegmentoElf32::dimensione() const$/;"	f	class:EseguibileElf32::SegmentoElf32
+dimensione	util/elf64.cpp	/^uint64_t EseguibileElf64::SegmentoElf64::dimensione() const$/;"	f	class:EseguibileElf64::SegmentoElf64
+dimensione	util/fswap.cpp	/^unsigned int FileSwap::dimensione() const$/;"	f	class:FileSwap
+directory	sistema/sistema.cpp	/^	natq	directory;$/;"	m	struct:superblock_t	file:
+directory	util/decode.c	/^	block_t		directory;$/;"	m	struct:superblock_t	file:
+directory	util/swap.h	/^	block_t		directory;$/;"	m	struct:superblock_t
+dirty	util/creatimg.cpp	/^	bool dirty[3];$/;"	m	class:TabCache	file:
+disp1	sistema/sistema.cpp	/^		natq disp1[2];$/;"	m	struct:des_proc::__anon26	file:
+disp2	sistema/sistema.cpp	/^		natq disp2[7];$/;"	m	struct:des_proc::__anon26	file:
+distruggi_processo	sistema/sistema.cpp	/^void distruggi_processo(proc_elem* p)$/;"	f
+divide_error	sistema/sistema.s	/^divide_error:$/;"	l
+dmareadhd_n	io/io.s	/^dmareadhd_n:	int		$IO_TIPO_DMAHDR$/;"	l
+dmareadhd_n	utente/utente.s	/^dmareadhd_n:$/;"	l
+dmastarthd_in	io/io.cpp	/^void dmastarthd_in(des_ata *p_des, natw vetti[], natl primo, natb quanti)$/;"	f
+dmastarthd_out	io/io.cpp	/^void dmastarthd_out(des_ata *p_des, natw vetto[], natl primo, natb quanti)$/;"	f
+dmawritehd_n	io/io.s	/^dmawritehd_n:	int		$IO_TIPO_DMAHDW$/;"	l
+dmawritehd_n	utente/utente.s	/^dmawritehd_n:$/;"	l
+do_log	io/io.cpp	/^extern "C" void do_log(log_sev sev, const char* buf, natl l)$/;"	f
+do_log	utente/lib.cpp	/^extern "C" void do_log(log_sev sev, const char* msg, natl size)$/;"	f
+do_map	util/creatimg.cpp	/^void do_map(char* fname, int liv, uint64_t& entry_point, uint64_t& last_address)$/;"	f
+double_fault	sistema/sistema.s	/^double_fault:$/;"	l
+dpf	sistema/sistema.cpp	/^des_pf* dpf;		\/\/ vettore di descrittori di pagine fisiche$/;"	v
+driver_td	sistema/sistema.s	/^driver_td:$/;"	l
+dsize	util/coff.h	/^	unsigned long dsize;$/;"	m	struct:gnu_aout
+dsize	util/coff.h	/^  unsigned long	dsize;		\/* initialized data "  "		*\/$/;"	m	struct:__anon1
+dtrel	util/coff.h	/^	unsigned long dtrel;$/;"	m	struct:gnu_aout
+e	util/coff.h	/^    } e;$/;"	m	union:external_syment::__anon3	typeref:struct:external_syment::__anon3::__anon4
+e	util/coff.h	/^  } e;$/;"	m	struct:external_syment	typeref:union:external_syment::__anon3
+e	util/creatimg.cpp	/^	entrata e[512];$/;"	m	struct:tabella	file:
+e_ehsize	include/elf64.h	/^        Elf64_Half    e_ehsize;$/;"	m	struct:__anon23
+e_ehsize	util/elf32.h	/^        Elf32_Half    e_ehsize;$/;"	m	struct:__anon17
+e_entry	include/elf64.h	/^        Elf64_Addr    e_entry;$/;"	m	struct:__anon23
+e_entry	util/elf32.h	/^        Elf32_Addr    e_entry;$/;"	m	struct:__anon17
+e_flags	include/elf64.h	/^        Elf64_Word    e_flags;$/;"	m	struct:__anon23
+e_flags	util/elf32.h	/^        Elf32_Word    e_flags;$/;"	m	struct:__anon17
+e_ident	include/elf64.h	/^        unsigned char e_ident[EI_NIDENT];$/;"	m	struct:__anon23
+e_ident	util/elf32.h	/^        unsigned char e_ident[EI_NIDENT];$/;"	m	struct:__anon17
+e_machine	include/elf64.h	/^        Elf64_Half    e_machine;$/;"	m	struct:__anon23
+e_machine	util/elf32.h	/^        Elf32_Half    e_machine;$/;"	m	struct:__anon17
+e_name	util/coff.h	/^    char e_name[E_SYMNMLEN];$/;"	m	union:external_syment::__anon3
+e_numaux	util/coff.h	/^  unsigned char e_numaux;$/;"	m	struct:external_syment
+e_offset	util/coff.h	/^      unsigned long e_offset __attribute__((packed));$/;"	m	struct:external_syment::__anon3::__anon4
+e_phentsize	include/elf64.h	/^        Elf64_Half    e_phentsize;$/;"	m	struct:__anon23
+e_phentsize	util/elf32.h	/^        Elf32_Half    e_phentsize;$/;"	m	struct:__anon17
+e_phnum	include/elf64.h	/^        Elf64_Half    e_phnum;$/;"	m	struct:__anon23
+e_phnum	util/elf32.h	/^        Elf32_Half    e_phnum;$/;"	m	struct:__anon17
+e_phoff	include/elf64.h	/^        Elf64_Off     e_phoff;$/;"	m	struct:__anon23
+e_phoff	util/elf32.h	/^        Elf32_Off     e_phoff;$/;"	m	struct:__anon17
+e_sclass	util/coff.h	/^  unsigned char e_sclass;$/;"	m	struct:external_syment
+e_scnum	util/coff.h	/^  short e_scnum;$/;"	m	struct:external_syment
+e_shentsize	include/elf64.h	/^        Elf64_Half    e_shentsize;$/;"	m	struct:__anon23
+e_shentsize	util/elf32.h	/^        Elf32_Half    e_shentsize;$/;"	m	struct:__anon17
+e_shnum	include/elf64.h	/^        Elf64_Half    e_shnum;$/;"	m	struct:__anon23
+e_shnum	util/elf32.h	/^        Elf32_Half    e_shnum;$/;"	m	struct:__anon17
+e_shoff	include/elf64.h	/^        Elf64_Off     e_shoff;$/;"	m	struct:__anon23
+e_shoff	util/elf32.h	/^        Elf32_Off     e_shoff;$/;"	m	struct:__anon17
+e_shstrndx	include/elf64.h	/^        Elf64_Half    e_shstrndx;$/;"	m	struct:__anon23
+e_shstrndx	util/elf32.h	/^        Elf32_Half    e_shstrndx;$/;"	m	struct:__anon17
+e_type	include/elf64.h	/^        Elf64_Half    e_type;$/;"	m	struct:__anon23
+e_type	util/coff.h	/^  unsigned short e_type;$/;"	m	struct:external_syment
+e_type	util/elf32.h	/^        Elf32_Half    e_type;$/;"	m	struct:__anon17
+e_value	util/coff.h	/^  unsigned long e_value __attribute__((packed));$/;"	m	struct:external_syment
+e_version	include/elf64.h	/^        Elf64_Word    e_version;$/;"	m	struct:__anon23
+e_version	util/elf32.h	/^        Elf32_Word    e_version;$/;"	m	struct:__anon17
+e_zeroes	util/coff.h	/^      unsigned long e_zeroes __attribute__((packed));$/;"	m	struct:external_syment::__anon3::__anon4
+eccezioni	sistema/sistema.cpp	/^static const char *eccezioni[] = {$/;"	v	file:
+emetti	util/parse.c	/^void emetti(const char *t)$/;"	f
+emetti_line	util/parse.c	/^void emetti_line()$/;"	f
+emetti_line2	util/parse.c	/^void emetti_line2()$/;"	f
+end_gdt	sistema/sistema.s	/^end_gdt:$/;"	l
+end_idt	sistema/sistema.s	/^end_idt:$/;"	l
+end_program	sistema/sistema.s	/^end_program:$/;"	l
+end_tss	sistema/sistema.s	/^end_tss:$/;"	l
+entrata	util/creatimg.cpp	/^union entrata {$/;"	u	file:
+entrata	util/decode.c	/^union entrata {$/;"	u	file:
+entry	util/coff.h	/^	unsigned long entry;$/;"	m	struct:gnu_aout
+entry	util/coff.h	/^  unsigned long	entry;		\/* entry pt.				*\/$/;"	m	struct:__anon1
+entry_point	util/coff.cpp	/^uint64_t EseguibileCoff_go32::entry_point() const$/;"	f	class:EseguibileCoff_go32
+entry_point	util/elf32.cpp	/^uint64_t EseguibileElf32::entry_point() const$/;"	f	class:EseguibileElf32
+entry_point	util/elf64.cpp	/^uint64_t EseguibileElf64::entry_point() const$/;"	f	class:EseguibileElf64
+errore	io/io.cpp	/^	natb errore;$/;"	m	struct:des_ata	file:
+errore	util/parse.c	/^void errore(const char *msg)$/;"	f
+esecuzione	sistema/sistema.cpp	/^proc_elem *esecuzione;$/;"	v
+esternAta	io/io.cpp	/^void esternAta(int h)			\/\/ codice commune ai 2 processi esterni ATA$/;"	f
+estern_ce	io/io.cpp	/^extern "C" void estern_ce(int id)$/;"	f
+estern_com	io/io.cpp	/^void estern_com(int i) \/\/$/;"	f
+estern_generico	sistema/sistema.cpp	/^void estern_generico(int h)$/;"	f
+estern_kbd	io/io.cpp	/^void estern_kbd(int h) \/\/$/;"	f
+external_auxent	util/coff.h	/^union external_auxent {$/;"	u
+external_filehdr	util/coff.h	/^struct external_filehdr {$/;"	s
+external_lineno	util/coff.h	/^struct external_lineno {$/;"	s
+external_reloc	util/coff.h	/^struct external_reloc {$/;"	s
+external_scnhdr	util/coff.h	/^struct external_scnhdr {$/;"	s
+external_syment	util/coff.h	/^struct external_syment$/;"	s
+extr_A	sistema/sistema.cpp	/^bool extr_A(natq descrittore)$/;"	f
+extr_D	sistema/sistema.cpp	/^bool extr_D(natq descrittore)$/;"	f
+extr_IND_FISICO	sistema/sistema.cpp	/^addr extr_IND_FISICO(natq descrittore)$/;"	f
+extr_IND_MASSA	sistema/sistema.cpp	/^natq extr_IND_MASSA(natq descrittore)$/;"	f
+extr_P	sistema/sistema.cpp	/^bool  extr_P(natq descrittore)$/;"	f
+extr_ZERO	sistema/sistema.cpp	/^bool extr_ZERO(natq descrittore)$/;"	f
+f_flags	util/coff.h	/^	unsigned short f_flags;		\/* flags			*\/$/;"	m	struct:external_filehdr
+f_magic	util/coff.h	/^	unsigned short f_magic;		\/* magic number			*\/$/;"	m	struct:external_filehdr
+f_nscns	util/coff.h	/^	unsigned short f_nscns;		\/* number of sections		*\/$/;"	m	struct:external_filehdr
+f_nsyms	util/coff.h	/^	unsigned long f_nsyms;		\/* number of symtab entries	*\/$/;"	m	struct:external_filehdr
+f_opthdr	util/coff.h	/^	unsigned short f_opthdr;	\/* sizeof(optional hdr)		*\/$/;"	m	struct:external_filehdr
+f_symptr	util/coff.h	/^	unsigned long f_symptr;	\/* file pointer to symtab	*\/$/;"	m	struct:external_filehdr
+f_timdat	util/coff.h	/^	unsigned long f_timdat;	\/* time & date stamp		*\/$/;"	m	struct:external_filehdr
+file_elem	util/parse.c	/^struct file_elem {$/;"	s	file:
+fill_gate	io/io.s	/^fill_gate:$/;"	l
+fill_io_gates	io/io.s	/^fill_io_gates:$/;"	l
+fin_mio_c	sistema/sistema.cpp	/^const addr fin_mio_c = (addr)((natq)ini_mio_c + dim_pag(4) * N_MIO_C);$/;"	v
+fin_sis_c	sistema/sistema.cpp	/^const addr fin_sis_c = (addr)((natq)ini_sis_c + dim_pag(4) * N_SIS_C);$/;"	v
+fin_sis_p	sistema/sistema.cpp	/^const addr fin_sis_p = (addr)((natq)ini_sis_p + dim_pag(4) * N_SIS_P);$/;"	v
+fin_utn_c	sistema/sistema.cpp	/^const addr fin_utn_c = (addr)((natq)ini_utn_c + dim_pag(4) * N_UTN_C);$/;"	v
+fin_utn_p	sistema/sistema.cpp	/^const addr fin_utn_p = (addr)((natq)ini_utn_p + dim_pag(4) * N_UTN_P);$/;"	v
+find_qemu	run	/^find_qemu() {$/;"	f
+fine	util/parse.c	/^struct file_elem *utente[2], *fine[2];$/;"	v	typeref:struct:
+fine_codice_sistema	sistema/sistema.s	/^fine_codice_sistema:$/;"	l
+finito	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::finito() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+finito	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::finito() const$/;"	f	class:EseguibileElf32::SegmentoElf32
+finito	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::finito() const$/;"	f	class:EseguibileElf64::SegmentoElf64
+first	util/doswap.cpp	/^	unsigned int first;	\/\/ primo settore della partizione$/;"	m	struct:partizione	file:
+fp_exc	sistema/sistema.s	/^fp_exc:$/;"	l
+free	sistema/sistema.cpp	/^	natl *free;		\/\/ bitmap dei blocchi liberi$/;"	m	struct:des_swap	file:
+funz	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	g	file:
+funzione	io/io.cpp	/^	funz funzione;$/;"	m	struct:des_se	file:
+gdb_breakpoint	sistema/sistema.cpp	/^void gdb_breakpoint() {}$/;"	f
+gdt	sistema/sistema.s	/^gdt:$/;"	l
+gdt_pointer	sistema/sistema.s	/^gdt_pointer:$/;"	l
+gestore_eccezioni	sistema/sistema.cpp	/^extern "C" void gestore_eccezioni(int tipo, natq errore, addr rsp)$/;"	f
+get_bit	util/decode.c	/^int get_bit() {$/;"	f
+get_des	sistema/sistema.cpp	/^natq& get_des(natl processo, int livello, addr ind_virt)$/;"	f
+get_disk_size	util/doswap.cpp	/^static int get_disk_size(unsigned int13_drive_num, unsigned& nsec)$/;"	f	file:
+get_entry	sistema/sistema.cpp	/^natq& get_entry(addr tab, natl index)$/;"	f
+global	util/creatimg.cpp	/^		uint64_t global:	1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon20	file:
+global	util/decode.c	/^		uint64_t global:	1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon15	file:
+gnu_aout	util/coff.h	/^typedef struct gnu_aout {$/;"	s
+go_inputkbd	io/io.s	/^go_inputkbd:$/;"	l
+go_inputse	io/io.s	/^go_inputse:$/;"	l
+go_outputse	io/io.s	/^go_outputse:$/;"	l
+goto_user	sistema/sistema.s	/^goto_user:$/;"	l
+h	util/coff.cpp	/^	FILHDR h;$/;"	m	class:EseguibileCoff_go32	file:
+h	util/elf32.cpp	/^	Elf32_Ehdr h;$/;"	m	class:EseguibileElf32	file:
+h	util/elf64.cpp	/^	Elf64_Ehdr h;$/;"	m	class:EseguibileElf64	file:
+halt_inputkbd	io/io.s	/^halt_inputkbd:$/;"	l
+halt_inputse	io/io.s	/^halt_inputse:$/;"	l
+halt_outputse	io/io.s	/^halt_outputse:$/;"	l
+handler	sistema/sistema.s	/^handler 1$/;"	l
+handler	sistema/sistema.s	/^handler 10$/;"	l
+handler	sistema/sistema.s	/^handler 11$/;"	l
+handler	sistema/sistema.s	/^handler 12$/;"	l
+handler	sistema/sistema.s	/^handler 13$/;"	l
+handler	sistema/sistema.s	/^handler 14$/;"	l
+handler	sistema/sistema.s	/^handler 15$/;"	l
+handler	sistema/sistema.s	/^handler 16$/;"	l
+handler	sistema/sistema.s	/^handler 17$/;"	l
+handler	sistema/sistema.s	/^handler 18$/;"	l
+handler	sistema/sistema.s	/^handler 19$/;"	l
+handler	sistema/sistema.s	/^handler 2$/;"	l
+handler	sistema/sistema.s	/^handler 20$/;"	l
+handler	sistema/sistema.s	/^handler 21$/;"	l
+handler	sistema/sistema.s	/^handler 22$/;"	l
+handler	sistema/sistema.s	/^handler 23$/;"	l
+handler	sistema/sistema.s	/^handler 24$/;"	l
+handler	sistema/sistema.s	/^handler 3$/;"	l
+handler	sistema/sistema.s	/^handler 4$/;"	l
+handler	sistema/sistema.s	/^handler 5$/;"	l
+handler	sistema/sistema.s	/^handler 6$/;"	l
+handler	sistema/sistema.s	/^handler 7$/;"	l
+handler	sistema/sistema.s	/^handler 8$/;"	l
+handler	sistema/sistema.s	/^handler 9$/;"	l
+hd	io/io.cpp	/^des_ata hd = {$/;"	v
+hd_cmd	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	g	file:
+hd_componi_prd	io/io.cpp	/^void hd_componi_prd(des_ata* p_dmades, addr iff, natw quanti)$/;"	f
+hd_go_inout	io/io.s	/^hd_go_inout:		#...$/;"	l
+hd_halt_inout	io/io.s	/^hd_halt_inout:$/;"	l
+hd_init	io/io.cpp	/^bool hd_init()$/;"	f
+hd_sel_drv	io/io.cpp	/^void hd_sel_drv(des_ata* p_des) \/\/$/;"	f
+hd_select_device	io/io.s	/^hd_select_device:$/;"	l
+hd_wait_data	io/io.cpp	/^extern "C" bool hd_wait_data(ioaddr iSTS) \/\/ [9.3.1]$/;"	f
+hd_write_address	io/io.s	/^hd_write_address:$/;"	l
+hd_write_command	io/io.s	/^hd_write_command:$/;"	l
+header_paragraphs	util/dos.h	/^  unsigned short header_paragraphs;$/;"	m	struct:DOS_EXE
+iASR	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	file:
+iBMCMD	io/io.cpp	/^	ioaddr iBMCMD, iBMSTR, iBMDTPR;$/;"	m	struct:pci_ata	file:
+iBMDTPR	io/io.cpp	/^	ioaddr iBMCMD, iBMSTR, iBMDTPR;$/;"	m	struct:pci_ata	file:
+iBMLEN	io/io.cpp	/^	natw iBMPTR, iBMLEN, iCMD, iSTS;$/;"	m	struct:des_ce	file:
+iBMPTR	io/io.cpp	/^	natw iBMPTR, iBMLEN, iCMD, iSTS;$/;"	m	struct:des_ce	file:
+iBMSTR	io/io.cpp	/^	ioaddr iBMCMD, iBMSTR, iBMDTPR;$/;"	m	struct:pci_ata	file:
+iBR	io/io.cpp	/^	ioaddr iBR;$/;"	m	struct:interfata_reg	file:
+iCMD	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	file:
+iCMD	io/io.cpp	/^	natw iBMPTR, iBMLEN, iCMD, iSTS;$/;"	m	struct:des_ce	file:
+iCMR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	file:
+iCNH	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	file:
+iCNL	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	file:
+iDAT	io/io.cpp	/^	ioaddr iIND, iDAT;$/;"	m	struct:interfvid_reg	file:
+iDCR	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	file:
+iERR	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	file:
+iHND	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	file:
+iIER	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	file:
+iIIR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	file:
+iIND	io/io.cpp	/^	ioaddr iIND, iDAT;$/;"	m	struct:interfvid_reg	file:
+iLSR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	file:
+iRBR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	file:
+iRBR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	file:
+iSCR	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	file:
+iSNR	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	file:
+iSTR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	file:
+iSTS	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	file:
+iSTS	io/io.cpp	/^	natw iBMPTR, iBMLEN, iCMD, iSTS;$/;"	m	struct:des_ce	file:
+iTBR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	file:
+iTHR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	file:
+i_tab	sistema/sistema.cpp	/^int i_tab(addr ind_virt, int liv)$/;"	f
+i_tabella	util/creatimg.cpp	/^int i_tabella(uint64_t ind_virt, int liv)$/;"	f
+id	sistema/sistema.cpp	/^	natl id;$/;"	m	struct:proc_elem	file:
+idt	sistema/sistema.s	/^idt:$/;"	l
+idt_pointer	sistema/sistema.s	/^idt_pointer:$/;"	l
+img	util/fswap.cpp	/^	FILE* img;$/;"	m	class:FileSwap	file:
+in	util/interp.h	/^		Interprete* in;$/;"	m	struct:ListaInterpreti::Elem
+in	util/swap.h	/^		TipoSwap* in;$/;"	m	struct:ListaTipiSwap::Elem
+in_pf	sistema/sistema.cpp	/^bool in_pf = false;$/;"	v
+ind_massa	sistema/sistema.cpp	/^	natq	ind_massa;$/;"	m	struct:des_pf	file:
+ind_virtuale	sistema/sistema.cpp	/^		addr	ind_virtuale;$/;"	m	union:des_pf::__anon28	file:
+ind_virtuale	util/coff.cpp	/^uint64_t EseguibileCoff_go32::SegmentoCoff_go32::ind_virtuale() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+ind_virtuale	util/elf32.cpp	/^uint64_t EseguibileElf32::SegmentoElf32::ind_virtuale() const$/;"	f	class:EseguibileElf32::SegmentoElf32
+ind_virtuale	util/elf64.cpp	/^uint64_t EseguibileElf64::SegmentoElf64::ind_virtuale() const$/;"	f	class:EseguibileElf64::SegmentoElf64
+indirizzo_pf	sistema/sistema.cpp	/^addr indirizzo_pf(des_pf* ppf)$/;"	f
+indreg	io/io.cpp	/^	interfata_reg indreg;$/;"	m	struct:des_ata	file:
+indreg	io/io.cpp	/^	interfkbd_reg indreg;$/;"	m	struct:des_kbd	file:
+indreg	io/io.cpp	/^	interfse_reg indreg;$/;"	m	struct:des_se	file:
+indreg	io/io.cpp	/^	interfvid_reg indreg;$/;"	m	struct:des_vid	file:
+info	util/coff.h	/^	unsigned long info;$/;"	m	struct:gnu_aout
+ini_mio_c	sistema/sistema.cpp	/^const addr ini_mio_c = norm((addr)(I_MIO_C * dim_pag(4))); \/\/ modulo IO$/;"	v
+ini_sis_c	sistema/sistema.cpp	/^const addr ini_sis_c = norm((addr)(I_SIS_C * dim_pag(4))); \/\/ sistema condivisa$/;"	v
+ini_sis_p	sistema/sistema.cpp	/^const addr ini_sis_p = norm((addr)(I_SIS_P * dim_pag(4))); \/\/ sistema privata$/;"	v
+ini_utn_c	sistema/sistema.cpp	/^const addr ini_utn_c = norm((addr)(I_UTN_C * dim_pag(4))); \/\/ utente condivisa$/;"	v
+ini_utn_p	sistema/sistema.cpp	/^const addr ini_utn_p = norm((addr)(I_UTN_P * dim_pag(4))); \/\/ utente privata$/;"	v
+iniconsole	utente/utente.s	/^iniconsole:$/;"	l
+init	sistema/sistema.cpp	/^proc_elem init;$/;"	v
+init	util/coff.cpp	/^bool EseguibileCoff_go32::init()$/;"	f	class:EseguibileCoff_go32
+init	util/elf32.cpp	/^bool EseguibileElf32::init()$/;"	f	class:EseguibileElf32
+init	util/elf64.cpp	/^bool EseguibileElf64::init()$/;"	f	class:EseguibileElf64
+init_dpf	sistema/sistema.cpp	/^bool init_dpf()$/;"	f
+init_gate	sistema/sistema.s	/^init_gate: \/\/rdi = indice nella idt; rsi = offset della routine; rdx = dpl$/;"	l
+init_gdt	sistema/sistema.s	/^init_gdt:$/;"	l
+init_idt	sistema/sistema.s	/^init_idt:$/;"	l
+init_pe	sistema/sistema.cpp	/^bool init_pe()$/;"	f
+input	util/parse.c	/^FILE *input,*output;	        	\/* uscita del parser *\/$/;"	v
+input_com	io/io.cpp	/^void input_com(des_se *p_des) \/\/ [9.2.1]$/;"	f
+input_ln	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+input_n	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+inserimento_lista	sistema/sistema.cpp	/^void inserimento_lista(proc_elem *&p_lista, proc_elem *p_elem)$/;"	f
+inserimento_lista_attesa	sistema/sistema.cpp	/^void inserimento_lista_attesa(richiesta *p)$/;"	f
+inspronti	sistema/sistema.cpp	/^extern "C" void inspronti()$/;"	f
+instance	util/interp.cpp	/^ListaInterpreti* ListaInterpreti::instance()$/;"	f	class:ListaInterpreti
+instance	util/swap.cpp	/^ListaTipiSwap* ListaTipiSwap::instance()$/;"	f	class:ListaTipiSwap
+instance_	util/interp.cpp	/^ListaInterpreti* ListaInterpreti::instance_ = NULL;$/;"	m	class:ListaInterpreti	file:
+instance_	util/interp.h	/^	static ListaInterpreti* instance_;$/;"	m	class:ListaInterpreti
+instance_	util/swap.cpp	/^ListaTipiSwap* ListaTipiSwap::instance_ = NULL;$/;"	m	class:ListaTipiSwap	file:
+instance_	util/swap.h	/^	static ListaTipiSwap* instance_;$/;"	m	class:ListaTipiSwap
+int_coff_go32	util/coff.cpp	/^InterpreteCoff_go32	int_coff_go32;$/;"	v
+int_elf32	util/elf32.cpp	/^InterpreteElf32		int_elf32;$/;"	v
+int_elf64	util/elf64.cpp	/^InterpreteElf64		int_elf64;$/;"	v
+int_tipo_pf	sistema/sistema.s	/^int_tipo_pf:$/;"	l
+interfata_reg	io/io.cpp	/^struct interfata_reg {$/;"	s	file:
+interfkbd_reg	io/io.cpp	/^struct interfkbd_reg {	\/\/$/;"	s	file:
+interfse_reg	io/io.cpp	/^struct interfse_reg {	\/\/$/;"	s	file:
+interfvid_reg	io/io.cpp	/^struct interfvid_reg {	\/\/$/;"	s	file:
+interpreta	util/coff.cpp	/^Eseguibile* InterpreteCoff_go32::interpreta(FILE* pexe)$/;"	f	class:InterpreteCoff_go32
+interpreta	util/elf32.cpp	/^Eseguibile* InterpreteElf32::interpreta(FILE* pexe)$/;"	f	class:InterpreteElf32
+interpreta	util/elf64.cpp	/^Eseguibile* InterpreteElf64::interpreta(FILE* pexe)$/;"	f	class:InterpreteElf64
+intest_utente	util/src.h	/^static const char *intest_utente[] = {$/;"	v
+invalid_opcode	sistema/sistema.s	/^invalid_opcode:$/;"	l
+invalid_tss	sistema/sistema.s	/^invalid_tss:$/;"	l
+invalida_TLB	sistema/sistema.s	/^invalida_TLB:$/;"	l
+invalida_entrata_TLB	sistema/sistema.s	/^invalida_entrata_TLB:$/;"	l
+io_end	sistema/sistema.cpp	/^	natq	io_end;$/;"	m	struct:superblock_t	file:
+io_end	util/decode.c	/^	uint64_t	io_end;$/;"	m	struct:superblock_t	file:
+io_end	util/swap.h	/^	uint64_t	io_end;$/;"	m	struct:superblock_t
+io_entry	sistema/sistema.cpp	/^	void	(*io_entry)(int);$/;"	m	struct:superblock_t	file:
+io_entry	util/decode.c	/^	uint64_t	io_entry;$/;"	m	struct:superblock_t	file:
+io_entry	util/swap.h	/^	uint64_t	io_entry;$/;"	m	struct:superblock_t
+ioaddr	include/tipo.h	/^typedef unsigned short ioaddr; \/\/ indirizzo (fisico) nello spazio di I\/O$/;"	t
+ioaddr	utente/include/tipo.h	/^typedef unsigned short ioaddr;$/;"	t
+iomap_base	sistema/sistema.cpp	/^		natw iomap_base; \/\/ si veda crea_processo()$/;"	m	struct:des_proc::__anon26	file:
+ip	util/dos.h	/^  unsigned short ip;$/;"	m	struct:DOS_EXE
+iter_tss	sistema/sistema.s	/^iter_tss:$/;"	l
+kbd	io/io.cpp	/^	des_kbd kbd;$/;"	m	struct:des_console	file:
+kbd_init	io/io.cpp	/^bool kbd_init()$/;"	f
+l_addr	util/coff.h	/^	} l_addr;$/;"	m	struct:external_lineno	typeref:union:external_lineno::__anon2
+l_lnno	util/coff.h	/^	unsigned short l_lnno;						\/* line number *\/$/;"	m	struct:external_lineno
+l_paddr	util/coff.h	/^		unsigned long l_paddr __attribute__((packed));		\/* (physical) address of line number *\/$/;"	m	union:external_lineno::__anon2
+l_symndx	util/coff.h	/^		unsigned long l_symndx __attribute__((packed));	\/* function name symbol index, iff l_lnno == 0 *\/$/;"	m	union:external_lineno::__anon2
+lba_biosdisk	util/doswap.cpp	/^static int lba_biosdisk(unsigned int13_drive_num, int cmd, unsigned long lba, unsigned nsects, void *buf)$/;"	f	file:
+leggi	util/creatimg.cpp	/^	void leggi(int liv, block_t blocco) {$/;"	f	class:TabCache
+leggi	util/doswap.cpp	/^bool DOSwap::leggi(unsigned int off, void* buf, unsigned int size)$/;"	f	class:DOSwap
+leggi	util/fswap.cpp	/^bool FileSwap::leggi(unsigned int off, void* buf, unsigned int size)$/;"	f	class:FileSwap
+leggi_blocco	util/swap.cpp	/^bool Swap::leggi_blocco(block_t b, void* buf)$/;"	f	class:Swap
+leggi_car	util/parse.c	/^void leggi_car()$/;"	f
+leggi_nome	util/parse.c	/^void leggi_nome(int salta)$/;"	f
+leggi_numero	util/parse.c	/^void leggi_numero(int salta)$/;"	f
+leggi_partizioni	util/doswap.cpp	/^partizione* TipoDOSwap::leggi_partizioni(unsigned drv)$/;"	f	class:TipoDOSwap
+leggi_swap	sistema/sistema.cpp	/^void leggi_swap(addr dest, natl blocco)$/;"	f
+lettore	utente/utente.cpp	/^short lettore;$/;"	v
+lib_init	utente/lib.cpp	/^extern "C" void lib_init()$/;"	f
+line	util/coff.cpp	/^		uint line;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+line_needed	util/parse.c	/^int line_needed = 0;$/;"	v
+livello	sistema/sistema.cpp	/^	int	livello;	\/\/ 0=pagina, -1=libera$/;"	m	struct:des_pf	file:
+loadCR3	sistema/sistema.s	/^loadCR3:$/;"	l
+log	io/io.s	/^log:$/;"	l
+log	utente/utente.s	/^log:$/;"	l
+log	util/creatimg.cpp	/^verbose log;$/;"	v
+look	util/parse.c	/^char look;			\/* carattere sotto esame *\/$/;"	v
+magic	sistema/sistema.cpp	/^	char	magic[8];$/;"	m	struct:superblock_t	file:
+magic	util/coff.h	/^  unsigned short 	magic;		\/* type of file				*\/$/;"	m	struct:__anon1
+magic	util/decode.c	/^	int8_t		magic[8];$/;"	m	struct:superblock_t	file:
+magic	util/swap.h	/^	int8_t		magic[8];$/;"	m	struct:superblock_t
+mailbox	utente/utente.cpp	/^mess mailbox;$/;"	v
+mailbox_piena	utente/utente.cpp	/^int mailbox_piena;$/;"	v
+mailbox_vuota	utente/utente.cpp	/^int mailbox_vuota;$/;"	v
+main	utente/utente.cpp	/^int main()$/;"	f
+main	util/creatimg.cpp	/^int main(int argc, char* argv[])$/;"	f
+main	util/decode.c	/^int main(int argc, char* argv[])$/;"	f
+main	util/mkstart.cpp	/^int main()$/;"	f
+main	util/parse.c	/^int main(int argc, char* argv[])$/;"	f
+main	util/showb.c	/^int main(int argc, char* argv[])$/;"	f
+main_sistema	sistema/sistema.cpp	/^void main_sistema(int n)$/;"	f
+max_extra_paragraphs	util/dos.h	/^  unsigned short max_extra_paragraphs;$/;"	m	struct:DOS_EXE
+mc_exc	sistema/sistema.s	/^mc_exc:$/;"	l
+mem_alloc	utente/lib.cpp	/^void* mem_alloc(natl dim)$/;"	f
+mem_free	utente/lib.cpp	/^void mem_free(void* p)$/;"	f
+mem_mutex	utente/lib.cpp	/^natl mem_mutex;$/;"	v
+mess	utente/utente.cpp	/^struct mess {$/;"	s	file:
+min_extra_paragraphs	util/dos.h	/^  unsigned short min_extra_paragraphs;$/;"	m	struct:DOS_EXE
+mittente	utente/utente.cpp	/^	int mittente;$/;"	m	struct:mess	file:
+ms_out	io/io.s	/^ms_out:	movw %si,%dx$/;"	l
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_ata	file:
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_ce	file:
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_console	file:
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_se	file:
+natb	include/tipo.h	/^typedef unsigned char natb;$/;"	t
+natb	utente/include/tipo.h	/^typedef unsigned char natb;$/;"	t
+natl	include/tipo.h	/^typedef unsigned int natl;$/;"	t
+natl	utente/include/tipo.h	/^typedef unsigned long natl;$/;"	t
+natq	include/tipo.h	/^typedef unsigned  long natq;$/;"	t
+natw	include/tipo.h	/^typedef unsigned short natw;$/;"	t
+natw	utente/include/tipo.h	/^typedef unsigned short natw;$/;"	t
+next	util/doswap.cpp	/^	partizione*  next;$/;"	m	struct:partizione	file:
+next	util/interp.h	/^		Elem* next;$/;"	m	struct:ListaInterpreti::Elem
+next	util/swap.h	/^		Elem* next;$/;"	m	struct:ListaTipiSwap::Elem
+next_ce	io/io.cpp	/^natl next_ce;$/;"	v
+nmi	sistema/sistema.s	/^nmi:$/;"	l
+nome	util/parse.c	/^char nome[LUN_NOME];		\/* ultimo identificatore (o intero) letto *\/$/;"	v
+norm	sistema/sistema.cpp	/^static inline addr norm(addr a)$/;"	f	file:
+norm	util/mkstart.cpp	/^static inline natq norm(natq a)$/;"	f	file:
+num_relocs	util/dos.h	/^  unsigned short num_relocs;$/;"	m	struct:DOS_EXE
+nuova	util/creatimg.cpp	/^	block_t nuova(int liv) {$/;"	f	class:TabCache
+oggetti	util/parse.c	/^char oggetti[LUN_OGGETTI];$/;"	v
+operator <<	util/creatimg.cpp	/^	template<class T> verbose& operator << (const T& t) {$/;"	f	class:verbose
+outname	util/parse.c	/^const char* outname = "utente.cpp";$/;"	v
+output	util/parse.c	/^FILE *input,*output;	        	\/* uscita del parser *\/$/;"	v
+output_0	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+output_com	io/io.cpp	/^void output_com(des_se *p_des)	\/\/ [9.2.2]$/;"	f
+output_n	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+overflow	sistema/sistema.s	/^overflow:$/;"	l
+overlay_number	util/dos.h	/^  unsigned short overlay_number;$/;"	m	struct:DOS_EXE
+p	util/creatimg.cpp	/^	} p;$/;"	m	union:entrata	typeref:struct:entrata::__anon20	file:
+p	util/decode.c	/^	} p;$/;"	m	union:entrata	typeref:struct:entrata::__anon15	file:
+p	util/doswap.cpp	/^	partizione p;$/;"	m	class:DOSwap	file:
+p_align	include/elf64.h	/^        Elf64_XWord p_align;$/;"	m	struct:__anon24
+p_align	util/elf32.h	/^        Elf32_Word p_align;$/;"	m	struct:__anon18
+p_filesz	include/elf64.h	/^        Elf64_XWord p_filesz;$/;"	m	struct:__anon24
+p_filesz	util/elf32.h	/^        Elf32_Word p_filesz;$/;"	m	struct:__anon18
+p_flags	include/elf64.h	/^	Elf64_Word p_flags;$/;"	m	struct:__anon24
+p_flags	util/elf32.h	/^        Elf32_Word p_flags;$/;"	m	struct:__anon18
+p_memsz	include/elf64.h	/^        Elf64_XWord p_memsz;$/;"	m	struct:__anon24
+p_memsz	util/elf32.h	/^        Elf32_Word p_memsz;$/;"	m	struct:__anon18
+p_offset	include/elf64.h	/^        Elf64_Off  p_offset;$/;"	m	struct:__anon24
+p_offset	util/elf32.h	/^        Elf32_Off  p_offset;$/;"	m	struct:__anon18
+p_paddr	include/elf64.h	/^        Elf64_Addr p_paddr;$/;"	m	struct:__anon24
+p_paddr	util/elf32.h	/^        Elf32_Addr p_paddr;$/;"	m	struct:__anon18
+p_rich	sistema/sistema.cpp	/^	richiesta *p_rich;$/;"	m	struct:richiesta	file:
+p_sospesi	sistema/sistema.cpp	/^richiesta *p_sospesi; \/\/$/;"	v
+p_type	include/elf64.h	/^        Elf64_Word p_type;$/;"	m	struct:__anon24
+p_type	util/elf32.h	/^        Elf32_Word p_type;$/;"	m	struct:__anon18
+p_vaddr	include/elf64.h	/^        Elf64_Addr p_vaddr;$/;"	m	struct:__anon24
+p_vaddr	util/elf32.h	/^        Elf32_Addr p_vaddr;$/;"	m	struct:__anon18
+pad	sistema/sistema.cpp	/^	natq pad   : 60; \/\/ bit non significativi$/;"	m	struct:pf_error	file:
+padre	util/coff.cpp	/^		EseguibileCoff_go32 *padre;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+padre	util/elf32.cpp	/^		EseguibileElf32 *padre;$/;"	m	class:EseguibileElf32::SegmentoElf32	file:
+padre	util/elf64.cpp	/^		EseguibileElf64 *padre;$/;"	m	class:EseguibileElf64::SegmentoElf64	file:
+pag	util/creatimg.cpp	/^pagina pag;$/;"	v
+pagina	util/creatimg.cpp	/^struct pagina {$/;"	s	file:
+pagina_di_zeri	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::pagina_di_zeri() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+pagina_di_zeri	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::pagina_di_zeri() const {$/;"	f	class:EseguibileElf32::SegmentoElf32
+pagina_di_zeri	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::pagina_di_zeri() const {$/;"	f	class:EseguibileElf64::SegmentoElf64
+pagina_puntata	util/creatimg.cpp	/^pagina* pagina_puntata(entrata* e) {$/;"	f
+pagine_libere	sistema/sistema.cpp	/^des_pf* pagine_libere;	\/\/ indice del descrittore della prima pagina libera$/;"	v
+panic	io/io.s	/^panic:$/;"	l
+panic	sistema/sistema.s	/^panic:$/;"	l
+panic	utente/lib.cpp	/^extern "C" void panic(const char* msg)$/;"	f
+param_err	io/io.s	/^param_err:$/;"	l
+param_err	sistema/sistema.s	/^param_err:$/;"	l
+parole_lunghe	util/creatimg.cpp	/^		uint64_t parole_lunghe[DIM_PAGINA \/ sizeof(uint64_t)];$/;"	m	union:pagina::__anon22	file:
+parse_file	util/parse.c	/^void parse_file(const char* inname, FILE* output)$/;"	f
+partizione	util/doswap.cpp	/^struct partizione {$/;"	s	file:
+partizioni	util/doswap.cpp	/^	partizione *partizioni[MAX_DISCHI];$/;"	m	class:TipoDOSwap	file:
+pause	utente/lib.cpp	/^void pause()$/;"	f
+pause_buf	utente/lib.cpp	/^char pause_buf[1];$/;"	v
+pause_len	utente/lib.cpp	/^natl pause_len = 1;$/;"	v
+pci_ata	io/io.cpp	/^struct pci_ata$/;"	s	file:
+pexe	util/coff.cpp	/^	FILE *pexe;$/;"	m	class:EseguibileCoff_go32	file:
+pexe	util/elf32.cpp	/^	FILE *pexe;$/;"	m	class:EseguibileElf32	file:
+pexe	util/elf64.cpp	/^	FILE *pexe;$/;"	m	class:EseguibileElf64	file:
+pf_error	sistema/sistema.cpp	/^struct pf_error {$/;"	s	file:
+ph	util/coff.cpp	/^		SCNHDR* ph;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+ph	util/elf32.cpp	/^		Elf32_Phdr* ph;$/;"	m	class:EseguibileElf32::SegmentoElf32	file:
+ph	util/elf64.cpp	/^		Elf64_Phdr* ph;$/;"	m	class:EseguibileElf64::SegmentoElf64	file:
+pml	utente/utente.cpp	/^void pml(int a)$/;"	f
+pms	utente/utente.cpp	/^void pms(int a)$/;"	f
+pointer	sistema/sistema.cpp	/^	proc_elem *pointer;$/;"	m	struct:des_sem	file:
+pos	util/parse.c	/^int riga, colonna, pos;		\/* posizione corrente *\/$/;"	v
+pp	sistema/sistema.cpp	/^	proc_elem *pp;$/;"	m	struct:richiesta	file:
+prd	io/io.cpp	/^	natl prd[2];$/;"	m	struct:des_ata	file:
+precedenza	sistema/sistema.cpp	/^	natl precedenza;$/;"	m	struct:proc_elem	file:
+prima_pf_utile	sistema/sistema.cpp	/^addr prima_pf_utile;	\/\/ indirizzo fisico della prima pagina fisica di M2$/;"	v
+printf	utente/lib.cpp	/^int printf(const char *fmt, ...)$/;"	f
+proc_elem	sistema/sistema.cpp	/^struct proc_elem {$/;"	s	file:
+process	util/parse.c	/^void process()$/;"	f
+process_body	util/parse.c	/^void process_body()$/;"	f
+process_dump	sistema/sistema.cpp	/^void process_dump(natl id, addr rsp, log_sev sev)$/;"	f
+processi	sistema/sistema.cpp	/^volatile natl processi;$/;"	v
+processo	sistema/sistema.cpp	/^	natl	processo;	\/\/ identificatore di processo$/;"	m	struct:des_pf	file:
+pronti	sistema/sistema.cpp	/^proc_elem *pronti;$/;"	v
+prossima_libera	sistema/sistema.cpp	/^		des_pf*	prossima_libera;$/;"	m	union:des_pf::__anon28	file:
+prossima_pagina	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::prossima_pagina()$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+prossima_pagina	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::prossima_pagina()$/;"	f	class:EseguibileElf32::SegmentoElf32
+prossima_pagina	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::prossima_pagina()$/;"	f	class:EseguibileElf64::SegmentoElf64
+prossimo	util/interp.cpp	/^Interprete* ListaInterpreti::prossimo()$/;"	f	class:ListaInterpreti
+prossimo	util/swap.cpp	/^TipoSwap* ListaTipiSwap::prossimo()$/;"	f	class:ListaTipiSwap
+prossimo_segmento	util/coff.cpp	/^Segmento* EseguibileCoff_go32::prossimo_segmento()$/;"	f	class:EseguibileCoff_go32
+prossimo_segmento	util/elf32.cpp	/^Segmento* EseguibileElf32::prossimo_segmento()$/;"	f	class:EseguibileElf32
+prossimo_segmento	util/elf64.cpp	/^Segmento* EseguibileElf64::prossimo_segmento()$/;"	f	class:EseguibileElf64
+prot	sistema/sistema.cpp	/^	natq prot  : 1;$/;"	m	struct:pf_error	file:
+prot_fault	sistema/sistema.s	/^prot_fault:$/;"	l
+punt	io/io.cpp	/^	addr punt;$/;"	m	struct:des_ata	file:
+punt	io/io.cpp	/^	addr punt;$/;"	m	struct:des_kbd	file:
+punt	io/io.cpp	/^	addr punt;$/;"	m	struct:des_se	file:
+punt_nucleo	sistema/sistema.cpp	/^		addr punt_nucleo;$/;"	m	struct:des_proc::__anon26	file:
+puntatore	sistema/sistema.cpp	/^	proc_elem *puntatore;$/;"	m	struct:proc_elem	file:
+quanti	io/io.cpp	/^	natl quanti;$/;"	m	struct:des_ce	file:
+r_symndx	util/coff.h	/^  unsigned long r_symndx __attribute__((packed));$/;"	m	struct:external_reloc
+r_type	util/coff.h	/^  unsigned short r_type;$/;"	m	struct:external_reloc
+r_vaddr	util/coff.h	/^  unsigned long r_vaddr __attribute__((packed));$/;"	m	struct:external_reloc
+readCR2	sistema/sistema.s	/^readCR2:$/;"	l
+readCR3	sistema/sistema.s	/^readCR3:$/;"	l
+read_all_partitions	util/doswap.cpp	/^void TipoDOSwap::read_all_partitions()$/;"	f	class:TipoDOSwap
+read_buf	sistema/sistema.cpp	/^natw read_buf[256];$/;"	v
+readconsole	utente/utente.s	/^readconsole:$/;"	l
+readhd_n	io/io.s	/^readhd_n:	int		$IO_TIPO_HDR$/;"	l
+readhd_n	utente/utente.s	/^readhd_n:$/;"	l
+readse_ln	utente/utente.s	/^readse_ln:$/;"	l
+readse_n	utente/utente.s	/^readse_n:$/;"	l
+receive	ce1.pl	/^sub receive {$/;"	s
+reloc_table_offset	util/dos.h	/^  unsigned short reloc_table_offset;$/;"	m	struct:DOS_EXE
+res	sistema/sistema.cpp	/^	natq res   : 1;$/;"	m	struct:pf_error	file:
+residente	sistema/sistema.cpp	/^	bool	residente;	\/\/ pagina residente o meno$/;"	m	struct:des_pf	file:
+resvd	util/creatimg.cpp	/^		uint64_t resvd:	7;$/;"	m	struct:entrata::__anon21	file:
+resvd	util/decode.c	/^		uint64_t resvd:		7;$/;"	m	struct:entrata::__anon16	file:
+rewind	util/interp.h	/^	void rewind() { curr = testa; }$/;"	f	class:ListaInterpreti
+rewind	util/swap.h	/^	void rewind() { curr = testa; }$/;"	f	class:ListaTipiSwap
+richiesta	sistema/sistema.cpp	/^struct richiesta {$/;"	s	file:
+riga	util/parse.c	/^int riga, colonna, pos;		\/* posizione corrente *\/$/;"	v
+riga_out	util/parse.c	/^int riga_out = 1;$/;"	v
+rilascia_pagina_fisica	sistema/sistema.cpp	/^void rilascia_pagina_fisica(des_pf* ppf)$/;"	f
+rilascia_ric	sistema/sistema.cpp	/^void rilascia_ric(addr tab, int liv, natl i, natl n)$/;"	f
+rilascia_righe	util/parse.c	/^void rilascia_righe()$/;"	f
+rilascia_tss	sistema/sistema.s	/^rilascia_tss:$/;"	l
+rilascia_tutto	sistema/sistema.cpp	/^void rilascia_tutto(addr tab4, natl i, natl n)$/;"	f
+rimozione_lista	sistema/sistema.cpp	/^void rimozione_lista(proc_elem *&p_lista, proc_elem *&p_elem)$/;"	f
+riservato1	sistema/sistema.cpp	/^		natl riservato1;$/;"	m	struct:des_proc::__anon26	file:
+riservato2	sistema/sistema.cpp	/^		natq riservato2;$/;"	m	struct:des_proc::__anon26	file:
+riservato3	sistema/sistema.cpp	/^		natq riservato3;$/;"	m	struct:des_proc::__anon26	file:
+riservato4	sistema/sistema.cpp	/^		natw riservato4;$/;"	m	struct:des_proc::__anon26	file:
+s_flags	util/coff.h	/^	unsigned long		s_flags;	\/* flags			*\/$/;"	m	struct:external_scnhdr
+s_lnnoptr	util/coff.h	/^	unsigned long		s_lnnoptr;	\/* file ptr to line numbers	*\/$/;"	m	struct:external_scnhdr
+s_name	util/coff.h	/^	char		s_name[8];	\/* section name			*\/$/;"	m	struct:external_scnhdr
+s_nlnno	util/coff.h	/^	unsigned short		s_nlnno;	\/* number of line number entries*\/$/;"	m	struct:external_scnhdr
+s_nreloc	util/coff.h	/^	unsigned short		s_nreloc;	\/* number of relocation entries	*\/$/;"	m	struct:external_scnhdr
+s_paddr	util/coff.h	/^	unsigned long		s_paddr;	\/* physical address, aliased s_nlib *\/$/;"	m	struct:external_scnhdr
+s_relptr	util/coff.h	/^	unsigned long		s_relptr;	\/* file ptr to relocation	*\/$/;"	m	struct:external_scnhdr
+s_scnptr	util/coff.h	/^	unsigned long		s_scnptr;	\/* file ptr to raw data for section *\/$/;"	m	struct:external_scnhdr
+s_size	util/coff.h	/^	unsigned long		s_size;		\/* section size			*\/$/;"	m	struct:external_scnhdr
+s_vaddr	util/coff.h	/^	unsigned long		s_vaddr;	\/* virtual address		*\/$/;"	m	struct:external_scnhdr
+salta_a_main	sistema/sistema.s	/^salta_a_main:$/;"	l
+salta_commento	util/parse.c	/^void salta_commento()$/;"	f
+salta_spazi	util/parse.c	/^void salta_spazi()$/;"	f
+salva_stato	sistema/sistema.s	/^salva_stato:$/;"	l
+sb	sistema/sistema.cpp	/^	superblock_t sb;	\/\/ contenuto del superblocco$/;"	m	struct:des_swap	file:
+scarica	sistema/sistema.cpp	/^void scarica(des_pf* ppf) \/\/$/;"	f
+scegli_vittima	sistema/sistema.cpp	/^des_pf* scegli_vittima(natl proc, int liv, addr ind_virtuale) \/\/$/;"	f
+schedulatore	sistema/sistema.cpp	/^extern "C" void schedulatore(void)$/;"	f
+scollega	sistema/sistema.cpp	/^bool scollega(des_pf* ppf)	\/\/$/;"	f
+scrittore1	utente/utente.cpp	/^short scrittore1;$/;"	v
+scrittore2	utente/utente.cpp	/^short scrittore2;$/;"	v
+scrivi	util/creatimg.cpp	/^	void scrivi(int liv) {$/;"	f	class:TabCache
+scrivi	util/doswap.cpp	/^bool DOSwap::scrivi(unsigned int off, const void* buf, unsigned int size)$/;"	f	class:DOSwap
+scrivi	util/fswap.cpp	/^bool FileSwap::scrivi(unsigned int off, const void* buf, unsigned int size)$/;"	f	class:FileSwap
+scrivi_bitmap	util/swap.cpp	/^bool Swap::scrivi_bitmap(const void* vec, int nb)$/;"	f	class:Swap
+scrivi_blocco	util/swap.cpp	/^bool Swap::scrivi_blocco(block_t b, const void* buf)$/;"	f	class:Swap
+scrivi_superblocco	util/swap.cpp	/^bool Swap::scrivi_superblocco(const superblock_t& sb)$/;"	f	class:Swap
+scrivi_swap	sistema/sistema.cpp	/^void scrivi_swap(addr src, natl blocco)$/;"	f
+scrivi_utente	util/parse.c	/^void scrivi_utente()$/;"	f
+scrivibile	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::scrivibile() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+scrivibile	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::scrivibile() const$/;"	f	class:EseguibileElf32::SegmentoElf32
+scrivibile	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::scrivibile() const$/;"	f	class:EseguibileElf64::SegmentoElf64
+scroll	io/io.cpp	/^void scroll(des_vid *p_des)	\/\/$/;"	f
+sec_buf	util/elf32.cpp	/^	char *sec_buf;$/;"	m	class:EseguibileElf32	file:
+sec_buf	util/elf64.cpp	/^	char *sec_buf;$/;"	m	class:EseguibileElf64	file:
+seg_buf	util/coff.cpp	/^	char *seg_buf;$/;"	m	class:EseguibileCoff_go32	file:
+seg_buf	util/elf32.cpp	/^	char *seg_buf;$/;"	m	class:EseguibileElf32	file:
+seg_buf	util/elf64.cpp	/^	char *seg_buf;$/;"	m	class:EseguibileElf64	file:
+segm_fault	sistema/sistema.s	/^segm_fault:$/;"	l
+sem_allocati	sistema/sistema.cpp	/^natl sem_allocati = 0;$/;"	v
+sem_ini	io/io.s	/^sem_ini:$/;"	l
+sem_ini	sistema/sistema.s	/^sem_ini:$/;"	l
+sem_ini	utente/utente.s	/^sem_ini:$/;"	l
+sem_signal	io/io.s	/^sem_signal:$/;"	l
+sem_signal	utente/utente.s	/^sem_signal:$/;"	l
+sem_valido	sistema/sistema.cpp	/^bool sem_valido(natl sem)$/;"	f
+sem_wait	io/io.s	/^sem_wait:$/;"	l
+sem_wait	sistema/sistema.s	/^sem_wait:$/;"	l
+sem_wait	utente/utente.s	/^sem_wait:$/;"	l
+semaphore	util/parse.c	/^void semaphore()$/;"	f
+send	ce1.pl	/^sub send {$/;"	s
+send_intr	ce1.pl	/^sub send_intr {$/;"	s
+send_ret	ce1.pl	/^sub send_ret {$/;"	s
+set_A	sistema/sistema.cpp	/^void set_A(natq& descrittore, bool bitA)$/;"	f
+set_D	sistema/sistema.cpp	/^void set_D(natq& descrittore, bool bitD) \/\/$/;"	f
+set_IND_FISICO	sistema/sistema.cpp	/^void  set_IND_FISICO(natq& descrittore, addr ind_fisico) \/\/$/;"	f
+set_IND_MASSA	sistema/sistema.cpp	/^void set_IND_MASSA(natq& descrittore, natq ind_massa) \/\/$/;"	f
+set_P	sistema/sistema.cpp	/^void set_P(natq& descrittore, bool bitP)$/;"	f
+set_ZERO	sistema/sistema.cpp	/^void set_ZERO(natq& descrittore, bool bitZERO)$/;"	f
+set_entry	sistema/sistema.cpp	/^void set_entry(addr tab, natl index, natq entry)$/;"	f
+set_entry_tss	sistema/sistema.s	/^set_entry_tss:$/;"	l
+set_verbose	util/creatimg.cpp	/^	void set_verbose(bool v_) {$/;"	f	class:verbose
+sh_addr	include/elf64.h	/^        Elf64_Addr sh_addr;$/;"	m	struct:__anon25
+sh_addr	util/elf32.h	/^        Elf32_Addr sh_addr;$/;"	m	struct:__anon19
+sh_addralign	include/elf64.h	/^        Elf64_Word sh_addralign;$/;"	m	struct:__anon25
+sh_addralign	util/elf32.h	/^        Elf32_Word sh_addralign;$/;"	m	struct:__anon19
+sh_entsize	include/elf64.h	/^        Elf64_Word sh_entsize;$/;"	m	struct:__anon25
+sh_entsize	util/elf32.h	/^        Elf32_Word sh_entsize;$/;"	m	struct:__anon19
+sh_flags	include/elf64.h	/^        Elf64_Word sh_flags;$/;"	m	struct:__anon25
+sh_flags	util/elf32.h	/^        Elf32_Word sh_flags;$/;"	m	struct:__anon19
+sh_info	include/elf64.h	/^        Elf64_Word sh_info;$/;"	m	struct:__anon25
+sh_info	util/elf32.h	/^        Elf32_Word sh_info;$/;"	m	struct:__anon19
+sh_link	include/elf64.h	/^        Elf64_Word sh_link;$/;"	m	struct:__anon25
+sh_link	util/elf32.h	/^        Elf32_Word sh_link;$/;"	m	struct:__anon19
+sh_name	include/elf64.h	/^        Elf64_Word sh_name;$/;"	m	struct:__anon25
+sh_name	util/elf32.h	/^        Elf32_Word sh_name;$/;"	m	struct:__anon19
+sh_offset	include/elf64.h	/^        Elf64_Off  sh_offset;$/;"	m	struct:__anon25
+sh_offset	util/elf32.h	/^        Elf32_Off  sh_offset;$/;"	m	struct:__anon19
+sh_size	include/elf64.h	/^        Elf64_Word sh_size;$/;"	m	struct:__anon25
+sh_size	util/elf32.h	/^        Elf32_Word sh_size;$/;"	m	struct:__anon19
+sh_type	include/elf64.h	/^        Elf64_Word sh_type;$/;"	m	struct:__anon25
+sh_type	util/elf32.h	/^        Elf32_Word sh_type;$/;"	m	struct:__anon19
+shd_ms	io/io.s	/^shd_ms:	movb $0xe0,%al$/;"	l
+shd_sl	io/io.s	/^shd_sl:	movb $0xf0,%al$/;"	l
+shift	io/io.cpp	/^	bool shift;$/;"	m	struct:des_kbd	file:
+signature	util/dos.h	/^  unsigned short signature; \/* == 0x5a4D *\/$/;"	m	struct:DOS_EXE
+simd_exc	sistema/sistema.s	/^simd_exc:$/;"	l
+sincr	io/io.cpp	/^	natl sincr;$/;"	m	struct:des_ata	file:
+sincr	io/io.cpp	/^	natl sincr;$/;"	m	struct:des_console	file:
+sincr	io/io.cpp	/^	natl sincr;$/;"	m	struct:des_se	file:
+size	util/creatimg.cpp	/^	uint64_t size;$/;"	m	struct:bm_t	file:
+soff	util/coff.cpp	/^	unsigned int soff;$/;"	m	class:EseguibileCoff_go32	file:
+sp	util/dos.h	/^  unsigned short sp;$/;"	m	struct:DOS_EXE
+sprintf	utente/lib.cpp	/^int sprintf(char *buf, natq size, const char *fmt, ...)$/;"	f
+ss	util/dos.h	/^  unsigned short ss;$/;"	m	struct:DOS_EXE
+stack	sistema/sistema.s	/^stack:$/;"	l
+stack_fault	sistema/sistema.s	/^stack_fault:$/;"	l
+start	io/io.s	/^start:	jmp cmain$/;"	l
+start	sistema/sistema.s	/^start:$/;"	l
+start	utente/utente.s	/^start:$/;"	l
+start_dma	ce1.pl	/^sub start_dma {$/;"	s
+starthd_in	io/io.cpp	/^void starthd_in(des_ata *p_des, natw vetti[], natl primo, natb quanti)$/;"	f
+starthd_out	io/io.cpp	/^void starthd_out(des_ata *p_des, natw vetto[], natl primo, natb quanti)$/;"	f
+startkbd_in	io/io.cpp	/^void startkbd_in(des_kbd* p_des, str buff) \/\/$/;"	f
+startse_in	io/io.cpp	/^void startse_in(des_se *p_des, natb vetti[], natl quanti, funz op) \/\/ [9.2.1]$/;"	f
+startse_out	io/io.cpp	/^void startse_out(des_se *p_des, natb vetto[], natl quanti, funz op) \/\/ [9.2.2]$/;"	f
+stat	sistema/sistema.cpp	/^void stat()$/;"	f
+stato	io/io.cpp	/^	natb stato;$/;"	m	struct:des_se	file:
+str	include/tipo.h	/^typedef void* str;$/;"	t
+succ	util/parse.c	/^	struct file_elem *succ;$/;"	m	struct:file_elem	typeref:struct:file_elem::file_elem	file:
+superblock	util/creatimg.cpp	/^superblock_t superblock;$/;"	v
+superblock_t	sistema/sistema.cpp	/^struct superblock_t {$/;"	s	file:
+superblock_t	util/decode.c	/^struct superblock_t {$/;"	s	file:
+superblock_t	util/swap.h	/^struct superblock_t {$/;"	s
+swap	sistema/sistema.cpp	/^void swap(int liv, addr ind_virt)$/;"	f
+swap	util/creatimg.cpp	/^Swap* swap = NULL;$/;"	v
+swap2	sistema/sistema.cpp	/^des_pf* swap2(natl proc, int livello, addr ind_virt, bool residente)$/;"	f
+swap_dev	sistema/sistema.cpp	/^} swap_dev; 	\/\/ c'e' un unico oggetto swap$/;"	v	typeref:struct:des_swap
+swap_init	sistema/sistema.cpp	/^bool swap_init()$/;"	f
+symsize	util/coff.h	/^	unsigned long symsize;$/;"	m	struct:gnu_aout
+sync	io/io.cpp	/^	natl sync;$/;"	m	struct:des_ce	file:
+tab	io/io.cpp	/^	natb tab[MAX_CODE];$/;"	m	struct:des_kbd	file:
+tab	util/creatimg.cpp	/^tabella tab[5];$/;"	v
+tabella	util/creatimg.cpp	/^struct tabella {$/;"	s	file:
+tabella_puntata	util/creatimg.cpp	/^tabella *tabella_puntata(entrata *e)$/;"	f
+tabmai	io/io.cpp	/^	natb tabmai[MAX_CODE];$/;"	m	struct:des_kbd	file:
+tabmin	io/io.cpp	/^	natb tabmin[MAX_CODE];$/;"	m	struct:des_kbd	file:
+terminate_p	io/io.s	/^terminate_p:$/;"	l
+terminate_p	sistema/sistema.s	/^terminate_p:$/;"	l
+terminate_p	utente/utente.s	/^terminate_p:$/;"	l
+terminate_stack	sistema/sistema.s	/^terminate_stack:$/;"	l
+terminate_stack_end	sistema/sistema.s	/^terminate_stack_end:$/;"	l
+testa	util/interp.h	/^	} *testa, *curr;$/;"	m	class:ListaInterpreti	typeref:struct:ListaInterpreti::Elem
+testa	util/swap.h	/^	} *testa, *curr;$/;"	m	class:ListaTipiSwap	typeref:struct:ListaTipiSwap::Elem
+testo	util/parse.c	/^	char *testo;$/;"	m	struct:file_elem	file:
+text_start	util/coff.h	/^  unsigned long 	text_start;	\/* base of text used for this file *\/$/;"	m	struct:__anon1
+tipoDOSwap	util/doswap.cpp	/^TipoDOSwap tipoDOSwap;$/;"	v
+tipoFileSwap	util/fswap.cpp	/^TipoFileSwap tipoFileSwap;$/;"	v
+toLine	util/show_log.pl	/^	sub toLine($) {$/;"	s
+trasforma	io/io.s	/^trasforma:$/;"	l
+triple_fault_idt	sistema/sistema.s	/^triple_fault_idt:$/;"	l
+trova	util/parse.c	/^void trova(char c, int salta)$/;"	f
+trova_nome	util/parse.c	/^void trova_nome(const char *n, int salta)$/;"	f
+tsize	util/coff.h	/^	unsigned long tsize;$/;"	m	struct:gnu_aout
+tsize	util/coff.h	/^  unsigned long	tsize;		\/* text size in bytes, padded to FW bdry*\/$/;"	m	struct:__anon1
+txrel	util/coff.h	/^	unsigned long txrel;$/;"	m	struct:gnu_aout
+type	util/doswap.cpp	/^	int	     type;	\/\/ tipo della partizione$/;"	m	struct:partizione	file:
+uint	util/coff.cpp	/^typedef unsigned int uint;$/;"	t	file:
+uint16_t	util/doswap.cpp	/^typedef unsigned short		uint16_t;$/;"	t	file:
+uint32_t	util/doswap.cpp	/^typedef unsigned long		uint32_t;$/;"	t	file:
+uint32_t	util/elf32.cpp	/^typedef unsigned int uint32_t;$/;"	t	file:
+uint64_t	util/doswap.cpp	/^typedef unsigned long long	uint64_t;$/;"	t	file:
+uint8_t	util/doswap.cpp	/^typedef unsigned char		uint8_t;$/;"	t	file:
+ultima_riga	util/parse.c	/^char ultima_riga[LUN_RIGA];$/;"	v
+user	sistema/sistema.cpp	/^	natq user  : 1;$/;"	m	struct:pf_error	file:
+user_end	sistema/sistema.cpp	/^	natq	user_end;$/;"	m	struct:superblock_t	file:
+user_end	util/decode.c	/^	uint64_t	user_end;$/;"	m	struct:superblock_t	file:
+user_end	util/swap.h	/^	uint64_t	user_end;$/;"	m	struct:superblock_t
+user_entry	sistema/sistema.cpp	/^	void	(*user_entry)(int);$/;"	m	struct:superblock_t	file:
+user_entry	util/decode.c	/^	uint64_t	user_entry;$/;"	m	struct:superblock_t	file:
+user_entry	util/swap.h	/^	uint64_t	user_entry;$/;"	m	struct:superblock_t
+utente	util/parse.c	/^struct file_elem *utente[2], *fine[2];$/;"	v	typeref:struct:file_elem
+v	util/creatimg.cpp	/^	bool v;$/;"	m	class:verbose	file:
+valid	util/creatimg.cpp	/^	bool valid[3];$/;"	m	class:TabCache	file:
+vect	util/creatimg.cpp	/^	uint64_t *vect;$/;"	m	struct:bm_t	file:
+verbose	util/creatimg.cpp	/^class verbose {$/;"	c	file:
+vid	io/io.cpp	/^	des_vid vid;$/;"	m	struct:des_console	file:
+vid_init	io/io.cpp	/^bool vid_init()$/;"	f
+video	io/io.cpp	/^	natw* video;$/;"	m	struct:des_vid	file:
+vietato	sistema/sistema.cpp	/^bool vietato(des_pf* ppf, natl proc, int liv, addr ind_virt)$/;"	f
+vstamp	util/coff.h	/^  unsigned short	vstamp;		\/* version stamp			*\/$/;"	m	struct:__anon1
+wfi	io/io.s	/^wfi:$/;"	l
+wfi	sistema/sistema.s	/^wfi:$/;"	l
+write	sistema/sistema.cpp	/^	natq write : 1;$/;"	m	struct:pf_error	file:
+writeconsole	utente/utente.s	/^writeconsole:$/;"	l
+writeelem	io/io.cpp	/^void writeelem(natb c) {	\/\/$/;"	f
+writehd_n	io/io.s	/^writehd_n:	int		$IO_TIPO_HDW$/;"	l
+writehd_n	utente/utente.s	/^writehd_n:$/;"	l
+writese_0	utente/utente.s	/^writese_0:$/;"	l
+writese_n	utente/utente.s	/^writese_n:$/;"	l
+writeseq	io/io.cpp	/^void writeseq(cstr seq)	\/\/$/;"	f
+writevid	io/io.s	/^writevid:$/;"	l
+x	io/io.cpp	/^	natl x, y;$/;"	m	struct:des_vid	file:
+x_ary	util/coff.h	/^			} x_ary;$/;"	m	union:external_auxent::__anon5::__anon8	typeref:struct:external_auxent::__anon5::__anon8::__anon10
+x_dimen	util/coff.h	/^			    unsigned short x_dimen[E_DIMNUM];$/;"	m	struct:external_auxent::__anon5::__anon8::__anon10
+x_endndx	util/coff.h	/^			    unsigned long x_endndx __attribute__((packed));	\/* entry ndx past block end *\/$/;"	m	struct:external_auxent::__anon5::__anon8::__anon9
+x_fcn	util/coff.h	/^			} x_fcn;$/;"	m	union:external_auxent::__anon5::__anon8	typeref:struct:external_auxent::__anon5::__anon8::__anon9
+x_fcnary	util/coff.h	/^		} x_fcnary;$/;"	m	struct:external_auxent::__anon5	typeref:union:external_auxent::__anon5::__anon8
+x_file	util/coff.h	/^	} x_file;$/;"	m	union:external_auxent	typeref:union:external_auxent::__anon11
+x_fname	util/coff.h	/^		char x_fname[E_FILNMLEN];$/;"	m	union:external_auxent::__anon11
+x_fsize	util/coff.h	/^			unsigned long x_fsize __attribute__((packed));		\/* size of function *\/$/;"	m	union:external_auxent::__anon5::__anon6
+x_lnno	util/coff.h	/^			    unsigned short  x_lnno;				\/* declaration line number *\/$/;"	m	struct:external_auxent::__anon5::__anon6::__anon7
+x_lnnoptr	util/coff.h	/^			    unsigned long x_lnnoptr __attribute__((packed));	\/* ptr to fcn line # *\/$/;"	m	struct:external_auxent::__anon5::__anon8::__anon9
+x_lnsz	util/coff.h	/^			} x_lnsz;$/;"	m	union:external_auxent::__anon5::__anon6	typeref:struct:external_auxent::__anon5::__anon6::__anon7
+x_misc	util/coff.h	/^		} x_misc;$/;"	m	struct:external_auxent::__anon5	typeref:union:external_auxent::__anon5::__anon6
+x_n	util/coff.h	/^		} x_n;$/;"	m	union:external_auxent::__anon11	typeref:struct:external_auxent::__anon11::__anon12
+x_nlinno	util/coff.h	/^		unsigned short x_nlinno;					\/* # line numbers *\/$/;"	m	struct:external_auxent::__anon13
+x_nreloc	util/coff.h	/^		unsigned short x_nreloc;					\/* # relocation entries *\/$/;"	m	struct:external_auxent::__anon13
+x_offset	util/coff.h	/^			unsigned long x_offset __attribute__((packed));$/;"	m	struct:external_auxent::__anon11::__anon12
+x_scn	util/coff.h	/^	} x_scn;$/;"	m	union:external_auxent	typeref:struct:external_auxent::__anon13
+x_scnlen	util/coff.h	/^		unsigned long x_scnlen __attribute__((packed));		\/* section length *\/$/;"	m	struct:external_auxent::__anon13
+x_size	util/coff.h	/^			    unsigned short  x_size; 				\/* str\/union\/array size *\/$/;"	m	struct:external_auxent::__anon5::__anon6::__anon7
+x_sym	util/coff.h	/^	} x_sym;$/;"	m	union:external_auxent	typeref:struct:external_auxent::__anon5
+x_tagndx	util/coff.h	/^		unsigned long x_tagndx __attribute__((packed));		\/* str, un, or enum tag indx *\/$/;"	m	struct:external_auxent::__anon5
+x_tv	util/coff.h	/^	} x_tv;		\/* info about .tv section (in auxent of symbol .tv)) *\/$/;"	m	union:external_auxent	typeref:struct:external_auxent::__anon14
+x_tvfill	util/coff.h	/^		unsigned long x_tvfill __attribute__((packed));		\/* tv fill value *\/$/;"	m	struct:external_auxent::__anon14
+x_tvlen	util/coff.h	/^		unsigned short x_tvlen;						\/* length of .tv *\/$/;"	m	struct:external_auxent::__anon14
+x_tvndx	util/coff.h	/^		unsigned short x_tvndx;						\/* tv index *\/$/;"	m	struct:external_auxent::__anon5
+x_tvran	util/coff.h	/^		unsigned short x_tvran[2];					\/* tv range *\/$/;"	m	struct:external_auxent::__anon14
+x_zeroes	util/coff.h	/^			unsigned long x_zeroes __attribute__((packed));$/;"	m	struct:external_auxent::__anon11::__anon12
+xmalloc	util/parse.c	/^void *xmalloc(size_t s)$/;"	f
+y	io/io.cpp	/^	natl x, y;$/;"	m	struct:des_vid	file:
+zero_pag	util/creatimg.cpp	/^pagina zero_pag;$/;"	v
+~DOSwap	util/doswap.cpp	/^	~DOSwap() {}$/;"	f	class:DOSwap
+~Eseguibile	util/interp.h	/^	virtual ~Eseguibile() {}$/;"	f	class:Eseguibile
+~EseguibileCoff_go32	util/coff.cpp	/^EseguibileCoff_go32::~EseguibileCoff_go32()$/;"	f	class:EseguibileCoff_go32
+~EseguibileElf32	util/elf32.cpp	/^EseguibileElf32::~EseguibileElf32()$/;"	f	class:EseguibileElf32
+~EseguibileElf64	util/elf64.cpp	/^EseguibileElf64::~EseguibileElf64()$/;"	f	class:EseguibileElf64
+~FileSwap	util/fswap.cpp	/^FileSwap::~FileSwap()$/;"	f	class:FileSwap
+~Interprete	util/interp.h	/^	virtual ~Interprete() {};$/;"	f	class:Interprete
+~InterpreteCoff_go32	util/coff.cpp	/^	~InterpreteCoff_go32() {}$/;"	f	class:InterpreteCoff_go32
+~InterpreteElf32	util/elf32.cpp	/^	~InterpreteElf32() {}$/;"	f	class:InterpreteElf32
+~InterpreteElf64	util/elf64.cpp	/^	~InterpreteElf64() {}$/;"	f	class:InterpreteElf64
+~Segmento	util/interp.h	/^	virtual ~Segmento() {}$/;"	f	class:Segmento
+~SegmentoCoff_go32	util/coff.cpp	/^		~SegmentoCoff_go32() {}$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+~SegmentoElf32	util/elf32.cpp	/^		~SegmentoElf32() {}$/;"	f	class:EseguibileElf32::SegmentoElf32
+~SegmentoElf64	util/elf64.cpp	/^		~SegmentoElf64() {}$/;"	f	class:EseguibileElf64::SegmentoElf64
+~Swap	util/swap.h	/^	virtual ~Swap() {}$/;"	f	class:Swap
+~TabCache	util/creatimg.cpp	/^	~TabCache() {$/;"	f	class:TabCache
+~TipoDOSwap	util/doswap.cpp	/^TipoDOSwap::~TipoDOSwap()$/;"	f	class:TipoDOSwap
+~TipoFileSwap	util/fswap.cpp	/^	~TipoFileSwap() {}$/;"	f	class:TipoFileSwap
+~TipoSwap	util/swap.h	/^	virtual ~TipoSwap() {};$/;"	f	class:TipoSwap

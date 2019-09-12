@@ -1,0 +1,201 @@
+.text 
+.global _ZN2clC1E3st1
+
+
+
+_ZN2clC1E3st1:
+	.set	this,	-8
+	.set	vi,		-12
+	.set	i,		-16
+
+	pushq	%rbp
+	movq	%rsp,%rbp
+	subq	$16,%rsp	
+		
+	movq	%rdi,this(%rbp)
+	movl	%esi,vi(%rbp)
+	movl	$0,i(%rbp)
+	movq	$0,%rax
+	_for1:
+		cmpl	$4,i(%rbp)
+		jge		_fine_for1
+		
+		movslq	i(%rbp),%rcx
+		leaq	vi(%rbp),%rdx
+		movb	(%rdx,%rcx),%al			#ss.v[i] in %rax
+		
+
+		
+		movq	this(%rbp),%rsi
+		movb	%al,(%rsi,%rcx)			#v1i] = ss.vi[i];
+		
+		movb	%al,4(%rsi,%rcx)		#v2[i] = ss.vi[i];
+		
+		addl	%eax,%eax
+		movq	%rax,8(%rsi,%rcx,8)		#v3[i] = ss.vi[i] + ss.vi[i];
+
+		incl	i(%rbp)
+		jmp	_for1
+
+	_fine_for1:
+	movq	this(%rbp),%rax	
+	leave
+	ret
+
+.global _ZN2clC1E3st1Pl
+
+_ZN2clC1E3st1Pl:
+	.set	this2,	-8
+	.set	s1,		-12
+	.set	ar2,	-24
+	.set	i2,		-28
+
+	pushq	%rbp
+	movq	%rsp,%rbp
+	subq	$32,%rsp	
+		
+	movq	%rdi,this2(%rbp)
+	movl	%esi,s1(%rbp)
+	movq	%rdx,ar2(%rbp)
+	movq	$0,%rax
+	movq	$0,-32(%rbp)
+
+	_for2:
+
+		movslq	i2(%rbp),%rcx
+		
+		leaq	s1(%rbp),%rdx
+		movb	(%rdx,%rcx),%al		#s1.vi[i] in al
+	
+		movq	this2(%rbp),%rsi
+		movb	%al,(%rsi,%rcx)		#v1[i] = s1.vi[i]
+			
+		movb	%al,4(%rsi,%rcx)	#v2i] = s1.vi[i]
+
+		movq	ar2(%rbp),%rdi
+		movq	(%rdi,%rcx,8),%rbx	#ar2[i] in rbx
+	
+		movq	%rbx,8(%rsi,%rcx,8)	#v3[i] = ar2[i]
+
+		incl	i2(%rbp)
+		cmpl	$4,i2(%rbp)
+		jl		_for2
+	_fine_for2:
+
+	movq	this2(%rbp),%rax	
+	leave
+	ret
+
+##frame3 elab1
+
+##|i	|XXXXXXX|-96
+##|cla.v2|cla.v1|-88
+##|	cla.v3[0]  	|-80
+##|	cla.v3[1]	|-72
+##|	cla.v3[2] 	|-64
+##|	cla.v3[3]  	|-56
+##|XXXXXX|s1.v1	|-48
+##|	vd[1]|vd[0]	|-40
+##|	vd[3]|vd[2]	|-32
+##|    ar     	|-24
+##|   this    	|-16
+##|   indo    	|-8
+##| old rbp   	|0
+
+
+
+
+.global _ZN2cl5elab1EPc3st2
+
+_ZN2cl5elab1EPc3st2:
+
+	.set	indo,	-8
+	.set	this3,	-16
+	.set	ar1,	-24
+	.set	s2,		-40
+	.set	_s1,	-48
+	.set	cla_v3,	-80
+	.set	cla_v2, -84
+	.set	cla_v1,	-88
+	.set	i3,		-92
+
+	pushq	%rbp
+	movq	%rsp,%rbp
+	subq	$96,%rsp	
+
+	movq	%rdi,indo(%rbp)
+	movq	%rsi,this3(%rbp)
+	movq	%rdx,ar1(%rbp)
+	movq	%rcx,s2(%rbp)
+	movq	%r8,-32(%rbp)
+	movl	$0,i3(%rbp)
+
+	_for3:
+		cmpl $4,i3(%rbp)
+		jge _fine_for3
+		movslq	i3(%rbp),%rcx
+	
+		movq	ar1(%rbp),%rdi
+		movb	(%rdi,%rcx),%al
+
+		leaq	_s1(%rbp),%rsi
+		movb	%al,(%rsi,%rcx)	
+		incl	i3(%rbp)
+		jmp		_for3
+	_fine_for3:
+
+	leaq	-88(%rbp),%rdi
+	movl	_s1(%rbp),%esi
+	call	_ZN2clC1E3st1
+
+	movq	$0,-96(%rbp)
+	
+	_for4:
+		cmpl $4,i3(%rbp)
+		jge _fine_for4
+
+		movslq	i3(%rbp),%rcx
+		leaq	s2(%rbp),%rdx
+		movl	(%rdx,%rcx,4),%ebx
+		movslq	%ebx,%rbx
+		movq	%rbx,cla_v3(%rbp,%rcx,8)
+
+		incl	i3(%rbp)
+		jmp		_for4
+	_fine_for4:
+
+	## rep movsq ricopia il contenuto della parola quadrupla
+	##il cui indirizzo si trova in rsi 
+	##all'indirizzo contenuto in rdi
+	##poi incrementa sia rdi che rsi  tante volte
+	##quanto il numero contenuto in rcx
+	leaq -88(%rbp), %rsi 
+	movq indo(%rbp), %rdi
+
+	movabsq $5, %rcx 
+	rep movsq
+	##in pratica è equivalente a fare
+
+/*	
+	movq indo(%rbp), %rdi
+
+	movq	-88(%rbp),%rax
+	movq	%rax,(%rdi)
+
+	movq	-80(%rbp),%rax
+	movq	%rax,8(%rdi)
+
+	movq	-72(%rbp),%rax
+	movq	%rax,16(%rdi)
+
+	movq	-64(%rbp),%rax
+	movq	%rax,24(%rdi)
+
+	movq	-56(%rbp),%rax	
+	movq	%rax,32(%rdi)
+*/
+	movq indo(%rbp), %rax
+
+	leave
+	ret
+

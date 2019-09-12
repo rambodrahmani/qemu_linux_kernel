@@ -17,10 +17,10 @@
 /**
  * Developer harness test.
  *
- * @param   argc    command line arguments counter.
- * @param   argv    command line arguments.
+ * @param  argc  command line arguments counter.
+ * @param  argv  command line arguments.
  *
- * @return          execution exit code.
+ * @return       execution exit code.
  */
 int main(int argc, char * argv[])
 {

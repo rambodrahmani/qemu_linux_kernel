@@ -26,7 +26,7 @@ _ZN2clC1EcR3st1:
     .set  c,    -16
     .set  s2,   -24
 
-# prologue
+# prologue: activation frame
     pushq %rbp
     movq  %rsp, %rbp
     subq  $24, %rsp                  # reserve stack space for actual arguments
@@ -36,14 +36,14 @@ _ZN2clC1EcR3st1:
     movq %rsi, c(%rbp)
     movq %rdx, s2(%rbp)
 
-# for loop 1, initialization
+# for loop 1 initialization
     movl $0, i(%rbp)                 # i = 0
 
 for1:
     cmpl $8, i(%rbp)                 # check if i < 4
     jge  finefor1                    # end for loop (i >= 8)
 
-# for loop 1, body
+# for loop 1 body
     movq   this(%rbp), %rdi          # this -> %rdi
     movslq i(%rbp), %rcx
     movb   c(%rbp), %al              # c -> %al
@@ -77,7 +77,7 @@ for2:
 
 finefor2:
     movq   this(%rbp), %rax          # return initialized object address
-    leave                            # mov %rbp, %rsp; popq %rbp
+    leave                            # movq %rbp, %rsp; popq %rbp
     ret
 
 #-------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ _ZN2cl5elab1E3st1R3st2:
     .set cla_s, -48
     .set i,     -52
 
-# prologue
+# prologue: activation frame
     pushq %rbp
     movq  %rsp, %rbp
     subq  $56, %rsp                   # reserve stack space for actual arguments
