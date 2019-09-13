@@ -963,7 +963,7 @@ struct des_ce
     // virtual address of the destination buffer
     char *buf;
 
-    // number of byte to be transferred
+    // number of bytes to be transferred
     natl quanti;
 };
 
@@ -994,7 +994,7 @@ extern "C" void c_cedmaread(natl id, char *buf, natl quanti)
     if (id >= next_ce)
     {
         // if not, print a log message for the user
-        flog(LOG_WARN, "CE Device %d not found.", id);
+        flog(LOG_WARN, "CE Device %d does not exist.", id);
 
         // abort the current process under execution
         abort_p();

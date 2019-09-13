@@ -163,7 +163,7 @@ _ZN2cl5elab1EPc3st2:
     movl $0, i(%rbp)                  # i = 0
 
 for2:
-    cmpl $4, i(%rbp)                 # check if i < 4
+    cmpl $4, i(%rbp)                  # check if i < 4
     jge  finefor2                     # end for loop (i >= 4)
 
 # for loop 1 body
@@ -203,12 +203,20 @@ for3:
 finefor3:
 
 # copy return object from stack to the address in indo
-    leaq -88(%rbp), %rsi
-    movq indo(%rbp), %rdi
-    movabsq $5, %rcx
-    rep movsq
-    movq indo(%rbp), %rax
+    leaq cla_v1(%rbp), %rsi           # rep movsq source address
+    movq indo(%rbp), %rdi             # rep movsq destination address
+    movabsq $5, %rcx                  # rep movsq repetitions
+    rep movsq                         # rep movsq, [0]
+    movq indo(%rbp), %rax             # return initialized object address
 
-    leave
+    leave                             # movq %rbp, %rsp; popq %rbp;
     ret
+#*******************************************************************************
+
+################################################################################
+# [0]
+# Copies the quad word address by %rsi into the location addressed by %rdi. It
+# will then increment both %rsi and %rdi and repeat. The number of repetitions
+# is set using %rcx.
+################################################################################
 

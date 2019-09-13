@@ -931,17 +931,151 @@ void mem_free(void* p)
 }
 
 // ( SOLUZIONE 2016-07-06
+/**
+ * CE device descriptor.
+ */
+struct des_ce
+{
+    // control register address
+    ioaddr iCTL;
+
+    // status register address
+    ioaddr iSTS;
+
+    // RBR register address
+    ioaddr iRBR;
+
+    // synchronization semaphore
+    natl sync;
+
+    // mutex semaphor
+    natl mutex;
+
+    // destination buffer virtual address
+    char * buf;
+
+    // number of bytes to be transferred
+    natl quanti;
+
+    // char used to stop the transfer
+    char stop;
+};
 //   SOLUZIONE 2016-07-06 )
-// ( ESAME 2016-07-06
+
+// EXTENSION 2016-07-06
+/**
+ * Maximum number of CE devices to be initialized at boot.
+ */
 static const int MAX_CE = 16;
+
+/**
+ * CE devices decriptors array.
+ */
 des_ce array_ce[MAX_CE];
+
+/**
+ * Number of CE device actually initialized at boot.
+ */
 natl next_ce;
-//   ESAME 2016-07-06 )
+// EXTENSION 2016-07-06
 
 // ( SOLUZIONE 2016-07-06
+/**
+ *
+ */
+extern "C" void c_ceread(natl id, char * buf, natl& quanti, char stop)
+{
+    // check if the given id is valid
+    if (id >= next_ce)
+    {
+        // if not, print a warning log message
+        flog(LOG_WARN, "CE Device %d does not exits.");
+
+        // abort current process under execution
+        abort_p();
+    }
+
+    // retrieve pointer to the CE device
+    des_ce *c = &array_ce[id];
+
+    // wait for the CE device mutex
+    sem_wait(c->mutex);
+
+    // set destination buffer address
+    c->buf = buf;
+
+    // set number of bytes to be transferred
+    c->quanti = quanti;
+
+    // set stop char
+    c->stop = stop;
+
+    // write to the control register: start transfers
+    outputb(1, c->iCTL);
+
+    // wait for the synchronization sempahore: set in estern_ce
+    sem_wait(c->sync);
+
+    // set number of bytes actually transferred
+    quanti -= c->quanti;
+
+    // signal mutex semaphore
+    sem_signal(c->mutex);
+}
+
+/**
+ * Called everytime the CE device having the given id sends an interrupt
+ * request.
+ *
+ * @param  id  the id of the CE device sending the interrupt request.
+ */
+extern "C" void estern_ce(int id)
+{
+    // retrieve CE device descriptor
+    des_ce *c = &array_ce[id];
+
+    // buffer
+    natb b;
+
+    // infinite loop
+    for (;;)
+    {
+        // stop CE device interrupt requests
+        outputb(0, c->iCTL);
+
+        // read RBR register content: interrupt request ak
+        inputb(c->iRBR, b);
+
+        // write transferred byte
+        *c->buf++ = b;
+
+        // decrease number of bytes to be transferred
+        c->quanti--;
+
+        // check if either the number of bytes to be transferred has been
+        // reached or the stop char has been retrieved
+        if (c->quanti == 0 || b == c->stop)
+        {
+            // if so, signal synchronization semaphore
+            sem_signal(c->sync);
+		}
+        else
+        {
+            // otherwise, enable interrupt requests
+            outputb(1, c->iCTL);
+        }
+
+        // send End Of Interrupt
+        wfi();
+    }
+}
 //   SOLUZIONE 2016-07-06 )
 
-// ( ESAME 2016-07-06
+// EXTENSION 2016-07-06
+/**
+ * Initializes the CE device. Called at the end of the I/O module
+ * initialization.
+ */
 bool ce_init()
 {
 
@@ -968,7 +1102,7 @@ bool ce_init()
 	}
 	return true;
 }
-//   ESAME 2016-07-06 )
+// EXTENSION 2016-07-06
 
 ////////////////////////////////////////////////////////////////////////////////
 //                 INIZIALIZZAZIONE DEL SOTTOSISTEMA DI I/O                   //
