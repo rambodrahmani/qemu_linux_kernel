@@ -930,7 +930,7 @@ void mem_free(void* p)
 	sem_signal(mem_mutex);
 }
 
-// ( SOLUZIONE 2016-07-06
+// SOLUTION 2016-07-06
 /**
  * CE device descriptor.
  */
@@ -960,7 +960,7 @@ struct des_ce
     // char used to stop the transfer
     char stop;
 };
-//   SOLUZIONE 2016-07-06 )
+// SOLUTION 2016-07-06
 
 // EXTENSION 2016-07-06
 /**
@@ -979,9 +979,18 @@ des_ce array_ce[MAX_CE];
 natl next_ce;
 // EXTENSION 2016-07-06
 
-// ( SOLUZIONE 2016-07-06
+// SOLUTION 2016-07-06
 /**
+ * Called by the IO_TIPO_CEREAD interrupt handler a_ceread in io/io.s.
  *
+ * Retrieves from the RBR register of the given CE device a number of bytes
+ * equal to 'quanti' into the destination buffer. If the stop char is retrieved
+ * the transfer will be stopped before reaching the bytes limit.
+ *
+ * @param  id      CE device id;
+ * @param  buf     destination buffer address;
+ * @param  quanti  number of bytes to retrieve;
+ * @param  stop    stop char.
  */
 extern "C" void c_ceread(natl id, char * buf, natl& quanti, char stop)
 {
@@ -989,7 +998,7 @@ extern "C" void c_ceread(natl id, char * buf, natl& quanti, char stop)
     if (id >= next_ce)
     {
         // if not, print a warning log message
-        flog(LOG_WARN, "CE Device %d does not exits.");
+        flog(LOG_WARN, "CE Device %d does not exit.");
 
         // abort current process under execution
         abort_p();
@@ -1010,7 +1019,7 @@ extern "C" void c_ceread(natl id, char * buf, natl& quanti, char stop)
     // set stop char
     c->stop = stop;
 
-    // write to the control register: start transfers
+    // write to the control register: enable interrupt requests
     outputb(1, c->iCTL);
 
     // wait for the synchronization sempahore: set in estern_ce
@@ -1034,7 +1043,7 @@ extern "C" void estern_ce(int id)
     // retrieve CE device descriptor
     des_ce *c = &array_ce[id];
 
-    // buffer
+    // RBR register temp destination buffer
     natb b;
 
     // infinite loop
@@ -1065,7 +1074,7 @@ extern "C" void estern_ce(int id)
             outputb(1, c->iCTL);
         }
 
-        // send End Of Interrupt
+        // send End Of Interrupt to APIC
         wfi();
     }
 }
@@ -1073,34 +1082,65 @@ extern "C" void estern_ce(int id)
 
 // EXTENSION 2016-07-06
 /**
- * Initializes the CE device. Called at the end of the I/O module
- * initialization.
+ * Initializes the CE devices on the PCI bus. Called at the end of the I/O
+ * module initialization.
  */
 bool ce_init()
 {
+    // loop through the PCI bus devices
+    for (natb bus = 0, dev = 0, fun = 0;
+         pci_find_dev(bus, dev, fun, 0xedce, 0x1234);
+         pci_next(bus, dev, fun))
+    {
+        // check the number of retrieved CE devices
+        if (next_ce >= MAX_CE)
+        {
+            // print warning log message
+	        flog(LOG_WARN, "Too many CE devices.");
 
-	for (natb bus = 0, dev = 0, fun = 0;
-	     pci_find_dev(bus, dev, fun, 0xedce, 0x1234);
-	     pci_next(bus, dev, fun))
-	{
-		if (next_ce >= MAX_CE) {
-			flog(LOG_WARN, "troppi dispositivi ce");
-			break;
-		}
-		des_ce *ce = &array_ce[next_ce];
-		natw base = pci_read_confl(bus, dev, fun, 0x10);
-		base &= ~0x1;
-		ce->iCTL = base;
-		ce->iSTS = base + 4;
-		ce->iRBR = base + 8;
-		ce->sync = sem_ini(0);
-		ce->mutex = sem_ini(1);
-		natb irq = pci_read_confb(bus, dev, fun, 0x3c);
-		activate_pe(estern_ce, next_ce, PRIO, LIV, irq);
-		flog(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, irq);
-		next_ce++;
-	}
-	return true;
+            // exit for loop
+            break;
+        }
+
+        // retrieve pointer to available CE device descriptor
+        des_ce *ce = &array_ce[next_ce];
+
+        // retrieve base register address
+        natw base = pci_read_confl(bus, dev, fun, 0x10);
+
+        // 
+        base &= ~0x1;
+
+        // set control register address: base
+        ce->iCTL = base;
+
+        // set status register address: base + 4
+        ce->iSTS = base + 4;
+
+        // set RBR register address: base + 8
+        ce->iRBR = base + 8;
+
+        // initialize synchronization semaphore
+        ce->sync = sem_ini(0);
+
+        // initialize mutex sempahore
+        ce->mutex = sem_ini(1);
+
+        // retrieve PCI device APIC pin
+        natb irq = pci_read_confb(bus, dev, fun, 0x3c);
+
+        // activate external process
+        activate_pe(estern_ce, next_ce, PRIO, LIV, irq);
+
+        // log CE device info
+        flog(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, irq);
+
+        // increase CE devices counter
+        next_ce++;
+    }
+
+    // return true: initialization successful
+    return true;
 }
 // EXTENSION 2016-07-06
 

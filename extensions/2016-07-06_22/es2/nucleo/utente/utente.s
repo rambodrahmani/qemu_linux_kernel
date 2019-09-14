@@ -133,12 +133,19 @@ dmawritehd_n:
 	ret
 	.cfi_endproc
 
-// ( ESAME 2016-07-06
-	.global ceread
+# EXTENSION 2016-07-06
+
+################################################################################
+# Definition for the ceread primitive.
+# Just calls the IO_TIPO_CEREAD interrupt and returns.
+# The IO_TIPO_CEREAD interrupt is handled in io/io.s/a_ceread ->
+# io/io.cpp/c_ceread() 
+################################################################################
+.GLOBAL ceread
 ceread:
 	int $IO_TIPO_CEREAD
 	ret
-//   ESAME 2016-07-06 )
+# EXTENSION 2016-07-06
 
 	.global ce_write
 ce_write:

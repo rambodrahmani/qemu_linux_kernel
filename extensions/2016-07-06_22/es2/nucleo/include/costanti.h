@@ -86,10 +86,17 @@
 #define IO_TIPO_RCON		0x76	// readconsole
 #define IO_TIPO_WCON		0x77	// writeconsole
 #define IO_TIPO_INIC		0x78	// iniconsole
-// ( ESAME 2016-07-06
+
+// EXTENSION 2016-07-06
+/**
+ * Interrupt type declaration for primitive ceread().
+ * This interrupt type is the one called by the primitive implementation in
+ * user/user.s and must be handled in io/io.s.
+ */
 #define IO_TIPO_CEREAD		0x79
 #define IO_TIPO_CEWRITE		0x7a
-//   ESAME 2016-07-06 )
+// EXTENSION 2016-07-06
+
 // * in piu' rispetto al libro
 // )
 

@@ -367,9 +367,9 @@ fill_io_gates:
 	fill_io_gate	IO_TIPO_DMAHDR	a_dmareadhd_n
 	fill_io_gate	IO_TIPO_DMAHDW	a_dmawritehd_n
 
-// ( SOLUZIONE 2016-07-06
+# SOLUTION 2016-07-06
     fill_io_gate    IO_TIPO_CEREAD  a_ceread
-//   SOLUZIONE 2016-07-06 )
+# SOLUTION 2016-07-06
 
 	leave
 	ret
@@ -587,14 +587,18 @@ a_dmawritehd_n:	# routine INT $dma_tipob_w
 		call	c_dmawritehd_n
 		iretq
 
-// ( SOLUZIONE 2016-07-06
+# SOLUTION 2016-07-06
+
+################################################################################
+# Handles IO_TIPO_CEREAD interrupts in the I/O module.
+################################################################################
 .EXTERN c_ceread
 a_ceread:
     cavallo_di_troia %rsi           # check buffer address
     cavallo_di_troia %rdx           # check quanti address
     cavallo_di_troia2 %rdx $4       # quanti will contain a integer (4 bytes)
     cavallo_di_troia2 %rsi (%rdx)   # check the buffer entire length
-    call c_ceread
-    iretq
-//   SOLUZIONE 2016-07-06 )
+    call c_ceread                   # call C++ int. primitive implementation
+    iretq                           # return from interrupt
+# SOLUTION 2016-07-06
 
