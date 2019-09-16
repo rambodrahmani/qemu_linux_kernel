@@ -1031,61 +1031,147 @@ extern "C" bool c_cedmaread(natl id, natl& quanti, char *buf)
         abort_p();
     }
 
-	if ((natq)buf & 0xfff) {
-		flog(LOG_WARN, "indirizzo %x non allineato alla pagina", buf);
-		abort_p();
+    // check if the buffer is aligned to the page: to check the alignment we use
+    // a bitwise AND wich will return true if at least one of the last 12 least
+    // significant bits is not equal to zero in which case the given address is
+    // not a multiple of 4096 (the page size)
+    if ((natq)buf & 0xfff)
+    {
+        // print warning log message
+        flog(LOG_WARN, "Address %x not aligned to the page.", buf);
+
+        // abort current process under execution
+        abort_p();
 	}
 
-	if (quanti == 0 || quanti > MAX_CE_BUF_DES * 4096) {
-		flog(LOG_WARN, "valore quanti non valido: %d", quanti);
-		abort_p();
-	}
+    // check if the number of bytes to be transferred is greater than zero and
+    // smaller than 10 pages
+    if (quanti == 0 || quanti > MAX_CE_BUF_DES * 4096)
+    {
+        // print warning log message
+        flog(LOG_WARN, "Invalid value for transfer bytes: %d", quanti);
 
-	des_ce *ce = &array_ce[id];
-	sem_wait(ce->mutex);
-	flog(LOG_DEBUG, "virt %p len %d", buf, quanti);
-	int i;
-	for (i = 0; i < MAX_CE_BUF_DES && quanti; i++) {
-		natw len = quanti;
-		if (len > 4096)
-			len = 4096;
-		ce->buf_des[i].addr = (natq)trasforma(buf);
-		ce->buf_des[i].len = len;
-		ce->buf_des[i].eot = ce->buf_des[i].eod = 0;
-		quanti -= len;
-		buf += len;
-		flog(LOG_DEBUG, "des[%d] addr %x len %d", i, ce->buf_des[i].addr, ce->buf_des[i].len);
-	}
-	ce->buf_des[i - 1].eod = 1;
-	outputl(1, ce->iCMD);
-	sem_wait(ce->sync);
-	quanti = 0;
-	int j;
-	bool complete = false;
-	for (j = 0; j < i; j++) {
-		quanti += ce->buf_des[j].len;
-		if (ce->buf_des[j].eot) {
-			complete = true;
-			break;
-		}
-	}
-	sem_signal(ce->mutex);
-	return complete;
+        // abort current process under execution
+        abort_p();
+    }
+
+    // retrieve pointer to the CE device descriptor
+    des_ce *ce = &array_ce[id];
+
+    // wait for CE device mutex semaphore
+    sem_wait(ce->mutex);
+
+    // print log message for debugging purposes
+    flog(LOG_DEBUG, "virt %p len %d", buf, quanti);
+
+    //
+    int i;
+
+    // loop through available buffer descriptors and until the number of bytes
+    // to be transferred is reached
+    for (i = 0; i < MAX_CE_BUF_DES && quanti; i++)
+    {
+        // retrieve number of bytes to be transferred
+        natw len = quanti;
+
+        // check if len is not bigger than the page size
+        if (len > 4096)
+        {
+            // otherwise decrease it to the page size
+            len = 4096;
+        }
+
+        // set i-th buffer descriptor physical address
+        ce->buf_des[i].addr = (natq)trasforma(buf);
+
+        // set i-th buffer descriptor transfer length (bytes)
+        ce->buf_des[i].len = len;
+
+        // set i-th buffer descriptor eot and eod to 0
+        ce->buf_des[i].eot = ce->buf_des[i].eod = 0;
+
+        // decrease number of bytes to be transferred
+        quanti -= len;
+
+        // increase buffer virtual address by the bytes transferred
+        buf += len;
+
+        // print log message for debugging purposes
+        flog(LOG_DEBUG, "des[%d] addr %x len %d", i, ce->buf_des[i].addr, ce->buf_des[i].len);
+    }
+
+    // set the last buffer descriptor eod
+    ce->buf_des[i - 1].eod = 1;
+
+    // write to the command register: start transfer in BUS Mastering: DMA
+    outputl(1, ce->iCMD);
+
+    // wait for the synchronization semaphore: set by estern_ce
+    sem_wait(ce->sync);
+
+    // clear bytes to be transferred
+    quanti = 0;
+
+    //
+    int j;
+
+    // completition flag
+    bool complete = false;
+
+    // loop through CE device available buffer descriptors
+    for (j = 0; j < i; j++)
+    {
+        // count transferred bytes for each buffer descriptor
+        quanti += ce->buf_des[j].len;
+
+        // check if the eot is set (all bytes available transferred)
+        if (ce->buf_des[j].eot)
+        {
+            // set completition flag
+            complete = true;
+
+            // exit for loop
+            break;
+        }
+    }
+
+    // notify mutex semaphore
+    sem_signal(ce->mutex);
+
+    // return completition flag
+    return complete;
 }
 
 /**
+ * Called everytime an interrupt request from the CE device having the given id
+ * is accepted.
  *
+ * @param  id  CE device id.
  */
 extern "C" void estern_ce(int id)
 {
-	des_ce *ce = &array_ce[id];
-	natl b;
+    // retrieve CE device descriptor
+    des_ce *ce = &array_ce[id];
 
-	for (;;) {
-		inputl(ce->iSTS, b);
-		sem_signal(ce->sync);
-		wfi();
-	}
+    // input byte buffer
+    natl b;
+
+    // this infinite for loop is needed because once the wfi() is done sending
+    // the EOI to the APIC it will also schedule a new process; when a new
+    // interrupt request is received from this ce device this process will wake
+    // up again and start from where it was ended: without the for loop the
+    // function will just end resulting in a dead lock
+    for (;;)
+    {
+        // read CE device status register: interrupt request ak
+        inputl(ce->iSTS, b);
+
+        // notify synchronization sempahore: all transfers completed
+        sem_signal(ce->sync);
+
+        // send EOI to the APIC
+        wfi();
+    }
 }
 // SOLUTION 2016-07-27
 

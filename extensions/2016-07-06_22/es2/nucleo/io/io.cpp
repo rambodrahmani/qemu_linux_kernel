@@ -1046,7 +1046,11 @@ extern "C" void estern_ce(int id)
     // RBR register temp destination buffer
     natb b;
 
-    // infinite loop
+    // this infinite for loop is needed because once the wfi() is done sending
+    // the EOI to the APIC it will also schedule a new process; when a new
+    // interrupt request is received from this ce device this process will wake
+    // up again and start from where it was ended: without the for loop the
+    // function will just end resulting in a dead lock
     for (;;)
     {
         // stop CE device interrupt requests

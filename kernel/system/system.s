@@ -92,67 +92,56 @@ start:
 # Saves the CPU state to the process descriptor relative to the process
 # currently pointed by 'execution' (system/system.cpp). No register content will
 # be corrupted. All modules accessing the system modules using the interrupt
-# mechanism must go through this function.
+# mechanism must go through this function. All registers content are saved to
+# with the state they had just before calling save_state
 save_state:
-	// salviamo lo stato di un paio di registri
-	// in modo da poterli temporaneamente riutilizzare
-	// In particolare, useremo %rax come registro di lavoro
-	// e %rbx come puntatore al des_proc.
-	.cfi_startproc
-	.cfi_def_cfa_offset 8
-	pushq %rbx                              # pointer to the execution des_proc
-	.cfi_adjust_cfa_offset 8
-	.cfi_offset rbx, -16
-	pushq %rax
-	.cfi_adjust_cfa_offset 8
-	.cfi_offset rax, -24
+    .cfi_startproc
+    .cfi_def_cfa_offset 8
+    pushq %rbx                      # TSS descriptor pointer
+    .cfi_adjust_cfa_offset 8
+    .cfi_offset rbx, -16
+    pushq %rax                      # work register
+    .cfi_adjust_cfa_offset 8
+    .cfi_offset rax, -24
 
-	// ricaviamo il puntatore al des_proc
-	movq execution,%rax
-	movq $0, %rbx
-	movw (%rax),%bx		// campo id dal proc_elem
-	conv_id_tss		// conversione id -> offset in GDT
-	leaq gdt(%rbx), %rax	// indirizzo della corrispondente
-				// entrata nella GDT -> %rax
-	estrai_base		// base del des_proc -> %rbx
+    movq execution, %rax            # retrieve proc_elem descriptor 
+    movq $0, %rbx
+    movw (%rax), %bx                # copy process id
+    conv_id_tss                     # retrieve gdt offset using process id
+    leaq gdt(%rbx), %rax            # retrieve gdt entry address
+    estrai_base                     # extract TSS descriptor base into %rbx
 
-	// copiamo per primo il vecchio valore di %rax
-	movq (%rsp), %rax
-	movq %rax, RAX(%rbx)
-	// usiamo %rax come appoggio per copiare il vecchio %rbx
-	movq 8(%rsp), %rax
-	movq %rax, RBX(%rbx)
-	// copiamo gli altri registri
-	movq %rcx, RCX(%rbx)
-	movq %rdx, RDX(%rbx)
-	// salviamo il valore che %rsp aveva prima della chiamata
-	// a salva stato (valore corrente meno gli 8 byte che
-	// contengono l'indirizzo di ritorno e i 16 byte dovuti
-	// alle due push che abbiamo fatto all'inizio)
-	movq %rsp, %rax
-	addq $24, %rax
-	movq %rax, RSP(%rbx)
-	movq %rbp, RBP(%rbx)
-	movq %rsi, RSI(%rbx)
-	movq %rdi, RDI(%rbx)
-	movq %r8,  R8 (%rbx)
-	movq %r9,  R9 (%rbx)
-	movq %r10, R10(%rbx)
-	movq %r11, R11(%rbx)
-	movq %r12, R12(%rbx)
-	movq %r13, R13(%rbx)
-	movq %r14, R14(%rbx)
-	movq %r15, R15(%rbx)
+    movq (%rsp), %rax               # retrieve %rax from stack
+    movq %rax, RAX(%rbx)            # save %rax state
+    movq 8(%rsp), %rax              # retrieve %rbx from stack
+    movq %rax, RBX(%rbx)            # save %rbx state
+    movq %rcx, RCX(%rbx)            # save %rcx state
+    movq %rdx, RDX(%rbx)            # save %rdx state
+    movq %rsp, %rax                 # retrieve %rsp content before calling
+    addq $24, %rax                  # save_state: remove the return address and
+                                    # the %rax and %rbx pushes
+    movq %rax, RSP(%rbx)            # save %rsp state 
+    movq %rbp, RBP(%rbx)            # save %rbp state
+    movq %rsi, RSI(%rbx)            # save %rsi state
+    movq %rdi, RDI(%rbx)            # save %rdi state
+    movq %r8,  R8 (%rbx)            # save %r8 state
+    movq %r9,  R9 (%rbx)            # save %r9 state
+    movq %r10, R10(%rbx)            # save %r10 state
+    movq %r11, R11(%rbx)            # save %r11 state
+    movq %r12, R12(%rbx)            # save %r12 state
+    movq %r13, R13(%rbx)            # save %r13 state
+    movq %r14, R14(%rbx)            # save %r14 state
+    movq %r15, R15(%rbx)            # save %r15 state
 
-	popq %rax
-	.cfi_adjust_cfa_offset -8
-	.cfi_restore rax
-	popq %rbx
-	.cfi_adjust_cfa_offset -8
-	.cfi_restore rbx
+    popq %rax                       # restore %rax register content
+    .cfi_adjust_cfa_offset -8
+    .cfi_restore rax
+    popq %rbx                       # restore %rbx register content
+    .cfi_adjust_cfa_offset -8
+    .cfi_restore rbx
 
-	ret
-	.cfi_endproc
+    ret
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 # Loads to the CPU registers the content found in the process descriptor
@@ -674,17 +663,18 @@ a_activate_pe:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-a_wfi:		// routine int $tipo_wfi
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call save_state
-	call apic_send_EOI
-	call schedule
-	call load_state
-	iretq
-	.cfi_endproc
+# Interrupt TIPO_WFI primitive: sends the End Of Interrupt to the APIC.
+a_wfi:
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call save_state             # save current execution process state
+    call apic_send_EOI          # send apic EOI
+    call schedule               # schedule a new process
+    call load_state             # load new scheduled process state
+    iretq                       # return from interrupt
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 a_fill_gate:

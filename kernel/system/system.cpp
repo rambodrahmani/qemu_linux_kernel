@@ -238,7 +238,7 @@ void list_insert(proc_elem *&p_list, proc_elem *p_elem)
  */
 void list_remove(proc_elem *&p_list, proc_elem *&p_elem)
 {
-    // pointer to the top of the list: 0 if the list is empty
+    // copies the top element of the list into p_elem (usually execution)
     p_elem = p_list;
 
     // chekc if the list is not empty
@@ -1200,7 +1200,7 @@ void rilascia_tutto(faddr tab4, natl i, natl n);
  * execution will take place when the process is pointed by 'execution' which
  * will result in a call to the load_state and a final iretq.
  *
- * @param  f
+ * @param  f        function address for the process %RIP register;
  * @param  a
  * @param  prio
  * @param  liv
