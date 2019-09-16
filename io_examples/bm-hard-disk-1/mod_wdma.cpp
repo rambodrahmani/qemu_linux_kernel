@@ -110,7 +110,7 @@ void init_bm()
     // read the base register content
     base = pci_read_confl(bus, dev, fun, 32);
 
-    // set bit n. 0 to 0
+    // set bit n. 0 to 0, [1]
     base &= 0xFFFFFFFE;
 
     // set BM command register address
@@ -277,5 +277,31 @@ extern "C" void c_driver_wdma()
  * 0Ah             Bus Master IDE Status register Secondary      R/W/C
  * 0Bh             Device Specific
  * 0Ch-0Fh         Bus Master IDE PRD Table Address Secondary    R/W
+ */
+
+/**
+ * [1]
+ * Base Address Registers
+ * ----------------------
+ * Base address Registers (or BARs) can be used to hold memory addresses used by
+ * the device, or offsets for port addresses. Typically, memory address BARs
+ * need to be located in physical ram while I/O space BARs can reside at any
+ * memory address (even beyond physical memory). To distinguish between them,
+ * you can check the value of the lowest bit. The following tables describe the
+ * two types of BARs:
+ *                          Memory Space BAR Layout 
+ *           31 - 4                      3          2-1        0
+ * 16-Byte Aligned Base Address     Prefetchable    Type    Always 0
+ *
+ *                           I/O Space BAR Layout
+ *           31 - 2                1           0
+ * 4-Byte Aligned Base Address  Reserved    Always 1
+ *
+ * When you want to retrieve the actual base address of a BAR, be sure to mask
+ * the lower bits. For 16-Bit Memory Space BARs, you calculate (BAR[x] &
+ * 0xFFF0). For 32-Bit Memory Space BARs, you calculate (BAR[x] & 0xFFFFFFF0).
+ * For 64-Bit Memory Space BARs, you calculate ((BAR[x] & 0xFFFFFFF0) +
+ * ((BAR[x+1] & 0xFFFFFFFF) << 32)) For I/O Space BARs, you calculate (BAR[x] &
+ * 0xFFFFFFFC).
  */
 

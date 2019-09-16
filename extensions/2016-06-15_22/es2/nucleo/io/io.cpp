@@ -1141,10 +1141,10 @@ bool ce_init()
         // retrieve pointer to the next available CE device descriptor
         des_ce *ce = &array_ce[next_ce];
 
-        // retrieve base address
+        // retrieve base register content
         ioaddr base = pci_read_confl(bus, dev, fun, 0x10);
 
-        // set bit n. 0 to 0
+        // set bit n. 0 to 0: retrieve base address
         base &= ~0x1;
 
         // set device destination buffer address: base address
@@ -1214,9 +1214,14 @@ extern "C" void cmain(int sem_io)
 		abort_p();
 
 // EXTENSION 2016-06-15
+
     // initialize CE devices
     if (!ce_init())
-		abort_p();
+    {
+        // abort current process if the initialization does not succeed
+        abort_p();
+    }
+
 // EXTENSION 2016-06-15
 
 	sem_signal(sem_io);

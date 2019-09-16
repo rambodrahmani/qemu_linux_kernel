@@ -141,6 +141,7 @@ int main(int argc, char * argv[])
     // Base Address register at offset 0x20 (32) in PCI configuration space
     base = pci_read_confl(bus, dev, fun, 32);
 
+    // set bit n. 0 to 0
     base &= 0xFFFFFFFE;
 
     // set command register address (offset 0 from base address)

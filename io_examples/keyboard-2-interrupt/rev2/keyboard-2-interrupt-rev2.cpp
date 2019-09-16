@@ -186,7 +186,7 @@ int main(int argc, char * argv[])
  * sub-prioprity class implicitly defined: 4 for the priority and 0 for the
  * sub-priority.
  * When interrupts are pending in the IRR register, the local APIC dispatches
- * them to the processor one at a time,based on their priority.
+ * them to the processor one at a time, based on their priority.
  *
  * Each interrupt delivered to the processor through the local APIC has a
  * priority based on its vector number. The local APIC uses this priority

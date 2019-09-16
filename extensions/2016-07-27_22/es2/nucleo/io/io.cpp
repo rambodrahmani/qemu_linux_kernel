@@ -930,179 +930,193 @@ void mem_free(void* p)
 	sem_signal(mem_mutex);
 }
 
-// SOLUTION 2016-07-06
+//EXTENSION 2016-07-27
 /**
- * CE device descriptor.
- */
-struct des_ce
-{
-    // control register address
-    ioaddr iCTL;
-
-    // status register address
-    ioaddr iSTS;
-
-    // RBR register address
-    ioaddr iRBR;
-
-    // synchronization semaphore
-    natl sync;
-
-    // mutex semaphor
-    natl mutex;
-
-    // destination buffer virtual address
-    char * buf;
-
-    // number of bytes to be transferred
-    natl quanti;
-
-    // char used to stop the transfer
-    char stop;
-};
-// SOLUTION 2016-07-06
-
-// EXTENSION 2016-07-06
-/**
- * Maximum number of CE devices to be initialized at boot.
+ * Maximum number of CE device to be loaded at boot.
  */
 static const int MAX_CE = 16;
 
 /**
- * CE devices decriptors array.
+ * The provided buffer for the cedmaread primitive must be aligned to its page,
+ * the number of pages to be transferred must be greater than 0 and smaller
+ * than 10 pages.
+ */
+static const int MAX_CE_BUF_DES = 10;
+
+/**
+ * The cedmaread primitive will transfer the available bytes to the memory
+ * spaces addressed by a vector of transfer descriptors. The address of the
+ * vector must be placed in the CE device BMPTR register.
+ *
+ * Destination buffer descriptor for CE device transfers.
+ */
+struct ce_buf_des
+{
+    // memory location physical address
+    natl addr;
+
+    // memory location length
+    natw len;
+
+    // set to 1 if this is the last descriptor
+    natb eod;
+
+    // set to 1 by the CE device if all internal bytes have been transferred
+    natb eot;
+};
+
+/**
+ * CE Device descriptor.
+ *
+ * Ce devices are capable of working in bus mastering. Each device stores a
+ * certain amount if bytes and when the CMD register is set to 1 it will try
+ * and move them to the memory space in Bus Mastering (DMA). It is not possible
+ * to know the number of stored bytes. The bytes will be transferred to a
+ * sequence of memory locations addressed by a vector of transfers descriptors
+ * (ce_buf_des) addressed in BMPTR. Each descriptor must provide a starting
+ * physical destination address and a length. The device will entirely use all
+ * available memory locations until all its internal bytes have been
+ * transferred. If the provided transfer descriptors does not provide enough
+ * memory locations for all the available bytes, the remaining data will be lost
+ * in the transfer. Anyway, the CE device will send an interrupt request the
+ * transfer operation is complited (either because there are no more bytes to
+ * be transferred or memory locations available). Interrupt requests will always
+ * be enabled and reading from the status register will work as interrupt ak.
+ */
+struct des_ce
+{
+    // BMPTR register address
+	natw iBMPTR;
+
+    // command register address
+    natw iCMD;
+
+    // status register address
+    natw iSTS;
+
+    // synchronization semaphore
+	natl sync;
+
+    // mutex semaphore
+	natl mutex;
+
+    // destination buffers descriptors
+	ce_buf_des buf_des[MAX_CE_BUF_DES];
+} __attribute__((aligned(128)));
+
+/**
+ * Initialized CE devices decriptors.
  */
 des_ce array_ce[MAX_CE];
 
 /**
- * Number of CE device actually initialized at boot.
+ * Number of initialized CE devices.
  */
 natl next_ce;
-// EXTENSION 2016-07-06
+// EXTENSION 2016-07-27
 
-// SOLUTION 2016-07-06
+// SOLUTION 2016-07-27
 /**
- * Called by the IO_TIPO_CEREAD interrupt handler a_ceread in io/io.s.
  *
- * Retrieves from the RBR register of the given CE device a number of bytes
- * equal to 'quanti' into the destination buffer. If the stop char is retrieved
- * the transfer will be stopped before reaching the bytes limit.
- *
- * @param  id      CE device id;
- * @param  buf     destination buffer address;
- * @param  quanti  number of bytes to retrieve;
- * @param  stop    stop char.
  */
-extern "C" void c_ceread(natl id, char * buf, natl& quanti, char stop)
+extern "C" bool c_cedmaread(natl id, natl& quanti, char *buf)
 {
     // check if the given id is valid
     if (id >= next_ce)
     {
-        // if not, print a warning log message
-        flog(LOG_WARN, "CE Device %d does not exit.");
+        // print warning log message
+        flog(LOG_WARN, "CE device not found: %d", id);
 
-        // abort current process under execution
+        //
         abort_p();
     }
 
-    // retrieve pointer to the CE device
-    des_ce *c = &array_ce[id];
+	if ((natq)buf & 0xfff) {
+		flog(LOG_WARN, "indirizzo %x non allineato alla pagina", buf);
+		abort_p();
+	}
 
-    // wait for the CE device mutex
-    sem_wait(c->mutex);
+	if (quanti == 0 || quanti > MAX_CE_BUF_DES * 4096) {
+		flog(LOG_WARN, "valore quanti non valido: %d", quanti);
+		abort_p();
+	}
 
-    // set destination buffer address
-    c->buf = buf;
-
-    // set number of bytes to be transferred
-    c->quanti = quanti;
-
-    // set stop char
-    c->stop = stop;
-
-    // write to the control register: enable interrupt requests
-    outputb(1, c->iCTL);
-
-    // wait for the synchronization sempahore: set in estern_ce
-    sem_wait(c->sync);
-
-    // set number of bytes actually transferred
-    quanti -= c->quanti;
-
-    // signal mutex semaphore
-    sem_signal(c->mutex);
+	des_ce *ce = &array_ce[id];
+	sem_wait(ce->mutex);
+	flog(LOG_DEBUG, "virt %p len %d", buf, quanti);
+	int i;
+	for (i = 0; i < MAX_CE_BUF_DES && quanti; i++) {
+		natw len = quanti;
+		if (len > 4096)
+			len = 4096;
+		ce->buf_des[i].addr = (natq)trasforma(buf);
+		ce->buf_des[i].len = len;
+		ce->buf_des[i].eot = ce->buf_des[i].eod = 0;
+		quanti -= len;
+		buf += len;
+		flog(LOG_DEBUG, "des[%d] addr %x len %d", i, ce->buf_des[i].addr, ce->buf_des[i].len);
+	}
+	ce->buf_des[i - 1].eod = 1;
+	outputl(1, ce->iCMD);
+	sem_wait(ce->sync);
+	quanti = 0;
+	int j;
+	bool complete = false;
+	for (j = 0; j < i; j++) {
+		quanti += ce->buf_des[j].len;
+		if (ce->buf_des[j].eot) {
+			complete = true;
+			break;
+		}
+	}
+	sem_signal(ce->mutex);
+	return complete;
 }
 
 /**
- * Called everytime the CE device having the given id sends an interrupt
- * request.
  *
- * @param  id  the id of the CE device sending the interrupt request.
  */
 extern "C" void estern_ce(int id)
 {
-    // retrieve CE device descriptor
-    des_ce *c = &array_ce[id];
+	des_ce *ce = &array_ce[id];
+	natl b;
 
-    // RBR register temp destination buffer
-    natb b;
-
-    // infinite loop
-    for (;;)
-    {
-        // stop CE device interrupt requests
-        outputb(0, c->iCTL);
-
-        // read RBR register content: interrupt request ak
-        inputb(c->iRBR, b);
-
-        // write transferred byte
-        *c->buf++ = b;
-
-        // decrease number of bytes to be transferred
-        c->quanti--;
-
-        // check if either the number of bytes to be transferred has been
-        // reached or the stop char has been retrieved
-        if (c->quanti == 0 || b == c->stop)
-        {
-            // if so, signal synchronization semaphore
-            sem_signal(c->sync);
-		}
-        else
-        {
-            // otherwise, enable interrupt requests
-            outputb(1, c->iCTL);
-        }
-
-        // send End Of Interrupt to APIC
-        wfi();
-    }
+	for (;;) {
+		inputl(ce->iSTS, b);
+		sem_signal(ce->sync);
+		wfi();
+	}
 }
-//   SOLUZIONE 2016-07-06 )
+// SOLUTION 2016-07-27
 
-// EXTENSION 2016-07-06
+// EXTENSION 2016-07-27
 /**
- * Initializes the CE devices on the PCI bus. Called at the end of the I/O
- * module initialization.
+ * Initializes the CE device. Called at the end of the I/O module
+ * initialization.
+ *
+ * Loops through all PCI devices available on bus 0 and looks for those having
+ * vendor ID 0xedce and device ID 0x1234. A maximum of MAX_CE devices can be
+ * initialized: the remaining ones will simply be ignored.
  */
 bool ce_init()
 {
-    // loop through the PCI bus devices
+    // loop through PCI bus device having the required vendor and device id
     for (natb bus = 0, dev = 0, fun = 0;
          pci_find_dev(bus, dev, fun, 0xedce, 0x1234);
-         pci_next(bus, dev, fun))
+         pci_next(bus, dev, fun)
+        )
     {
-        // check the number of retrieved CE devices
+        // check if more CE devices can be initialized
         if (next_ce >= MAX_CE)
         {
-            // print warning log message
-	        flog(LOG_WARN, "Too many CE devices.");
+            // print warning lo message: maximum number of CE devices exceeded
+            flog(LOG_WARN, "Too many CE devices.");
 
             // exit for loop
             break;
         }
 
-        // retrieve pointer to available CE device descriptor
+        // retrieve next available CE device descriptor
         des_ce *ce = &array_ce[next_ce];
 
         // retrieve base register content
@@ -1111,38 +1125,44 @@ bool ce_init()
         // set bit n.0 to 0: retrieve base register address
         base &= ~0x1;
 
-        // set control register address: base
-        ce->iCTL = base;
+        // set BMPTR register address: base address
+        ce->iBMPTR = base;
 
-        // set status register address: base + 4
-        ce->iSTS = base + 4;
+        // set command register address: base address + 4
+        ce->iCMD = base + 4;
 
-        // set RBR register address: base + 8
-        ce->iRBR = base + 8;
+        // set status register address: base address + 8
+        ce->iSTS = base + 8;
 
         // initialize synchronization semaphore
         ce->sync = sem_ini(0);
 
-        // initialize mutex sempahore
+        // initialize mutex semaphore
         ce->mutex = sem_ini(1);
 
-        // retrieve PCI device APIC pin
+        // retrieve CE device APIC pin number
         natb irq = pci_read_confb(bus, dev, fun, 0x3c);
 
-        // activate external process
+        // retrieve physical address of the destination buffers descriptors
+        addr iff = trasforma(&ce->buf_des[0]);
+
+        // write destination buffers descriptor to the BMPTR register
+        outputl(reinterpret_cast<natq>(iff), ce->iBMPTR);
+
+        // activate external process for the APIC pin
         activate_pe(estern_ce, next_ce, PRIO, LIV, irq);
 
-        // log CE device info
+        // print log message containing the CE device info
         flog(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, irq);
 
-        // increase CE devices counter
+        // increase CE device counter
         next_ce++;
     }
 
-    // return true: initialization successful
+    // return true: initialization succeeded
     return true;
 }
-// EXTENSION 2016-07-06
+// EXTENSION 2016-07-27
 
 ////////////////////////////////////////////////////////////////////////////////
 //                 INIZIALIZZAZIONE DEL SOTTOSISTEMA DI I/O                   //
@@ -1173,16 +1193,18 @@ extern "C" void cmain(int sem_io)
 		abort_p();
 	if (!hd_init())
 		abort_p();
-// EXTENSION 2016-07-06
 
-    // initialize CE devices
+// EXTENSION 2016-07-27
+
+    // initialize CE device
     if (!ce_init())
     {
-        // abort the current process if the initialization does not succeed
+        // abort current process if the initialization does not succeed
         abort_p();
     }
 
-// EXTENSION 2016-07-06
+// EXTENSION 2016-07-27
+
 	sem_signal(sem_io);
 	terminate_p();
 }
