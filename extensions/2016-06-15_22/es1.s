@@ -16,8 +16,7 @@
 #  c           -16
 #  i           -12
 #  this        -8
-#  old %rbp    0  <- %rbp
-#  %rip
+#  %rbp        0
 #-------------------------------------------------------------------------------
 _ZN2clC1EcR3st1:
 # set stack locations labels
@@ -92,8 +91,7 @@ finefor2:
 #  s1 LSB      -16
 #  s1 MSB      -12
 #  this        -8
-#  old %rbp    0  <- %rbp
-#  %rip
+#  %rbp        0
 #-------------------------------------------------------------------------------
 _ZN2cl5elab1E3st1R3st2:
 # set stack locations labels

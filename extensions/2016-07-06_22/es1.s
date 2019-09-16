@@ -15,8 +15,7 @@
 #  i           -16
 #  ss          -12
 #  this        -8
-#  old %rbp    0  <- %rbp
-#  %rip
+#  %rbp        0
 #-------------------------------------------------------------------------------
 _ZN2clC1E3st1:
 # set stack locations labels
@@ -68,8 +67,7 @@ finefor:
 #  &ar2         -24
 #  s1           -12
 #  this         -8
-#  old %rbp     0  <- %rbp
-#  %rip
+#  %rbp         0
 #-------------------------------------------------------------------------------
 _ZN2clC1E3st1Pl:
 # set stack locations labels
@@ -132,8 +130,7 @@ finefor1:
 #  &ar1         -24
 #  this         -16     <- this (cl object) address
 #  indo         -8      <- leave returned cl object address here
-#  old %rbp     0
-#  %rip
+#  %rbp         0
 #-------------------------------------------------------------------------------
 _ZN2cl5elab1EPc3st2:
 # set stack locations labels
