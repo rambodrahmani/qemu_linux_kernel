@@ -61,7 +61,7 @@ for:
 finefor:
 
     movq this(%rbp), %rax           # return initialized object address
-    leave
+    leave                           # movq %rbp, %rsp; popq %rbp
     ret
 
 #-------------------------------------------------------------------------------
@@ -135,12 +135,12 @@ for1:
 
 fineif:
 
-    incl i(%rbp)
-    jmp  for1
+    incl i(%rbp)                    # i++
+    jmp  for1                       # loop again
 
 finefor1:
 
-    leave
+    leave                           # movq %rbp, %rsp; popq %rbp
     ret
 
 #*******************************************************************************

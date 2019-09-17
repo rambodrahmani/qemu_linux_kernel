@@ -160,8 +160,8 @@ fineif2:
     jmp   for                         # loop again
 
 finefor:
-    #movq   this(%rbp), %rax
-    leave
+
+    leave                             # movq %rbp, %rsp; popq %rbp
     ret
 #*******************************************************************************
 
