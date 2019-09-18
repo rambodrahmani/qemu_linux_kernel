@@ -1,0 +1,43 @@
+Introduciamo un meccanismo di {\em broadcast} tramite il quale
+un processo pu\`o inviare un messagio ad un insieme di processi.
+Per ricevere o inviare un broadcast i processi si devono preventivamente
+registrare come {\em listener} o {\em broadcaster}, rispettivamente.
+Un solo processo alla volta pu\`o essere registrato come broadcaster
+(un nuovo processo pu\`o diventare broadcaster solo quando il precedente
+termina).
+
+Il sistema ricorda tutti i messaggi di broadcast inviati (fino ad un
+massimo dato dalla costante \verb|MAX_BROADCAST|) e ciascun processo
+listener li riceve tutti, in ordine. I messaggi sono di tipo \verb|natl|.
+
+Per realizzare il sistema aggiungiamo il seguente tipo enumerato:
+
+\begin{verbatim}
+   enum broadcast_role { B_NONE, B_BROADCASTER, B_LISTENER };
+\end{verbatim}
+
+e il seguente campo ai descrittori di processo:
+\begin{verbatim}
+  broadcast_role b_reg;
+\end{verbatim}
+Il campo \`e posto a \verb|B_NONE| alla creazione del processo.
+
+Aggiungiamo infine le seguenti primitive:
+\begin{itemize}
+   \item \verb|void reg(broadcast_role role)| (tipo 0x3a, da realizzare):
+   	registra il processo per il ruolo dato da \verb|role|; \`e un errore se role non specifica n\'e un broadcaster,
+	n\'e un listener, se il processo era gi\`a registrato (per lo stesso o un altro ruolo), o se c\`e gi\`a un
+	broadcaster e si tenta di registrarne un altro;
+   \item \verb|natl listen()| (tipo 0x3b, da realizzare):
+   	restituisce il prossimo messagio di broadcast non ancora letto dal processo; se il processo li ha gi\`a
+	letti tutti, si blocca in attesa del prossimo; \`e un errore se il processo non \`e registrato come
+	listener;
+   \item \verb|void broadcast(natl msg)| (tipo 0x3c, da realizzare): 
+   	invia in broadcast il messaggio \verb|msg|; \`e un errore se il processo non \`e registrato come broadcaster
+	o se il limite di messaggi di broadcast \`e stato superato.
+\end{itemize}
+
+Le primitive abortiscono il processo chiamante in caso di errore e tengono conto della priorit\`a tra i processi.
+
+Modificare i file \verb|sistema.cpp| e \verb|sistema.S| in modo da realizzare le primitive mancanti.
+Attenzione: il candidato deve definire anche le necessarie strutture dati.
