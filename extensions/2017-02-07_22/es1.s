@@ -149,7 +149,7 @@ _ZN2cl5elab1EPcRK3st2:
 # prologue: activation frame
     pushq %rbp
     movq  %rsp, %rbp
-    subq  $96, %rsp                 # reserve stack space for actual arguments
+    subq  $100, %rsp                # reserve stack space for actual arguments
 
 # copy actual arguments to the stack
     movq %rdi, indo(%rbp)
@@ -193,11 +193,11 @@ for3:
 
 # for loop 2 body
     movq   this(%rbp), %rdi         # &this -> %rdi
-    leaq   -92(%rbp), %rsi          # &cla -> %rsi
+    leaq   -92(%rbp), %rsi          # &cla.v3 -> %rsi
     movq   s2(%rbp), %rdx           # &s2 -> %rdx
     movslq i(%rbp), %rcx            # i => %rcx
     movq   (%rdx, %rcx, 8), %rax    # s2.vd[i] -> %rax
-    movl   %eax, (%rsi, %rcx, 4)   # cla.v3[i] = s2.vd[i];
+    movl   %eax, (%rsi, %rcx, 4)    # cla.v3[i] = s2.vd[i];
 
     incl i(%rbp)                    # i++
     jmp  for3                       # loop again
@@ -207,7 +207,7 @@ finefor3:
 # copy return object from stack to the address in indo
     leaq cla(%rbp), %rsi            # rep movsq source address
     movq indo(%rbp), %rdi           # rep movsq destination address
-    movabsq $6, %rcx                # rep movsq repetitions
+    movabsq $7, %rcx                # rep movsq repetitions
     rep movsq                       # rep movsq, [0]
     movq indo(%rbp), %rax           # return initialized object address
 

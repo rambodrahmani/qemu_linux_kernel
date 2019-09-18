@@ -1,0 +1,42 @@
+Introduciamo un meccanismo di {\em broadcast} tramite il quale
+un processo pu\`o inviare un messagio ad un insieme di processi.
+Per ricevere un broadcast i processi si devono preventivamente
+registrare. Un processo pu\`o inviare un brodcast tramite
+la primitiva \verb|broadcast(msg)|, la quale attende anche che tutti
+i processi che risultano registrati ricevano il messaggio.
+Un processo registrato pu\`o ricevere un broadcast invocando
+la primitiva \verb|listen()|, che attende che sia disponibile
+il prossimo messaggio.
+
+Per realizzare i broadcast introduciamo la seguente struttura dati:
+\begin{verbatim}
+    struct broadcast {
+        int registered;
+        int nlisten;
+        natl msg;
+        proc_elem *listeners;
+        proc_elem *broadcaster;
+    };
+\end{verbatim}
+Dove: \verb|registered| \`e il numero di processi registrati;
+\verb|nlisten| conta i processi che hanno invocato \verb|listen()| dall'ultimo completamento di una operazione
+di broadcast; \verb|msg| contiene l'ultimo messaggio di broadcast; \verb|listeners| \`e la coda
+dei processi in attesa del prossimo messaggio; \verb|broadcaster| \`e la coda in cui attende il processo
+che vuole inviare il broadcast, in attesa che tutti i processi registrati invochino \verb|listen()|.
+
+Aggiungiamo inoltre le seguenti primitive (abortiscono il processo in caso di errore):
+\begin{itemize}
+   \item \verb|void reg()| (tipo 0x3a, gi\`a realizzata):
+   	registra il processo per la ricezione dei broadcast; non fa niente se il processo \`e gi\`a registrato;
+   \item \verb|natl listen()| (tipo 0x3b, da realizzare):
+   	riceve il prossimo messagio di broadcast; \`e un errore se il processo non \`e registrato;
+   \item \verb|void broadcast(natl msg)| (tipo 0x3c, da realizzare): 
+   	invia in broadcast il messaggio \verb|msg|; \`e un errore se il processo \`e registrato.
+\end{itemize}
+
+Le primitive abortiscono il processo chiamante in caso di errore e tengono conto della priorit\`a tra i processi.
+
+Per semplicit\`a si assuma che, durante tutta la sua esecuzione, ogni processo provi al pi\`u una sola volta a inviare un broadcast o ad ascoltare un messaggio.
+Inoltre, al pi\`u un processo alla volta tenta di eseguire un broadcast.
+
+Modificare i file \verb|sistema.cpp| e \verb|sistema.S| in modo da realizzare le primitive mancanti.
