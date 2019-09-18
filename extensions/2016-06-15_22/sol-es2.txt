@@ -66,9 +66,9 @@ extern "C" void estern_ce(int id)
 .EXTERN		c_cedmaread
 a_cedmaread:
 		cavallo_di_troia %rsi
-		cavallo_di_troia2 %rsi, %rdx
+		movl %edx, %edx	# azzera la parte alta di %rdx
+		cavallo_di_troia2 %rsi %rdx
 		call c_cedmaread
 		iretq
 //   SOLUZIONE 2016-06-15 )
-
 
