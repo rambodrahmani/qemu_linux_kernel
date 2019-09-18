@@ -33,6 +33,10 @@ extern "C" void dmawritehd_n(const natw vetto[], natl primo, natb quanti, natb& 
 
 // EXTENSION 2016-09-20
 /**
+ * PRIMITIVES DECLARATIONS.
+ */
+
+/**
  * Registers the process as a listener of broadcast messages. No action will
  * take place if the process is already a registered listener.
  */
@@ -52,6 +56,7 @@ extern "C" natl listen();
  * @param  msg  the message to be broadcasted.
  */
 extern "C" void broadcast(natl msg);
+
 // EXTENSION 2016-09-20
 
 

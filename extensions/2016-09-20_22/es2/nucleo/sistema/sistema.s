@@ -458,6 +458,11 @@ init_idt:
 	carica_gate	TIPO_EP		a_end_program	LIV_SISTEMA
 
 # EXTENSION 2016-09-20
+
+##
+# PRIMITIVES INTERRUPTS PINS.
+##
+
     # load void reg() primitive interrupt handler
     carica_gate	TIPO_R		a_reg		LIV_UTENTE
 # EXTENSION 2016-09-20
@@ -590,6 +595,10 @@ a_delay:	// routine int $tipo_d
 
 
 # EXTENSION 2016-09-20
+
+##
+# PRIMITIVES INTERRUPTS HANDLERS.
+##
 
 #-------------------------------------------------------------------------------
 .GLOBAL a_reg                           # void reg() primitive interrupt handler

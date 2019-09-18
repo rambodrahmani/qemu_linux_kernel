@@ -74,11 +74,17 @@
 #define TIPO_AB			0x56	// *abort_p
 #define TIPO_L			0x57	// *log
 #define TIPO_TRA		0x58	// trasforma
-// ( ESAME 2016-09-20
-#define TIPO_R			0x3a	// reg
-#define TIPO_LS			0x3b	// listen
-#define TIPO_B			0x3c	// broadcast
-//   ESAME 2016-09-20 )
+
+// EXTENSION 2016-09-20
+/**
+ * PRIMITIVES INTERRUPT TYPES DEFINITIONS.
+ */
+
+#define TIPO_R			0x3a	// reg()
+#define TIPO_LS			0x3b	// listen()
+#define TIPO_B			0x3c	// broadcast(msg)
+
+// EXTENSION 2016-09-20
 
 #define IO_TIPO_HDR		0x62	// readhd_n
 #define IO_TIPO_HDW		0x63	// writehd_n

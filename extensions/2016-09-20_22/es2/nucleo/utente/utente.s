@@ -133,7 +133,10 @@ dmawritehd_n:
 	ret
 	.cfi_endproc
 
-// EXTENSION 2016-09-20
+# EXTENSION 2016-09-20
+##
+# PRIMITIVES DEFINITIONS
+##
 
 #-------------------------------------------------------------------------------
 .GLOBAL reg                                # Primitive void reg() implementation
@@ -156,7 +159,7 @@ broadcast:
     int $TIPO_B
     ret
 
-// EXTENSION 2016-09-20
+# EXTENSION 2016-09-20
 
 
 	.global do_log

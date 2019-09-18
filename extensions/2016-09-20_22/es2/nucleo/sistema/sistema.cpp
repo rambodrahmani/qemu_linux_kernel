@@ -37,6 +37,7 @@ struct des_proc {
 	natl cpl;
 
 // EXTENSION 2016-09-20
+    // true if the process is registered to the global broadcast descriptor
 	bool listen_reg;
 // EXTENSION 2016-09-20
 };
@@ -211,7 +212,7 @@ struct broadcast
 };
 
 /**
- * General global sample broadcast.
+ * Global broadcast descriptor.
  */
 broadcast global_broadcast = { 0, 0, 0, 0, 0 };
 
@@ -220,26 +221,23 @@ broadcast global_broadcast = { 0, 0, 0, 0, 0 };
  */
 extern "C" void c_reg()
 {
-    /**
-     * Retrieve current process under execution pointer.
-     */
+    // retrieve current process under execution
     struct des_proc *p = des_p(esecuzione->id);
 
-    /**
-     * Retrieve reference to global sample broadcast.
-     */
+    // retrieve global broadcast descriptor
     struct broadcast *b = &global_broadcast;
 
-    /**
-     *
-     */
+    // check if the process is already a registered listener
     if (p->listen_reg)
     {
+        // if so, just return
         return;
     }
 
+    // otherwise, register the process to the listeners
     b->registered++;
 
+    // set the process broadcast listener flag
     p->listen_reg = true;
 }
 // EXTENSION 2016-09-20
@@ -247,104 +245,156 @@ extern "C" void c_reg()
 // SOLUTION 2016-09-20
 
 /**
- *
+ * Called when all registered listeners are ready to receive the broadcast
+ * message. Sends the current broadcast message to all waiting processes.
  */
 void broadcast_all()
 {
+    // retrieve pointer to the global broadcast descriptor
     struct broadcast *b = &global_broadcast;
-    
+
+    // process descriptor
     struct proc_elem *work;
 
+    // while there listeners processes in the queue
     while (b->listeners)
     {
+        // remove top process from listeners wait queue
         rimozione_lista(b->listeners, work);
 
+        // retrieve process descriptor
         struct des_proc *w = des_p(work->id);
 
+        // deliver broadcast message
         w->contesto[I_RAX] = b->msg;
 
+        // place process in the system ready processes queue
         inserimento_lista(pronti, work);
     }
 
+    // all process have received the broadcast message
     b->nlisten = 0;
 }
 
 /**
- *
+ * All registered listeners must call this method to receive the broadcast
+ * message. If the broadcaster has already sent the broadcast message this
+ * function will deliver it to the calling listener and remove it from the
+ * listeners processes queue and check if all registered listeners have called
+ * the listen() primitive. If so it will call the broadcast_all method.
+ * Otherwise it will insert the current process in the system ready processes
+ * queue and wait for the next listener to call the listen() primitive.
  */
 extern "C" void c_listen()
 {
+    // retrieve current process under execution descriptor
     struct des_proc *p = des_p(esecuzione->id);
 
+    // retrieve global broadcast descriptor
     struct broadcast *b = &global_broadcast;
 
+    // check if the current process is registered as listener
     if (!p->listen_reg)
     {
-        flog(LOG_WARN, "listen non registrata");
+        // print warning log message
+        flog(LOG_WARN, "Process not registered as broadcast listener.");
 
+        // abort current process under execution
         c_abort_p();
 
+        // just return to the caller
         return;
     }
 
+    // increase number of listeners awaiting broadcast message
     b->nlisten++;
 
+    // if there is not process in the broadcaster list: broadcast not called yet
     if (!b->broadcaster)
     {
+        // insert the process in the listeners wait queue
         inserimento_lista(b->listeners, esecuzione);
 	}
     else
     {
+        // otherwise, deliver the message to the current listener process
         p->contesto[I_RAX] = b->msg;
 
+        // insert current process in the system ready processes list
         inserimento_lista(pronti, esecuzione);
 
+        // check if all listener processes have called the listen() primitive
         if (b->nlisten == b->registered)
         {
+            // deliver broadcast message to all listener processes
             broadcast_all();
 
+            // process descriptor
             struct proc_elem *work;
 
+            // retrieve broadcaster process
             rimozione_lista(b->broadcaster, work);
 
+            // insert broadcaster process in the system ready processes list
             inserimento_lista(pronti, work);
         }
     }
 
+    // schedule a new process
     schedulatore();
 }
 
 /**
+ * Called by the broadcaster process to send the given broadcast message to all
+ * registered listener processes. If all registered listener processes have
+ * called the listen() primitive the broadcast_all method will deliver the
+ * broadcast message to all of them. Otherwise, the broadcaster process will be
+ * inserted in the broadcasyer wait queue waiting for all listeners to be ready.
  *
+ * @param  msg  the message to be broadcasted.
  */
 extern "C" void c_broadcast(natl msg)
 {
+    // retrieve current process under execution descriptor
     struct des_proc *p = des_p(esecuzione->id);
 
+    // retrieve global broadcast descriptor
     struct broadcast *b = &global_broadcast;
 
+    // check if the process is not registered as listener
     if (p->listen_reg)
     {
-        flog(LOG_WARN, "broadcast da processo listener");
+        // print warning log message
+        flog(LOG_WARN, "Listener process can not send broadcast messages.");
 
+        // abort current process under execution
         c_abort_p();
 
+        // return to the caller
         return;
     }
 
+    // set broadcast message
     b->msg = msg;
 
+    // check if all listeners have invoked the listen primitive
     if (b->nlisten == b->registered)
     {
+        // if so, insert the current process under execution in the system
+        // ready processes queue
         inserimento_lista(pronti, esecuzione);
-        
+
+        // send broadcast message to all listeners
         broadcast_all();
 	}
     else
     {
+        // otherwise, wait for all listeners to be ready
+        // insert current process in the broadcaster process queue
         inserimento_lista(b->broadcaster, esecuzione);
     }
 
+    // schedule a new process
     schedulatore();
 }
 
@@ -1178,10 +1228,14 @@ void distruggi_processo(proc_elem* p)
 {
 	des_proc* pdes_proc = des_p(p->id);
 
-// ( ESAME 2016-09-20
-	if (pdes_proc->listen_reg)
-		global_broadcast.registered--;
-//   ESAME 2016-09-20 )
+// EXTENSION 2016-09-20
+    // check if the process is a registered listener
+    if (pdes_proc->listen_reg)
+    {
+        // in that case, decrease registered processes
+        global_broadcast.registered--;
+    }
+// EXTENSION 2016-09-20
 	faddr tab4 = pdes_proc->cr3;
 	riassegna_tutto(p->id, tab4, I_MIO_C, N_MIO_C);
 	riassegna_tutto(p->id, tab4, I_UTN_C, N_UTN_C);
