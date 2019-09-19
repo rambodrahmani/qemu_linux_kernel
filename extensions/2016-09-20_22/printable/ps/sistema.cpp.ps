@@ -1,0 +1,1050 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 24 24 571 818
+%%Title: Enscript Output
+%%For: Rambod Rahmani
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Thu Sep 19 17:27:47 2019
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 547 def
+/d_page_h 794 def
+/d_header_x 0 def
+/d_header_y 779 def
+/d_header_w 547 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 547 def
+/d_footer_h 0 def
+/d_output_w 547 def
+/d_output_h 779 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 1 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 17:15:28 2019) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(/**) s
+5 755 M
+( * Process descriptor. We must edit this struct and add the listen_reg boolean) s
+5 744 M
+( * field which is set to true when a process registers as a listener of the) s
+5 733 M
+( * global broadcast descriptor. For simplicity we will assume that for the whole) s
+5 722 M
+( * system execution only one process at a time will try to send one and only one) s
+5 711 M
+( * broadcast message and that the listen primitive\(\) will be called by each) s
+5 700 M
+( * listener process one and only one time.) s
+5 689 M
+( */) s
+5 678 M
+(struct des_proc) s
+5 667 M
+({) s
+5 656 M
+(    // parte richiesta dall'hardware) s
+5 645 M
+(    struct __attribute__ \(\(packed\)\)) s
+5 634 M
+(    {) s
+5 623 M
+(        natl riservato1;) s
+5 612 M
+(        vaddr punt_nucleo;) s
+5 601 M
+(        // due quad  a disposizione \(puntatori alle pile ring 1 e 2\)) s
+5 590 M
+(        natq disp1[2];) s
+5 579 M
+(        natq riservato2;) s
+5 568 M
+(        //entry della IST, non usata) s
+5 557 M
+(        natq disp2[7];) s
+5 546 M
+(        natq riservato3;) s
+5 535 M
+(        natw riservato4;) s
+5 524 M
+(        natw iomap_base; // si veda crea_processo\(\)) s
+5 513 M
+(        };) s
+5 491 M
+(    //finiti i campi obbligatori) s
+5 480 M
+(    faddr cr3;) s
+5 458 M
+(    natq contesto[N_REG];) s
+5 436 M
+(    natl cpl;) s
+5 414 M
+(// EXTENSION 2016-09-20) s
+5 392 M
+(    // true if the process is registered to the global broadcast descriptor) s
+5 381 M
+(        bool listen_reg;) s
+5 359 M
+(// EXTENSION 2016-09-20) s
+5 348 M
+(};) s
+5 326 M
+(// EXTENSION 2016-09-20) s
+5 304 M
+(/**) s
+5 293 M
+( * Global broadcast descriptor struct.) s
+5 282 M
+( */) s
+5 271 M
+(struct broadcast) s
+5 260 M
+({) s
+5 249 M
+(    // number of registered listener processes) s
+5 238 M
+(    int registered;) s
+5 216 M
+(    // number of registered processes which have already called the listen\(\)) s
+5 205 M
+(    // primitive) s
+5 194 M
+(    int nlisten;) s
+5 172 M
+(    // last broadcast message sent) s
+5 161 M
+(    natl msg;) s
+5 139 M
+(    // processes waiting for the next broadcast message queue: processes which) s
+5 128 M
+(    // have called the listen\(\) primitive) s
+5 117 M
+(    proc_elem *listeners;) s
+5 95 M
+(    // broadcaster wait queue: the broadcaster process waits here until all) s
+5 84 M
+(    // registered listener processes have called the listen\(\) primitive) s
+5 73 M
+(    proc_elem *broadcaster;) s
+5 62 M
+(};) s
+5 40 M
+(/**) s
+5 29 M
+( * Global broadcast descriptor. For simplicity we will have one single system) s
+5 18 M
+( * wide broadcast descriptor which can be used to broadcast messages. Also, we) s
+5 7 M
+( * are assuming that for the whole system execution one and only one process) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 2 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 17:15:28 2019) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+( * will broadcast one and only one message. No listener process will call the) s
+5 755 M
+( * listen\(\) primitive more than once.) s
+5 744 M
+( */) s
+5 733 M
+(broadcast global_broadcast =) s
+5 722 M
+({) s
+5 711 M
+(    0,  // registered) s
+5 700 M
+(    0,  // nlisten) s
+5 689 M
+(    0,  // msg) s
+5 678 M
+(    0,  // listeners) s
+5 667 M
+(    0   // broadcaster) s
+5 656 M
+(};) s
+5 634 M
+(/**) s
+5 623 M
+( * Implementation for the void reg\(\) primitive. If the processes calling this) s
+5 612 M
+( * method is already registered to the global broadcast no action will be) s
+5 601 M
+( * performed.) s
+5 590 M
+( */) s
+5 579 M
+(extern "C" void c_reg\(\)) s
+5 568 M
+({) s
+5 557 M
+(    // retrieve calling process descriptor, [0]) s
+5 546 M
+(    struct des_proc *p = des_p\(esecuzione->id\);) s
+5 524 M
+(    // retrieve global broadcast descriptor) s
+5 513 M
+(    struct broadcast *b = &global_broadcast;) s
+5 491 M
+(    // check if the process is already a registered listener) s
+5 480 M
+(    if \(p->listen_reg\)) s
+5 469 M
+(    {) s
+5 458 M
+(        // if so, just return: nothing to do) s
+5 447 M
+(        return;) s
+5 436 M
+(    }) s
+5 414 M
+(    // otherwise, register the process to the listeners) s
+5 403 M
+(    b->registered++;) s
+5 381 M
+(    // set the process broadcast listener flag: this will be checked when the) s
+5 370 M
+(    // process calls the listen\(\) primitive) s
+5 359 M
+(    p->listen_reg = true;) s
+5 348 M
+(}) s
+5 337 M
+(// EXTENSION 2016-09-20) s
+5 315 M
+(// SOLUTION 2016-09-20) s
+5 293 M
+(/**) s
+5 282 M
+( * Called when all registered listeners are ready to receive the broadcast) s
+5 271 M
+( * message. This happens when registered == nlisten for the global broadcast.) s
+5 260 M
+( * Sends the current broadcast message to all waiting processes.) s
+5 249 M
+( */) s
+5 238 M
+(void broadcast_all\(\)) s
+5 227 M
+({) s
+5 216 M
+(    // retrieve pointer to the global broadcast descriptor) s
+5 205 M
+(    struct broadcast *b = &global_broadcast;) s
+5 183 M
+(    // process descriptor) s
+5 172 M
+(    struct proc_elem *work;) s
+5 150 M
+(    // while there are still listener processes in the queue) s
+5 139 M
+(    while \(b->listeners\)) s
+5 128 M
+(    {) s
+5 117 M
+(        // remove top process from listeners wait queue) s
+5 106 M
+(        rimozione_lista\(b->listeners, work\);) s
+5 84 M
+(        // retrieve process descriptor) s
+5 73 M
+(        struct des_proc *w = des_p\(work->id\);) s
+5 51 M
+(        // deliver broadcast message) s
+5 40 M
+(        w->contesto[I_RAX] = b->msg;) s
+5 18 M
+(        // place process in the system ready processes queue) s
+5 7 M
+(        inserimento_lista\(pronti, work\);) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 3 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 17:15:28 2019) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    }) s
+5 744 M
+(    // all process have received the broadcast message) s
+5 733 M
+(    b->nlisten = 0;) s
+5 722 M
+(}) s
+5 700 M
+(/**) s
+5 689 M
+( * All registered listeners must call this method to receive the broadcast) s
+5 678 M
+( * message. If the broadcaster has already sent the broadcast message this) s
+5 667 M
+( * function will deliver it to the calling listener and remove it from the) s
+5 656 M
+( * listeners processes queue and check if all registered listeners have called) s
+5 645 M
+( * the listen\(\) primitive. If so it will call the broadcast_all method.) s
+5 634 M
+( * Otherwise it will insert the current process in the system ready processes) s
+5 623 M
+( * queue and wait for the next listener to call the listen\(\) primitive.) s
+5 612 M
+( */) s
+5 601 M
+(extern "C" void c_listen\(\)) s
+5 590 M
+({) s
+5 579 M
+(    // retrieve calling process descriptor, [0]) s
+5 568 M
+(    struct des_proc *p = des_p\(esecuzione->id\);) s
+5 546 M
+(    // retrieve global broadcast descriptor) s
+5 535 M
+(    struct broadcast *b = &global_broadcast;) s
+5 513 M
+(    // check if the calling process is registered as listener) s
+5 502 M
+(    if \(!p->listen_reg\)) s
+5 491 M
+(    {) s
+5 480 M
+(        // print warning log message) s
+5 469 M
+(        flog\(LOG_WARN, "Process not registered as broadcast listener."\);) s
+5 447 M
+(        // abort current process under execution) s
+5 436 M
+(        c_abort_p\(\);) s
+5 414 M
+(        // just return to the caller) s
+5 403 M
+(        return;) s
+5 392 M
+(    }) s
+5 370 M
+(    // increase number of listeners awaiting broadcast message) s
+5 359 M
+(    b->nlisten++;) s
+5 337 M
+(    // if there is no process in the broadcaster queue yet: broadcast\(natl msg\)) s
+5 326 M
+(    // not called yet) s
+5 315 M
+(    if \(!b->broadcaster\)) s
+5 304 M
+(    {) s
+5 293 M
+(        // insert the process in the global broadcast listeners wait queue: a) s
+5 282 M
+(        // new process is scheduled at the end) s
+5 271 M
+(        inserimento_lista\(b->listeners, esecuzione\);) s
+5 260 M
+(        }) s
+5 249 M
+(    else) s
+5 238 M
+(    {) s
+5 227 M
+(        // otherwise, deliver the message to the current listener process) s
+5 216 M
+(        p->contesto[I_RAX] = b->msg;) s
+5 194 M
+(        // insert current process in the system ready processes list) s
+5 183 M
+(        inserimento_lista\(pronti, esecuzione\);) s
+5 161 M
+(        // check if all listener processes have called the listen\(\) primitive) s
+5 150 M
+(        if \(b->nlisten == b->registered\)) s
+5 139 M
+(        {) s
+5 128 M
+(            // if so, deliver broadcast message to all listener processes) s
+5 117 M
+(            broadcast_all\(\);) s
+5 95 M
+(            // after that,we need a process descriptor) s
+5 84 M
+(            struct proc_elem *work;) s
+5 62 M
+(            // to retrieve the broadcaster process) s
+5 51 M
+(            rimozione_lista\(b->broadcaster, work\);) s
+5 29 M
+(            // insert broadcaster process in the system ready processes list) s
+5 18 M
+(            inserimento_lista\(pronti, work\);) s
+5 7 M
+(        }) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 4 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 17:15:28 2019) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(        // if all the listener process have not called the listen\(\) primitive we) s
+5 744 M
+(        // will have to wait for the next listener process calling it and check) s
+5 733 M
+(        // again if all listener processes are ready, deliver the broadcast) s
+5 722 M
+(        // message to all of them and remove the broadcaster process from the) s
+5 711 M
+(        // queue in order for it to be rescheduled) s
+5 700 M
+(    }) s
+5 678 M
+(    // schedule a new process) s
+5 667 M
+(    schedulatore\(\);) s
+5 656 M
+(}) s
+5 634 M
+(/**) s
+5 623 M
+( * Called by the broadcaster process to send the given broadcast message to all) s
+5 612 M
+( * registered listener processes. If all registered listener processes have) s
+5 601 M
+( * called the listen\(\) primitive the broadcast_all method will deliver the) s
+5 590 M
+( * broadcast message to all of them. Otherwise, the broadcaster process will be) s
+5 579 M
+( * inserted in the broadcasyer wait queue waiting for all listeners to be ready.) s
+5 568 M
+( *) s
+5 557 M
+( * @param  msg  the message to be broadcasted.) s
+5 546 M
+( */) s
+5 535 M
+(extern "C" void c_broadcast\(natl msg\)) s
+5 524 M
+({) s
+5 513 M
+(    // retrieve calling process descriptor) s
+5 502 M
+(    struct des_proc *p = des_p\(esecuzione->id\);) s
+5 480 M
+(    // retrieve global broadcast descriptor) s
+5 469 M
+(    struct broadcast *b = &global_broadcast;) s
+5 447 M
+(    // check if the process is not registered as listener) s
+5 436 M
+(    if \(p->listen_reg\)) s
+5 425 M
+(    {) s
+5 414 M
+(        // print warning log message) s
+5 403 M
+(        flog\(LOG_WARN, "Listener process can not send broadcast messages."\);) s
+5 381 M
+(        // abort current process under execution) s
+5 370 M
+(        c_abort_p\(\);) s
+5 348 M
+(        // return to the caller) s
+5 337 M
+(        return;) s
+5 326 M
+(    }) s
+5 304 M
+(    // set broadcast message) s
+5 293 M
+(    b->msg = msg;) s
+5 271 M
+(    // check if all listeners have invoked the listen primitive) s
+5 260 M
+(    if \(b->nlisten == b->registered\)) s
+5 249 M
+(    {) s
+5 238 M
+(        // if so, insert the current process under execution \(the broadcaster\)) s
+5 227 M
+(        // in the system ready processes queue: a new process is scheduled at) s
+5 216 M
+(        // the end) s
+5 205 M
+(        inserimento_lista\(pronti, esecuzione\);) s
+5 183 M
+(        // send broadcast message to all listeners) s
+5 172 M
+(        broadcast_all\(\);) s
+5 161 M
+(        }) s
+5 150 M
+(    else) s
+5 139 M
+(    {) s
+5 128 M
+(        // otherwise, wait for all listeners to be ready) s
+5 117 M
+(        // insert current process in the broadcaster process queue) s
+5 106 M
+(        inserimento_lista\(b->broadcaster, esecuzione\);) s
+5 95 M
+(    }) s
+5 73 M
+(    // schedule a new process) s
+5 62 M
+(    schedulatore\(\);) s
+5 51 M
+(}) s
+5 29 M
+(// SOLUTION 2016-09-20) s
+5 7 M
+(// [...]) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 5 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 17:15:28 2019) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(/**) s
+5 744 M
+( * The method used to destroy processes must be edited in order to check if the) s
+5 733 M
+( * process being destructed is a registered listener and if so remove it from) s
+5 722 M
+( * the global broadcast listeners.) s
+5 711 M
+( */) s
+5 700 M
+(void distruggi_processo\(proc_elem* p\)) s
+5 689 M
+({) s
+5 678 M
+(        des_proc* pdes_proc = des_p\(p->id\);) s
+5 656 M
+(// EXTENSION 2016-09-20) s
+5 634 M
+(    // check if the process is a registered listener) s
+5 623 M
+(    if \(pdes_proc->listen_reg\)) s
+5 612 M
+(    {) s
+5 601 M
+(        // in that case, decrease registered processes) s
+5 590 M
+(        global_broadcast.registered--;) s
+5 579 M
+(    }) s
+5 557 M
+(// EXTENSION 2016-09-20) s
+5 546 M
+(        faddr tab4 = pdes_proc->cr3;) s
+5 535 M
+(        riassegna_tutto\(p->id, tab4, I_MIO_C, N_MIO_C\);) s
+5 524 M
+(        riassegna_tutto\(p->id, tab4, I_UTN_C, N_UTN_C\);) s
+5 513 M
+(        rilascia_tutto\(tab4, I_UTN_P, N_UTN_P\);) s
+5 502 M
+(        ultimo_terminato = tab4;) s
+5 491 M
+(        if \(p != esecuzione\) {) s
+5 480 M
+(                distruggi_pila_precedente\(\);) s
+5 469 M
+(        }) s
+5 458 M
+(        rilascia_tss\(id_to_tss\(p->id\)\);) s
+5 447 M
+(        dealloca\(pdes_proc\);) s
+5 436 M
+(}) s
+_R
+S
+%%Trailer
+%%Pages: 5
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF
