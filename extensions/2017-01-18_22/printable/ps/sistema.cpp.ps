@@ -1,0 +1,1217 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 24 24 571 818
+%%Title: Enscript Output
+%%For: Rambod Rahmani
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Thu Sep 19 21:23:19 2019
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 547 def
+/d_page_h 794 def
+/d_header_x 0 def
+/d_header_y 779 def
+/d_header_w 547 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 547 def
+/d_footer_h 0 def
+/d_output_w 547 def
+/d_output_h 779 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 1 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 21:20:00 2019) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(// sistema.cpp) s
+5 755 M
+(//) s
+5 744 M
+(#include "costanti.h") s
+5 733 M
+(#include "libce.h") s
+5 711 M
+(/////////////////////////////////////////////////////////////////////////////////) s
+5 700 M
+(//                     PROCESSI                                                //) s
+5 689 M
+(/////////////////////////////////////////////////////////////////////////////////) s
+5 678 M
+(const natl MAX_PRIORITY = 0xfffffff;) s
+5 667 M
+(const natl MIN_PRIORITY = 0x0000001;) s
+5 656 M
+(const natl DUMMY_PRIORITY = 0x0000000;) s
+5 645 M
+(const int N_REG = 16;   // numero di registri nel campo contesto) s
+5 612 M
+(// EXTENSION 2017-01-18) s
+5 590 M
+(/**) s
+5 579 M
+( * Available broadcaste roles.) s
+5 568 M
+( */) s
+5 557 M
+(enum broadcast_role) s
+5 546 M
+({) s
+5 535 M
+(    B_NONE,         // no role is assigned when the process is created) s
+5 524 M
+(    B_BROADCASTER,  // broadcaster \(can use the broadcast\(\) primitive\)) s
+5 513 M
+(    B_LISTENER      // listener \(can use the listen\(\) primitive\)) s
+5 502 M
+(};) s
+5 480 M
+(// EXTENSION 2017-01-18) s
+5 458 M
+(// si veda in PAGINAZIONE per il significato di questi typedef) s
+5 447 M
+(typedef natq vaddr;) s
+5 436 M
+(typedef natq faddr;) s
+5 425 M
+(typedef natq tab_entry;) s
+5 403 M
+(// descrittore di processo) s
+5 392 M
+(struct des_proc {) s
+5 381 M
+(        // parte richiesta dall'hardware) s
+5 370 M
+(        struct __attribute__ \(\(packed\)\) {) s
+5 359 M
+(                natl riservato1;) s
+5 348 M
+(                vaddr punt_nucleo;) s
+5 337 M
+(                // due quad  a disposizione \(puntatori alle pile ring 1 e 2\)) s
+5 326 M
+(                natq disp1[2];) s
+5 315 M
+(                natq riservato2;) s
+5 304 M
+(                //entry della IST, non usata) s
+5 293 M
+(                natq disp2[7];) s
+5 282 M
+(                natq riservato3;) s
+5 271 M
+(                natw riservato4;) s
+5 260 M
+(                natw iomap_base; // si veda crea_processo\(\)) s
+5 249 M
+(        };) s
+5 238 M
+(        //finiti i campi obbligatori) s
+5 227 M
+(        faddr cr3;) s
+5 216 M
+(        natq contesto[N_REG];) s
+5 205 M
+(        natl cpl;) s
+5 183 M
+(// EXTENSION 2017-01-18) s
+5 161 M
+(    // process broadcast role) s
+5 150 M
+(        broadcast_role b_reg;) s
+5 128 M
+(// EXTENSION 2017-01-18) s
+5 106 M
+(// SOLUTION 2017-01-18) s
+5 84 M
+(    // process last retrieved broadcast message id) s
+5 73 M
+(    natl b_id;) s
+5 51 M
+(// SOLUTION 2017-01-18) s
+5 40 M
+(};) s
+5 18 M
+(// [...]) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 2 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 21:20:00 2019) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(/**) s
+5 755 M
+( * Broadcast descriptor struct.) s
+5 744 M
+( */) s
+5 733 M
+(struct broadcast) s
+5 722 M
+({) s
+5 711 M
+(    // true if the broadcaster is registered) s
+5 700 M
+(    bool broadcaster_registered;) s
+5 678 M
+(// \( SOLUZIONE 2017-01-18) s
+5 656 M
+(    // last broadcast message id) s
+5 645 M
+(    natl last_id;) s
+5 623 M
+(    // sent broadcast messages array) s
+5 612 M
+(    natl msg[MAX_BROADCAST];) s
+5 590 M
+(    // registered listeners array) s
+5 579 M
+(    proc_elem *listeners;) s
+5 557 M
+(//   SOLUZIONE 2017-01-18 \)) s
+5 546 M
+(};) s
+5 524 M
+(/**) s
+5 513 M
+( * System global broadcast descriptor.) s
+5 502 M
+( */) s
+5 491 M
+(broadcast global_broadcast;) s
+5 469 M
+(/**) s
+5 458 M
+( * Initializes the global broadcast descriptor.) s
+5 447 M
+( */) s
+5 436 M
+(void broadcast_init\(\)) s
+5 425 M
+({) s
+5 414 M
+(    // no initial broadcaster registered) s
+5 403 M
+(    global_broadcast.broadcaster_registered = false;) s
+5 392 M
+(// \( SOLUZIONE 2017-01-18) s
+5 370 M
+(    // no broadcast messages registered at initialization) s
+5 359 M
+(    global_broadcast.last_id = 0;) s
+5 337 M
+(    // no initial listeners registered) s
+5 326 M
+(    global_broadcast.listeners = 0;) s
+5 304 M
+(//   SOLUZIONE 2017-01-18 \)) s
+5 293 M
+(}) s
+5 271 M
+(// \( SOLUZIONE 2016-09-20) s
+5 249 M
+(/**) s
+5 238 M
+( * Registers a process to the global broadcast with the specified broadcast) s
+5 227 M
+( * role. If the given role is not valid \(!B_BROADCASTER and !B_LISTENER\) or) s
+5 216 M
+( * if the given process is already registered, or if there is already a) s
+5 205 M
+( * broadcaster registered the current process must be aborted.) s
+5 194 M
+( *) s
+5 183 M
+( * @param  role  the of the process being registered \(either B_BROADCASTER or) s
+5 172 M
+( *               B_LISTENER\).) s
+5 161 M
+( */) s
+5 150 M
+(extern "C" void c_reg\(enum broadcast_role role\)) s
+5 139 M
+({) s
+5 128 M
+(    // retrieve calling process descriptor) s
+5 117 M
+(    struct des_proc *p = des_p\(esecuzione->id\);) s
+5 95 M
+(    // retrieve global broadcast descriptor) s
+5 84 M
+(    struct broadcast *b = &global_broadcast;) s
+5 62 M
+(    // check if the given broadcast role is valid: B_NONE is invalid) s
+5 51 M
+(    if \(role != B_BROADCASTER && role != B_LISTENER\)) s
+5 40 M
+(    {) s
+5 29 M
+(        // print warning log message) s
+5 18 M
+(        flog\(LOG_WARN, "Invalid broadcast role: %d", role\);) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 3 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 21:20:00 2019) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(        // abort calling process) s
+5 755 M
+(        c_abort_p\(\);) s
+5 733 M
+(        // just return) s
+5 722 M
+(        return;) s
+5 711 M
+(        }) s
+5 689 M
+(    // check if the process is already registered to the global broadcast) s
+5 678 M
+(    if \(p->b_reg != B_NONE\)) s
+5 667 M
+(    {) s
+5 656 M
+(        // print warning log message) s
+5 645 M
+(        flog\(LOG_WARN, "Process already registered as %s",) s
+5 634 M
+(             \(p->b_reg == B_BROADCASTER ? "broadcaster." : "listener."\)\);) s
+5 612 M
+(        // abort current process under execution) s
+5 601 M
+(        c_abort_p\(\);) s
+5 579 M
+(        // just return) s
+5 568 M
+(        return;) s
+5 557 M
+(        }) s
+5 535 M
+(    // check if the given role is broadcaster) s
+5 524 M
+(    if \(role == B_BROADCASTER\)) s
+5 513 M
+(    {) s
+5 502 M
+(        // check if there is already a registered broadcaster) s
+5 491 M
+(        if \(b->broadcaster_registered\)) s
+5 480 M
+(        {) s
+5 469 M
+(            // if so, print a warning log message) s
+5 458 M
+(            flog\(LOG_WARN, "Broadcaster already registered."\);) s
+5 436 M
+(            // abort current process under execution) s
+5 425 M
+(            c_abort_p\(\);) s
+5 403 M
+(            // just return) s
+5 392 M
+(            return;) s
+5 381 M
+(        }) s
+5 359 M
+(        // set broadcaster registered to true) s
+5 348 M
+(        b->broadcaster_registered = true;) s
+5 337 M
+(    }) s
+5 315 M
+(    // update process broadcast role) s
+5 304 M
+(    p->b_reg = role;) s
+5 293 M
+(}) s
+5 271 M
+(/**) s
+5 260 M
+( * Called by listener processes to retrieve the next broadcast message. If the) s
+5 249 M
+( * process has already received all the broadcast messages it must be placed in) s
+5 238 M
+( * the wait queue for the next broadcast message. If the process is not a) s
+5 227 M
+( * registered listener it must be aborted.) s
+5 216 M
+( */) s
+5 205 M
+(extern "C" void c_listen\(\)) s
+5 194 M
+({) s
+5 183 M
+(    // retrieve calling process descriptor) s
+5 172 M
+(    struct des_proc *p = des_p\(esecuzione->id\);) s
+5 150 M
+(    // retrieve global broadcast descriptor) s
+5 139 M
+(    struct broadcast *b = &global_broadcast;) s
+5 117 M
+(    // check if the current process is not a registered listener) s
+5 106 M
+(    if \(p->b_reg != B_LISTENER\)) s
+5 95 M
+(    {) s
+5 84 M
+(        // if so, print a warning log message) s
+5 73 M
+(        flog\(LOG_WARN, "Process not registered as listener."\);) s
+5 51 M
+(        // abort calling process) s
+5 40 M
+(        c_abort_p\(\);) s
+5 18 M
+(        // just return to the caller) s
+5 7 M
+(        return;) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 4 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 21:20:00 2019) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    }) s
+5 744 M
+(    // check if there are broadcast messages to be retrieved) s
+5 733 M
+(    if \(p->b_id < b->last_id\)) s
+5 722 M
+(    {) s
+5 711 M
+(        // if so, retrieve they nex broadcast message) s
+5 700 M
+(        p->contesto[I_RAX] = b->msg[p->b_id];) s
+5 678 M
+(        // increase last retrieved broadcast message id ) s
+5 667 M
+(        p->b_id++;) s
+5 645 M
+(        // just return to the caller) s
+5 634 M
+(        return;) s
+5 623 M
+(    }) s
+5 601 M
+(    // otherwise, insert the current process in the listeners processes queue:) s
+5 590 M
+(    // it will have to wait until another broadcast message is sent by the) s
+5 579 M
+(    // broadcaster process in which case it will receive the broadcast message) s
+5 568 M
+(    // and be placed in the system ready processes queue and eventually) s
+5 557 M
+(    // rescheduled) s
+5 546 M
+(    inserimento_lista\(b->listeners, esecuzione\);) s
+5 524 M
+(    // schedule a new process) s
+5 513 M
+(    schedulatore\(\);) s
+5 502 M
+(}) s
+5 480 M
+(/**) s
+5 469 M
+( * Sends the given broadcast message. It must check if the calling process is) s
+5 458 M
+( * registered as broadcaster and if the maximum number of broadcast messages is) s
+5 447 M
+( * not exceeded. If both conditions are not met the calling processes is) s
+5 436 M
+( * aborted.) s
+5 425 M
+( *) s
+5 414 M
+( * @param  msg  the broadcast message to be sent.) s
+5 403 M
+( */) s
+5 392 M
+(extern "C" void c_broadcast\(natl msg\)) s
+5 381 M
+({) s
+5 370 M
+(    // retrieve current process descriptor) s
+5 359 M
+(    struct des_proc *p = des_p\(esecuzione->id\);) s
+5 337 M
+(    // retrieve global broadcast descriptor) s
+5 326 M
+(    struct broadcast *b = &global_broadcast;) s
+5 304 M
+(    // check if the current process is registered as broadcaster) s
+5 293 M
+(    if \(p->b_reg != B_BROADCASTER\)) s
+5 282 M
+(    {) s
+5 271 M
+(        // if not, print a warning log message) s
+5 260 M
+(        flog\(LOG_WARN, "Broadcast message from invalid process."\);) s
+5 238 M
+(        // abort current process under execution) s
+5 227 M
+(        c_abort_p\(\);) s
+5 205 M
+(        // just return) s
+5 194 M
+(        return;) s
+5 183 M
+(    }) s
+5 161 M
+(    // check if the number of maximum broadcast messages has been reached) s
+5 150 M
+(    if \(b->last_id >= MAX_BROADCAST\)) s
+5 139 M
+(    {) s
+5 128 M
+(        // if so, print a warning log message) s
+5 117 M
+(        flog\(LOG_WARN, "Too many broadcast messages."\);) s
+5 95 M
+(        // abort the current process under execution) s
+5 84 M
+(        c_abort_p\(\);) s
+5 62 M
+(        // just retun) s
+5 51 M
+(        return;) s
+5 40 M
+(    }) s
+5 18 M
+(    // set broadcast message) s
+5 7 M
+(    b->msg[b->last_id] = msg;) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 5 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 21:20:00 2019) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(    // increase last broadcast message id) s
+5 744 M
+(    b->last_id++;) s
+5 722 M
+(    // insert the current process at the top of the ready processes queue) s
+5 711 M
+(    inspronti\(\);) s
+5 689 M
+(    // deliver the new broadcast message to all listeners in the wait queue:) s
+5 678 M
+(    // theese processes have already retrieved all previous broadcast messages) s
+5 667 M
+(    // and called the listen\(\) primitive one more time which resulted for them) s
+5 656 M
+(    // beign placed in the global broadcaster descriptor listeners wait queue) s
+5 645 M
+(    while \(b->listeners\)) s
+5 634 M
+(    {) s
+5 623 M
+(        // process descriptor) s
+5 612 M
+(        struct proc_elem *work;) s
+5 590 M
+(        // extract top indexed listener process) s
+5 579 M
+(        rimozione_lista\(b->listeners, work\);) s
+5 557 M
+(        // retrieve process descriptor) s
+5 546 M
+(        struct des_proc *w = des_p\(work->id\);) s
+5 524 M
+(        // deliver broadcast message to the listener process) s
+5 513 M
+(        w->contesto[I_RAX] = msg;) s
+5 491 M
+(        // increase listener process broadcast messages last id) s
+5 480 M
+(        w->b_id++;) s
+5 458 M
+(        // insert the listener process in the system ready processes queue) s
+5 447 M
+(        inserimento_lista\(pronti, work\);) s
+5 436 M
+(    }) s
+5 414 M
+(    // schedule a new process) s
+5 403 M
+(    schedulatore\(\);) s
+5 392 M
+(}) s
+5 370 M
+(// SOLUTION 2016-09-20) s
+5 348 M
+(// [...]) s
+5 326 M
+(/**) s
+5 315 M
+( * In this new implementation of the broadcast system there can be multiple) s
+5 304 M
+( * broadcaster processes. However, only one process can be active with the role) s
+5 293 M
+( * of broadcaster. When each process is destroyed we have to check if it is the) s
+5 282 M
+( * broadcaster process and in that case remove the broadcaster from the global) s
+5 271 M
+( * broadcast descriptor.) s
+5 260 M
+( */) s
+5 249 M
+(void distruggi_processo\(proc_elem* p\)) s
+5 238 M
+({) s
+5 227 M
+(        des_proc* pdes_proc = des_p\(p->id\);) s
+5 205 M
+(// EXTENSION 2016-09-20) s
+5 183 M
+(    // check if the process is a broadcaster) s
+5 172 M
+(    if \(pdes_proc->b_reg == B_BROADCASTER\)) s
+5 161 M
+(    {) s
+5 150 M
+(        // if so, remove the global broadcast broadcaster) s
+5 139 M
+(        global_broadcast.broadcaster_registered = false;) s
+5 128 M
+(    }) s
+5 106 M
+(// EXTENSION 2016-09-20) s
+5 84 M
+(        faddr tab4 = pdes_proc->cr3;) s
+5 73 M
+(        riassegna_tutto\(p->id, tab4, I_MIO_C, N_MIO_C\);) s
+5 62 M
+(        riassegna_tutto\(p->id, tab4, I_UTN_C, N_UTN_C\);) s
+5 51 M
+(        rilascia_tutto\(tab4, I_UTN_P, N_UTN_P\);) s
+5 40 M
+(        ultimo_terminato = tab4;) s
+5 29 M
+(        if \(p != esecuzione\) {) s
+5 18 M
+(                distruggi_pila_precedente\(\);) s
+5 7 M
+(        }) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 6 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 21:20:00 2019) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(        rilascia_tss\(id_to_tss\(p->id\)\);) s
+5 755 M
+(        dealloca\(pdes_proc\);) s
+5 744 M
+(}) s
+5 722 M
+(// [...]) s
+5 700 M
+(void main_sistema\(int n\)) s
+5 689 M
+({) s
+5 678 M
+(        natl sync_io;) s
+5 656 M
+(        // \( caricamento delle tabelle e pagine residenti degli spazi condivisi \(\)) s
+5 645 M
+(        flog\(LOG_INFO, "creazione o lettura delle tabelle e pagine residenti condivise...) s
+5 634 M
+("\);) s
+5 623 M
+(        if \(!crea_spazio_condiviso\(\)\)) s
+5 612 M
+(                goto error;) s
+5 601 M
+(        // \)) s
+5 579 M
+(        gdb_breakpoint\(\);) s
+5 557 M
+(        // \( inizializzazione del modulo di io) s
+5 546 M
+(        flog\(LOG_INFO, "creazione del processo main I/O..."\);) s
+5 535 M
+(        sync_io = sem_ini\(0\);) s
+5 524 M
+(        if \(sync_io == 0xFFFFFFFF\) {) s
+5 513 M
+(                flog\(LOG_ERR, "Impossibile allocare il semaforo di sincr per l'IO"\);) s
+5 502 M
+(                goto error;) s
+5 491 M
+(        }) s
+5 480 M
+(        // occupiamo l'entrata del timer) s
+5 469 M
+(        aggiungi_pe\(ESTERN_BUSY, 2\);) s
+5 458 M
+(        if \(activate_p\(swap_dev.sb.io_entry, sync_io, MAX_PRIORITY, LIV_SISTEMA\) == 0xFFF) s
+5 447 M
+(FFFFF\) {) s
+5 436 M
+(                flog\(LOG_ERR, "impossibile creare il processo main I/O"\);) s
+5 425 M
+(                goto error;) s
+5 414 M
+(        }) s
+5 403 M
+(        flog\(LOG_INFO, "attendo inizializzazione modulo I/O..."\);) s
+5 392 M
+(        sem_wait\(sync_io\);) s
+5 381 M
+(        // \)) s
+5 359 M
+(        // \( creazione del processo start_utente) s
+5 348 M
+(        flog\(LOG_INFO, "creazione del processo start_utente..."\);) s
+5 337 M
+(        if \(activate_p\(swap_dev.sb.user_entry, 0, MAX_PRIORITY, LIV_UTENTE\) == 0xFFFFFFFF) s
+5 326 M
+(\) {) s
+5 315 M
+(                flog\(LOG_ERR, "impossibile creare il processo main utente"\);) s
+5 304 M
+(                goto error;) s
+5 293 M
+(        }) s
+5 282 M
+(        // \)) s
+5 271 M
+(        // \(* attiviamo il timer) s
+5 260 M
+(        attiva_timer\(DELAY\);) s
+5 249 M
+(        flog\(LOG_INFO, "attivato timer \(DELAY=%d\)", DELAY\);) s
+5 238 M
+(        // *\)) s
+5 227 M
+(        ) s
+5 216 M
+(// \( ESAME 2017-01-18) s
+5 194 M
+(    // initialize global broadcast descriptor) s
+5 183 M
+(        broadcast_init\(\);) s
+5 161 M
+(//   ESAME 2017-01-18 \)) s
+5 139 M
+(        // \( terminazione) s
+5 128 M
+(        flog\(LOG_INFO, "passo il controllo al processo utente..."\);) s
+5 117 M
+(        terminate_p\(\);) s
+5 106 M
+(        // \)) s
+5 95 M
+(error:) s
+5 84 M
+(        panic\("Errore di inizializzazione"\);) s
+5 73 M
+(}) s
+_R
+S
+%%Trailer
+%%Pages: 6
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

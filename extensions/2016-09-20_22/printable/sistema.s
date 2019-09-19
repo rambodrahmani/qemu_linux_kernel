@@ -65,7 +65,7 @@ a_listen:
 .GLOBAL a_broadcast       # void broadcast(natl msg) interrupt primitive handler
 #-------------------------------------------------------------------------------
 # The c_broadcast C++ implementation for this IDT subroutine will queue the
-# broadcaster process in either the global broadcast descriptor broadcaster
+# broadcaster process if either the global broadcast descriptor broadcaster
 # queue (there are still some listener processes which must call the listen()
 # primitive to receive the broadcast message) or in the system ready process
 # (all listener processes have received the broadcast message using the

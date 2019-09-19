@@ -15,13 +15,13 @@ const int N_REG = 16;	// numero di registri nel campo contesto
 // EXTENSION 2017-01-18
 
 /**
- * Available broadcaster roles.
+ * Available broadcaste roles.
  */
 enum broadcast_role
 {
-    B_NONE,
-    B_BROADCASTER,
-    B_LISTENER
+    B_NONE,         // no role is assigned when the process is created
+    B_BROADCASTER,  // broadcaster (can use the broadcast() primitive)
+    B_LISTENER      // listener (can use the listen() primitive)
 };
 
 // EXTENSION 2017-01-18
@@ -214,18 +214,19 @@ extern "C" void c_sem_signal(natl sem)
 }
 
 /**
- * Broadcast descriptor.
+ * Broadcast descriptor struct.
  */
 struct broadcast
 {
     // true if the broadcaster is registered
     bool broadcaster_registered;
+
 // ( SOLUZIONE 2017-01-18
 
     // last broadcast message id
     natl last_id;
 
-    // broadcast messages
+    // sent broadcast messages array
     natl msg[MAX_BROADCAST];
 
     // registered listeners array
@@ -234,6 +235,9 @@ struct broadcast
 //   SOLUZIONE 2017-01-18 )
 };
 
+/**
+ * System global broadcast descriptor.
+ */
 broadcast global_broadcast;
 
 /**
@@ -243,6 +247,7 @@ void broadcast_init()
 {
     // no initial broadcaster registered
     global_broadcast.broadcaster_registered = false;
+
 // ( SOLUZIONE 2017-01-18
 
     // no broadcast messages registered at initialization
@@ -267,7 +272,7 @@ void broadcast_init()
  */
 extern "C" void c_reg(enum broadcast_role role)
 {
-    // retrieve current process descriptor
+    // retrieve calling process descriptor
     struct des_proc *p = des_p(esecuzione->id);
 
     // retrieve global broadcast descriptor
@@ -279,7 +284,7 @@ extern "C" void c_reg(enum broadcast_role role)
         // print warning log message
         flog(LOG_WARN, "Invalid broadcast role: %d", role);
 
-        // abort current process
+        // abort calling process
         c_abort_p();
 
         // just return
@@ -332,7 +337,7 @@ extern "C" void c_reg(enum broadcast_role role)
  */
 extern "C" void c_listen()
 {
-    // retrieve current process descriptor
+    // retrieve calling process descriptor
     struct des_proc *p = des_p(esecuzione->id);
 
     // retrieve global broadcast descriptor
@@ -344,7 +349,7 @@ extern "C" void c_listen()
         // if so, print a warning log message
         flog(LOG_WARN, "Process not registered as listener.");
 
-        // abort current process under execution
+        // abort calling process
         c_abort_p();
 
         // just return to the caller
@@ -354,7 +359,7 @@ extern "C" void c_listen()
     // check if there are broadcast messages to be retrieved
     if (p->b_id < b->last_id)
     {
-        // if so, retrieve the nex broadcast message
+        // if so, retrieve they nex broadcast message
         p->contesto[I_RAX] = b->msg[p->b_id];
 
         // increase last retrieved broadcast message id 
@@ -364,7 +369,11 @@ extern "C" void c_listen()
         return;
     }
 
-    // otherwise, insert the current process in the listeners processes queue
+    // otherwise, insert the current process in the listeners processes queue:
+    // it will have to wait until another broadcast message is sent by the
+    // broadcaster process in which case it will receive the broadcast message
+    // and be placed in the system ready processes queue and eventually
+    // rescheduled
     inserimento_lista(b->listeners, esecuzione);
 
     // schedule a new process
@@ -374,7 +383,8 @@ extern "C" void c_listen()
 /**
  * Sends the given broadcast message. It must check if the calling process is
  * registered as broadcaster and if the maximum number of broadcast messages is
- * not exceeded.
+ * not exceeded. If both conditions are not met the calling processes is
+ * aborted.
  *
  * @param  msg  the broadcast message to be sent.
  */
@@ -403,7 +413,7 @@ extern "C" void c_broadcast(natl msg)
     if (b->last_id >= MAX_BROADCAST)
     {
         // if so, print a warning log message
-        flog(LOG_WARN, "troppi messaggi");
+        flog(LOG_WARN, "Too many broadcast messages.");
 
         // abort the current process under execution
         c_abort_p();
@@ -415,13 +425,13 @@ extern "C" void c_broadcast(natl msg)
     // set broadcast message
     b->msg[b->last_id] = msg;
 
-    // increase broadcase messages last id
+    // increase last broadcast message id
     b->last_id++;
 
     // insert the current process at the top of the ready processes queue
     inspronti();
 
-    // deliver the new broadcast message to all listeners in the wait queue
+    // deliver the new broadcast message to all listeners in the wait queue:
     // theese processes have already retrieved all previous broadcast messages
     // and called the listen() primitive one more time which resulted for them
     // beign placed in the global broadcaster descriptor listeners wait queue
@@ -430,10 +440,10 @@ extern "C" void c_broadcast(natl msg)
         // process descriptor
         struct proc_elem *work;
 
-        // extract top listener process
+        // extract top indexed listener process
         rimozione_lista(b->listeners, work);
 
-        // retrieve global broadcast descriptor
+        // retrieve process descriptor
         struct des_proc *w = des_p(work->id);
 
         // deliver broadcast message to the listener process
@@ -442,7 +452,7 @@ extern "C" void c_broadcast(natl msg)
         // increase listener process broadcast messages last id
         w->b_id++;
 
-        // insert the listener process in the system ready processes
+        // insert the listener process in the system ready processes queue
         inserimento_lista(pronti, work);
     }
 
@@ -1276,6 +1286,14 @@ extern "C" void distruggi_pila_precedente() {
 	rilascia_frame(descrittore_frame(ultimo_terminato));
 	ultimo_terminato = 0;
 }
+
+/**
+ * In this new implementation of the broadcast system there can be multiple
+ * broadcaster processes. However, only one process can be active with the role
+ * of broadcaster. When each process is destroyed we have to check if it is the
+ * broadcaster process and in that case remove the broadcaster from the global
+ * broadcast descriptor.
+ */
 void distruggi_processo(proc_elem* p)
 {
 	des_proc* pdes_proc = des_p(p->id);
