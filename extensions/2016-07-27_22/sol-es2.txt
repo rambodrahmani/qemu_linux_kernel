@@ -83,7 +83,8 @@ a_cedmaread:
 		cavallo_di_troia %rsi
 		cavallo_di_troia2 %rsi $4
 		cavallo_di_troia %rdx
-		cavallo_di_troia2 %rdx (%rsi)
+		movl (%rsi), %r9d
+		cavallo_di_troia2 %rdx %r9
 		call c_cedmaread
 		iretq
 		.cfi_endproc

@@ -3,7 +3,7 @@
 %%Title: Enscript Output
 %%For: Rambod Rahmani
 %%Creator: GNU Enscript 1.6.6
-%%CreationDate: Thu Sep 19 15:08:36 2019
+%%CreationDate: Thu Sep 19 15:16:17 2019
 %%Orientation: Portrait
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -452,34 +452,54 @@ gs_languagelevel 1 gt {
 _S
 24 24 translate
 /pagenum 1 def
-/fname (printable/costanti.h) def
+/fname (printable/sys.h) def
 /fdir (printable) def
-/ftail (costanti.h) def
+/ftail (sys.h) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:53 2019) def
+/fmodstr (Thu Sep 19 14:40:14 2019) def
 /pagenumstr (1) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(// EXTENSION 2016-07-06) s
+(// EXTENSION 2016-07-27) s
 5 744 M
 (/**) s
 5 733 M
-( * Interrupt type declaration for primitive ceread\(\).) s
+( * This user primitive can be used to retrieve into the addressed buffer 'buf') s
 5 722 M
-( * This interrupt type is the one called by the primitive implementation in) s
+( * a maximum number of specified bytes \(quanti\) - as the CE device might contain) s
 5 711 M
-( * utente/utente.s and must be handled in io/io.s.) s
+( * more available bytes which will therefore be lost - from the CE device having) s
 5 700 M
-( */) s
+( * the given id. It must check for the given buffer address to be aligned to the) s
 5 689 M
-(#define IO_TIPO_CEREAD          0x79) s
+( * page, for 0 <= quanti <= 10*pages. In case of error the primitive must abort) s
+5 678 M
+( * the calling process.) s
 5 667 M
-(#define IO_TIPO_CEWRITE         0x7a) s
+( *) s
+5 656 M
+( * @param  id      CE device id;) s
 5 645 M
-(// EXTENSION 2016-07-06) s
+( * @param  quanti  number of bytes to be transferred;) s
+5 634 M
+( * @param  buf     destination buffer address;) s
+5 623 M
+( *) s
+5 612 M
+( * @return  true if the given buffer was big enough for all available bytes,) s
+5 601 M
+( *          false otherwise.) s
+5 590 M
+( */) s
+5 579 M
+(extern "C" bool cedmaread\(natl id, natl& quanti, char *buf\);) s
+5 568 M
+(extern "C" bool cedmaread2\(natl id, natl* quanti, char *buf\);) s
+5 546 M
+(// EXTENSION 2016-07-27) s
 _R
 S
 %%Trailer

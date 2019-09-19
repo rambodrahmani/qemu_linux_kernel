@@ -3,7 +3,7 @@
 %%Title: Enscript Output
 %%For: Rambod Rahmani
 %%Creator: GNU Enscript 1.6.6
-%%CreationDate: Thu Sep 19 15:08:36 2019
+%%CreationDate: Thu Sep 19 15:16:17 2019
 %%Orientation: Portrait
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -452,37 +452,319 @@ gs_languagelevel 1 gt {
 _S
 24 24 translate
 /pagenum 1 def
-/fname (printable/costanti.h) def
+/fname (printable/es1.s) def
 /fdir (printable) def
-/ftail (costanti.h) def
+/ftail (es1.s) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:53 2019) def
+/fmodstr (Tue Sep 17 15:21:21 2019) def
 /pagenumstr (1) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(// EXTENSION 2016-07-06) s
+(#*******************************************************************************) s
+5 755 M
+(# File: es1.s) s
 5 744 M
-(/**) s
+(#       Contains the Assembly translation for es1.cpp.) s
 5 733 M
-( * Interrupt type declaration for primitive ceread\(\).) s
+(#) s
 5 722 M
-( * This interrupt type is the one called by the primitive implementation in) s
+(# Author: Rambod Rahmani <rambodrahmani@autistici.org>) s
 5 711 M
-( * utente/utente.s and must be handled in io/io.s.) s
+(#         Created on 14/09/2019.) s
 5 700 M
-( */) s
-5 689 M
-(#define IO_TIPO_CEREAD          0x79) s
+(#*******************************************************************************) s
+5 678 M
+(#-------------------------------------------------------------------------------) s
 5 667 M
-(#define IO_TIPO_CEWRITE         0x7a) s
+(.TEXT) s
+5 656 M
+(.GLOBAL _ZN2clC1EPc                                           # cl::cl\(char v[]\)) s
 5 645 M
-(// EXTENSION 2016-07-06) s
+(#-------------------------------------------------------------------------------) s
+5 634 M
+(# activation record:) s
+5 623 M
+(# ------------------) s
+5 612 M
+(#  i             -20) s
+5 601 M
+(#  &v            -16) s
+5 590 M
+(#  this          -8) s
+5 579 M
+(#  %rbp          0) s
+5 568 M
+(#-------------------------------------------------------------------------------) s
+5 557 M
+(_ZN2clC1EPc:) s
+5 546 M
+(# set stack locations labels) s
+5 535 M
+(    .set this, -8) s
+5 524 M
+(    .set v,    -16) s
+5 513 M
+(    .set i,    -20) s
+5 491 M
+(# prologue: activation frame) s
+5 480 M
+(    pushq %rbp) s
+5 469 M
+(    movq  %rsp, %rbp) s
+5 458 M
+(    subq  $24, %rsp                   # reserve stack space for actual arguments) s
+5 436 M
+(# copy actual arguments to the stack) s
+5 425 M
+(    movq %rdi, this\(%rbp\)) s
+5 414 M
+(    movq %rsi, v\(%rbp\)) s
+5 392 M
+(# a = v[0]++;) s
+5 381 M
+(    movl   $0, i\(%rbp\)                # i = 0) s
+5 370 M
+(    movslq i\(%rbp\), %rcx              # i -> %rcx) s
+5 359 M
+(    movb   \(%rsi, %rcx, 1\), %al       # v[0] -> %al) s
+5 348 M
+(    movb   %al, \(%rdi, %rcx, 1\)       # a = v[0];) s
+5 337 M
+(    incb   \(%rsi, %rcx, 1\)            # v[0]++) s
+5 315 M
+(# b = v[1];) s
+5 304 M
+(    incq %rcx) s
+5 293 M
+(    movb \(%rsi, %rcx, 1\), %al         # v[1] -> %al) s
+5 282 M
+(    movb %al, \(%rdi, %rcx, 1\)         # b = v[1];) s
+5 260 M
+(# for loop initialization) s
+5 249 M
+(    movl $0, i\(%rbp\)                  # i = 0) s
+5 227 M
+(for:) s
+5 216 M
+(    cmpl $4, i\(%rbp\)                  # check if i < 4) s
+5 205 M
+(    jge  finefor                      # end for loop \(i >= 4\)) s
+5 183 M
+(# for loop body) s
+5 172 M
+(    movq   this\(%rbp\), %rdi           # this -> %rdi) s
+5 161 M
+(    movq   v\(%rbp\), %rsi              # &v -> %rsi) s
+5 150 M
+(    movslq i\(%rbp\), %rcx              # i -> %rcx) s
+5 128 M
+(    movq $0, %r8                      # $0 -> %r8) s
+5 117 M
+(    movb \(%rdi, %r8, 1\), %al          # a -> %al) s
+5 95 M
+(    incq %r8                          # increment %r8) s
+5 84 M
+(    movb \(%rdi, %r8, 1\), %bl          # b -> %bl) s
+5 62 M
+(    addb \(%rsi, %rcx, 1\), %al         # v[i] + a -> %al) s
+5 51 M
+(    movb %al, 8\(%rdi, %rcx, 1\)        # s.vv1[i] = v[i] + a, [0]) s
+5 29 M
+(    addb   \(%rsi, %rcx, 1\), %bl       # v[i] + b -> %bl) s
+5 18 M
+(    movsbq %bl, %rbx                  # %bl -> %rbx) s
+5 7 M
+(    movq   %rbx, 16\(%rdi, %rcx, 8\)    # s.vv2[i] = v[i] + b;) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 2 def
+/fname (printable/es1.s) def
+/fdir (printable) def
+/ftail (es1.s) def
+% User defined strings:
+/fmodstr (Tue Sep 17 15:21:21 2019) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(    incl i\(%rbp\)) s
+5 744 M
+(    jmp  for) s
+5 722 M
+(finefor:) s
+5 700 M
+(    movq  this\(%rbp\), %rax            # return initialized object address) s
+5 689 M
+(    leave                             # movq %rbp, %rsp; popq %rbp) s
+5 678 M
+(    ret) s
+5 656 M
+(#-------------------------------------------------------------------------------) s
+5 645 M
+(.GLOBAL _ZN2cl5elab1ER2sti) s
+5 634 M
+(#-------------------------------------------------------------------------------) s
+5 623 M
+(# activation record:) s
+5 612 M
+(# ------------------) s
+5 601 M
+(#  i             -24) s
+5 590 M
+(#  d             -20) s
+5 579 M
+(#  &ss           -16) s
+5 568 M
+(#  this          -8) s
+5 557 M
+(#  %rbp          0) s
+5 546 M
+(#-------------------------------------------------------------------------------) s
+5 535 M
+(_ZN2cl5elab1ER2sti:) s
+5 524 M
+(# set stack locations labels) s
+5 513 M
+(    .set this, -8) s
+5 502 M
+(    .set ss,   -16) s
+5 491 M
+(    .set d,    -20) s
+5 480 M
+(    .set i,    -24) s
+5 458 M
+(# prologue: activation frame) s
+5 447 M
+(    pushq %rbp) s
+5 436 M
+(    movq  %rsp, %rbp) s
+5 425 M
+(    subq  $24, %rsp                 # reserve stack space for actual arguments) s
+5 403 M
+(# copy actual arguments to the stack) s
+5 392 M
+(    movq %rdi, this\(%rbp\)) s
+5 381 M
+(    movq %rsi, ss\(%rbp\)) s
+5 370 M
+(    movl %edx, d\(%rbp\)) s
+5 348 M
+(# for loop initialization) s
+5 337 M
+(    movl $0, i\(%rbp\)                # i = 0) s
+5 315 M
+(for1:) s
+5 304 M
+(    cmpl $4, i\(%rbp\)                # check if i < 4) s
+5 293 M
+(    jge  finefor1                   # end for loop \(i >= 4\)) s
+5 271 M
+(# for looop body) s
+5 260 M
+(    movq   this\(%rbp\), %rdi) s
+5 249 M
+(    movq   ss\(%rbp\), %rsi) s
+5 238 M
+(    movslq i\(%rbp\), %rcx) s
+5 216 M
+(# if \(d >= ss.vv2[i]\)) s
+5 205 M
+(    movq 8\(%rsi, %rcx, 8\), %rax     # ss.vv2[i] -> %rax) s
+5 194 M
+(    cmpl %eax, d\(%rbp\)              # d >= ss.vv2[i]) s
+5 183 M
+(    jl   fineif                     # exit if \(d < ss.vv2[i]\)) s
+5 172 M
+(    movb \(%rsi, %rcx, 1\), %al       # ss.vv1[i] -> %al) s
+5 161 M
+(    addb %al, 8\(%rdi, %rcx, 1\)      # s.vv1[i] += ss.vv1[i];) s
+5 139 M
+(fineif:) s
+5 128 M
+(    movq   $0, %r8                  # 0 -> %r8) s
+5 117 M
+(    movb   \(%rdi, %r8, 1\), %al      # a -> %al) s
+5 106 M
+(    movsbl %al, %eax                # %al => %eax) s
+5 95 M
+(    addl   d\(%rbp\), %eax            # d + a -> %eax) s
+5 84 M
+(    movslq %eax, %rax               # %eax => %rax) s
+5 73 M
+(    movq   %rax, 16\(%rdi, %rcx, 8\)  # s.vv2[i] = a + d;) s
+5 51 M
+(    incl i\(%rbp\)) s
+5 40 M
+(    jmp  for1) s
+5 18 M
+(finefor1:) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 3 def
+/fname (printable/es1.s) def
+/fdir (printable) def
+/ftail (es1.s) def
+% User defined strings:
+/fmodstr (Tue Sep 17 15:21:21 2019) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    leave                           # movq %rsp, %rbp; popq %rbp) s
+5 755 M
+(    ret) s
+5 733 M
+(#*******************************************************************************) s
+5 711 M
+(################################################################################) s
+5 700 M
+(# [0]) s
+5 689 M
+(# When it comes to structs memory alignment the following criteria is applied:) s
+5 678 M
+(# "In general, a struct instance will have the alignment of its widest scalar) s
+5 667 M
+(#  member. Compilers do this as the easiest way to ensure that all the members) s
+5 656 M
+(#  are self-aligned for fast access".) s
+5 645 M
+(# In this case the struct will have 8-byte alignment because it contains a field) s
+5 634 M
+(# of type long.) s
+5 623 M
+(#) s
+5 612 M
+(# Primitive data types typical alignments:) s
+5 601 M
+(#  - A char \(one byte\) will be 1-byte aligned.) s
+5 590 M
+(#  - A short \(two bytes\) will be 2-byte aligned.) s
+5 579 M
+(#  - An int \(four bytes\) will be 4-byte aligned.) s
+5 568 M
+(#  - A long \(eight bytes\) will be 8-byte aligned.) s
+5 557 M
+(#  - Any pointer \(eight bytes\) will be 8-byte aligned.) s
+5 546 M
+(################################################################################) s
 _R
 S
 %%Trailer
-%%Pages: 1
+%%Pages: 3
 %%DocumentNeededResources: font Courier-Bold Courier 
 %%EOF

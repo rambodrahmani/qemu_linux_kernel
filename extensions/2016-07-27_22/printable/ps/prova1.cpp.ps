@@ -3,7 +3,7 @@
 %%Title: Enscript Output
 %%For: Rambod Rahmani
 %%Creator: GNU Enscript 1.6.6
-%%CreationDate: Thu Sep 19 15:08:36 2019
+%%CreationDate: Thu Sep 19 15:16:17 2019
 %%Orientation: Portrait
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -452,34 +452,80 @@ gs_languagelevel 1 gt {
 _S
 24 24 translate
 /pagenum 1 def
-/fname (printable/costanti.h) def
+/fname (printable/prova1.cpp) def
 /fdir (printable) def
-/ftail (costanti.h) def
+/ftail (prova1.cpp) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:53 2019) def
+/fmodstr (Mon Sep 16 15:05:01 2019) def
 /pagenumstr (1) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(// EXTENSION 2016-07-06) s
-5 744 M
 (/**) s
+5 755 M
+( * File: prova1.cpp) s
+5 744 M
+( *       This file contains a developer harness test for es1.s.) s
 5 733 M
-( * Interrupt type declaration for primitive ceread\(\).) s
+( *) s
 5 722 M
-( * This interrupt type is the one called by the primitive implementation in) s
+( *       Compile with:) s
 5 711 M
-( * utente/utente.s and must be handled in io/io.s.) s
+( *          g++ -o es1 -fno-elide-constructors es1.s prova1.cpp) s
 5 700 M
-( */) s
+( *) s
 5 689 M
-(#define IO_TIPO_CEREAD          0x79) s
+( *       Test your result with:) s
+5 678 M
+( *          ./es1 | diff - es1.out) s
 5 667 M
-(#define IO_TIPO_CEWRITE         0x7a) s
+( *) s
+5 656 M
+( * Author: Rambod Rahmani <rambodrahmani@autistici.org>) s
 5 645 M
-(// EXTENSION 2016-07-06) s
+( *         Created on 14/09/2019.) s
+5 634 M
+( */) s
+5 612 M
+(#include "cc.h") s
+5 590 M
+(/**) s
+5 579 M
+( * Developer harness test.) s
+5 568 M
+( *) s
+5 557 M
+( * @param   argc    command line arguments counter.) s
+5 546 M
+( * @param   argv    command line arguments.) s
+5 535 M
+( *) s
+5 524 M
+( * @return          execution exit code.) s
+5 513 M
+( */) s
+5 502 M
+(int main\(int argc, char * argv[]\)) s
+5 491 M
+({) s
+5 480 M
+(    st s = { 1,2,3,4, 1,2,3,4 };) s
+5 458 M
+(    char v[4] = {10,11,12,13 };) s
+5 436 M
+(    int d = 2;) s
+5 414 M
+(    cl cc1\(v\);) s
+5 392 M
+(    cc1.stampa\(\);) s
+5 370 M
+(    cc1.elab1\(s, d\);) s
+5 348 M
+(    cc1.stampa\(\);) s
+5 337 M
+(}) s
 _R
 S
 %%Trailer

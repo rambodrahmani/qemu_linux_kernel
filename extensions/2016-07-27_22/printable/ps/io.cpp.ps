@@ -3,7 +3,7 @@
 %%Title: Enscript Output
 %%For: Rambod Rahmani
 %%Creator: GNU Enscript 1.6.6
-%%CreationDate: Thu Sep 19 15:08:37 2019
+%%CreationDate: Thu Sep 19 15:16:17 2019
 %%Orientation: Portrait
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -456,126 +456,130 @@ _S
 /fdir (printable) def
 /ftail (io.cpp) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:48 2019) def
+/fmodstr (Thu Sep 19 15:13:18 2019) def
 /pagenumstr (1) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(// SOLUTION 2016-07-06) s
+(//EXTENSION 2016-07-27) s
 5 744 M
 (/**) s
 5 733 M
-( * CE device descriptor. CE devices are PCI devices and can not work in bus) s
+( * Maximum number of CE device to be loaded at boot.) s
 5 722 M
-( * mastering \(DMA\). Transfers must be handled reading from the RBR register each) s
+( */) s
 5 711 M
-( * byte.) s
-5 700 M
-( */) s
-5 689 M
-(struct des_ce) s
-5 678 M
-({) s
-5 667 M
-(    // control register address) s
-5 656 M
-(    ioaddr iCTL;) s
-5 634 M
-(    // status register address) s
-5 623 M
-(    ioaddr iSTS;) s
-5 601 M
-(    // RBR register address) s
-5 590 M
-(    ioaddr iRBR;) s
-5 568 M
-(    // synchronization semaphore) s
-5 557 M
-(    natl sync;) s
-5 535 M
-(    // mutex semaphor) s
-5 524 M
-(    natl mutex;) s
-5 502 M
-(    // destination buffer virtual address) s
-5 491 M
-(    char * buf;) s
-5 469 M
-(    // number of bytes to be transferred) s
-5 458 M
-(    natl quanti;) s
-5 436 M
-(    // char used to stop the transfer) s
-5 425 M
-(    char stop;) s
-5 414 M
-(};) s
-5 403 M
-(// SOLUTION 2016-07-06) s
-5 381 M
-(// EXTENSION 2016-07-06) s
-5 370 M
-(/**) s
-5 359 M
-( * Maximum number of CE devices to be initialized at boot.) s
-5 348 M
-( */) s
-5 337 M
 (static const int MAX_CE = 16;) s
-5 315 M
+5 689 M
 (/**) s
-5 304 M
-( * CE devices decriptors array.) s
-5 293 M
+5 678 M
+( * The provided buffer for the cedmaread primitive must be aligned to its page,) s
+5 667 M
+( * the number of pages to be transferred must be greater than 0 and smaller) s
+5 656 M
+( * than 10 pages.) s
+5 645 M
 ( */) s
-5 282 M
-(des_ce array_ce[MAX_CE];) s
-5 260 M
+5 634 M
+(static const int MAX_CE_BUF_DES = 10;) s
+5 612 M
 (/**) s
-5 249 M
-( * Next CE device id to be initialized.) s
-5 238 M
-( */) s
-5 227 M
-(natl next_ce;) s
-5 205 M
-(// EXTENSION 2016-07-06) s
-5 183 M
-(// SOLUTION 2016-07-06) s
-5 172 M
-(/**) s
-5 161 M
-( * Called by the IO_TIPO_CEREAD interrupt handler a_ceread in io/io.s.) s
-5 150 M
+5 601 M
+( * The cedmaread primitive will transfer the available bytes to the memory) s
+5 590 M
+( * spaces addressed by a vector of transfer descriptors. The address of the) s
+5 579 M
+( * vector must be placed in the CE device BMPTR register.) s
+5 568 M
 ( *) s
-5 139 M
-( * Retrieves from the RBR register of the given CE device a number of bytes) s
-5 128 M
-( * equal to 'quanti' into the destination buffer. If the stop char is retrieved) s
-5 117 M
-( * the transfer will be stopped before reaching the bytes limit.) s
-5 106 M
-( *) s
-5 95 M
-( * @param  id      CE device id;) s
-5 84 M
-( * @param  buf     destination buffer address;) s
-5 73 M
-( * @param  quanti  number of bytes to retrieve;) s
-5 62 M
-( * @param  stop    stop char.) s
-5 51 M
+5 557 M
+( * Destination buffer descriptor for CE device transfers.) s
+5 546 M
 ( */) s
-5 40 M
-(extern "C" void c_ceread\(natl id, char * buf, natl& quanti, char stop\)) s
-5 29 M
+5 535 M
+(struct ce_buf_des) s
+5 524 M
 ({) s
-5 18 M
-(    // check if the given CE device id is valid) s
+5 513 M
+(    // memory location physical address) s
+5 502 M
+(    natl addr;) s
+5 480 M
+(    // memory location length) s
+5 469 M
+(    natw len;) s
+5 447 M
+(    // set to 1 if this is the last descriptor) s
+5 436 M
+(    natb eod;) s
+5 414 M
+(    // set to 1 by the CE device if all internal bytes have been transferred) s
+5 403 M
+(    // till this buffer descriptor) s
+5 392 M
+(    natb eot;) s
+5 381 M
+(};) s
+5 359 M
+(/**) s
+5 348 M
+( * CE Device descriptor.) s
+5 337 M
+( *) s
+5 326 M
+( * Ce devices are capable of working in bus mastering. Each device stores a) s
+5 315 M
+( * certain amount if bytes and when the CMD register is set to 1 it will try) s
+5 304 M
+( * and move them to the memory space in Bus Mastering \(DMA\). It is not possible) s
+5 293 M
+( * to know the number of stored bytes. The bytes will be transferred to a) s
+5 282 M
+( * sequence of memory locations addressed by a vector of transfers descriptors) s
+5 271 M
+( * \(ce_buf_des\) addressed in BMPTR. Each descriptor must provide a starting) s
+5 260 M
+( * physical destination address and a length. The device will entirely use all) s
+5 249 M
+( * available memory locations until all its internal bytes have been) s
+5 238 M
+( * transferred. If the provided transfer descriptors does not provide enough) s
+5 227 M
+( * memory locations for all the available bytes, the remaining data will be lost) s
+5 216 M
+( * in the transfer. Anyway, the CE device will send an interrupt request the) s
+5 205 M
+( * transfer operation is complited \(either because there are no more bytes to) s
+5 194 M
+( * be transferred or memory locations available\). Interrupt requests will always) s
+5 183 M
+( * be enabled and reading from the status register will work as interrupt ak.) s
+5 172 M
+( */) s
+5 161 M
+(struct des_ce) s
+5 150 M
+({) s
+5 139 M
+(    // BMPTR register address) s
+5 128 M
+(        natw iBMPTR;) s
+5 106 M
+(    // command register address) s
+5 95 M
+(    natw iCMD;) s
+5 73 M
+(    // status register address) s
+5 62 M
+(    natw iSTS;) s
+5 40 M
+(    // synchronization semaphore) s
+5 29 M
+(        natl sync;) s
 5 7 M
-(    if \(id >= next_ce\)) s
+(    // mutex semaphore) s
 _R
 S
 %%Page: (2) 2
@@ -587,118 +591,128 @@ _S
 /fdir (printable) def
 /ftail (io.cpp) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:48 2019) def
+/fmodstr (Thu Sep 19 15:13:18 2019) def
 /pagenumstr (2) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(    {) s
-5 755 M
-(        // if not, print a warning log message) s
+(        natl mutex;) s
 5 744 M
-(        flog\(LOG_WARN, "CE Device %d does not exit."\);) s
-5 722 M
-(        // abort current process under execution) s
+(    // destination buffers descriptors) s
+5 733 M
+(        ce_buf_des buf_des[MAX_CE_BUF_DES];) s
 5 711 M
-(        abort_p\(\);) s
-5 700 M
-(    }) s
-5 678 M
-(    // retrieve CE device descriptor) s
-5 667 M
-(    des_ce *c = &array_ce[id];) s
-5 645 M
-(    // wait for the CE device mutex) s
-5 634 M
-(    sem_wait\(c->mutex\);) s
-5 612 M
-(    // set destination buffer address) s
-5 601 M
-(    c->buf = buf;) s
-5 579 M
-(    // set number of bytes to be transferred) s
-5 568 M
-(    c->quanti = quanti;) s
-5 546 M
-(    // set stop char) s
-5 535 M
-(    c->stop = stop;) s
-5 513 M
-(    // write to the control register: enable interrupt requests) s
-5 502 M
-(    outputb\(1, c->iCTL\);) s
-5 480 M
-(    // wait for the synchronization sempahore: set in estern_ce) s
-5 469 M
-(    sem_wait\(c->sync\);) s
-5 447 M
-(    // set number of bytes actually transferred) s
-5 436 M
-(    quanti -= c->quanti;) s
-5 414 M
-(    // signal mutex semaphore) s
-5 403 M
-(    sem_signal\(c->mutex\);) s
-5 392 M
-(}) s
-5 370 M
+(} __attribute__\(\(aligned\(128\)\)\);) s
+5 689 M
 (/**) s
-5 359 M
-( * Called everytime the CE device having the given id sends an interrupt) s
-5 348 M
-( * request.) s
-5 337 M
-( *) s
-5 326 M
-( * @param  id  the id of the CE device sending the interrupt request.) s
-5 315 M
+5 678 M
+( * Initialized CE devices decriptors.) s
+5 667 M
 ( */) s
-5 304 M
-(extern "C" void estern_ce\(int id\)) s
-5 293 M
+5 656 M
+(des_ce array_ce[MAX_CE];) s
+5 634 M
+(/**) s
+5 623 M
+( * Number of initialized CE devices.) s
+5 612 M
+( */) s
+5 601 M
+(natl next_ce;) s
+5 579 M
+(// EXTENSION 2016-07-27) s
+5 557 M
+(// SOLUTION 2016-07-27) s
+5 535 M
+(/**) s
+5 524 M
+( * Starts the transfers from the CE device having the given ID. The transfers) s
+5 513 M
+( * are executed by the PCI device in Bus Mastering \(DMA\) using the given buffer) s
+5 502 M
+( * descriptor array. The CE device will send an interrupt request when the) s
+5 491 M
+( * transfers are done. The estern_ce method will handle such interrupt request) s
+5 480 M
+( * and set the synchronization semaphore.) s
+5 469 M
+( *) s
+5 458 M
+( * When the synchronization semaphore is set, al DMA transfers have been) s
+5 447 M
+( * completed and we can loop through available buffer descriptors to) s
+5 436 M
+( * count the number of bytes actually transferred and check if any of them) s
+5 425 M
+( * contains the eot flag.) s
+5 414 M
+( *) s
+5 403 M
+( * The user will provide a virtual address in 'buf' and a number of bytes to be) s
+5 392 M
+( * read. We will have to create the buffer descriptors \(ce_buf_des\) array) s
+5 381 M
+( * manually.) s
+5 370 M
+( */) s
+5 359 M
+(extern "C" bool c_cedmaread\(natl id, natl& quanti, char *buf\)) s
+5 348 M
 ({) s
-5 282 M
-(    // retrieve CE device descriptor) s
-5 271 M
-(    des_ce *c = &array_ce[id];) s
-5 249 M
-(    // RBR register temp destination buffer) s
-5 238 M
-(    natb b;) s
-5 216 M
-(    // this infinite for loop is needed because once the wfi\(\) is done sending) s
-5 205 M
-(    // the EOI to the APIC it will also schedule a new process; when a new) s
-5 194 M
-(    // interrupt request is received from this ce device this process will wake) s
-5 183 M
-(    // up again and start from where it was ended: without the for loop the) s
-5 172 M
-(    // function will just end resulting in a dead lock) s
-5 161 M
-(    for \(;;\)) s
-5 150 M
+5 337 M
+(    // check if the given id is valid) s
+5 326 M
+(    if \(id >= next_ce\)) s
+5 315 M
 (    {) s
-5 139 M
-(        // stop CE device interrupt requests) s
+5 304 M
+(        // print warning log message) s
+5 293 M
+(        flog\(LOG_WARN, "CE device not found: %d", id\);) s
+5 271 M
+(        //) s
+5 260 M
+(        abort_p\(\);) s
+5 249 M
+(    }) s
+5 227 M
+(    // check if the buffer is aligned to the page: to check the alignment we use) s
+5 216 M
+(    // a bitwise AND wich will return true if at least one of the last 12 least) s
+5 205 M
+(    // significant bits is not equal to zero in which case the given address is) s
+5 194 M
+(    // not a multiple of 4096 \(the page size\)) s
+5 183 M
+(    if \(\(natq\)buf & 0xfff\)) s
+5 172 M
+(    {) s
+5 161 M
+(        // print warning log message) s
+5 150 M
+(        flog\(LOG_WARN, "Address %x not aligned to the page.", buf\);) s
 5 128 M
-(        outputb\(0, c->iCTL\);) s
+(        // abort current process under execution) s
+5 117 M
+(        abort_p\(\);) s
 5 106 M
-(        // read RBR register content: interrupt request ak) s
-5 95 M
-(        inputb\(c->iRBR, b\);) s
+(        }) s
+5 84 M
+(    // check if the number of bytes to be transferred is greater than zero and) s
 5 73 M
-(        // write transferred byte) s
+(    // smaller than 10 pages) s
 5 62 M
-(        *c->buf++ = b;) s
+(    if \(quanti == 0 || quanti > MAX_CE_BUF_DES * 4096\)) s
+5 51 M
+(    {) s
 5 40 M
-(        // decrease number of bytes to be transferred) s
+(        // if so, print warning log message) s
 5 29 M
-(        c->quanti--;) s
+(        flog\(LOG_WARN, "Invalid value for transfer bytes: %d", quanti\);) s
 5 7 M
-(        // check if either the number of bytes to be transferred has been) s
+(        // abort current process under execution) s
 _R
 S
 %%Page: (3) 3
@@ -710,124 +724,114 @@ _S
 /fdir (printable) def
 /ftail (io.cpp) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:48 2019) def
+/fmodstr (Thu Sep 19 15:13:18 2019) def
 /pagenumstr (3) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(        // reached or the stop char has been retrieved) s
+(        abort_p\(\);) s
 5 755 M
-(        if \(c->quanti == 0 || b == c->stop\)) s
-5 744 M
-(        {) s
-5 733 M
-(            // if so, signal synchronization semaphore) s
-5 722 M
-(            sem_signal\(c->sync\);) s
-5 711 M
-(                }) s
-5 700 M
-(        else) s
-5 689 M
-(        {) s
-5 678 M
-(            // otherwise, enable interrupt requests) s
-5 667 M
-(            outputb\(1, c->iCTL\);) s
-5 656 M
-(        }) s
-5 634 M
-(        // send End Of Interrupt to APIC) s
-5 623 M
-(        wfi\(\);) s
-5 612 M
 (    }) s
+5 733 M
+(    // retrieve pointer to the CE device descriptor) s
+5 722 M
+(    des_ce *ce = &array_ce[id];) s
+5 700 M
+(    // wait for CE device mutex semaphore) s
+5 689 M
+(    sem_wait\(ce->mutex\);) s
+5 667 M
+(    // print log message for debugging purposes) s
+5 656 M
+(    flog\(LOG_DEBUG, "virt %p len %d", buf, quanti\);) s
+5 634 M
+(    // last buffer descriptor index) s
+5 623 M
+(    int i;) s
 5 601 M
-(}) s
+(    // loop through available buffer descriptors and until the number of bytes) s
 5 590 M
-(//   SOLUZIONE 2016-07-06 \)) s
+(    // to be transferred is reached) s
+5 579 M
+(    for \(i = 0; i < MAX_CE_BUF_DES && quanti; i++\)) s
 5 568 M
-(// EXTENSION 2016-07-06) s
-5 557 M
-(/**) s
-5 546 M
-( * Initializes the CE devices on the PCI bus. Called at the end of the I/O) s
-5 535 M
-( * module initialization.) s
-5 524 M
-( */) s
-5 513 M
-(bool ce_init\(\)) s
-5 502 M
-({) s
-5 491 M
-(    // loop through the PCI bus devices) s
-5 480 M
-(    for \(natb bus = 0, dev = 0, fun = 0;) s
-5 469 M
-(         pci_find_dev\(bus, dev, fun, 0xedce, 0x1234\);) s
-5 458 M
-(         pci_next\(bus, dev, fun\)\)) s
-5 447 M
 (    {) s
-5 436 M
-(        // check the number of retrieved CE devices) s
-5 425 M
-(        if \(next_ce >= MAX_CE\)) s
-5 414 M
+5 557 M
+(        // retrieve number of bytes to be transferred) s
+5 546 M
+(        natw len = quanti;) s
+5 524 M
+(        // check if len is not bigger than the page size) s
+5 513 M
+(        if \(len > 4096\)) s
+5 502 M
 (        {) s
-5 403 M
-(            // print warning log message) s
-5 392 M
-(                flog\(LOG_WARN, "Too many CE devices."\);) s
-5 370 M
-(            // exit for loop) s
-5 359 M
-(            break;) s
-5 348 M
+5 491 M
+(            // otherwise decrease it to the page size) s
+5 480 M
+(            len = 4096;) s
+5 469 M
 (        }) s
-5 326 M
-(        // retrieve pointer to available CE device descriptor) s
+5 447 M
+(        // set i-th buffer descriptor physical address) s
+5 436 M
+(        ce->buf_des[i].addr = \(natq\)trasforma\(buf\);) s
+5 414 M
+(        // set i-th buffer descriptor transfer length \(bytes\)) s
+5 403 M
+(        ce->buf_des[i].len = len;) s
+5 381 M
+(        // set i-th buffer descriptor eot and eod to 0) s
+5 370 M
+(        ce->buf_des[i].eot = ce->buf_des[i].eod = 0;) s
+5 348 M
+(        // decrease number of bytes to be transferred) s
+5 337 M
+(        quanti -= len;) s
 5 315 M
-(        des_ce *ce = &array_ce[next_ce];) s
-5 293 M
-(        // retrieve base register content) s
+(        // increase buffer virtual address by the bytes transferred) s
+5 304 M
+(        buf += len;) s
 5 282 M
-(        natw base = pci_read_confl\(bus, dev, fun, 0x10\);) s
+(        // print log message for debugging purposes) s
+5 271 M
+(        flog\(LOG_DEBUG, "des[%d] addr %x len %d", i, ce->buf_des[i].addr, ce->buf_des[i].) s
 5 260 M
-(        // set bit n.0 to 0: retrieve base register address) s
+(len\);) s
 5 249 M
-(        base &= ~0x1;) s
+(    }) s
 5 227 M
-(        // set control register address: base) s
+(    // set the last buffer descriptor eod) s
 5 216 M
-(        ce->iCTL = base;) s
+(    ce->buf_des[i - 1].eod = 1;) s
 5 194 M
-(        // set status register address: base + 4) s
+(    // write to the command register: start transfer in BUS Mastering: DMA) s
 5 183 M
-(        ce->iSTS = base + 4;) s
+(    outputl\(1, ce->iCMD\);) s
 5 161 M
-(        // set RBR register address: base + 8) s
+(    // wait for the synchronization semaphore: set by estern_ce) s
 5 150 M
-(        ce->iRBR = base + 8;) s
+(    sem_wait\(ce->sync\);) s
 5 128 M
-(        // initialize synchronization semaphore) s
+(    // clear bytes to be transferred) s
 5 117 M
-(        ce->sync = sem_ini\(0\);) s
+(    quanti = 0;) s
 5 95 M
-(        // initialize mutex sempahore) s
+(    //) s
 5 84 M
-(        ce->mutex = sem_ini\(1\);) s
+(    int j;) s
 5 62 M
-(        // retrieve PCI device APIC pin) s
+(    // completition flag) s
 5 51 M
-(        natb irq = pci_read_confb\(bus, dev, fun, 0x3c\);) s
+(    bool complete = false;) s
 5 29 M
-(        // activate external process) s
+(    // loop through CE device available buffer descriptors) s
 5 18 M
-(        activate_pe\(estern_ce, next_ce, PRIO, LIV, irq\);) s
+(    for \(j = 0; j < i; j++\)) s
+5 7 M
+(    {) s
 _R
 S
 %%Page: (4) 4
@@ -839,109 +843,331 @@ _S
 /fdir (printable) def
 /ftail (io.cpp) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:11:48 2019) def
+/fmodstr (Thu Sep 19 15:13:18 2019) def
 /pagenumstr (4) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 do_header
 5 766 M
-(        // log CE device info) s
+(        // count transferred bytes for each buffer descriptor to be returned to) s
 5 755 M
-(        flog\(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, ) s
+(        // the caller) s
 5 744 M
-(irq\);) s
+(        quanti += ce->buf_des[j].len;) s
 5 722 M
-(        // increase CE devices counter) s
+(        // check if the eot is set \(all bytes available transferred\)) s
 5 711 M
-(        next_ce++;) s
+(        if \(ce->buf_des[j].eot\)) s
 5 700 M
-(    }) s
+(        {) s
+5 689 M
+(            // set completition flag to be returned) s
 5 678 M
-(    // return true: initialization successful) s
-5 667 M
-(    return true;) s
+(            complete = true;) s
 5 656 M
-(}) s
+(            // exit for loop) s
 5 645 M
-(// EXTENSION 2016-07-06) s
-5 623 M
-(////////////////////////////////////////////////////////////////////////////////) s
-5 612 M
-(//                 INIZIALIZZAZIONE DEL SOTTOSISTEMA DI I/O                   //) s
-5 601 M
-(////////////////////////////////////////////////////////////////////////////////) s
-5 579 M
-(// inizializza i gate usati per le chiamate di IO) s
-5 568 M
-(//) s
-5 557 M
-(extern "C" void fill_io_gates\(void\);) s
-5 535 M
-(extern "C" natl end;) s
-5 524 M
-(// eseguita in fase di inizializzazione) s
-5 513 M
-(//) s
-5 502 M
-(extern "C" void cmain\(int sem_io\)) s
-5 491 M
-({) s
-5 469 M
-(        fill_io_gates\(\);) s
-5 458 M
-(        mem_mutex = sem_ini\(1\);) s
-5 447 M
-(        if \(mem_mutex == 0xFFFFFFFF\) {) s
-5 436 M
-(                flog\(LOG_ERR, "impossible creare semaforo mem_mutex"\);) s
-5 425 M
-(                abort_p\(\);) s
-5 414 M
+(            break;) s
+5 634 M
 (        }) s
+5 623 M
+(    }) s
+5 601 M
+(    // notify mutex semaphore) s
+5 590 M
+(    sem_signal\(ce->mutex\);) s
+5 568 M
+(    // return completition flag) s
+5 557 M
+(    return complete;) s
+5 546 M
+(}) s
+5 524 M
+(/**) s
+5 513 M
+( * Called everytime an interrupt request from the CE device having the given id) s
+5 502 M
+( * is accepted.) s
+5 491 M
+( *) s
+5 480 M
+( * @param  id  CE device id.) s
+5 469 M
+( */) s
+5 458 M
+(extern "C" void estern_ce\(int id\)) s
+5 447 M
+({) s
+5 436 M
+(    // retrieve CE device descriptor) s
+5 425 M
+(    des_ce *ce = &array_ce[id];) s
 5 403 M
-(        unsigned long long end_ = \(unsigned long long\)&end;) s
+(    // input byte buffer) s
 5 392 M
-(        end_ = \(end_ + DIM_PAGINA - 1\) & ~\(DIM_PAGINA - 1\);) s
-5 381 M
-(        heap_init\(\(void *\)end_, DIM_IO_HEAP\);) s
+(    natl b;) s
 5 370 M
-(        if \(!console_init\(\)\)) s
+(    // this infinite for loop is needed because once the wfi\(\) is done sending) s
 5 359 M
-(                abort_p\(\);) s
+(    // the EOI to the APIC it will also schedule a new process; when a new) s
 5 348 M
-(        if \(!com_init\(\)\)) s
+(    // interrupt request is received from this ce device this process will wake) s
 5 337 M
-(                abort_p\(\);) s
+(    // up again and start from where it was ended: without the for loop the) s
 5 326 M
-(        if \(!hd_init\(\)\)) s
+(    // function will just end resulting in a dead lock) s
 5 315 M
-(                abort_p\(\);) s
-5 293 M
-(// EXTENSION 2016-07-06) s
-5 271 M
-(    // initialize CE devices) s
-5 260 M
-(    if \(!ce_init\(\)\)) s
-5 249 M
+(    for \(;;\)) s
+5 304 M
 (    {) s
-5 238 M
-(        // abort the current process if the initialization does not succeed) s
+5 293 M
+(        // read CE device status register: interrupt request ak) s
+5 282 M
+(        inputl\(ce->iSTS, b\);) s
+5 260 M
+(        // notify synchronization sempahore: all transfers completed) s
+5 249 M
+(        sem_signal\(ce->sync\);) s
 5 227 M
-(        abort_p\(\);) s
+(        // send EOI to the APIC and schedule a new process) s
 5 216 M
+(        wfi\(\);) s
+5 205 M
 (    }) s
 5 194 M
-(// EXTENSION 2016-07-06) s
-5 172 M
-(        sem_signal\(sem_io\);) s
+(}) s
+5 183 M
+(// SOLUTION 2016-07-27) s
 5 161 M
+(// EXTENSION 2016-07-27) s
+5 139 M
+(/**) s
+5 128 M
+( * Initializes the CE device. Called at the end of the I/O module) s
+5 117 M
+( * initialization.) s
+5 106 M
+( *) s
+5 95 M
+( * Loops through all PCI devices available on bus 0 and looks for those having) s
+5 84 M
+( * vendor ID 0xedce and device ID 0x1234. A maximum of MAX_CE devices can be) s
+5 73 M
+( * initialized: the remaining ones will simply be ignored.) s
+5 62 M
+( */) s
+5 51 M
+(bool ce_init\(\)) s
+5 40 M
+({) s
+5 29 M
+(    // loop through PCI bus device having the required vendor and device id) s
+5 18 M
+(    for \(natb bus = 0, dev = 0, fun = 0;) s
+5 7 M
+(         pci_find_dev\(bus, dev, fun, 0xedce, 0x1234\);) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 5 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 15:13:18 2019) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(         pci_next\(bus, dev, fun\)) s
+5 755 M
+(        \)) s
+5 744 M
+(    {) s
+5 733 M
+(        // check if more CE devices can be initialized) s
+5 722 M
+(        if \(next_ce >= MAX_CE\)) s
+5 711 M
+(        {) s
+5 700 M
+(            // print warning lo message: maximum number of CE devices exceeded) s
+5 689 M
+(            flog\(LOG_WARN, "Too many CE devices."\);) s
+5 667 M
+(            // exit for loop) s
+5 656 M
+(            break;) s
+5 645 M
+(        }) s
+5 623 M
+(        // retrieve next available CE device descriptor) s
+5 612 M
+(        des_ce *ce = &array_ce[next_ce];) s
+5 590 M
+(        // retrieve base register content) s
+5 579 M
+(        natw base = pci_read_confl\(bus, dev, fun, 0x10\);) s
+5 557 M
+(        // set bit n.0 to 0: retrieve base register address) s
+5 546 M
+(        base &= ~0x1;) s
+5 524 M
+(        // set BMPTR register address: base address) s
+5 513 M
+(        ce->iBMPTR = base;) s
+5 491 M
+(        // set command register address: base address + 4) s
+5 480 M
+(        ce->iCMD = base + 4;) s
+5 458 M
+(        // set status register address: base address + 8) s
+5 447 M
+(        ce->iSTS = base + 8;) s
+5 425 M
+(        // initialize synchronization semaphore) s
+5 414 M
+(        ce->sync = sem_ini\(0\);) s
+5 392 M
+(        // initialize mutex semaphore) s
+5 381 M
+(        ce->mutex = sem_ini\(1\);) s
+5 359 M
+(        // retrieve CE device APIC pin number) s
+5 348 M
+(        natb irq = pci_read_confb\(bus, dev, fun, 0x3c\);) s
+5 326 M
+(        // retrieve physical address of the destination buffers descriptors) s
+5 315 M
+(        addr iff = trasforma\(&ce->buf_des[0]\);) s
+5 293 M
+(        // write destination buffers descriptor to the BMPTR register) s
+5 282 M
+(        outputl\(reinterpret_cast<natq>\(iff\), ce->iBMPTR\);) s
+5 260 M
+(        // activate external process for the APIC pin) s
+5 249 M
+(        activate_pe\(estern_ce, next_ce, PRIO, LIV, irq\);) s
+5 227 M
+(        // print log message containing the CE device info) s
+5 216 M
+(        flog\(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, ) s
+5 205 M
+(irq\);) s
+5 183 M
+(        // increase CE device counter) s
+5 172 M
+(        next_ce++;) s
+5 161 M
+(    }) s
+5 139 M
+(    // return true: initialization succeeded) s
+5 128 M
+(    return true;) s
+5 117 M
+(}) s
+5 95 M
+(// EXTENSION 2016-07-27) s
+5 73 M
+(////////////////////////////////////////////////////////////////////////////////) s
+5 62 M
+(//                 INIZIALIZZAZIONE DEL SOTTOSISTEMA DI I/O                   //) s
+5 51 M
+(////////////////////////////////////////////////////////////////////////////////) s
+5 29 M
+(// inizializza i gate usati per le chiamate di IO) s
+5 18 M
+(//) s
+5 7 M
+(extern "C" void fill_io_gates\(void\);) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 6 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Thu Sep 19 15:13:18 2019) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(extern "C" natl end;) s
+5 744 M
+(// eseguita in fase di inizializzazione) s
+5 733 M
+(//) s
+5 722 M
+(extern "C" void cmain\(int sem_io\)) s
+5 711 M
+({) s
+5 689 M
+(        fill_io_gates\(\);) s
+5 678 M
+(        mem_mutex = sem_ini\(1\);) s
+5 667 M
+(        if \(mem_mutex == 0xFFFFFFFF\) {) s
+5 656 M
+(                flog\(LOG_ERR, "impossible creare semaforo mem_mutex"\);) s
+5 645 M
+(                abort_p\(\);) s
+5 634 M
+(        }) s
+5 623 M
+(        unsigned long long end_ = \(unsigned long long\)&end;) s
+5 612 M
+(        end_ = \(end_ + DIM_PAGINA - 1\) & ~\(DIM_PAGINA - 1\);) s
+5 601 M
+(        heap_init\(\(void *\)end_, DIM_IO_HEAP\);) s
+5 590 M
+(        if \(!console_init\(\)\)) s
+5 579 M
+(                abort_p\(\);) s
+5 568 M
+(        if \(!com_init\(\)\)) s
+5 557 M
+(                abort_p\(\);) s
+5 546 M
+(        if \(!hd_init\(\)\)) s
+5 535 M
+(                abort_p\(\);) s
+5 513 M
+(// EXTENSION 2016-07-27) s
+5 491 M
+(    // initialize CE device) s
+5 480 M
+(    if \(!ce_init\(\)\)) s
+5 469 M
+(    {) s
+5 458 M
+(        // abort current process if the initialization does not succeed) s
+5 447 M
+(        abort_p\(\);) s
+5 436 M
+(    }) s
+5 414 M
+(// EXTENSION 2016-07-27) s
+5 392 M
+(        sem_signal\(sem_io\);) s
+5 381 M
 (        terminate_p\(\);) s
-5 150 M
+5 370 M
 (}) s
 _R
 S
 %%Trailer
-%%Pages: 4
+%%Pages: 6
 %%DocumentNeededResources: font Courier-Bold Courier 
 %%EOF

@@ -3,7 +3,7 @@
 %%Title: Enscript Output
 %%For: Rambod Rahmani
 %%Creator: GNU Enscript 1.6.6
-%%CreationDate: Thu Sep 19 14:19:06 2019
+%%CreationDate: Thu Sep 19 15:08:37 2019
 %%Orientation: Portrait
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -456,7 +456,7 @@ _S
 /fdir (printable) def
 /ftail (io.s) def
 % User defined strings:
-/fmodstr (Thu Sep 19 14:14:17 2019) def
+/fmodstr (Thu Sep 19 15:06:16 2019) def
 /pagenumstr (1) def
 /user_header_p false def
 /user_footer_p false def
@@ -487,12 +487,14 @@ do_header
 5 601 M
 (    cavallo_di_troia2 %rdx $4       # quanti will contain a integer \(4 bytes\)) s
 5 590 M
-(    cavallo_di_troia2 %rsi \(%rdx\)   # check the buffer entire length) s
+(    movl \(%rdx\), %r9d                           # move buffer length and zero out r9) s
 5 579 M
-(    call c_ceread                   # call C++ int. primitive implementation) s
+(    cavallo_di_troia2 %rsi %r9      # check the buffer entire length) s
 5 568 M
+(    call c_ceread                   # call C++ int. primitive implementation) s
+5 557 M
 (    iretq                           # return from interrupt) s
-5 546 M
+5 535 M
 (# SOLUTION 2016-07-06) s
 _R
 S
