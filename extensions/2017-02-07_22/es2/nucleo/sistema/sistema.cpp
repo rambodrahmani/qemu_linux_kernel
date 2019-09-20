@@ -1466,6 +1466,49 @@ void undo_res(natq start, natq stop, int i)
 //   ESAME 2017-02-07 )
 
 // ( SOLUZIONE 2017-02-07
+extern "C" void c_resident(addr start, natq s)
+{
+	natl proc = esecuzione->id, id;
+	int i;
+	vaddr v, a = reinterpret_cast<vaddr>(start), b = a + s - 1;
+	des_proc *self = des_p(proc);
+
+	self->contesto[I_RAX] = 0xFFFFFFFF;
+
+	if (a < ini_utn_p || a + s < a /* overflow */ || a + s >= fin_utn_p) {
+		flog(LOG_WARN, "parametri non validi: %p, %p", a, s);
+		c_abort_p();
+		return;
+	}
+	for (i = 3; i >= 0; i--) {
+		vaddr vi = base(a, i);
+		vaddr vf = base(b, i) + dim_region(i);
+		flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
+		for (v = vi; v != vf; v += dim_region(i)) {
+			tab_entry& d = get_des(proc, i + 1, v);
+			des_frame *ppf;
+			if (!extr_P(d)) {
+				ppf = swap(proc, i, v);
+				if (!ppf)
+					goto error;
+			} else {
+				ppf = descrittore_frame(extr_IND_FISICO(d));
+			}
+			ppf->residente++;
+		}
+	}
+	id = alloca_res(a, s);
+	if (id == 0xffffffff)
+		goto error;
+
+	self->contesto[I_RAX] = id;
+	return;
+	
+error:
+	for (int j = 3; j >= i + 1; j--)
+		undo_res(a, a + s, j);
+	undo_res(a, v, i);
+}
 //   SOLUZIONE 2017-02-07 )
 
 // ( ESAME 2017-02-07

@@ -661,23 +661,48 @@ out:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                   FRAME                                    //
+//                                  FRAMES                                    //
 ////////////////////////////////////////////////////////////////////////////////
+// frame = physical memory page
+// page = virtual memory page
 
-// avremo un descrittore di frame per ogni frame della parte M2.  Lo scopo del
-// descrittore e' di contenere alcune informazioni relative al contenuto del
-// frame corrispondente. Tali informazioni servono principalmente a
-// facilitare o rendere possibile il rimpiazzamento del contenuto stesso.
+/**
+ * This structure describes a memory frame.
+ *
+ * The entire available memory of the system is devided into two main blocks:
+ *  M1: contains data structures and subroutines relative to the operating
+ *      system;
+ *  M2: contains the available frames (physical pages) which can be used to
+ *      store paging tables (always permanent) and the user virtual pages.
+ */
 struct des_frame
 {
-	int	livello;	// 0=pagina, -1=libera, >0=livello tabella
-	bool	residente;	// pagina residente o meno
-	// identificatore del processo a cui appartiene l'entita'
-	// contenuta nel frame.
-	natl	processo;
-	natl	contatore;	// contatore per le statistiche
+    /**
+     * Each memory frame can contain 
+     * -1 = free
+     *  0 = page
+     * >0 = table
+     */
+    int	livello;
+
+    /**
+     * Permanent or removable page.
+     */
+    bool residente;
+
+    /**
+     * Frame content owner process ID.
+     */
+    natl processo;
+
+    /**
+     * Statistics counter.
+     */
+	natl contatore;
+
 	// blocco da cui l'entita' contenuta nel frame era stata caricata
-	natq	ind_massa;
+	natq ind_massa;
+
 	// per risparmiare un po' di spazio uniamo due campi che
 	// non servono mai insieme:
 	// - ind_virtuale serve solo se il frame e' occupato
@@ -694,11 +719,25 @@ struct des_frame
 	};
 };
 
-des_frame* vdf;		// vettore di descrittori di frame
-			// (allocato in M1, si veda init_dpf())
-faddr primo_frame_utile;	// indirizzo fisico del primo frame di M2
-natq N_DF;			// numero di frame in M2
-des_frame* frame_liberi;	// indice del descrittore del primo frame libero
+/**
+ * Frame descriptors array allocated in M1.
+ */
+des_frame* vdf;
+
+/**
+ * Physical address of the first frame available in the M2 memory.
+ */
+faddr primo_frame_utile;
+
+/**
+ * Number of frames contained in the M2 memory.
+ */
+natq N_DF;
+
+/**
+ * First available frame descriptor pointer.
+ */
+des_frame* frame_liberi;
 
 // dato un indirizzo di un frame restituisce un puntatore al
 // corrispondente descrittore
@@ -772,30 +811,46 @@ des_frame* alloca_frame_libero()
 	return p;
 }
 
-// (* rende di nuovo libera il frame descritto da df
+/**
+ * Frees the given memory frame.
+ *
+ * @param  df  memory descriptor of the frame to be freed.
+ */
 void rilascia_frame(des_frame* df)
 {
-	df->livello = -1;
-	df->prossimo_libero = frame_liberi;
-	frame_liberi = df;
+    df->livello = -1;
+    df->prossimo_libero = frame_liberi;
+    frame_liberi = df;
 }
 
 /**
- *
+ * @param  proc
+ * @param  liv
+ * @param  ind_virtuale
  */
-des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virtuale); // piu' avanti
+des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virtuale);
 
 /**
- *
+ * @param  proc
+ * @param  livello
+ * @param  ind_virt
  */
-des_frame* alloca_frame(natl proc, int livello, vaddr ind_virt); // piu' avanti
+des_frame* alloca_frame(natl proc, int livello, vaddr ind_virt);
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               MEMORY PAGING                                //
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ */
 static const natq BIT_SEGNO = (1UL << 47);
+
+/**
+ *
+ */
 static const natq MASCHERA_MODULO = BIT_SEGNO - 1;
+
 // restituisce la versione normalizzata (16 bit piu' significativi uguali al
 // bit 47) dell'indirizzo a
 static inline vaddr norm(vaddr a)

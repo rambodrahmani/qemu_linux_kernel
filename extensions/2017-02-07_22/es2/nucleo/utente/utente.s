@@ -133,22 +133,34 @@ dmawritehd_n:
 	ret
 	.cfi_endproc
 
-// ( ESAME 2017-02-07
-	.global countres
+# EXTENSION 2017-02-07
+
+##
+# User Primitives definitions.
+##
+
+#-------------------------------------------------------------------------------
+.GLOBAL countres                                   # extern "C" natq countres();
+#-------------------------------------------------------------------------------
 countres:
-	int $TIPO_CRES
-	ret
+    int $TIPO_CRES
+    ret
 
-	.global resident
+#-------------------------------------------------------------------------------
+.GLOBAL resident               # extern "C" natl resident(addr base, natq size);
+#-------------------------------------------------------------------------------
 resident:
-	int $TIPO_RES
-	ret
+    int $TIPO_RES
+    ret
 
-	.global nonresident
+#-------------------------------------------------------------------------------
+.GLOBAL nonresident                      # extern "C" void nonresident(natl id);
+#-------------------------------------------------------------------------------
 nonresident:
-	int $TIPO_NONRES
-	ret
-//   ESAME 2017-02-07 )
+    int $TIPO_NONRES
+    ret
+
+# EXTENSION 2017-02-07
 
 	.global do_log
 do_log:

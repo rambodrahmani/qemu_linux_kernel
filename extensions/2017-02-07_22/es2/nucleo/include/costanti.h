@@ -9,9 +9,16 @@
 #define NUM_TSS 		1024
 #define MIN_PROC_ID		0
 #define MAX_PROC_ID		(NUM_TSS - 1)
+
 // ( ESAME 2017-02-07
-#define MAX_RES			10
+
+/**
+ *
+ */
+#define MAX_RES     10
+
 //   ESAME 2017-02-07 )
+
 // )
 
 // ( varie dimensioni
@@ -77,11 +84,29 @@
 #define TIPO_AB			0x56	// *abort_p
 #define TIPO_L			0x57	// *log
 #define TIPO_TRA		0x58	// trasforma
-// ( ESAME 2017-02-07
-#define TIPO_RES		0x59
-#define TIPO_NONRES		0x5a
-#define TIPO_CRES		0x5b	// conta residenti
-//   ESAME 2017-02-07 )
+
+// EXTENSION 2017-02-07
+
+/**
+ * User module primitives interrupt types definitions.
+ */
+
+/**
+ * natl resident(addr base, natq size);
+ */
+#define TIPO_RES     0x59
+
+/**
+ * void nonresident(natl id);
+ */
+#define TIPO_NONRES  0x5a
+
+/**
+ * natq countres();
+ */
+#define TIPO_CRES    0x5b
+
+// EXTENSION 2017-02-07
 
 #define IO_TIPO_HDR		0x62	// readhd_n
 #define IO_TIPO_HDW		0x63	// writehd_n
