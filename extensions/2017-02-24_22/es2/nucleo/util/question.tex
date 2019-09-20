@@ -1,0 +1,66 @@
+Colleghiamo al sistema delle periferiche PCI di tipo \verb|ce|, con vendorID \verb|0xedce| e deviceID \verb|0x1234|.
+Ogni periferica \verb|ce| usa 32 byte nello spazio di I/O a partire dall'indirizzo base specificato nel
+registro di configurazione BAR0, sia $b$.
+
+La periferiche \verb|ce| sono periferiche di ingresso in grado di operare in PCI Bus Mastering.
+Sono inoltre in grado di eseguire tutte le necessarie trasformazioni da indirizzi virtuali a fisici,
+utilizzando le stesse strutture dati della MMU del processore, purch\`e non incontrino bit P a
+zero durante la traduzione.
+
+I registri accessibili al programmatore, tutti di 4 byte, sono i seguenti:
+\begin{enumerate}
+  \item {\bf VPTRHI} (indirizzo $b$): parte pi\`u significativa dell'indirizzo virtuale di destinazione
+  	(sempre 0 nei sistemi a 32bit);
+  \item {\bf VPTRLO} (indirizzo $b+4$): parte meno significativa dell'indirizzo virtuale di destinazine;
+  \item {\bf CNT}    (indirizzo $b+8$): numero di byte da trasferire;
+  \item {\bf CR3}    (indirizzo $b+12$): indirizzo fisico del direttorio (32bit) o tabella di livello 4 (64bit);
+  \item {\bf STS}    (indirizzo $b+16$): registro di stato;
+  \item {\bf CMD}    (indirizzo $b+20$): registro di comando.
+\end{enumerate}
+Ogni volta che si scrive il valore 1 nel registro CMD, la periferica tenta di scrivere CNT byte in memoria
+a partire dall'indirizzo virtuale contenuto in VPTRHI, VPTRLO. Gli indirizzi verranno tradotti utilizzando
+la tabella di corrispondenza puntata dal registro CR3 dell'interfaccia. Se l'interfaccia incontra degli errori
+durante la traduzione (per es. un bit P a zero), interrompe il traferimento e setta il bit 2 di STS.
+In ogni caso la periferica invia una richiesta di interruzione al completamento dell'operazione
+(o perch\'e non ha pi\`u byte da trasferire, o perch\'e ha riscontrato un errore).
+
+Le interruzioni sono sempre abilitate. La lettura del registro di stato funziona da risposta alle richieste di interruzione.
+
+Modificare i file \verb|io.s| e \verb|io.cpp| in modo da realizzare la primitiva
+\begin{verbatim}
+   bool cedmaread(natl id, natl quanti, char *buf)
+\end{verbatim}
+che permette di leggere \verb|quanti| byte dalla periferica numero \verb|id| (tra quelle di questo tipo), copiandoli
+nel buffer \verb|buf|.  La primitiva restituisce
+\verb|false| se il trasferimento \`e stato interrotto per errori, \verb|true| altrimenti.
+
+Controllare tutti i problemi di Cavallo di Troia.
+
+Per descrivere le periferiche \verb|ce| aggiungiamo le seguenti strutture dati al modulo I/O:
+\begin{verbatim}
+    struct des_ce {
+        natw iVPTRHI, iVPTRLO, iCNT, iCR3, iSTS, iCMd;
+        natl sync;
+        natl mutex;
+        bool error;
+    }; 
+    des_ce array_ce[MAX_CE];
+    natl next_ce;
+\end{verbatim}
+La struttura \verb|des_ce| descrive una periferica di tipo \verb|ce| e contiene al suo interno gli indirizzi
+dei vari registri, l'indice di un semaforo inizializzato a zero (\verb|sync|), l'indice di un semaforo
+inizializzato a 1 (\verb|mutex|) e un booleano per memorizzare il successo o fallimento dell'ultima operazione.
+
+I primi \verb|next_ce| elementi del vettore \verb|array_ce| contengono i descrittori, opportunamente inizializzati,
+delle periferiche di tipo \verb|ce| effettivamente rilevate in fase di avvio del sistema. Ogni periferica \`e identificata
+dall'indice del suo descrittore.
+
+{\bf Nota}: il modulo sistema mette a disposizione del modulo di I/O le primitive 
+\begin{verbatim}
+   natl resident(void addr, natl quanti);
+   void nonresident(natl id);
+\end{verbatim}
+La primitiva \verb|resident()| permette di caricare in memoria e rendere temporaneamente non rimpiazzabili tutte le pagine
+virtuali (e le relative tabelle) che contengono gli indirizzi da \verb|addr| a \verb|addr|+\verb|quanti| (escluso).
+La primitiva restituisce un identificatore di operazione che pu\`o essere successivamente passato a \verb|nonresident()|
+per rendere nuovamente rimpiazzabili le pagine (e le tabelle) in questione. In caso di errore restituisce \verb|0xffffffff|.

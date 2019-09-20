@@ -1,0 +1,883 @@
+diff --git a/ce1.pl b/ce1.pl
+new file mode 100644
+index 0000000..eb66ea6
+--- /dev/null
++++ b/ce1.pl
+@@ -0,0 +1,216 @@
++use JSON::XS;
++use Data::Dumper;
++use IO::Handle;
++
++($dev = $0) =~ s/\.pl$//;
++
++open $in, "<", "$dev.out";
++open $out, ">", "$dev.in";
++open $ain, "<", "${dev}a.out";
++open $aout, ">", "${dev}a.in";
++
++$out->autoflush(1);
++$aout->autoflush(1);
++
++$json = JSON::XS->new;
++
++#$debug = 1;
++
++$config = {
++		bars => [
++			{
++				name => 'ce-io',
++				type => 'io',
++				size => 32,
++			}
++		],
++		'interrupt-pin' => 2
++	};
++
++
++my $VPTRHI;
++my $VPTRLO;
++my $CNT;
++my $CMD;
++my $STS;
++my $pend_intr;
++
++sub dbg {
++	my $msg = shift;
++	if ($debug) {
++		printf "$0: $msg", @_;
++	}
++}
++
++sub send {
++	my ($ch, $msg) = @_;
++	my $r = $json->encode($msg);
++	&dbg("### $0: sending '$r' on $ch\n");
++	if ($ch eq "sync") {
++		print $out "$r\n";
++	} else {
++		print $aout "$r\n";
++	}
++	&dbg("### $0: done sending\n");
++}
++
++sub receive {
++	my $ch = shift || "sync";
++	my $i = \*$in;
++	if ($ch eq "async") {
++		$i = \*$ain;
++	}
++	&dbg("### $0: receiving from $ch\n");
++	while (<$i>) {
++	       	if ($obj = $json->incr_parse($_)) {
++			&dbg("<-" . Dumper($obj));
++			return $obj;
++		}
++	}
++	exit;
++}
++
++
++sub send_ret {
++	my $arg = shift || 0;
++	&send("sync", { return => $arg});
++}
++
++sub send_intr {
++	if (!$pend_intr) {
++		&send("async", { "raise-irq" => 1 });
++		&receive("async");
++		$pend_intr = 1;
++	}
++}
++
++sub clear_intr {
++	if ($pend_intr) {
++		&send("async", { "lower-irq" => 1 });
++		&receive("async");
++		$pend_intr = 0;
++	}
++}
++
++my $next_len = 0;
++
++sub get_des
++{
++	my $p = shift;
++	&send("async", { "dma-read" => { addr => $p, len => 8 } });
++	my $obj = &receive("async");
++	my @a = ();
++	if (!(@a = @{$obj->{'bytes'}})) {
++		&dbg("no bytes?\n");
++		return 0;
++	}
++	my $addr = 0;
++	$a[6] &= 0x0f;
++	$a[1] &= 0xf0;
++	for (my $i = 6; $i >= 1; $i--) {
++		$addr <<= 8;
++		$addr |= $a[$i];
++	}
++	return (int($a[0]), $addr << 8);	
++}
++
++sub translate {
++	my $v = int(shift);
++	my $sh = 36;
++	my $b = int($CR3), $d;
++	for (my $i = 4; $i >= 1; $i--) {
++		($d, $b) = &get_des($b | (($v >> $sh) & 07770));
++		&dbg("translate(%x) lev $i -> access %x, next %x\n", $v, $d, $b);
++		if (!($d & 1)) {
++			return 0;
++		}
++		$sh -= 9;
++	}
++	return $b | ($v & 0xfff);
++}
++
++my $chr = 0;
++sub start_dma {
++	my $v = $VPTRHI << 32 | $VPTRLO;
++	&dbg("### DMA %x+%x CR3=%x\n", $v, $CNT, $CR3);
++	while ($CNT) {
++		my $p = &translate($v);
++		if (!$p) {
++			$STS |= 2;
++			last;
++		}
++		my $next_pag = ($p + 4096) & ~0xfff;
++		$len = $next_pag - $p;
++		$trans = ($len, $CNT)[$CNT < $len];
++		$CNT -= $trans;
++		#dbg("### addr %x - %x len $len trans $trans remain $CNT\n", $v, $p);
++		my $stop = $chr+$trans-1;
++		$reply = {
++			"dma-write" => {
++				addr => int($p),
++				len  => int($trans),
++				bytes => [map { ($_ % 26) + 65 } $chr..$stop],
++			}
++		};
++		$chr = $stop;
++		&send("async", $reply);
++		&receive("async");
++		$v += $trans;
++	}
++	&send_intr;
++}
++
++while (1) {
++	$obj = &receive;
++	if ($$obj{'get-config'}) {
++		&send("sync", $config);
++		&send_ret;
++	} elsif ($i = $$obj{'write'}) {
++		$a = $i->{'addr'};
++		$s = $i->{'size'};
++		$v = $i->{'val'};
++		&send_ret if  ($s != 4);
++		&dbg("### $0: writing $v at $a\n");
++		my $dma = 0;
++		if ($a == 0) {
++			$VPTRHI = $v;
++		} elsif ($a == 4) {
++			$VPTRLO = $v;
++		} elsif ($a == 8) {
++			$CNT = $v;
++		} elsif ($a == 12) {
++			$CR3 = $v;
++		} elsif ($a == 16) {
++			$STS = $v;
++		} elsif ($a == 20) {
++			$CMD = $v;
++			if ($CMD == 1) {
++				$dma = 1;
++			}
++		}
++		&send_ret;
++		if ($dma) {
++			&start_dma;
++		}
++	} elsif ($i = $$obj{'read'}) {
++		$a = $i->{'addr'};
++		&send_ret if  ($a % 4 || $a >= 24);
++		$s = $i->{'size'};
++		&send_ret if  ($s != 4);
++		&dbg("### $0: reading from $a\n");
++		if ($a == 0) {
++			&send_ret($VPTRHI);
++		} elsif ($a == 4) {
++			&send_ret($VPTRLO);
++		} elsif ($a == 8) {
++			&send_ret($CNT);
++		} elsif ($a == 12) {
++			&send_ret($CR3);
++		} elsif ($a == 16) {
++			&send_ret($STS);
++			&clear_intr;
++		} elsif ($a == 20) {
++			&send_ret($CMD);
++		}
++	}			
++}
+diff --git a/conf/conf.sh b/conf/conf.sh
+new file mode 100644
+index 0000000..c70bae2
+--- /dev/null
++++ b/conf/conf.sh
+@@ -0,0 +1,3 @@
++QEMU_EXTRA_OPTIONS="-chardev pipe,id=ce1a,path=ce1a -device ce,id=ce1,async=ce1a"
++QEMU_PRE_CMD="perl ce1.pl &"
++QEMU_FIFOS="ce1a ce1"
+diff --git a/include/costanti.h b/include/costanti.h
+index 776ec34..ce0d941 100644
+--- a/include/costanti.h
++++ b/include/costanti.h
+@@ -9,6 +9,9 @@
+ #define NUM_TSS 		1024
+ #define MIN_PROC_ID		32
+ #define MAX_PROC_ID		(NUM_TSS*16)
++// ( ESAME 2017-02-24
++#define MAX_RES			10
++//   ESAME 2017-02-24 )
+ // )
+ 
+ // ( varie dimensioni
+@@ -22,9 +25,9 @@
+ #define DIM_PAGINA		4096UL
+ #define MAX_PRD			16
+ 
+-#define MEM_TOT			(8*MiB)
++#define MEM_TOT			(16*MiB)
+ #define DIM_USR_HEAP		(1*MiB)
+-#define DIM_USR_STACK		(10*MiB)
++#define DIM_USR_STACK		(8*MiB)
+ #define DIM_IO_HEAP		(1*MiB)
+ #define DIM_SYS_STACK		(4*KiB)
+ #define DIM_SWAP		(80*MiB)
+@@ -74,6 +77,11 @@
+ #define TIPO_AB			0x56	// *abort_p
+ #define TIPO_L			0x57	// *log
+ #define TIPO_TRA		0x58	// trasforma
++// ( ESAME 2017-02-24
++#define TIPO_RES		0x59
++#define TIPO_NONRES		0x5a
++#define TIPO_CRES		0x5b	// conta residenti
++//   ESAME 2017-02-24 )
+ 
+ #define IO_TIPO_HDR		0x62	// readhd_n
+ #define IO_TIPO_HDW		0x63	// writehd_n
+@@ -86,6 +94,9 @@
+ #define IO_TIPO_RCON		0x76	// readconsole
+ #define IO_TIPO_WCON		0x77	// writeconsole
+ #define IO_TIPO_INIC		0x78	// iniconsole
++// ( ESAME 2017-02-24
++#define IO_TIPO_CEDMAREAD	0x79
++//   ESAME 2017-02-24 )
+ // * in piu' rispetto al libro
+ // )
+ 
+diff --git a/io/io.cpp b/io/io.cpp
+index a737572..4337ce8 100644
+--- a/io/io.cpp
++++ b/io/io.cpp
+@@ -26,6 +26,10 @@ extern "C" void abort_p();
+ extern "C" void log(log_sev sev, const char* buf, int quanti);
+ extern "C" addr trasforma(addr ff);
+ extern "C" void panic(const char *msg);
++// ( ESAME 2017-02-24
++extern "C" natl resident(addr base, natq size);
++extern "C" void nonresident(natl id);
++//   ESAME 2017-02-24 )
+ 
+ void *mem_alloc(natl dim);
+ void mem_free(void *p);
+@@ -931,6 +935,102 @@ void mem_free(void* p)
+ 	sem_signal(mem_mutex);
+ }
+ 
++// ( ESAME 2017-02-24
++static const int MAX_CE = 16;
++
++struct des_ce {
++	natw iVPTRHI, iVPTRLO, iCNT, iCR3, iSTS, iCMD;
++	natl sync;
++	natl mutex;
++	bool error;
++};
++des_ce array_ce[MAX_CE];
++natl next_ce;
++
++extern "C" addr readCR3();
++//   ESAME 2017-02-24 )
++
++
++// ( SOLUZIONE 2017-02-24
++extern "C" bool c_cedmaread(natl id, natl quanti, char *buf)
++{
++	bool rv;
++
++	if (id >= next_ce) {
++		flog(LOG_WARN, "ce non riconosciuto: %d", id);
++		abort_p();
++	}
++
++	des_ce *ce = &array_ce[id];
++
++	sem_wait(ce->mutex);
++	flog(LOG_DEBUG, "virt %p len %d", buf, quanti);
++	ce->error = false;
++	natl rid = resident(buf, quanti);
++	if (rid == 0xffffffff) {
++		rv = false;
++		goto out;
++	}
++	outputl((natq)buf, ce->iVPTRLO);
++	outputl((natq)buf >> 32, ce->iVPTRHI);
++	outputl(quanti, ce->iCNT);
++	outputl((natq)readCR3(), ce->iCR3);
++	outputl(0, ce->iSTS);
++	outputl(1, ce->iCMD);
++	sem_wait(ce->sync);
++	rv = !ce->error;
++	nonresident(rid);
++out:
++	sem_signal(ce->mutex);
++	return rv;
++}
++
++extern "C" void estern_ce(int id)
++{
++	des_ce *ce = &array_ce[id];
++	natl b;
++
++	for (;;) {
++		inputl(ce->iSTS, b);
++		ce->error = (b & 2);
++		sem_signal(ce->sync);
++		wfi();
++	}
++}
++//   SOLUZIONE 2017-02-24 )
++
++// ( ESAME 2017-02-24
++bool ce_init()
++{
++
++	for (natb bus = 0, dev = 0, fun = 0;
++	     pci_find_dev(bus, dev, fun, 0xedce, 0x1234);
++	     pci_next(bus, dev, fun))
++	{
++		if (next_ce >= MAX_CE) {
++			flog(LOG_WARN, "troppi dispositivi ce");
++			break;
++		}
++		des_ce *ce = &array_ce[next_ce];
++		natw base = pci_read_confl(bus, dev, fun, 0x10);
++		base &= ~0x1;
++		ce->iVPTRHI = base;
++		ce->iVPTRLO = base + 4;
++		ce->iCNT = base + 8;
++		ce->iCR3 = base + 12;
++		ce->iSTS = base + 16;
++		ce->iCMD = base + 20;
++		ce->sync = sem_ini(0);
++		ce->mutex = sem_ini(1);
++		natb irq = pci_read_confb(bus, dev, fun, 0x3c);
++		activate_pe(estern_ce, next_ce, PRIO, LIV, irq);
++		flog(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, irq);
++		next_ce++;
++	}
++	return true;
++}
++//   ESAME 2017-02-24 )
++
+ ////////////////////////////////////////////////////////////////////////////////
+ //                 INIZIALIZZAZIONE DEL SOTTOSISTEMA DI I/O                   //
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -958,6 +1058,10 @@ extern "C" void cmain(int sem_io)
+ 		abort_p();
+ 	if (!hd_init())
+ 		abort_p();
++// ( ESAME 2017-02-24
++	if (!ce_init())
++		abort_p();
++//   ESAME 2017-02-24 )
+ 	sem_signal(sem_io);
+ 	terminate_p();
+ }
+diff --git a/io/io.s b/io/io.s
+index 46c2ae5..f08c2c4 100644
+--- a/io/io.s
++++ b/io/io.s
+@@ -93,6 +93,23 @@ trasforma:
+ 	int $TIPO_TRA
+ 	ret
+ 
++// ( ESAME 2017-02-24
++	.global resident
++resident:
++	int $TIPO_RES
++	ret
++
++	.global nonresident
++nonresident:
++	int $TIPO_NONRES
++	ret
++
++// restituisce in %eax il contenuto di cr3
++	.global readCR3
++readCR3:
++	movq %cr3, %rax
++	retq
++//   ESAME 2017-02-24 )
+ ////////////////////////////////////////////////////////////////////////////////
+ //                     INTERFACCIA VERSO IL MODULO SISTEMA                    //
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -341,6 +358,10 @@ fill_io_gates:
+ 	fill_io_gate	IO_TIPO_DMAHDR	a_dmareadhd_n
+ 	fill_io_gate	IO_TIPO_DMAHDW	a_dmawritehd_n
+ 
++// ( SOLUZIONE 2017-02-24
++	fill_io_gate	IO_TIPO_CEDMAREAD	a_cedmaread
++//   SOLUZIONE 2017-02-24 )
++
+ 	leave
+ 	ret
+ 
+@@ -520,3 +541,11 @@ a_dmawritehd_n:	# routine INT $dma_tipob_w
+ 		call	c_dmawritehd_n
+ 		iretq
+ 
++// ( SOLUZIONE 2017-02-24
++.EXTERN		c_cedmaread
++a_cedmaread:
++		cavallo_di_troia %rdx
++		cavallo_di_troia2 %rdx %rsi
++		call c_cedmaread
++		iretq
++//   SOLUZIONE 2017-02-24 )
+diff --git a/sistema/sistema.cpp b/sistema/sistema.cpp
+index 8a83096..62f7fd8 100644
+--- a/sistema/sistema.cpp
++++ b/sistema/sistema.cpp
+@@ -384,7 +384,9 @@ extern "C" void c_pre_routine_pf(	//
+ // contenuto stesso.
+ struct des_pf {
+ 	int	livello;	// 0=pagina, -1=libera
+-	bool	residente;	// pagina residente o meno
++// ( ESAME 2017-02-24
++	natl	residente;	// pagina residente sse > 0
++//   ESAME 2017-02-24 )
+ 	natl	processo;	// identificatore di processo
+ 	natl	contatore;	// contatore per le statistiche
+ 	natq	ind_massa;
+@@ -450,11 +452,18 @@ bool init_dpf()
+ 	// creiamo la lista delle pagine libere, che inizialmente contiene
+ 	// tutte le pagine fisiche di M2
+ 	pagine_libere = &dpf[0];
+-	for (natl i = 0; i < N_DPF - 1; i++) {
++// ( ESAME 2017-02-24
++	// prendiamo una pagina si' e una no, in modo che lo spazio
++	// comune non sia contiguo in memoria fisica
++	natl i;
++	for (i = 0; i < N_DPF; i += 2) {
+ 		dpf[i].livello = -1;
+-		dpf[i].prossima_libera = &dpf[i + 1];
++		dpf[i].prossima_libera = &dpf[i + 2];
+ 	}
+-	dpf[N_DPF - 1].prossima_libera = 0;
++	dpf[i - 2].prossima_libera = 0;
++	// testo cavallo di troia
++	*(natl *)0x20100 = 10;
++//   ESAME 2017-02-24 )
+ 
+ 	return true;
+ }
+@@ -1111,10 +1120,18 @@ bool scollega(des_pf* ppf)	//
+ }
+ 
+ void swap(int liv, addr ind_virt); //
++// ( ESAME 2017-02-24
++natq pf_count = 0;
++//   ESAME 2017-02-24 )
+ void c_routine_pf()	//
+ {
+ 	addr ind_virt = readCR2();
+ 
++// ( ESAME 2017-02-24
++	pf_count++;
++	//flog(LOG_DEBUG, "page fault a %p", ind_virt);
++//   ESAME 2017-02-24 )
++
+ 	for (int i = 3; i >= 0; i--) {
+ 		natq d = get_des(esecuzione->id, i + 1, ind_virt);
+ 		bool bitP = extr_P(d);
+@@ -1155,7 +1172,9 @@ void swap(int liv, addr ind_virt)
+ 	}
+ 	// *)
+ 	nuovo_dpf->livello = liv;
+-	nuovo_dpf->residente = false;
++// ( ESAME 2017-02-24
++	nuovo_dpf->residente = 0;
++//   ESAME 2017-02-24 )
+ 	nuovo_dpf->processo = esecuzione->id;
+ 	nuovo_dpf->ind_virtuale = ind_virt;
+ 	nuovo_dpf->ind_massa = IM;
+@@ -1343,6 +1362,141 @@ bool crea_spazio_condiviso(natl dummy_proc)
+ 	return true;
+ }
+ 
++// ( ESAME 2017-02-24
++struct res_des {
++	addr base;
++	natq size;
++	natl proc;
++};
++
++res_des array_res[MAX_RES];
++natl alloca_res(addr base, natq size)
++{
++	res_des *r = 0;
++	natl id = 0xffffffff;
++	for (int i = 0; i < MAX_RES; i++) {
++		r = &array_res[i];
++		if (r->proc == 0) {
++			id = i;
++			break;
++		}
++	}
++
++	if (r) {
++		r->base = base;
++		r->size = size;
++		r->proc = esecuzione->id;
++	}
++	return id;
++}
++bool res_valido(natl id)
++{
++	return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
++}
++
++void rilascia_res(natl id)
++{
++	array_res[id].proc = 0;
++}
++
++extern "C" natq c_countres()
++{
++	natq c = 0;
++
++	for (natq i = 0; i < N_DPF; i++) {
++		des_pf* ppf = &dpf[i];
++		if (ppf->livello >= 0 && ppf->residente > 0)
++			c++;
++	}
++	return c | (pf_count << 32);
++}
++
++// decrementa i campi resident per tutte le tabelle o pagine
++// di livello i che coprono gli indirizzi [base, stop) 
++void undo_res(natq base, natq stop, int i)
++{
++	natl proc = esecuzione->id;
++	// per capire quali tabelle/pagine di livello j dobbiamo
++	// rendere non residenti calcoliamo:
++	// vi: l'indirizzo virtuale di partenza della prima pagina di livello
++	//     i+1 che interseca [base, base+size)
++	// vf: l'indirizzo virtuale di partenza della prima pagina di livello
++	//     i+1 che si trova oltre a e non interseca [base, base+size)
++	natq mask = dim_pag(i + 1) - 1;
++	natq vi = base & ~mask;
++	natq vf = (stop + mask) & ~mask;
++	for (natq v = vi; v != vf; v += dim_pag(i + 1)) {
++		// otteniamo il descrittore che punta a questa tabella/pagina
++		natq& d = get_des(proc, i + 1, (addr)v);
++		// se prima era residente, deve essere presente, quindi
++		// possiamo estrarre l'indirizzo fisico e ottenere da questo
++		// il puntatore al descrittore di pagina fisica
++		des_pf *ppf = descrittore_pf(extr_IND_FISICO(d));
++		ppf->residente--;
++	}
++}
++
++extern "C" natl c_resident(addr base, natq s)
++{
++	natl proc = esecuzione->id, id;
++	int i;
++	natq v, a = (natq)base;
++
++	if (a < (natq)ini_utn_p || a + s < a || a + s > (natq)fin_utn_p) {
++		flog(LOG_WARN, "parametri non validi: %p, %p", a, s);
++		return 0xffffffff;
++	}
++	for (i = 3; i >= 0; i--) {
++		natq mask = dim_pag(i + 1) - 1;
++		natq vi = a & ~mask;
++		natq vf = (a + s + mask) & ~mask;
++		//flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
++		for (v = vi; v != vf; v += dim_pag(i + 1)) {
++			natq& d = get_des(proc, i + 1, (addr)v);
++			des_pf *ppf;
++			if (!extr_P(d)) {
++				ppf = swap2(proc, i, (addr)v);
++				if (!ppf)
++					goto error;
++			} else {
++				ppf = descrittore_pf(extr_IND_FISICO(d));
++			}
++			ppf->residente++;
++		}
++	}
++	id = alloca_res(base, s);
++	if (id == 0xffffffff)
++		goto error;
++
++	return id;
++error:
++	for (int j = 3; j >= i + 1; j--)
++		undo_res(a, a + s, j);
++	undo_res(a, v, i);
++	return 0xffffffff;
++}
++
++extern "C" void c_nonresident(natl id)
++{
++	res_des *r;
++
++	if (!res_valido(id)) {
++		flog(LOG_WARN, "id non valido: %d", id);
++		abort_p();
++	}
++	r = &array_res[id];
++
++	natq a = (natq)r->base;
++	natq s = r->size;
++
++	for (int i = 3; i >= 0; i--) {
++		undo_res(a, a + s, i);
++	}
++	rilascia_res(id);
++}
++
++//   ESAME 2017-02-24 )
++
+ ///////////////////////////////////////////////////////////////////////////////////
+ //                   INIZIALIZZAZIONE                                            //
+ ///////////////////////////////////////////////////////////////////////////////////
+ extern "C" void c_panic(const char *msg, addr rsp)
+diff --git a/sistema/sistema.s b/sistema/sistema.s
+index 0430d39..3999145 100644
+--- a/sistema/sistema.s
++++ b/sistema/sistema.s
+@@ -345,6 +345,9 @@ init_idt:
+ 	carica_gate	TIPO_D		a_delay		LIV_UTENTE
+ 	carica_gate	TIPO_L		a_log		LIV_UTENTE
+ 	carica_gate	TIPO_EP		a_end_program	LIV_SISTEMA
++// ( ESAME 2017-02-24
++	carica_gate	TIPO_CRES	a_countres	LIV_UTENTE
++//   ESAME 2017-02-24 )
+ 
+ 	// primitive per il livello I/O
+ 	carica_gate	TIPO_APE	a_activate_pe	LIV_SISTEMA
+@@ -353,6 +356,10 @@ init_idt:
+ 	carica_gate	TIPO_P		a_panic		LIV_SISTEMA
+ 	carica_gate	TIPO_AB		a_abort_p	LIV_SISTEMA
+ 	carica_gate	TIPO_TRA	a_trasforma	LIV_SISTEMA
++// ( ESAME 2017-02-24
++	carica_gate	TIPO_NONRES	a_nonresident	LIV_SISTEMA
++	carica_gate	TIPO_RES	a_resident	LIV_SISTEMA
++//   ESAME 2017-02-24 )
+ 
+ 	lidt idt_pointer
+ 	ret
+@@ -438,6 +445,24 @@ a_delay:	// routine int $tipo_d
+ 	call carica_stato
+ 	iretq
+ 
++// ( ESAME 2017-02-24
++	.extern c_countres
++a_countres:
++	call c_countres
++	iretq
++
++	.extern c_nonresident
++a_nonresident:
++	call c_nonresident
++	iretq
++
++	.extern c_resident
++a_resident:
++	cavallo_di_troia %rdi
++	cavallo_di_troia2 %rdi %rsi
++	call c_resident
++	iretq
++//   ESAME 2017-02-24 )
+ 
+ //
+ // Interfaccia offerta al modulo di IO, inaccessibile dal livello utente
+diff --git a/utente/include/sys.h b/utente/include/sys.h
+index fff8010..21871b0 100644
+--- a/utente/include/sys.h
++++ b/utente/include/sys.h
+@@ -31,6 +31,13 @@ extern "C" void writehd_n(const natw vetto[], natl primo, natb quanti, natb &err
+ extern "C" void dmareadhd_n(natw vetti[], natl primo, natb quanti, natb &errore);
+ extern "C" void dmawritehd_n(const natw vetto[], natl primo, natb quanti, natb& errore);
+ 
++// ( ESAME 2017-02-24
++extern "C" natq countres();
++//   ESAME 2017-02-24 )
++
++// ( ESAME 2017-02-24
++extern "C" bool cedmaread(natl id, natl quanti, char *buf);
++//   ESAME 2017-02-24 )
+ 
+ #endif
+ 
+diff --git a/utente/prog/pce.in b/utente/prog/pce.in
+new file mode 100644
+index 0000000..bdbcbd7
+--- /dev/null
++++ b/utente/prog/pce.in
+@@ -0,0 +1,119 @@
++/*
++ * Programma di test 2016-06-15
++ */
++
++#include <sys.h>
++#include <lib.h>
++
++const int MSG_SIZE = 60;
++const int NMESG = 2;
++
++struct count {
++	natq nr;
++	natq pf;
++};
++
++count get_count()
++{
++	count c;
++	natq r = countres();
++	c.nr = r & 0xffffffff;
++	c.pf = (r >> 32);
++	return c;
++}
++
++natl end[4];
++
++semaphore mailbox_piena value 0;
++semaphore mailbox_vuota value 1;
++semaphore proc_terminati value 0;
++
++process last_proc body last(3), 1, LIV_UTENTE;
++process errato1 body err1(1), 22, LIV_UTENTE;
++process errato2 body err2(2), 21, LIV_UTENTE;
++process pce body main_body(0), 20, LIV_UTENTE;
++
++struct mess {
++	int mittente;
++	char corpo[MSG_SIZE];
++};
++
++mess mailbox;
++
++process_body err1(int a)
++{
++	cedmaread(0, 256, (char *)0x20000);
++	printf("processo errato 1");
++}
++
++process_body err2(int a)
++{
++	cedmaread(0, 4096 * 10, (char *)-4096);
++	printf("processo errato 4");
++}
++
++void pms(int a)
++{
++	const natl m = 1000;
++	char buf[MSG_SIZE * m];
++
++	for (int i = 0; i < NMESG; i++) {
++		if (!cedmaread(0, MSG_SIZE * m, buf)) {
++			printf("scrittore %d: errore nel DMA", a);
++		}
++		sem_wait(mailbox_vuota);
++		natl j, k;
++		for (j = 0, k = 0; j < MSG_SIZE - 1; k += m, j++) {
++			mailbox.corpo[j] = buf[k];
++		}
++		mailbox.corpo[j] = '\0';
++		mailbox.mittente = a;
++		sem_signal(mailbox_piena);
++	}
++	printf("fine scrittore %d", a);
++	sem_signal(proc_terminati);
++	sem_wait(end[a]);
++	terminate_p();
++}
++
++void pml(int a)
++{
++	char corpo[MSG_SIZE];
++	int mittente;
++	for (int i = 0; i < 2 * NMESG; i++) {
++		sem_wait(mailbox_piena);
++		mittente = mailbox.mittente;
++		copy(mailbox.corpo, corpo);
++		sem_signal(mailbox_vuota);
++		printf("mittente=%d corpo=%s", mittente, corpo);
++	}
++	printf("fine lettore");
++	sem_signal(proc_terminati);
++	sem_wait(end[a]);
++	terminate_p();
++}
++
++process_body last(int a)
++{
++	sem_wait(end[a]);
++	pause();
++}
++
++process_body main_body(int a)
++{
++	count ci, cf;
++
++	for (int i = 0; i < 4; i++)
++		end[i] = sem_ini(0);
++	activate_p(pms, 0, 6, LIV_UTENTE);
++	activate_p(pms, 1, 7, LIV_UTENTE);
++	activate_p(pml, 2, 5, LIV_UTENTE);
++	ci = get_count();
++	for (int i = 0; i < 3; i++)
++		sem_wait(proc_terminati);
++	cf = get_count();
++	if (ci.nr != cf.nr)
++		printf("conteggio pagine residenti errato %d != %d", ci.nr, cf.nr);
++	for (int i = 0; i < 4; i++)
++		sem_signal(end[i]);
++}
+diff --git a/utente/utente.s b/utente/utente.s
+index 34ea292..9e59239 100644
+--- a/utente/utente.s
++++ b/utente/utente.s
+@@ -91,6 +91,16 @@ dmawritehd_n:
+ 	int $IO_TIPO_DMAHDW
+ 	ret
+ 
++// ( ESAME 2017-02-24
++	.global countres
++countres:
++	int $TIPO_CRES
++	ret
++	.global cedmaread
++cedmaread:
++	int $IO_TIPO_CEDMAREAD
++	ret
++//   ESAME 2017-02-24 )
+ 
+ 	.global log
+ log:
