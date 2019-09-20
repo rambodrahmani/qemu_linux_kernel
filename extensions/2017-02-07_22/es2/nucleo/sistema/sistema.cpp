@@ -1221,7 +1221,7 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt)
 // EXTENSION 2017-02-07
 
 /**
- *
+ * Page faults counter.
  */
 natq pf_count = 0;
 
@@ -1238,6 +1238,7 @@ bool c_routine_pf()
 
 // EXTENSION 2017-02-07
 
+    // increase page faults counter
     pf_count++;
 
 // EXTENSION 2017-02-07
@@ -1408,14 +1409,26 @@ bool crea_spazio_condiviso()
 	return true;
 }
 
-// ( ESAME 2017-02-07
-struct res_des {
-	vaddr start;
-	natq size;
-	natl proc;
+// EXTENSION 2017-02-07
+
+/**
+ *
+ */
+struct res_des
+{
+    vaddr start;
+    natq size;
+    natl proc;
 };
 
+/**
+ *
+ */
 res_des array_res[MAX_RES];
+
+/**
+ *
+ */
 natl alloca_res(vaddr start, natq size)
 {
 	res_des *r = 0;
@@ -1435,16 +1448,26 @@ natl alloca_res(vaddr start, natq size)
 	}
 	return id;
 }
+
+/**
+ *
+ */
 bool res_valido(natl id)
 {
 	return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
 }
 
+/**
+ *
+ */
 void rilascia_res(natl id)
 {
 	array_res[id].proc = 0;
 }
 
+/**
+ *
+ */
 extern "C" natq c_countres()
 {
 	natq c = 0;
@@ -1480,55 +1503,112 @@ void undo_res(natq start, natq stop, int i)
 		ppf->residente--;
 	}
 }
-//   ESAME 2017-02-07 )
 
-// ( SOLUZIONE 2017-02-07
+// EXTENSION 2017-02-07
+
+// SOLUTION 2017-02-07
+
+/**
+ * Makes the virtual pages address by start and start+s (size) permanent.
+ * It must also move the missing pages to the available frames and notify in
+ * case there is not enough space for all of them.
+ *
+ * @param  start  virtual pages starting address;
+ * @param  s      virtual pages size.
+ *
+ * @return  the operation ID which can be used to undo it.
+ */
 extern "C" void c_resident(addr start, natq s)
 {
-	natl proc = esecuzione->id, id;
-	int i;
-	vaddr v, a = reinterpret_cast<vaddr>(start), b = a + s - 1;
-	des_proc *self = des_p(proc);
+    // retrieve calling process id
+    natl proc = esecuzione->id, id;
 
-	self->contesto[I_RAX] = 0xFFFFFFFF;
+    int i;
 
-	if (a < ini_utn_p || a + s < a /* overflow */ || a + s >= fin_utn_p) {
-		flog(LOG_WARN, "parametri non validi: %p, %p", a, s);
-		c_abort_p();
-		return;
-	}
-	for (i = 3; i >= 0; i--) {
-		vaddr vi = base(a, i);
-		vaddr vf = base(b, i) + dim_region(i);
-		flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
-		for (v = vi; v != vf; v += dim_region(i)) {
-			tab_entry& d = get_des(proc, i + 1, v);
-			des_frame *ppf;
-			if (!extr_P(d)) {
-				ppf = swap(proc, i, v);
-				if (!ppf)
-					goto error;
-			} else {
-				ppf = descrittore_frame(extr_IND_FISICO(d));
+    // retrieve start (inclusive) and end (exclusive) addresses of the virtual
+    // pages to be made permanent
+    vaddr v, a = reinterpret_cast<vaddr>(start), b = a + s - 1;
+
+    // retrieve calling process descriptor
+    des_proc *self = des_p(proc);
+
+    self->contesto[I_RAX] = 0xFFFFFFFF;
+
+    // check if the addressed virtual pages belong to the private user memory
+    // space: keep in mind that this space starts from ini_utn_p and ends at
+    // fin_utn_p
+    if (a < ini_utn_p || a + s < a /* overflow */ || a + s >= fin_utn_p)
+    {
+        // print a warning log message
+        flog(LOG_WARN, "Invalid parameters: %p, %p", a, s);
+
+        // abort calling process
+        c_abort_p();
+
+        // just return to the caller
+        return;
+    }
+
+    for (i = 3; i >= 0; i--)
+    {
+        vaddr vi = base(a, i);
+        
+        vaddr vf = base(b, i) + dim_region(i);
+        
+        flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
+        
+        for (v = vi; v != vf; v += dim_region(i))
+        {
+            tab_entry& d = get_des(proc, i + 1, v);
+
+            des_frame *ppf;
+            
+            if (!extr_P(d))
+            {
+                ppf = swap(proc, i, v);
+
+                if (!ppf)
+                {
+                    goto error;
+                }
+            }
+            else
+            {
+                ppf = descrittore_frame(extr_IND_FISICO(d));
 			}
-			ppf->residente++;
-		}
-	}
-	id = alloca_res(a, s);
-	if (id == 0xffffffff)
-		goto error;
 
-	self->contesto[I_RAX] = id;
-	return;
+            ppf->residente++;
+        }
+    }
+
+    id = alloca_res(a, s);
+
+    if (id == 0xffffffff)
+    {
+        goto error;
+    }
+
+    // return operation ID
+    self->contesto[I_RAX] = id;
+
+    return;
 	
 error:
-	for (int j = 3; j >= i + 1; j--)
-		undo_res(a, a + s, j);
-	undo_res(a, v, i);
-}
-//   SOLUZIONE 2017-02-07 )
+    for (int j = 3; j >= i + 1; j--)
+    {
+        undo_res(a, a + s, j);
+    }
 
-// ( ESAME 2017-02-07
+    undo_res(a, v, i);
+}
+
+// SOLUTION 2017-02-07
+
+// EXTENSION 2017-02-07
+
+/**
+ *
+ */
 extern "C" void c_nonresident(natl id)
 {
 	res_des *r;
@@ -1549,7 +1629,7 @@ extern "C" void c_nonresident(natl id)
 	rilascia_res(id);
 }
 
-//   ESAME 2017-02-07 )
+// EXTENSION 2017-02-07
 
 ///////////////////////////////////////////////////////////////////////////////////
 //                   INIZIALIZZAZIONE                                            //
