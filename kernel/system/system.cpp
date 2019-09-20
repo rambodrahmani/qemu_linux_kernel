@@ -267,6 +267,13 @@ extern "C" void ins_ready_proc()
 }
 
 /**
+ * Generally speacking, each process can be found in one of the following
+ * states:
+ *  1. execution: the process is currently under execution by the CPU;
+ *  2. ready: the process is ready to be executed by the CPU;
+ *  3. wait: the process is not ready to be executed by the CPU as it is waiting
+ *           for certain conditions to be met.
+ *
  * Selects the next process to be placed under execution. Since the processes
  * list is ordered according to priority we can just remove the process on the
  * top of the list.
@@ -1019,10 +1026,16 @@ tab_entry& get_des(natl processo, int livello, vaddr ind_virt)
 	return get_entry(tab, i_tab(ind_virt, livello));
 }
 
-// carica un nuovo valore in cr3 [vedi sistema.S]
+/**
+ * Loads the given address in the CPU CR3 register.
+ *
+ * @param  dir  the address to be loaded.
+ */
 extern "C" void loadCR3(faddr dir);
 
-// restituisce il valore corrente di cr3 [vedi sistema.S]
+/**
+ * Reads and returns the current address contained in the CPU CR3 register.
+ */
 extern "C" faddr readCR3();
 
 //invalida il TLB
@@ -1165,11 +1178,15 @@ const natl BIT_IF = 1L << 9;
 
 /**
  * Retrieves a valid process id using the given process TSS offset.
+ *
+ * @param  tss_off  Process TSS offset.
  */
 extern "C" natl tss_to_id(natl tss_off);
 
 /**
+ * Returns the TSS offset for the given process ID.
  *
+ * @param  id  process ID.
  */
 extern "C" natl id_to_tss(natl id);
 
@@ -1200,10 +1217,13 @@ void rilascia_tutto(faddr tab4, natl i, natl n);
  * execution will take place when the process is pointed by 'execution' which
  * will result in a call to the load_state and a final iretq.
  *
- * @param  f        function address for the process %RIP register;
- * @param  a
- * @param  prio
- * @param  liv
+ * @param  f     function address for the process %RIP register; for
+ *               simplicity we will assume that the process body is
+ *               represented by a void function having an integer parameter
+ *               only;
+ * @param  a     f function integer parameter;
+ * @param  prio  process priority level;
+ * @param  liv   process privilege level;
  * @param  IF
  *
  * @return a pointer to the newly created process.
@@ -1244,7 +1264,7 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
     // allocate TSS for the process and save the tss offset
 	tss_off = allocate_tss(pdes_proc);
 
-    // check if the tss offset if valid
+    // check if the tss offset is valid
     if (tss_off == 0)
     {
         // otherwise go to error #2
@@ -1273,7 +1293,7 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
     // set process next element
     p->next = 0;
 
-    // process tab4 creation
+    // process tab4 creation: each process has its own level 4 table
     dpf_tab4 = alloca_frame(p->id, 4, 0);
 
     // check if the process tab4 was correctly allocated
@@ -1283,11 +1303,19 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
         goto error4;
     }
 
-	dpf_tab4->livello = 4;
-	dpf_tab4->residente = true;
-	dpf_tab4->processo = identifier;
-	pdes_proc->cr3 = indirizzo_frame(dpf_tab4);
-	crea_tab4(pdes_proc->cr3);
+    // set table level
+    dpf_tab4->livello = 4;
+
+    // make table persistent in physical memory
+    dpf_tab4->residente = true;
+
+    // set table process
+    dpf_tab4->processo = identifier;
+
+    // set process cr3 address: this must be loaded in the CPU CR3 register
+    // evereytime a process switch occurs
+    pdes_proc->cr3 = indirizzo_frame(dpf_tab4);
+    crea_tab4(pdes_proc->cr3);
 
     // create process system stack
     if (!crea_pila(p->id, fin_sis_p, DIM_SYS_STACK, LEV_SYSTEM))
@@ -1296,32 +1324,40 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
         goto error5;
     }
 
-	pila_sistema = carica_pila_sistema(p->id, fin_sis_p, DIM_SYS_STACK);
-	if (pila_sistema == 0)
-		goto error6;
+    pila_sistema = carica_pila_sistema(p->id, fin_sis_p, DIM_SYS_STACK);
+    if (pila_sistema == 0)
+    {
+        goto error6;
+    }
 
-    // check process level
+    // check if the given process level is USER
     if (liv == LEV_USER)
     {
-		// ( inizializziamo la pila sistema.
+        // if so, allocate system stack
 		natq* pl = reinterpret_cast<natq*>(pila_sistema);
 
-		pl[-5] = reinterpret_cast<natq>(f); // RIP (codice utente)
-		pl[-4] = SEL_CODICE_UTENTE;	    // CS (codice utente)
-		pl[-3] = IF ? BIT_IF : 0;	    // RFLAGS
-		pl[-2] = fin_utn_p - sizeof(natq);  // RSP
-		pl[-1] = SEL_DATI_UTENTE;	    // SS (pila utente)
-		//   eseguendo una IRET da questa situazione, il processo
-		//   passera' ad eseguire la prima istruzione della funzione f,
-		//   usando come pila la pila utente (al suo indirizzo virtuale)
-		// )
+        // set RIP: execution will continue from here when the process is
+        // scheduled
+		pl[-5] = reinterpret_cast<natq>(f);
 
-		// ( creazione della pila utente
-		if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER)) {
-			flog(LOG_WARN, "creazione pila utente fallita");
-			goto error6;
+        // 
+		pl[-4] = SEL_CODICE_UTENTE;	    // CS (codice utente)
+
+        //
+		pl[-3] = IF ? BIT_IF : 0;	    // RFLAGS
+
+        //
+		pl[-2] = fin_utn_p - sizeof(natq);  // RSP
+
+        //
+		pl[-1] = SEL_DATI_UTENTE;	    // SS (pila utente)
+
+        // create user stack
+        if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER))
+        {
+            flog(LOG_WARN, "User stack creation failed.");
+            goto error6;
 		}
-		// )
 
 		// ( infine, inizializziamo il descrittore di processo
 		//   indirizzo del bottom della pila sistema, che verra' usato
@@ -1333,12 +1369,14 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 		//   che contiene le 5 parole lunghe preparate precedentemente
 		pdes_proc->context[I_RSP] = fin_sis_p - 5 * sizeof(natq);
 
-		//   il registro RDI deve contenere il parametro da passare
-		//   alla funzione f
-		pdes_proc->context[I_RDI] = a;
+        // set function f (RIP) parameter
+        pdes_proc->context[I_RDI] = a;
+
 		//pdes_proc->context[I_FPU_CR] = 0x037f;
 		//pdes_proc->context[I_FPU_TR] = 0xffff;
-		pdes_proc->cpl = LEV_USER;
+
+        // set current privilege level to user level
+        pdes_proc->cpl = LEV_USER;
 	
 		//   il campo iomap_base contiene l'offset (nel TSS) dell'inizio 
 		//   della "I/O bitmap". Questa bitmap contiene un bit per ogni
@@ -1375,13 +1413,16 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
 
 		//pdes_proc->context[I_FPU_CR] = 0x037f;
 		//pdes_proc->context[I_FPU_TR] = 0xffff;
-		pdes_proc->cpl = LEV_SYSTEM;
+
+        // set current privilege level to system level
+        pdes_proc->cpl = LEV_SYSTEM;
 
 		//   tutti gli altri campi valgono 0
 		// )
 	}
 
-	return p;
+    // return newly created process descriptor
+    return p;
 
 //
 error6:	rilascia_tutto(indirizzo_frame(dpf_tab4), I_SIS_P, N_SIS_P);

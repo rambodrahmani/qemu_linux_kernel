@@ -1,0 +1,134 @@
+#include <sys.h>
+#include <lib.h>
+
+process pbarrier body main_body(0), 100, LIV_UTENTE;
+semaphore sync3 value 0;
+natl sems[5];
+
+struct err_arg {
+	addr base;
+	natq size;
+	natl prio;
+};
+
+err_arg err_args[] = {
+	{ 0, 4*KiB },
+	{ (addr)0xffffc00000000000, 4*KiB },
+	{ (addr)0xffffff7fff800000, 8*MiB+4*KiB },
+	{ (addr)0xffffff7fff800000, 8*MiB },
+	{ 0, 0 }
+};
+
+struct count {
+	natq nr;
+	natq pf;
+};
+
+count get_count()
+{
+	count c;
+	natq r = countres();
+	c.nr = r & 0xffffffff;
+	c.pf = (r >> 32);
+	return c;
+}
+
+void error(int a)
+{
+	struct err_arg *e = &err_args[a];
+
+	count c0 = get_count();
+	if (resident(e->base, e->size) != 0xffffffff) {
+		printf("processo errato %d", a);
+	} else {
+		printf("%d: OK", a);
+	}
+	count c1 = get_count();
+	if (c0.nr != c1.nr) {
+		printf("%d: %d pagine residenti invece di %d", a, c0.nr, c1.nr);
+	}
+	terminate_p();
+}
+
+void good(int a)
+{
+	char buf[1*MiB];
+	count c0, c1, c2;
+
+	c0 = get_count();
+	natl id = resident(buf, 1*MiB);
+	if (id == 0xffffffff) {
+		printf("%d: resident fallita");
+		goto out;
+	}
+	buf[0] = 'a';
+	c1 = get_count();
+	if (c0.pf != c1.pf) {
+		printf("%d: %d page fault invece di %d", a, c1.pf, c0.pf);
+		goto out;
+	}
+	nonresident(id);
+	c2 = get_count();
+	if (c0.nr != c2.nr) {
+		printf("%d: %d pagine residenti invece di %d", a, c2.nr, c0.nr);
+		goto out;
+	}
+	printf("%d: OK", a);
+out:
+	terminate_p();
+}
+
+void overlap(int a)
+{
+	char buf[4*KiB];
+	count c0, c1, c2, c3;
+	natl id1, id2;
+
+	c0 = get_count();
+	id1 = resident(buf, 3*KiB);
+	if (id1 == 0xffffffff) {
+		printf("%d: resident 1 fallita");
+		goto out;
+	}
+	c1 = get_count();
+	id2 = resident(buf + KiB, 3*KiB);
+	if (id2 == 0xffffffff) {
+		printf("%d: resident 2 fallita");
+		goto out;
+	}
+	nonresident(id2);
+	c2 = get_count();
+	if (c2.nr != c1.nr) {
+		printf("%d: %d tabelle/pagine residenti invece di %d", a, c2.nr, c1.nr);
+		goto out;
+	}
+	nonresident(id1);
+	c3 = get_count();
+	if (c3.nr != c0.nr) {
+		printf("%d: %d tabelle/pagine residenti invece di %d", a, c3.nr, c0.nr);
+		goto out;
+	}
+	printf("%d: OK", a);
+out:
+	terminate_p();
+}
+
+void last(int a)
+{
+	pause();
+	terminate_p();
+}
+
+process_body main_body(int a)
+{
+	int n = 0;
+	natl prio = 50;
+	for (err_arg *e = err_args; e->size; e++, n++) {
+		activate_p(error, n, prio, LIV_UTENTE);
+		prio -= 10;
+	}
+	activate_p(good, n++, 45, LIV_UTENTE);
+	activate_p(overlap, n++, 15, LIV_UTENTE);
+	activate_p(last, n, 10, LIV_UTENTE);
+}
+

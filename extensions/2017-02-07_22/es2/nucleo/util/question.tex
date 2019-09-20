@@ -1,0 +1,55 @@
+Vogliamo estendere il nucleo in modo da permettere ai processi di rendere
+temporaneamente residenti alcune delle loro pagine virtuali private
+(nella zona utente/privata, contenente la pila di livello utente).
+
+A tale scopo aggiungiamo al nucleo le seguenti primitive:
+\begin{itemize}
+  \item \verb|natl resident(addr base, natq size)|: rende residenti le pagine
+ 	virtuali che contengono gli indirizzi da \verb|base| (incluso) a
+	\verb|base|+\verb|size| (escluso). Restituisce un identificatore che pu\`o poi
+	essere passato a \verb|nonresident()| per disfare l'operazione,
+	o \verb|0xffffffff| in caso di fallimento; \`E un errore
+	se gli indirizzi da \verb|base| (incluso) a \verb|base|+\verb|size|
+	(escluso) non sono all'interno della zona utente/privata;
+  \item \verb|void nonresident(natl id)|: disfa l'operazione di una precedente
+  	chiamata a \verb|resident()|; \`e un errore se \verb|id| non
+	corrisponde ad una precedente operazione \verb|resident()|.
+\end{itemize}
+Se la primitiva \verb|resident()| ha successo, non devono essere pi\`u
+possibili page fault nelle pagine interessate fino alla corrispondente
+\verb|nonresident()|. Questo vuol dire che la primitiva deve anche
+caricare le necessarie pagine o tabelle assenti, e marcarle tutte come
+residenti in modo che non possano essere rimpiazzate.
+La primitiva \verb|resident()| pu\`o fallire se non riesce a caricare
+una pagina o tabella (ad. es., perch\`e tutta la memoria \`e occupata
+da pagine residenti).
+
+Le stesse pagine o tabelle possono essere coinvolte in pi\`u operazioni
+\verb|resident()| distinte. Per permettere ci\`o trasformiamo
+il campo \verb|residente| dei descrittori di pagina fisica in un contatore
+(conta il numero di operazioni \verb|resident()| non ancora disfatte 
+sulla tabella o pagina corrispondente). Se la primitiva \verb|resident()|
+fallisce, deve riportare i contatori \verb|residente| al valore che
+avevano prima dell'inizio della primitiva.
+
+Le primitive abortiscono il processo chiamante in caso di errore.
+
+Modificare i file \verb|sistema.cpp| e \verb|sistema.s| in modo da realizzare le primitive mancanti.
+
+{\bf SUGGERIMENTI}:
+\begin{itemize}
+  \item si osservi con attenzione la funzione \verb|undo_res()|,
+gi\`a presente nel codice, e come \`e usata in \verb|c_nonresident()|;
+  \item \`e possibile usare la funzione
+  \verb|des_pf* swap2(natl proc, int liv, addr ind_virt)| che
+  carica nello spazio del processo \verb|proc| la tabella o pagina di livello \verb|liv| relativa all'indirizzo \verb|ind_virt| e restituisce
+  il puntatore al descrittore di pagina fisica della pagina in cui
+  l'entit\`a \`e stata caricata; restituisce 0 se non \`e stato possibile
+  caricare la pagina (memoria piena e impossibile rimpiazzare).
+  \item La parte utente privata va da \verb|ini_utn_p| (incluso)
+   a \verb|fin_unt_p| (escluso).
+\end{itemize}
+{\bf Sistema a 32bit:} usare \verb|natl| al posto di \verb|natq|;
+la funzione \verb|swap2| usa \verb|tt tipo| come secondo argomento;
+la parte utente privata va da \verb|inizio_utente_privato| (incluso)
+a \verb|fine_utente_privato| (escluso).

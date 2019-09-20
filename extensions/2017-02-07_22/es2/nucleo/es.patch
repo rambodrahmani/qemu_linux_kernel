@@ -1,0 +1,453 @@
+diff --git a/include/costanti.h b/include/costanti.h
+index 776ec34..59853c7 100644
+--- a/include/costanti.h
++++ b/include/costanti.h
+@@ -9,6 +9,9 @@
+ #define NUM_TSS 		1024
+ #define MIN_PROC_ID		32
+ #define MAX_PROC_ID		(NUM_TSS*16)
++// ( ESAME 2017-02-07
++#define MAX_RES			10
++//   ESAME 2017-02-07 )
+ // )
+ 
+ // ( varie dimensioni
+@@ -24,7 +27,7 @@
+ 
+ #define MEM_TOT			(8*MiB)
+ #define DIM_USR_HEAP		(1*MiB)
+-#define DIM_USR_STACK		(10*MiB)
++#define DIM_USR_STACK		(8*MiB)
+ #define DIM_IO_HEAP		(1*MiB)
+ #define DIM_SYS_STACK		(4*KiB)
+ #define DIM_SWAP		(80*MiB)
+@@ -74,6 +77,11 @@
+ #define TIPO_AB			0x56	// *abort_p
+ #define TIPO_L			0x57	// *log
+ #define TIPO_TRA		0x58	// trasforma
++// ( ESAME 2017-02-07
++#define TIPO_RES		0x59
++#define TIPO_NONRES		0x5a
++#define TIPO_CRES		0x5b	// conta residenti
++//   ESAME 2017-02-07 )
+ 
+ #define IO_TIPO_HDR		0x62	// readhd_n
+ #define IO_TIPO_HDW		0x63	// writehd_n
+diff --git a/sistema/sistema.cpp b/sistema/sistema.cpp
+index 8a83096..c7decde 100644
+--- a/sistema/sistema.cpp
++++ b/sistema/sistema.cpp
+@@ -384,7 +384,9 @@ extern "C" void c_pre_routine_pf(	//
+ // contenuto stesso.
+ struct des_pf {
+ 	int	livello;	// 0=pagina, -1=libera
+-	bool	residente;	// pagina residente o meno
++// ( ESAME 2017-02-07
++	natl	residente;	// pagina residente sse > 0
++//   ESAME 2017-02-07 )
+ 	natl	processo;	// identificatore di processo
+ 	natl	contatore;	// contatore per le statistiche
+ 	natq	ind_massa;
+@@ -1111,10 +1113,17 @@ bool scollega(des_pf* ppf)	//
+ }
+ 
+ void swap(int liv, addr ind_virt); //
++// ( ESAME 2017-02-07
++natq pf_count = 0;
++//   ESAME 2017-02-07 )
+ void c_routine_pf()	//
+ {
+ 	addr ind_virt = readCR2();
+ 
++// ( ESAME 2017-02-07
++	pf_count++;
++//   ESAME 2017-02-07 )
++
+ 	for (int i = 3; i >= 0; i--) {
+ 		natq d = get_des(esecuzione->id, i + 1, ind_virt);
+ 		bool bitP = extr_P(d);
+@@ -1155,7 +1164,9 @@ void swap(int liv, addr ind_virt)
+ 	}
+ 	// *)
+ 	nuovo_dpf->livello = liv;
+-	nuovo_dpf->residente = false;
++// ( ESAME 2017-02-07
++	nuovo_dpf->residente = 0;
++//   ESAME 2017-02-07 )
+ 	nuovo_dpf->processo = esecuzione->id;
+ 	nuovo_dpf->ind_virtuale = ind_virt;
+ 	nuovo_dpf->ind_massa = IM;
+@@ -1343,6 +1354,145 @@ bool crea_spazio_condiviso(natl dummy_proc)
+ 	return true;
+ }
+ 
++// ( ESAME 2017-02-07
++struct res_des {
++	addr base;
++	natq size;
++	natl proc;
++};
++
++res_des array_res[MAX_RES];
++natl alloca_res(addr base, natq size)
++{
++	res_des *r = 0;
++	natl id = 0xffffffff;
++	for (int i = 0; i < MAX_RES; i++) {
++		r = &array_res[i];
++		if (r->proc == 0) {
++			id = i;
++			break;
++		}
++	}
++
++	if (r) {
++		r->base = base;
++		r->size = size;
++		r->proc = esecuzione->id;
++	}
++	return id;
++}
++bool res_valido(natl id)
++{
++	return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
++}
++
++void rilascia_res(natl id)
++{
++	array_res[id].proc = 0;
++}
++
++extern "C" natq c_countres()
++{
++	natq c = 0;
++
++	for (natq i = 0; i < N_DPF; i++) {
++		des_pf* ppf = &dpf[i];
++		if (ppf->livello >= 0 && ppf->residente > 0)
++			c++;
++	}
++	return c | (pf_count << 32);
++}
++
++// decrementa i campi resident per tutte le tabelle o pagine
++// di livello i che coprono gli indirizzi [base, stop) 
++void undo_res(natq base, natq stop, int i)
++{
++	natl proc = esecuzione->id;
++	// per capire quali tabelle/pagine di livello j dobbiamo
++	// rendere non residenti calcoliamo:
++	// vi: l'indirizzo virtuale di partenza della prima pagina di livello
++	//     i+1 che interseca [base, base+size)
++	// vf: l'indirizzo virtuale di partenza della prima pagina di livello
++	//     i+1 che si trova oltre a e non interseca [base, base+size)
++	natq mask = dim_pag(i + 1) - 1;
++	natq vi = base & ~mask;
++	natq vf = (stop + mask) & ~mask;
++	for (natq v = vi; v != vf; v += dim_pag(i + 1)) {
++		// otteniamo il descrittore che punta a questa tabella/pagina
++		natq& d = get_des(proc, i + 1, (addr)v);
++		// se prima era residente, deve essere presente, quindi
++		// possiamo estrarre l'indirizzo fisico e ottenere da questo
++		// il puntatore al descrittore di pagina fisica
++		des_pf *ppf = descrittore_pf(extr_IND_FISICO(d));
++		ppf->residente--;
++	}
++}
++//   ESAME 2017-02-07 )
++
++// ( SOLUZIONE 2017-02-07
++extern "C" natl c_resident(addr base, natq s)
++{
++	natl proc = esecuzione->id, id;
++	int i;
++	natq v, a = (natq)base;
++
++	if (a < (natq)ini_utn_p || a + s < a || a + s > (natq)fin_utn_p) {
++		flog(LOG_WARN, "parametri non validi: %p, %p", a, s);
++		abort_p();
++	}
++	for (i = 3; i >= 0; i--) {
++		natq mask = dim_pag(i + 1) - 1;
++		natq vi = a & ~mask;
++		natq vf = (a + s + mask) & ~mask;
++		flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
++		for (v = vi; v != vf; v += dim_pag(i + 1)) {
++			natq& d = get_des(proc, i + 1, (addr)v);
++			des_pf *ppf;
++			if (!extr_P(d)) {
++				ppf = swap2(proc, i, (addr)v);
++				if (!ppf)
++					goto error;
++			} else {
++				ppf = descrittore_pf(extr_IND_FISICO(d));
++			}
++			ppf->residente++;
++		}
++	}
++	id = alloca_res(base, s);
++	if (id == 0xffffffff)
++		goto error;
++
++	return id;
++error:
++	for (int j = 3; j >= i + 1; j--)
++		undo_res(a, a + s, j);
++	undo_res(a, v, i);
++	return 0xffffffff;
++}
++//   SOLUZIONE 2017-02-07 )
++
++// ( ESAME 2017-02-07
++extern "C" void c_nonresident(natl id)
++{
++	res_des *r;
++
++	if (!res_valido(id)) {
++		flog(LOG_WARN, "id non valido: %d", id);
++		abort_p();
++	}
++	r = &array_res[id];
++
++	natq a = (natq)r->base;
++	natq s = r->size;
++
++	for (int i = 3; i >= 0; i--) {
++		undo_res(a, a + s, i);
++	}
++	rilascia_res(id);
++}
++
++//   ESAME 2017-02-07 )
++
+ ///////////////////////////////////////////////////////////////////////////////////
+ //                   INIZIALIZZAZIONE                                            //
+ ///////////////////////////////////////////////////////////////////////////////////
+diff --git a/sistema/sistema.s b/sistema/sistema.s
+index 0430d39..b3f74e4 100644
+--- a/sistema/sistema.s
++++ b/sistema/sistema.s
+@@ -345,6 +345,13 @@ init_idt:
+ 	carica_gate	TIPO_D		a_delay		LIV_UTENTE
+ 	carica_gate	TIPO_L		a_log		LIV_UTENTE
+ 	carica_gate	TIPO_EP		a_end_program	LIV_SISTEMA
++// ( ESAME 2017-02-07
++	carica_gate	TIPO_CRES	a_countres	LIV_UTENTE
++	carica_gate	TIPO_NONRES	a_nonresident	LIV_UTENTE
++//   ESAME 2017-02-07 )
++// ( SOLUZIONE 2017-02-07
++	carica_gate	TIPO_RES	a_resident	LIV_UTENTE
++//   SOLUZIONE 2017-02-07 )
+ 
+ 	// primitive per il livello I/O
+ 	carica_gate	TIPO_APE	a_activate_pe	LIV_SISTEMA
+@@ -438,6 +445,26 @@ a_delay:	// routine int $tipo_d
+ 	call carica_stato
+ 	iretq
+ 
++// ( ESAME 2017-02-07
++	.extern c_countres
++a_countres:
++	call c_countres
++	iretq
++
++	.extern c_nonresident
++a_nonresident:
++	call c_nonresident
++	iretq
++//   ESAME 2017-02-07 )
++
++// ( SOLUZIONE 2017-02-07
++	.extern c_resident
++a_resident:
++	cavallo_di_troia %rdi
++	cavallo_di_troia2 %rdi %rsi
++	call c_resident
++	iretq
++//   SOLUZIONE 2017-02-07 )
+ 
+ //
+ // Interfaccia offerta al modulo di IO, inaccessibile dal livello utente
+diff --git a/utente/include/sys.h b/utente/include/sys.h
+index fff8010..eaab541 100644
+--- a/utente/include/sys.h
++++ b/utente/include/sys.h
+@@ -31,6 +31,11 @@ extern "C" void writehd_n(const natw vetto[], natl primo, natb quanti, natb &err
+ extern "C" void dmareadhd_n(natw vetti[], natl primo, natb quanti, natb &errore);
+ extern "C" void dmawritehd_n(const natw vetto[], natl primo, natb quanti, natb& errore);
+ 
++// ( ESAME 2017-02-07
++extern "C" natq countres();
++extern "C" natl resident(addr base, natq size);
++extern "C" void nonresident(natl id);
++//   ESAME 2017-02-07 )
+ 
+ #endif
+ 
+diff --git a/utente/prog/president.in b/utente/prog/president.in
+new file mode 100644
+index 0000000..127cf5d
+--- /dev/null
++++ b/utente/prog/president.in
+@@ -0,0 +1,134 @@
++#include <sys.h>
++#include <lib.h>
++
++process pbarrier body main_body(0), 100, LIV_UTENTE;
++semaphore sync3 value 0;
++natl sems[5];
++
++struct err_arg {
++	addr base;
++	natq size;
++	natl prio;
++};
++
++err_arg err_args[] = {
++	{ 0, 4*KiB },
++	{ (addr)0xffffc00000000000, 4*KiB },
++	{ (addr)0xffffff7fff800000, 8*MiB+4*KiB },
++	{ (addr)0xffffff7fff800000, 8*MiB },
++	{ 0, 0 }
++};
++
++struct count {
++	natq nr;
++	natq pf;
++};
++
++count get_count()
++{
++	count c;
++	natq r = countres();
++	c.nr = r & 0xffffffff;
++	c.pf = (r >> 32);
++	return c;
++}
++
++void error(int a)
++{
++	struct err_arg *e = &err_args[a];
++
++	count c0 = get_count();
++	if (resident(e->base, e->size) != 0xffffffff) {
++		printf("processo errato %d", a);
++	} else {
++		printf("%d: OK", a);
++	}
++	count c1 = get_count();
++	if (c0.nr != c1.nr) {
++		printf("%d: %d pagine residenti invece di %d", a, c0.nr, c1.nr);
++	}
++	terminate_p();
++}
++
++void good(int a)
++{
++	char buf[1*MiB];
++	count c0, c1, c2;
++
++	c0 = get_count();
++	natl id = resident(buf, 1*MiB);
++	if (id == 0xffffffff) {
++		printf("%d: resident fallita");
++		goto out;
++	}
++	buf[0] = 'a';
++	c1 = get_count();
++	if (c0.pf != c1.pf) {
++		printf("%d: %d page fault invece di %d", a, c1.pf, c0.pf);
++		goto out;
++	}
++	nonresident(id);
++	c2 = get_count();
++	if (c0.nr != c2.nr) {
++		printf("%d: %d pagine residenti invece di %d", a, c2.nr, c0.nr);
++		goto out;
++	}
++	printf("%d: OK", a);
++out:
++	terminate_p();
++}
++
++void overlap(int a)
++{
++	char buf[4*KiB];
++	count c0, c1, c2, c3;
++	natl id1, id2;
++
++	c0 = get_count();
++	id1 = resident(buf, 3*KiB);
++	if (id1 == 0xffffffff) {
++		printf("%d: resident 1 fallita");
++		goto out;
++	}
++	c1 = get_count();
++	id2 = resident(buf + KiB, 3*KiB);
++	if (id2 == 0xffffffff) {
++		printf("%d: resident 2 fallita");
++		goto out;
++	}
++	nonresident(id2);
++	c2 = get_count();
++	if (c2.nr != c1.nr) {
++		printf("%d: %d tabelle/pagine residenti invece di %d", a, c2.nr, c1.nr);
++		goto out;
++	}
++	nonresident(id1);
++	c3 = get_count();
++	if (c3.nr != c0.nr) {
++		printf("%d: %d tabelle/pagine residenti invece di %d", a, c3.nr, c0.nr);
++		goto out;
++	}
++	printf("%d: OK", a);
++out:
++	terminate_p();
++}
++
++void last(int a)
++{
++	pause();
++	terminate_p();
++}
++
++process_body main_body(int a)
++{
++	int n = 0;
++	natl prio = 50;
++	for (err_arg *e = err_args; e->size; e++, n++) {
++		activate_p(error, n, prio, LIV_UTENTE);
++		prio -= 10;
++	}
++	activate_p(good, n++, 45, LIV_UTENTE);
++	activate_p(overlap, n++, 15, LIV_UTENTE);
++	activate_p(last, n, 10, LIV_UTENTE);
++}
++
+diff --git a/utente/utente.s b/utente/utente.s
+index 34ea292..0356a40 100644
+--- a/utente/utente.s
++++ b/utente/utente.s
+@@ -91,6 +91,22 @@ dmawritehd_n:
+ 	int $IO_TIPO_DMAHDW
+ 	ret
+ 
++// ( ESAME 2017-02-07
++	.global countres
++countres:
++	int $TIPO_CRES
++	ret
++
++	.global resident
++resident:
++	int $TIPO_RES
++	ret
++
++	.global nonresident
++nonresident:
++	int $TIPO_NONRES
++	ret
++//   ESAME 2017-02-07 )
+ 
+ 	.global log
+ log:

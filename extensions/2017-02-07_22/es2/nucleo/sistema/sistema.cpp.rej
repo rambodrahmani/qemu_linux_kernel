@@ -1,0 +1,31 @@
+--- sistema/sistema.cpp
++++ sistema/sistema.cpp
+@@ -1113,10 +1115,17 @@ bool scollega(des_pf* ppf)	//
+ }
+ 
+ void swap(int liv, addr ind_virt); //
++// ( ESAME 2017-02-07
++natq pf_count = 0;
++//   ESAME 2017-02-07 )
+ void c_routine_pf()	//
+ {
+ 	addr ind_virt = readCR2();
+ 
++// ( ESAME 2017-02-07
++	pf_count++;
++//   ESAME 2017-02-07 )
++
+ 	for (int i = 3; i >= 0; i--) {
+ 		natq d = get_des(esecuzione->id, i + 1, ind_virt);
+ 		bool bitP = extr_P(d);
+@@ -1157,7 +1166,9 @@ void swap(int liv, addr ind_virt)
+ 	}
+ 	// *)
+ 	nuovo_dpf->livello = liv;
+-	nuovo_dpf->residente = false;
++// ( ESAME 2017-02-07
++	nuovo_dpf->residente = 0;
++//   ESAME 2017-02-07 )
+ 	nuovo_dpf->processo = esecuzione->id;
+ 	nuovo_dpf->ind_virtuale = ind_virt;
+ 	nuovo_dpf->ind_massa = IM;

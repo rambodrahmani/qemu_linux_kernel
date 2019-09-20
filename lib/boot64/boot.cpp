@@ -31,8 +31,13 @@ extern "C" void loadCR3(addr dir);
  */
 extern "C" addr readCR3();
 
-// attiva la paginazione [vedi sistema.S]
-extern "C" void attiva_paginazione(natl entry, int debug);
+/**
+ * Enables memory paging and x86-64 long mode.
+ *
+ * @param  entry  
+ * @param  debug  
+ */
+extern "C" void enable_memory_paging(natl entry, int debug);
 
 /**
  *
@@ -161,7 +166,7 @@ static void parse_args(char *cmd)
 }
 
 /**
- *
+ * Boot module cmain. Called from boot.S/start.
  */
 extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 {
@@ -204,8 +209,9 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
 		mod->cmdline, mod->mod_start, mod->mod_end);
 	entry = carica_modulo(mod);
 	// *)
-	
-	loadCR3(tab4);
+
+    // load new table 4 address
+    loadCR3(tab4);
 
     // check if debug mode is enabled
     if (debug_mode)
@@ -214,10 +220,11 @@ extern "C" void cmain (natl magic, multiboot_info_t* mbi)
         flog(LOG_INFO, "Waiting for gdb connection...");
     }
 
-    attiva_paginazione(entry, debug_mode);
+    // enable memory paging and move to x86-64 long mode
+    enable_memory_paging(entry, debug_mode);
 
-	// never reached
-	return;
+    // never reached
+    return;
 }
 
 /* [1]

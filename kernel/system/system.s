@@ -168,7 +168,9 @@ load_state:
 					// (richiesto dal processore
 					// per compatibilita* con il modo
 					// a 32 bit)
-	ltr %cx
+
+    # load new process TR ID
+    ltr %cx
 
 	popq %rcx   //ind di ritorno, va messo nella nuova pila
 	.cfi_adjust_cfa_offset -8
@@ -196,29 +198,31 @@ load_state:
 	// non era stata distrutta, in modo da permettere a noi di continuare
 	// ad usarla. Ora che abbiamo cambiato pila possiamo disfarci della
 	// precedente.
-	cmpq $0, ultimo_terminato
-	je 1f
-	call distruggi_pila_precedente
+    cmpq $0, ultimo_terminato
+    je 1f
+    call distruggi_pila_precedente
+
 1:
 
-	movq RCX(%rbx), %rcx
-	movq RDI(%rbx), %rdi
-	movq RSI(%rbx), %rsi
-	movq RBP(%rbx), %rbp
-	movq RDX(%rbx), %rdx
-	movq RAX(%rbx), %rax
-	movq R8(%rbx), %r8
-	movq R9(%rbx), %r9
-	movq R10(%rbx), %r10
-	movq R11(%rbx), %r11
-	movq R12(%rbx), %r12
-	movq R13(%rbx), %r13
-	movq R14(%rbx), %r14
-	movq R15(%rbx), %r15
-	movq RBX(%rbx), %rbx
+    # restore process registers
+    movq RCX(%rbx), %rcx
+    movq RDI(%rbx), %rdi
+    movq RSI(%rbx), %rsi
+    movq RBP(%rbx), %rbp
+    movq RDX(%rbx), %rdx
+    movq RAX(%rbx), %rax
+    movq R8(%rbx), %r8
+    movq R9(%rbx), %r9
+    movq R10(%rbx), %r10
+    movq R11(%rbx), %r11
+    movq R12(%rbx), %r12
+    movq R13(%rbx), %r13
+    movq R14(%rbx), %r14
+    movq R15(%rbx), %r15
+    movq RBX(%rbx), %rbx
 
-	retq
-	.cfi_endproc
+    retq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 # Used when creating a new process, allocates a new empty TSS descriptor,
@@ -437,6 +441,13 @@ violazione:
 # CPU handles exception the same way it handles external interrupts: each
 # exception is identified by a numeric type (from 0 to 31) which is used to
 # access an IDT gate where the subroutine handler address is found.
+#
+# The DPL is the current privilege level of the processor (placed in the CPL
+# register of the CPU) needed to execute the IDT gate.
+# Each gate also contains a separate L bite in the gate access byte which
+# contains the privilege level do be used for the execution of the addressed
+# subroutine.
+#-------------------------------------------------------------------------------
 .GLOBAL init_idt
 #-------------------------------------------------------------------------------
 init_idt:
