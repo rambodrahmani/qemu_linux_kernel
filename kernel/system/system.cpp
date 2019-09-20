@@ -1875,30 +1875,48 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt)
 }
 
 /**
- *
+ * Updates memory frames statistics.
  */
 void stat();
 
 /**
- *
+ * Page fault subroutine C++ implementation. A page fault (sometimes called #PF,
+ * PF or hard fault) is a type of exception raised by computer hardware when a
+ * running program accesses a memory page that is not currently mapped by the
+ * memory management unit (MMU) into the virtual address space of a process.
+ * Logically, the page may be accessible to the process, but requires a mapping
+ * to be added to the process page tables, and may additionally require the
+ * actual page contents to be loaded from a backing store such as a disk.
  */
 bool c_routine_pf()
 {
-	vaddr ind_virt = readCR2();
-	natl proc = execution->id;
+    // missing virtual address
+    vaddr ind_virt = readCR2();
 
-	stat();
+    // retrieve calling process id
+    natl proc = execution->id;
 
-	for (int i = 3; i >= 0; i--) {
-		tab_entry d = get_des(proc, i + 1, ind_virt);
-		bool bitP = extr_P(d);
-		if (!bitP) {
-			des_frame *df = swap(proc, i, ind_virt);
-			if (!df)
-				return false;
-		}
-	}
-	return true;
+    // update frames statistics
+    stat();
+
+    for (int i = 3; i >= 0; i--)
+    {
+        tab_entry d = get_des(proc, i + 1, ind_virt);
+
+        bool bitP = extr_P(d);
+
+        if (!bitP)
+        {
+            des_frame *df = swap(proc, i, ind_virt);
+
+            if (!df)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1938,35 +1956,62 @@ des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virt)
 }
 
 /**
- *
+ * Updates memory frames statistics used in case of page fault in order to
+ * choose the frame to be emptied to make space for the incoming page.
  */
 void stat()
 {
-	des_frame *df1, *df2;
-	faddr f1, f2;
-	bool bitA;
+    des_frame *df1, *df2;
 
-	for (natq i = 0; i < N_DF; i++) {
-		df1 = &vdf[i];
-		if (df1->livello < 1)
-			continue;
-		f1 = indirizzo_frame(df1);
-		for (int j = 0; j < 512; j++) {
-			tab_entry& des = get_entry(f1, j);
-			if (!extr_P(des))
-				continue;
-			bitA = extr_A(des);
-			set_A(des, false);
-			f2 = extr_IND_FISICO(des);
-			df2 = descrittore_frame(f2);
-			if (!df2 || df2->residente)
-				continue;
-			df2->contatore >>= 1;
-			if (bitA)
-				df2->contatore |= 0x80000000;
-		}
-	}
-	invalida_TLB();
+    faddr f1, f2;
+
+    bool bitA;
+
+    for (natq i = 0; i < N_DF; i++)
+    {
+	    df1 = &vdf[i];
+	
+        if (df1->livello < 1)
+        {
+            continue;
+        }
+
+
+        f1 = indirizzo_frame(df1);
+
+        for (int j = 0; j < 512; j++)
+        {
+            tab_entry& des = get_entry(f1, j);
+            
+            if (!extr_P(des))
+            {
+                continue;
+            }
+
+            bitA = extr_A(des);
+
+            set_A(des, false);
+
+            f2 = extr_IND_FISICO(des);
+
+            df2 = descrittore_frame(f2);
+
+            if (!df2 || df2->residente)
+            {
+                continue;
+            }
+
+            df2->contatore >>= 1;
+
+            if (bitA)
+            {
+                df2->contatore |= 0x80000000;
+            }
+        }
+    }
+
+    // invalidate TLB
+    invalida_TLB();
 }
 
 // funzione di supporto per carica_tutto()

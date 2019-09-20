@@ -380,11 +380,20 @@ out:
 // al contenuto della pagina fisica descritta. Tali informazioni servono
 // principalmente a facilitare o rendere possibile il rimpiazzamento del
 // contenuto stesso.
-struct des_frame {
+struct des_frame
+{
 	int	livello;	// 0=pagina, -1=libera
-// ( ESAME 2017-02-07
-	natl	residente;	// pagina residente sse > 0
+
+// ESAME 2017-02-07
+
+    /**
+     * We change this variable from boolean to natl in order to be able to count
+     * the number of times the residente() primitive is called upon a page.
+     */
+    natl residente;
+
 //   ESAME 2017-02-07 )
+
 	// identificatore del processo a cui appartiene l'entita'
 	// contenuta nel frame.
 	natl	processo;
@@ -1209,11 +1218,17 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt)
 }
 
 
-// ( ESAME 2017-02-07
+// EXTENSION 2017-02-07
+
+/**
+ *
+ */
 natq pf_count = 0;
-//   ESAME 2017-02-07 )
+
+// EXTENSION 2017-02-07
 
 void stat();
+
 bool c_routine_pf()
 {
 	vaddr ind_virt = readCR2();
@@ -1221,9 +1236,11 @@ bool c_routine_pf()
 
 	stat();
 
-// ( ESAME 2017-02-07
-	pf_count++;
-//   ESAME 2017-02-07 )
+// EXTENSION 2017-02-07
+
+    pf_count++;
+
+// EXTENSION 2017-02-07
 
 	for (int i = 3; i >= 0; i--) {
 		tab_entry d = get_des(proc, i + 1, ind_virt);
