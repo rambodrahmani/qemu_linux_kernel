@@ -10,14 +10,14 @@
 #define MIN_PROC_ID		0
 #define MAX_PROC_ID		(NUM_TSS - 1)
 
-// ( ESAME 2017-02-07
+// EXTENSION 2017-02-07
 
 /**
  *
  */
 #define MAX_RES     10
 
-//   ESAME 2017-02-07 )
+// EXTENSION 2017-02-07
 
 // )
 

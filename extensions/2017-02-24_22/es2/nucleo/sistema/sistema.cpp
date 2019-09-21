@@ -382,9 +382,13 @@ out:
 // contenuto stesso.
 struct des_frame {
 	int	livello;	// 0=pagina, -1=libera
-// ( ESAME 2017-02-24
+
+// EXTENSION 2017-02-24
+
 	natl	residente;	// pagina residente sse > 0
-//   ESAME 2017-02-24 )
+
+// EXTENSION 2017-02-24
+
 	// identificatore del processo a cui appartiene l'entita'
 	// contenuta nel frame.
 	natl	processo;
@@ -1210,9 +1214,11 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt)
 }
 
 
-// ( ESAME 2017-02-24
+// EXTENSION 2017-02-24
+
 natq pf_count = 0;
-//   ESAME 2017-02-24 )
+
+// EXTENSION 2017-02-24
 
 void stat();
 
@@ -1223,10 +1229,12 @@ bool c_routine_pf()
 
 	stat();
 
-// ( ESAME 2017-02-24
+// EXTENSION 2017-02-24
+
 	pf_count++;
 	//flog(LOG_DEBUG, "page fault a %p", ind_virt);
-//   ESAME 2017-02-24 )
+
+// EXTENSION 2017-02-24
 
 	for (int i = 3; i >= 0; i--) {
 		tab_entry d = get_des(proc, i + 1, ind_virt);
@@ -1394,94 +1402,141 @@ bool crea_spazio_condiviso()
 	return true;
 }
 
-// ( ESAME 2017-02-24
-struct res_des {
-	addr base;
-	natq size;
-	natl proc;
+// EXTENSION 2017-02-24
+
+/**
+ *
+ */
+struct res_des
+{
+    addr base;
+    natq size;
+    natl proc;
 };
 
+/**
+ *
+ */
 res_des array_res[MAX_RES];
+
+/**
+ *
+ */
 natl alloca_res(addr base, natq size)
 {
-	res_des *r = 0;
-	natl id = 0xffffffff;
-	for (int i = 0; i < MAX_RES; i++) {
-		r = &array_res[i];
-		if (r->proc == 0) {
-			id = i;
-			break;
-		}
-	}
+    res_des *r = 0;
 
-	if (r) {
-		r->base = base;
-		r->size = size;
-		r->proc = esecuzione->id;
-	}
-	return id;
+    natl id = 0xffffffff;
+
+    for (int i = 0; i < MAX_RES; i++)
+    {
+        r = &array_res[i];
+
+        if (r->proc == 0)
+        {
+            id = i;
+
+            break;
+        }
+    }
+
+    if (r)
+    {
+        r->base = base;
+
+        r->size = size;
+
+        r->proc = esecuzione->id;
+    }
+
+    return id;
 }
+
+/**
+ *
+ */
 bool res_valido(natl id)
 {
-	return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
+    return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
 }
 
+/**
+ *
+ */
 void rilascia_res(natl id)
 {
-	array_res[id].proc = 0;
+    array_res[id].proc = 0;
 }
 
+/**
+ *
+ */
 extern "C" natq c_countres()
 {
-	natq c = 0;
+    natq c = 0;
 
-	for (natq i = 0; i < N_DF; i++) {
-		des_frame* ppf = &vdf[i];
-		if (ppf->livello >= 0 && ppf->residente > 0)
-			c++;
-	}
-	return c | (pf_count << 32);
+    for (natq i = 0; i < N_DF; i++)
+    {
+        des_frame* ppf = &vdf[i];
+
+        if (ppf->livello >= 0 && ppf->residente > 0)
+        {
+            c++;
+        }
+    }
+
+    return c | (pf_count << 32);
 }
 
 // decrementa i campi resident per tutte le tabelle o pagine
 // di livello i che coprono gli indirizzi [base, stop) 
 void undo_res(natq base, natq stop, int i)
 {
-	natl proc = esecuzione->id;
-	// per capire quali tabelle/pagine di livello j dobbiamo
-	// rendere non residenti calcoliamo:
-	// vi: l'indirizzo virtuale di partenza della prima pagina di livello
-	//     i+1 che interseca [base, base+size)
-	// vf: l'indirizzo virtuale di partenza della prima pagina di livello
-	//     i+1 che si trova oltre a e non interseca [base, base+size)
-	natq mask = dim_region(i) - 1;
-	vaddr vi = base & ~mask;
-	vaddr vf = (stop + mask) & ~mask;
-	for (natq v = vi; v != vf; v += dim_region(i)) {
-		// otteniamo il descrittore che punta a questa tabella/pagina
-		natq& d = get_des(proc, i + 1, v);
-		// se prima era residente, deve essere presente, quindi
-		// possiamo estrarre l'indirizzo fisico e ottenere da questo
-		// il puntatore al descrittore di pagina fisica
-		des_frame *ppf = descrittore_frame(extr_IND_FISICO(d));
-		ppf->residente--;
-	}
+    natl proc = esecuzione->id;
+
+    // per capire quali tabelle/pagine di livello j dobbiamo
+    // rendere non residenti calcoliamo:
+    // vi: l'indirizzo virtuale di partenza della prima pagina di livello
+    //     i+1 che interseca [base, base+size)
+    // vf: l'indirizzo virtuale di partenza della prima pagina di livello
+    //     i+1 che si trova oltre a e non interseca [base, base+size)
+    natq mask = dim_region(i) - 1;
+    vaddr vi = base & ~mask;
+    vaddr vf = (stop + mask) & ~mask;
+
+    for (natq v = vi; v != vf; v += dim_region(i))
+    {
+        // otteniamo il descrittore che punta a questa tabella/pagina
+        natq& d = get_des(proc, i + 1, v);
+        // se prima era residente, deve essere presente, quindi
+        // possiamo estrarre l'indirizzo fisico e ottenere da questo
+        // il puntatore al descrittore di pagina fisica
+        des_frame *ppf = descrittore_frame(extr_IND_FISICO(d));
+        ppf->residente--;
+    }
 }
 
+/**
+ * @param  base
+ * @param  size
+ */
 extern "C" void c_resident(addr base, natq s)
 {
-	natl proc = esecuzione->id, id;
-	int i;
-	natq v, a = (natq)base;
-	des_proc *self = des_p(proc);
+    natl proc = esecuzione->id, id;
+    int i;
+    natq v, a = (natq)base;
+    des_proc *self = des_p(proc);
 
-	self->contesto[I_RAX] = 0xFFFFFFFF;
+    self->contesto[I_RAX] = 0xFFFFFFFF;
 
-	if (a < ini_utn_p || a + s < a || a + s > fin_utn_p) {
-		flog(LOG_WARN, "parametri non validi: %p, %p", a, s);
-		return;
-	}
-	for (i = 3; i >= 0; i--) {
+    if (a < ini_utn_p || a + s < a || a + s > fin_utn_p)
+    {
+        flog(LOG_WARN, "parametri non validi: %p, %p", a, s);
+        return;
+    }
+
+    for (i = 3; i >= 0; i--)
+    {
 		natq mask = dim_region(i) - 1;
 		vaddr vi = a & ~mask;
 		vaddr vf = (a + s + mask) & ~mask;
@@ -1512,6 +1567,9 @@ error:
 	undo_res(a, v, i);
 }
 
+/**
+ *
+ */
 extern "C" void c_nonresident(natl id)
 {
 	res_des *r;
@@ -1532,7 +1590,7 @@ extern "C" void c_nonresident(natl id)
 	rilascia_res(id);
 }
 
-//   ESAME 2017-02-24 )
+// EXTENSION 2017-02-24
 
 ///////////////////////////////////////////////////////////////////////////////////
 //                   INIZIALIZZAZIONE                                            //

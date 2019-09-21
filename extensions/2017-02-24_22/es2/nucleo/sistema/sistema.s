@@ -456,9 +456,12 @@ init_idt:
 	carica_gate	TIPO_D		a_delay		LIV_UTENTE
 	carica_gate	TIPO_L		a_log		LIV_UTENTE
 	carica_gate	TIPO_EP		a_end_program	LIV_SISTEMA
-// ( ESAME 2017-02-24
-	carica_gate	TIPO_CRES	a_countres	LIV_UTENTE
-//   ESAME 2017-02-24 )
+
+# EXTENSION 2017-02-24
+
+    carica_gate  TIPO_CRES  a_countres  LIV_UTENTE
+
+# EXTENSION 2017-02-24
 
 	// primitive per il livello I/O
 	carica_gate	TIPO_APE	a_activate_pe	LIV_SISTEMA
@@ -467,10 +470,13 @@ init_idt:
 	carica_gate	TIPO_P		a_panic		LIV_SISTEMA
 	carica_gate	TIPO_AB		a_abort_p	LIV_SISTEMA
 	carica_gate	TIPO_TRA	a_trasforma	LIV_SISTEMA
-// ( ESAME 2017-02-24
-	carica_gate	TIPO_NONRES	a_nonresident	LIV_SISTEMA
-	carica_gate	TIPO_RES	a_resident	LIV_SISTEMA
-//   ESAME 2017-02-24 )
+
+# EXTENSION 2017-02-24
+
+    carica_gate  TIPO_NONRES  a_nonresident  LIV_SISTEMA
+    carica_gate  TIPO_RES     a_resident     LIV_SISTEMA
+
+# EXTENSION 2017-02-24
 
 	lidt idt_pointer
 	ret
@@ -582,43 +588,51 @@ a_delay:	// routine int $tipo_d
 	iretq
 	.cfi_endproc
 
-// ( ESAME 2017-02-24
-	.extern c_countres
+# EXTENSION 2017-02-24
+
+#-------------------------------------------------------------------------------
+.EXTERN c_countres                                            # natq countres();
+#-------------------------------------------------------------------------------
 a_countres:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call c_countres
-	iretq
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call c_countres                 # call C++ implementation
+    iretq                           # return from interrupt
+    .cfi_endproc
 
-	.extern c_nonresident
+#-------------------------------------------------------------------------------
+.EXTERN c_nonresident                               # void nonresident(natl id);
+#-------------------------------------------------------------------------------
 a_nonresident:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	call c_nonresident
-	call carica_stato
-	iretq
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato                # save current process state
+    call c_nonresident              # call C++ implementation
+    call carica_stato               # load new process state
+    iretq                           # return from interrupt
+    .cfi_endproc
 
-	.extern c_resident
+#-------------------------------------------------------------------------------
+.extern c_resident                        # natl resident(addr base, natq size);
+#-------------------------------------------------------------------------------
 a_resident:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call salva_stato
-	cavallo_di_troia %rdi
-	cavallo_di_troia2 %rdi %rsi
-	call c_resident
-	call carica_stato
-	iretq
-	.cfi_endproc
-//   ESAME 2017-02-24 )
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call salva_stato                # save current process state
+    cavallo_di_troia %rdi           # check addressed pages base
+    cavallo_di_troia2 %rdi %rsi     # check addressed pages length
+    call c_resident                 # call C++ implementation
+    call carica_stato               # load new process state
+    iretq                           # return from interrupt
+    .cfi_endproc
+
+# EXTENSION 2017-02-24
 
 //
 // Interfaccia offerta al modulo di IO, inaccessibile dal livello utente

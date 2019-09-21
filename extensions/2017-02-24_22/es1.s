@@ -155,7 +155,7 @@ _ZN2cl5elab1EPc3st2:
     movq %rdi, indo(%rbp)
     movq %rsi, this(%rbp)
     movq %rdx, ar1(%rbp)
-    movl %eax, s2(%rbp)
+    movl %ecx, s2(%rbp)
 
 # for loop 1 initialization:
     movl $0, i(%rbp)                # i = 0
@@ -174,7 +174,7 @@ for2:
     movl   %eax, (%rsi, %rcx, 4)    # s1.vi[i] = ar1[i] + i;
 
     incl i(%rbp)                    # i++
-    jmp  finefor2                   # loop again
+    jmp  for2                       # loop again
 
 finefor2:
 
@@ -204,10 +204,10 @@ for3:
 finefor3:
 
 # copy cla into the memory space addressed by indo
-    leaq cla(%rbp), %rsi
-    movq indo(%rbp), %rdi
-    movabsq $5, %rcx
-    rep movsq
+    leaq cla(%rbp), %rsi            # source address
+    movq indo(%rbp), %rdi           # destination address
+    movabsq $5, %rcx                # repetitions
+    rep movsq                       # execute transfer
 
 # return intialized object address
     movq indo(%rbp), %rax

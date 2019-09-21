@@ -1431,22 +1431,32 @@ res_des array_res[MAX_RES];
  */
 natl alloca_res(vaddr start, natq size)
 {
-	res_des *r = 0;
-	natl id = 0xffffffff;
-	for (int i = 0; i < MAX_RES; i++) {
-		r = &array_res[i];
-		if (r->proc == 0) {
-			id = i;
-			break;
-		}
-	}
+    res_des *r = 0;
 
-	if (r) {
-		r->start = start;
-		r->size = size;
-		r->proc = esecuzione->id;
-	}
-	return id;
+    natl id = 0xffffffff;
+
+    for (int i = 0; i < MAX_RES; i++)
+    {
+        r = &array_res[i];
+
+        if (r->proc == 0)
+        {
+            id = i;
+
+            break;
+        }
+    }
+
+    if (r)
+    {
+        r->start = start;
+
+        r->size = size;
+
+        r->proc = esecuzione->id;
+    }
+
+    return id;
 }
 
 /**
@@ -1454,7 +1464,7 @@ natl alloca_res(vaddr start, natq size)
  */
 bool res_valido(natl id)
 {
-	return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
+    return (id < MAX_RES) && (esecuzione->id == array_res[id].proc);
 }
 
 /**
@@ -1462,7 +1472,7 @@ bool res_valido(natl id)
  */
 void rilascia_res(natl id)
 {
-	array_res[id].proc = 0;
+    array_res[id].proc = 0;
 }
 
 /**
@@ -1470,30 +1480,37 @@ void rilascia_res(natl id)
  */
 extern "C" natq c_countres()
 {
-	natq c = 0;
+    natq c = 0;
 
-	for (natq i = 0; i < N_DF; i++) {
-		des_frame* ppf = &vdf[i];
-		if (ppf->livello >= 0 && ppf->residente > 0)
-			c++;
+    for (natq i = 0; i < N_DF; i++)
+    {
+        des_frame* ppf = &vdf[i];
+
+        if (ppf->livello >= 0 && ppf->residente > 0)
+        {
+            c++;
+        }
 	}
-	return c | (pf_count << 32);
+
+    return c | (pf_count << 32);
 }
 
 // decrementa i campi resident per tutte le tabelle o pagine
 // di livello i che coprono gli indirizzi [base, stop) 
 void undo_res(natq start, natq stop, int i)
 {
-	natl proc = esecuzione->id;
-	// per capire quali tabelle/pagine di livello j dobbiamo
-	// rendere non residenti calcoliamo:
-	// vi: l'indirizzo virtuale della prima regione di livello i
-	//     che interseca [start, stop)
-	// vf: l'indirizzo virtuale della prima regione di livello i
-	//     che si trova oltre vi e non interseca [start, stop)
-	vaddr vi = base(start, i);
-	vaddr vf = base(stop - 1, i) + dim_region(i);
-	for (natq v = vi; v != vf; v += dim_region(i)) {
+    natl proc = esecuzione->id;
+    // per capire quali tabelle/pagine di livello j dobbiamo
+    // rendere non residenti calcoliamo:
+    // vi: l'indirizzo virtuale della prima regione di livello i
+    //     che interseca [start, stop)
+    // vf: l'indirizzo virtuale della prima regione di livello i
+    //     che si trova oltre vi e non interseca [start, stop)
+    vaddr vi = base(start, i);
+    vaddr vf = base(stop - 1, i) + dim_region(i);
+
+    for (natq v = vi; v != vf; v += dim_region(i))
+    {
 		// otteniamo il descrittore che punta a questa tabella/pagina
 		natq& d = get_des(proc, i + 1, v);
 		// se prima era residente, deve essere presente, quindi
@@ -1525,13 +1542,17 @@ extern "C" void c_resident(addr start, natq s)
 
     int i;
 
+    vaddr v;
+
     // retrieve start (inclusive) and end (exclusive) addresses of the virtual
     // pages to be made permanent
-    vaddr v, a = reinterpret_cast<vaddr>(start), b = a + s - 1;
+    vaddr a = reinterpret_cast<vaddr>(start);
+    vaddr b = a + s - 1;
 
     // retrieve calling process descriptor
     des_proc *self = des_p(proc);
 
+    // return value
     self->contesto[I_RAX] = 0xFFFFFFFF;
 
     // check if the addressed virtual pages belong to the private user memory
