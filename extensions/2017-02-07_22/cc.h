@@ -25,6 +25,7 @@ class cl
     char v1[4];
     int v3[4];
     long v2[4];
+
 public:
     cl(st1 ss);
 

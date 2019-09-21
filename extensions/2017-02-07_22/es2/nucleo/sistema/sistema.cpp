@@ -1570,14 +1570,18 @@ extern "C" void c_resident(addr start, natq s)
         return;
     }
 
+    // loop through virtual memory tables levels
     for (i = 3; i >= 0; i--)
     {
+        // for each level, retrieve start address region
         vaddr vi = base(a, i);
-        
+
+        // and end address region
         vaddr vf = base(b, i) + dim_region(i);
-        
+
+        // print log message for debugging purposes
         flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
-        
+
         for (v = vi; v != vf; v += dim_region(i))
         {
             tab_entry& d = get_des(proc, i + 1, v);

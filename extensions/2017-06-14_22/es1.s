@@ -12,8 +12,8 @@
 #-------------------------------------------------------------------------------
 # activation frame:
 # -----------------
-#  i            -17
-#  s2           -13
+#  i            -21
+#  s2           -17
 #  c            -9
 #  &this        -8
 #  %rbp         0
@@ -22,8 +22,8 @@ _ZN2clC1Ec3st1:
 # set stack locations labels:
     .set this, -8
     .set c,    -9
-    .set s2,   -13
-    .set i,    -17
+    .set s2,   -17
+    .set i,    -21
 
 # prologue: activation frame
     pushq %rbp
@@ -33,7 +33,7 @@ _ZN2clC1Ec3st1:
 # copy actual arguments to the stack:
     movq %rdi, this(%rbp)
     movb %sil, c(%rbp)
-    movl %edx, s2(%rbp)
+    movq %rdx, s2(%rbp)
 
 # for loop 1 initialization:
     movl $0, i(%rbp)                # i = 0
@@ -119,19 +119,48 @@ _ZN2cl5elab1ER3st13st2:
 
 # cl cla('S', s1);
     leaq cla(%rbp), %rdi
-    movb $'C', %sil
-    movl (%rsi), %edx
+    movb $'S', %sil
+    movq s1(%rbp), %rdx
+    movq (%rdx), %rdx
     call _ZN2clC1Ec3st1
 
 # for loop inizitialization
     movl $0, i(%rbp)                # i = 0
 
 for2:
-    mcpl $4, i(%rbp)                # check if i < 4
-    jge  finefor2                   # end for loop (I >= 4)
+    cmpl $4, i(%rbp)                # check if i < 4
+    jge  finefor2                   # end for loop (i >= 4)
 
 # for loop body:
+    movslq i(%rbp), %rcx            # i -> %rcx
+    movq   this(%rbp), %rdi         # &this -> %rdi
+    movq   s1(%rbp), %rsi           # &s1 -> %rsi
 
+# if (s.vc[i] > s1.vc[i]):
+    movb  (%rsi, %rcx, 1), %al      # s1.vc[i] -> %al
+    movb  (%rdi, %rcx, 1), %bl      # s.vc[i] -> %bl
+    cmpb  %al, %bl                  # compare s.vc[i] and s1.vc[i]
+    jge   fineif1                   # exit if (s.vc[i] >= s1.vc[i])
+    leaq  cla(%rbp), %rsi           # &cla -> %rsi
+    movb  (%rsi, %rcx, 1), %bl      # cla.s.vc[i] -> %bl
+    movb  %bl, (%rdi, %rcx, 1)      # s.vc[i] = cla.s.vc[i]
+
+fineif1:
+
+# if (v[i] < cla.v[i]):
+    leaq  cla(%rbp), %rdi           # &cla -> %rdi
+    movq  this(%rbp), %rsi          # &this -> %rsi
+    movq  8(%rsi, %rcx, 8), %rax    # v[i] -> %rax
+    movq  8(%rdi, %rcx, 8), %rbx    # cla.v[i] -> %rbx
+    cmpq  %rbx, %rax                # compare v[i] and cla.v[i]
+    jge   fineif2                   # exit if (v[i] >= cla.v[i])
+    addq  %rcx, %rbx                # cla.v[i] + i -> %rbx
+    movq  %rbx, 8(%rsi, %rcx, 8)    # v[i] = cla.v[i] + i;
+
+fineif2:
+
+    incl i(%rbp)                    # i++
+    jmp  for2                       # loop again
 
 finefor2:
 
