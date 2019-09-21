@@ -1412,12 +1412,17 @@ bool crea_spazio_condiviso()
 // EXTENSION 2017-02-07
 
 /**
- *
+ * Permanent region descriptor.
  */
 struct res_des
 {
+    // starting virtual address
     vaddr start;
+
+    // region size
     natq size;
+
+    // owner process
     natl proc;
 };
 
@@ -1460,7 +1465,10 @@ natl alloca_res(vaddr start, natq size)
 }
 
 /**
- *
+ * Checks if the given resident id is valid: an ID is valid if it is not higher
+ * than the maximum value and if it belongs to the calling process. A different
+ * process can not undo resident operation performed by other processes. This is
+ * because the CR3 CPU register content differs from process to process.
  */
 bool res_valido(natl id)
 {
@@ -1495,11 +1503,19 @@ extern "C" natq c_countres()
     return c | (pf_count << 32);
 }
 
-// decrementa i campi resident per tutte le tabelle o pagine
-// di livello i che coprono gli indirizzi [base, stop) 
+/**
+ * Decreases the value of the residente field for all the tables and pages
+ * of level i regarding the addressed area [base, stop).
+ *
+ * @param  start  starting address;
+ * @param  stop   ragion size;
+ * @param  i      table level. 
+ */
 void undo_res(natq start, natq stop, int i)
 {
+    // retrieve calling process ID
     natl proc = esecuzione->id;
+
     // per capire quali tabelle/pagine di livello j dobbiamo
     // rendere non residenti calcoliamo:
     // vi: l'indirizzo virtuale della prima regione di livello i
@@ -1511,14 +1527,15 @@ void undo_res(natq start, natq stop, int i)
 
     for (natq v = vi; v != vf; v += dim_region(i))
     {
-		// otteniamo il descrittore che punta a questa tabella/pagina
-		natq& d = get_des(proc, i + 1, v);
-		// se prima era residente, deve essere presente, quindi
-		// possiamo estrarre l'indirizzo fisico e ottenere da questo
-		// il puntatore al descrittore di pagina fisica
-		des_frame *ppf = descrittore_frame(extr_IND_FISICO(d));
-		ppf->residente--;
-	}
+        // otteniamo il descrittore che punta a questa tabella/pagina
+        natq& d = get_des(proc, i + 1, v);
+
+        // se prima era residente, deve essere presente, quindi
+        // possiamo estrarre l'indirizzo fisico e ottenere da questo
+        // il puntatore al descrittore di pagina fisica
+        des_frame *ppf = descrittore_frame(extr_IND_FISICO(d));
+        ppf->residente--;
+    }
 }
 
 // EXTENSION 2017-02-07
@@ -1571,41 +1588,56 @@ extern "C" void c_resident(addr start, natq s)
     }
 
     // loop through virtual memory tables levels
+    // for each level
     for (i = 3; i >= 0; i--)
     {
-        // for each level, retrieve start address region
+        // retrieve level 'i' region starting address for the virtual address
+        // 'a' (a contains the virtual pages starting virtual address)
         vaddr vi = base(a, i);
 
-        // and end address region
+        // and level 'i' region ending address for the virtual address 'b' (b
+        // contains the virtual pages end virtual address): keep in mind that
+        // base() will return the start address of the regione where b is
+        // contained that is why we need to add the region dimension for level i
         vaddr vf = base(b, i) + dim_region(i);
 
         // print log message for debugging purposes
         flog(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf);
 
+        // start from the region starting address, for each region
         for (v = vi; v != vf; v += dim_region(i))
         {
+            // retrieve table entry of level i+1 containing v
             tab_entry& d = get_des(proc, i + 1, v);
 
             des_frame *ppf;
-            
+
+            // check the table entry P bit: it zero (the page is in the swap)
             if (!extr_P(d))
             {
+                // swap in the missing page in the process addressing area
                 ppf = swap(proc, i, v);
 
+                // check if the swap-in succeeded
                 if (!ppf)
                 {
+                    // if not, go to error
                     goto error;
                 }
             }
             else
             {
+                // if the entry P is set to 1: retrieve frame descriptor
                 ppf = descrittore_frame(extr_IND_FISICO(d));
 			}
 
+            // increment residente field to make the region permanent
             ppf->residente++;
         }
     }
 
+    // create an ID for this whole operation in order to be able to undo
+    // everything later using the c_nonresident()
     id = alloca_res(a, s);
 
     if (id == 0xffffffff)
@@ -1617,7 +1649,8 @@ extern "C" void c_resident(addr start, natq s)
     self->contesto[I_RAX] = id;
 
     return;
-	
+
+// in case of error all regions made permanent must be undone
 error:
     for (int j = 3; j >= i + 1; j--)
     {
@@ -1632,26 +1665,47 @@ error:
 // EXTENSION 2017-02-07
 
 /**
+ * This method can be used to undo the operation performed by c_resident()
+ * passing as ID the value returned by c_resident().
  *
+ * @param  id  the id of the operation performed by c_resident() to be undone.
  */
 extern "C" void c_nonresident(natl id)
 {
-	res_des *r;
+    // permanent region descrpitor
+    res_des *r;
 
-	if (!res_valido(id)) {
-		flog(LOG_WARN, "id non valido: %d", id);
-		c_abort_p();
-		return;
-	}
-	r = &array_res[id];
+    // check if the given resident id is valid
+    if (!res_valido(id))
+    {
+        // print warning log message
+        flog(LOG_WARN, "Invalid Resident ID: %d", id);
 
-	vaddr a = r->start;
-	natq s = r->size;
+        // abort calling process
+        c_abort_p();
 
-	for (int i = 3; i >= 0; i--) {
-		undo_res(a, a + s, i);
-	}
-	rilascia_res(id);
+        // just return to the caller
+        return;
+    }
+
+    // retrieve permanent region descriptor
+    r = &array_res[id];
+
+    // retrieve region starting address
+    vaddr a = r->start;
+
+    // retrieve region size
+    natq s = r->size;
+
+    // loop through different table levels of the memory 
+    for (int i = 3; i >= 0; i--)
+    {
+        // undo each and every resident operation performed
+        undo_res(a, a + s, i);
+    }
+
+    // release permanent region
+    rilascia_res(id);
 }
 
 // EXTENSION 2017-02-07
