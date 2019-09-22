@@ -1,0 +1,28 @@
+Vogliamo fornire ai processi la possibilit\`a di scoprire se l'esecuzione di un altro processo passa da una certa istruzione.
+Per far questo forniamo una primitiva \verb|breakpoint(vaddr rip)| che installa un breakpoint (istruzione \verb|int3|, codice operativo \verb|0xCC|) 
+all'indirizzo \verb|rip|, quindi blocca il processo chiamante, sia $P_1$. Quando (e se) un altro processo $P_2$ arriva a quell'indirizzo,
+il processo $P_1$ deve essere risvegliato. Si noti che il processo $P_2$ non si blocca e deve proseguire la sua esecuzione
+indisturbato (salvo che potrebbe dover cedere il processore a $P_1$ per via della preemption).
+
+Prevediamo le seguenti limitazioni del meccanismo:
+\begin{enumerate}
+\item per ogni chiamata di \verb|breakpoint(rip)| viene intercettato solo il primo processo che passa da \verb|rip|: altri processi che dovessero passarvi dopo il primo non
+vengono intercettati;
+\item Un solo processo alla volta pu\`o chiamare \verb|breakpoint()|; la primitiva restituisce un errore se un altro processo sta gi\`a aspettando un breakpoint.
+\end{enumerate}
+
+Si noti che se un processo esegue \verb|int3| senza che ci\`o sia richiesto da una primitiva \verb|breakpoint()| attiva, il processo
+deve essere abortito.
+
+
+
+Si modifichino dunque i file \verb|sistema/sistema.s| e \verb|sistema/sistema.cpp| per implementare la seguente primitiva:
+\begin{itemize}
+\item 	\verb|natl breakpoint(vaddr rip)|: (tipo 0x59): blocca il processo chiamante in attesa che un altro processo provi ad eseguire
+	l'istruzione all'indirizzo \verb|rip|; restituisce l'id del processo intercettato, o 0xFFFFFFFF se un altro processo sta gi\`a
+	  aspettando un breakpoint (a qualunque indirizzo);
+      abortisce il processo se \verb|rip| non appartiene all'intervallo $[\mathtt{ini\_utn\_c}, \mathtt{fin\_utn\_c})$ (zona utente/condivisa).
+\end{itemize}
+
+{\bf Suggerimento}: Il comando \verb|process dump| del debugger \`e stato modificato in modo da mostrare il disassemblato del codice
+intorno al valore di \verb|rip| salvato in pila.
