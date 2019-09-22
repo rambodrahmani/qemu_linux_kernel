@@ -1,0 +1,1034 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 24 24 571 818
+%%Title: Enscript Output
+%%For: Rambod Rahmani
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Mon Sep 23 00:28:25 2019
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 547 def
+/d_page_h 794 def
+/d_header_x 0 def
+/d_header_y 779 def
+/d_header_w 547 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 547 def
+/d_footer_h 0 def
+/d_output_w 547 def
+/d_output_h 779 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 1 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:21:58 2019) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(// EXTENSION 2017-02-24) s
+5 744 M
+(/**) s
+5 733 M
+( * Checks if the address virtual pages [base, size\) are permanent or can be make) s
+5 722 M
+( * permanent in the physical memory.) s
+5 711 M
+( *) s
+5 700 M
+( * @param  base  virtual pages starting address) s
+5 689 M
+( * @param  size  virtual pages length) s
+5 678 M
+( *) s
+5 667 M
+( * @return  an ID which can be used as argument of the nonresident\(natl id\)) s
+5 656 M
+( *          primitive to undo the operation.) s
+5 645 M
+( */) s
+5 634 M
+(extern "C" natl resident\(addr base, natq size\);) s
+5 612 M
+(/**) s
+5 601 M
+( * Undoes the operations performed by the resident\(addr, natq\) primitive.) s
+5 590 M
+( */) s
+5 579 M
+(extern "C" void nonresident\(natl id\);) s
+5 557 M
+(// EXTENSION 2017-02-24) s
+5 524 M
+(// EXTENSION 2017-02-24) s
+5 502 M
+(/**) s
+5 491 M
+( * Maximum number of CE devices to be initialized at boot.) s
+5 480 M
+( */) s
+5 469 M
+(static const int MAX_CE = 16;) s
+5 447 M
+(/**) s
+5 436 M
+( * CE device descriptor. Each CE PCI device \(identified by the vendor ID 0xedce) s
+5 425 M
+( * and device ID 0x1234\) occupies 32 bytes in the I/O space starting from the) s
+5 414 M
+( * address specified in the BAR0 configuration register. Theese PCI devices are) s
+5 403 M
+( * capable of transferring data in PCI Bus Mastering.) s
+5 392 M
+( */) s
+5 381 M
+(struct des_ce) s
+5 370 M
+({) s
+5 359 M
+(    // destination buffer virtual address MSB) s
+5 348 M
+(    ioaddr iVPTRHI;) s
+5 326 M
+(    // destination buffer virtual address LSB) s
+5 315 M
+(    ioaddr iVPTRLO;) s
+5 293 M
+(    // number of bytes to be transferred) s
+5 282 M
+(    ioaddr iCNT;) s
+5 260 M
+(    // directory \(32 bit\) / tab4 \(64 bit\) physical address to be used to) s
+5 249 M
+(    // translate the provided destination buffer virtual address) s
+5 238 M
+(    ioaddr iCR3;) s
+5 216 M
+(    // status register: reading it is considered as interrupt request ak) s
+5 205 M
+(    // in case of errors the transfer is interrupted and the status register bit) s
+5 194 M
+(    // n. 2 is set to 1) s
+5 183 M
+(    ioaddr iSTS;) s
+5 161 M
+(    // command regsiter address: writing 1 here starts the transfers) s
+5 150 M
+(    ioaddr iCMD;) s
+5 128 M
+(    // synchronization semaphore) s
+5 117 M
+(    natl sync;) s
+5 95 M
+(    // mutex semaphore) s
+5 84 M
+(    natl mutex;) s
+5 62 M
+(    // last transfer operation result) s
+5 51 M
+(    bool error;) s
+5 40 M
+(};) s
+5 18 M
+(/**) s
+5 7 M
+( * Initialized CE devices array.) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 2 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:21:58 2019) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+( */) s
+5 755 M
+(des_ce array_ce[MAX_CE];) s
+5 733 M
+(/**) s
+5 722 M
+( * Next CE device to be initialized.) s
+5 711 M
+( */) s
+5 700 M
+(natl next_ce;) s
+5 678 M
+(/**) s
+5 667 M
+( * Reads the content of the CPU CR3 register.) s
+5 656 M
+( */) s
+5 645 M
+(extern "C" addr readCR3\(\);) s
+5 623 M
+(// EXTENSION 2017-02-24) s
+5 590 M
+(// SOLUTION 2017-02-24) s
+5 568 M
+(/**) s
+5 557 M
+( * Transfers from the CE device having the provided id the number of specified) s
+5 546 M
+( * bytes into the destination buffer.) s
+5 535 M
+( *) s
+5 524 M
+( * @param  id      CE device ID;) s
+5 513 M
+( * @param  quanti  number of bytes to be transferred;) s
+5 502 M
+( * @param  buf     destination buffer virtual address.) s
+5 491 M
+( */) s
+5 480 M
+(extern "C" bool c_cedmaread\(natl id, natl quanti, char *buf\)) s
+5 469 M
+({) s
+5 458 M
+(    // tranfer result) s
+5 447 M
+(    bool rv;) s
+5 425 M
+(    // check if the given CE device id is valid) s
+5 414 M
+(    if \(id >= next_ce\)) s
+5 403 M
+(    {) s
+5 392 M
+(        // print warning log message) s
+5 381 M
+(        flog\(LOG_WARN, "Invalid CE device: %d", id\);) s
+5 359 M
+(        // abort calling process) s
+5 348 M
+(        abort_p\(\);) s
+5 337 M
+(        }) s
+5 315 M
+(    // retrieve CE device descriptor) s
+5 304 M
+(    des_ce *ce = &array_ce[id];) s
+5 282 M
+(    // wait for the CE device mutex sempahore) s
+5 271 M
+(    sem_wait\(ce->mutex\);) s
+5 249 M
+(    // print log message for debugging purposes) s
+5 238 M
+(    flog\(LOG_DEBUG, "virt %p len %d", buf, quanti\);) s
+5 216 M
+(    // reset error flag to false before starting a new transfer) s
+5 205 M
+(    ce->error = false;) s
+5 183 M
+(    // check if the provided buffer virtual address is or can be made resident) s
+5 172 M
+(    // in memory) s
+5 161 M
+(    natl rid = resident\(buf, quanti\);) s
+5 150 M
+(    if \(rid == 0xffffffff\)) s
+5 139 M
+(    {) s
+5 128 M
+(        // if not, the transfer can not be completed) s
+5 117 M
+(        rv = false;) s
+5 106 M
+(        goto out;) s
+5 95 M
+(    }) s
+5 73 M
+(    // write destination buffer virtual address MSB) s
+5 62 M
+(    outputl\(\(natq\)buf, ce->iVPTRLO\);) s
+5 40 M
+(    // write destination buffer virtual address LSB) s
+5 29 M
+(    outputl\(\(natq\)buf >> 32, ce->iVPTRHI\);) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 3 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:21:58 2019) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    // write number of bytes to be transferred) s
+5 755 M
+(    outputl\(quanti, ce->iCNT\);) s
+5 733 M
+(    // retrieve CPU CR3 register content and write it in the) s
+5 722 M
+(    // CE device CR3 register) s
+5 711 M
+(    outputl\(\(natq\)readCR3\(\), ce->iCR3\);) s
+5 689 M
+(    // clear status register: might contain previous errors) s
+5 678 M
+(    outputl\(0, ce->iSTS\);) s
+5 656 M
+(    // write 1 in the command register: start transfers) s
+5 645 M
+(    outputl\(1, ce->iCMD\);) s
+5 623 M
+(    // wait for the sync sempahore: DMA transfers completed) s
+5 612 M
+(    sem_wait\(ce->sync\);) s
+5 590 M
+(    // check if there was any error during DMA transfers) s
+5 579 M
+(    rv = !ce->error;) s
+5 557 M
+(    // undo the previous resident operation) s
+5 546 M
+(    nonresident\(rid\);) s
+5 524 M
+(out:) s
+5 513 M
+(    // notify mutex semaphore) s
+5 502 M
+(    sem_signal\(ce->mutex\);) s
+5 480 M
+(    // return transfer result) s
+5 469 M
+(    return rv;) s
+5 458 M
+(}) s
+5 436 M
+(/**) s
+5 425 M
+( * Called every time the CE device having the given id sends an interrupt) s
+5 414 M
+( * request.) s
+5 403 M
+( */) s
+5 392 M
+(extern "C" void estern_ce\(int id\)) s
+5 381 M
+({) s
+5 370 M
+(    // retrieve CE device descriptor) s
+5 359 M
+(    des_ce *ce = &array_ce[id];) s
+5 337 M
+(    // status register buffer byte) s
+5 326 M
+(    natl b;) s
+5 304 M
+(    // without the infinite for loop when the wfi\(\) function sends the EOI and) s
+5 293 M
+(    // schedules a new process, the next time this process is waken the function) s
+5 282 M
+(    // will end) s
+5 271 M
+(    for \(;;\)) s
+5 260 M
+(    {) s
+5 249 M
+(        // read from the CE device status register: interrupt request ak) s
+5 238 M
+(        inputl\(ce->iSTS, b\);) s
+5 216 M
+(        // check bit n. 2 of the status register for errors) s
+5 205 M
+(        ce->error = \(b & 2\);) s
+5 183 M
+(        // notify synchronization semaphore) s
+5 172 M
+(        sem_signal\(ce->sync\);) s
+5 150 M
+(        // send EOI and schedule a new process) s
+5 139 M
+(        wfi\(\);) s
+5 128 M
+(    }) s
+5 117 M
+(}) s
+5 95 M
+(// SOLUTION 2017-02-24) s
+5 73 M
+(// EXTENSION 2017-02-24) s
+5 51 M
+(/**) s
+5 40 M
+( * Initializes the CE devices available on the PCI bus 0. A maximum number of) s
+5 29 M
+( * MAX_CE device can be initializes which descriptors will be place in the) s
+5 18 M
+( * array_ce array. All other CE devices will be ignored.) s
+5 7 M
+( */) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 4 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:21:58 2019) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(bool ce_init\(\)) s
+5 755 M
+({) s
+5 744 M
+(    // loop through PCI device on bus 0 having the required vendor and device ID) s
+5 733 M
+(    for \(natb bus = 0, dev = 0, fun = 0;) s
+5 722 M
+(         pci_find_dev\(bus, dev, fun, 0xedce, 0x1234\);) s
+5 711 M
+(         pci_next\(bus, dev, fun\)\)) s
+5 700 M
+(    {) s
+5 689 M
+(        // check if the maximum number of CE devices is not exceeded) s
+5 678 M
+(        if \(next_ce >= MAX_CE\)) s
+5 667 M
+(        {) s
+5 656 M
+(            // if so, print a warning log message) s
+5 645 M
+(            flog\(LOG_WARN, "Too many CE devices"\);) s
+5 623 M
+(            // just return to the caller) s
+5 612 M
+(            break;) s
+5 601 M
+(        }) s
+5 579 M
+(        // retrieve CE device descriptor) s
+5 568 M
+(        des_ce *ce = &array_ce[next_ce];) s
+5 546 M
+(        // retrieve BAR0 register content) s
+5 535 M
+(        natw base = pci_read_confl\(bus, dev, fun, 0x10\);) s
+5 513 M
+(        // retrieve base address) s
+5 502 M
+(        base &= ~0x1;) s
+5 480 M
+(        // set VPTRHI register address: base address) s
+5 469 M
+(        ce->iVPTRHI = base;) s
+5 447 M
+(        // set VPTRLO register address: base + 4) s
+5 436 M
+(        ce->iVPTRLO = base + 4;) s
+5 414 M
+(        // set CNT register address: base + 8) s
+5 403 M
+(        ce->iCNT = base + 8;) s
+5 381 M
+(        // set CR3 register address: base + 12) s
+5 370 M
+(        ce->iCR3 = base + 12;) s
+5 348 M
+(        // set status register address: base + 16) s
+5 337 M
+(        ce->iSTS = base + 16;) s
+5 315 M
+(        // set command register address: base + 20) s
+5 304 M
+(        ce->iCMD = base + 20;) s
+5 282 M
+(        // initialize synchronization semaphore) s
+5 271 M
+(        ce->sync = sem_ini\(0\);) s
+5 249 M
+(        // initialize mutex semaphore) s
+5 238 M
+(        ce->mutex = sem_ini\(1\);) s
+5 216 M
+(        // retrieve device APIC pin number) s
+5 205 M
+(        natb irq = pci_read_confb\(bus, dev, fun, 0x3c\);) s
+5 183 M
+(        // activate external process for CE device interrupt requests) s
+5 172 M
+(        activate_pe\(estern_ce, next_ce, PRIO, LIV, irq\);) s
+5 150 M
+(        // print info log message with the CE device details) s
+5 139 M
+(        flog\(LOG_INFO, "ce%d %2x:%1x:%1x base=%4x IRQ=%d", next_ce, bus, dev, fun, base, ) s
+5 128 M
+(irq\);) s
+5 106 M
+(        // increase initialized CE devices counter) s
+5 95 M
+(        next_ce++;) s
+5 84 M
+(    }) s
+5 62 M
+(    // return CE devices initialization successful) s
+5 51 M
+(    return true;) s
+5 40 M
+(}) s
+5 18 M
+(// EXTENSION 2017-02-24) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 5 def
+/fname (printable/io.cpp) def
+/fdir (printable) def
+/ftail (io.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:21:58 2019) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(////////////////////////////////////////////////////////////////////////////////) s
+5 755 M
+(//                 INIZIALIZZAZIONE DEL SOTTOSISTEMA DI I/O                   //) s
+5 744 M
+(////////////////////////////////////////////////////////////////////////////////) s
+5 722 M
+(// inizializza i gate usati per le chiamate di IO) s
+5 711 M
+(//) s
+5 700 M
+(extern "C" void fill_io_gates\(void\);) s
+5 678 M
+(extern "C" natl end;) s
+5 667 M
+(// eseguita in fase di inizializzazione) s
+5 656 M
+(//) s
+5 645 M
+(extern "C" void cmain\(int sem_io\)) s
+5 634 M
+({) s
+5 612 M
+(        fill_io_gates\(\);) s
+5 601 M
+(        mem_mutex = sem_ini\(1\);) s
+5 590 M
+(        if \(mem_mutex == 0xFFFFFFFF\) {) s
+5 579 M
+(                flog\(LOG_ERR, "impossible creare semaforo mem_mutex"\);) s
+5 568 M
+(                abort_p\(\);) s
+5 557 M
+(        }) s
+5 546 M
+(        unsigned long long end_ = \(unsigned long long\)&end;) s
+5 535 M
+(        end_ = \(end_ + DIM_PAGINA - 1\) & ~\(DIM_PAGINA - 1\);) s
+5 524 M
+(        heap_init\(\(void *\)end_, DIM_IO_HEAP\);) s
+5 513 M
+(        if \(!console_init\(\)\)) s
+5 502 M
+(                abort_p\(\);) s
+5 491 M
+(        if \(!com_init\(\)\)) s
+5 480 M
+(                abort_p\(\);) s
+5 469 M
+(        if \(!hd_init\(\)\)) s
+5 458 M
+(                abort_p\(\);) s
+5 436 M
+(// EXTENSION 2017-02-24) s
+5 414 M
+(    // initialize CE devices) s
+5 403 M
+(    if \(!ce_init\(\)\)) s
+5 392 M
+(    {) s
+5 381 M
+(        // abort the calling process in case of errors) s
+5 370 M
+(        abort_p\(\);) s
+5 359 M
+(    }) s
+5 348 M
+(// EXTENSION 2017-02-24) s
+5 326 M
+(        sem_signal\(sem_io\);) s
+5 315 M
+(        terminate_p\(\);) s
+5 304 M
+(}) s
+_R
+S
+%%Trailer
+%%Pages: 5
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

@@ -1,0 +1,953 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 24 24 571 818
+%%Title: Enscript Output
+%%For: Rambod Rahmani
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Mon Sep 23 00:28:25 2019
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 547 def
+/d_page_h 794 def
+/d_header_x 0 def
+/d_header_y 779 def
+/d_header_w 547 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 547 def
+/d_footer_h 0 def
+/d_output_w 547 def
+/d_output_h 779 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 1 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:25:31 2019) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(/////////////////////////////////////////////////////////////////////////////////) s
+5 744 M
+(//                         PAGINE FISICHE                                      //) s
+5 733 M
+(/////////////////////////////////////////////////////////////////////////////////) s
+5 711 M
+(// avremo un descrittore di pagina fisica per ogni pagina fisica della parte) s
+5 700 M
+(// M2.  Lo scopo del descrittore e' di contenere alcune informazioni relative) s
+5 689 M
+(// al contenuto della pagina fisica descritta. Tali informazioni servono) s
+5 678 M
+(// principalmente a facilitare o rendere possibile il rimpiazzamento del) s
+5 667 M
+(// contenuto stesso.) s
+5 656 M
+(struct des_frame {) s
+5 645 M
+(        int     livello;        // 0=pagina, -1=libera) s
+5 623 M
+(// EXTENSION 2017-02-24) s
+5 601 M
+(        natl    residente;      // pagina residente sse > 0) s
+5 579 M
+(// EXTENSION 2017-02-24) s
+5 557 M
+(        // identificatore del processo a cui appartiene l'entita') s
+5 546 M
+(        // contenuta nel frame.) s
+5 535 M
+(        natl    processo;) s
+5 524 M
+(        natl    contatore;      // contatore per le statistiche) s
+5 513 M
+(        // blocco da cui l'entita' contenuta nel frame era stata caricata) s
+5 502 M
+(        natq    ind_massa;) s
+5 491 M
+(        // per risparmiare un po' di spazio uniamo due campi che) s
+5 480 M
+(        // non servono mai insieme:) s
+5 469 M
+(        // - ind_virtuale serve solo se il frame e' occupato) s
+5 458 M
+(        // - prossimo_libero serve solo se il frame e' libero) s
+5 447 M
+(        union {) s
+5 436 M
+(                // indirizzo virtuale che permette di risalire al) s
+5 425 M
+(                // descrittore che punta all'entita' contenuta nel) s
+5 414 M
+(                // frame. Per le pagine si tratta di un qualunque) s
+5 403 M
+(                // indirizzo virtuale interno alla pagina. Per le) s
+5 392 M
+(                // tabelle serve un qualunque indirizzo virtuale la) s
+5 381 M
+(                // cui traduzione passa dalla tabella.) s
+5 370 M
+(                vaddr   ind_virtuale;) s
+5 359 M
+(                des_frame*      prossimo_libero;) s
+5 348 M
+(        };) s
+5 337 M
+(};) s
+5 304 M
+(// EXTENSION 2017-02-24) s
+5 282 M
+(natq pf_count = 0;) s
+5 260 M
+(// EXTENSION 2017-02-24) s
+5 238 M
+(void stat\(\);) s
+5 216 M
+(bool c_routine_pf\(\)) s
+5 205 M
+({) s
+5 194 M
+(        vaddr ind_virt = readCR2\(\);) s
+5 183 M
+(        natl proc = esecuzione->id;) s
+5 161 M
+(        stat\(\);) s
+5 139 M
+(// EXTENSION 2017-02-24) s
+5 117 M
+(        pf_count++;) s
+5 106 M
+(        //flog\(LOG_DEBUG, "page fault a %p", ind_virt\);) s
+5 84 M
+(// EXTENSION 2017-02-24) s
+5 62 M
+(        for \(int i = 3; i >= 0; i--\) {) s
+5 51 M
+(                tab_entry d = get_des\(proc, i + 1, ind_virt\);) s
+5 40 M
+(                bool bitP = extr_P\(d\);) s
+5 29 M
+(                if \(!bitP\) {) s
+5 18 M
+(                        des_frame *df = swap\(proc, i, ind_virt\);) s
+5 7 M
+(                        if \(!df\)) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 2 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:25:31 2019) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(                                return false;) s
+5 755 M
+(                }) s
+5 744 M
+(        }) s
+5 733 M
+(        return true;) s
+5 722 M
+(}) s
+5 700 M
+(// EXTENSION 2017-02-24) s
+5 678 M
+(/**) s
+5 667 M
+( *) s
+5 656 M
+( */) s
+5 645 M
+(struct res_des) s
+5 634 M
+({) s
+5 623 M
+(    addr base;) s
+5 612 M
+(    natq size;) s
+5 601 M
+(    natl proc;) s
+5 590 M
+(};) s
+5 568 M
+(/**) s
+5 557 M
+( *) s
+5 546 M
+( */) s
+5 535 M
+(res_des array_res[MAX_RES];) s
+5 513 M
+(/**) s
+5 502 M
+( *) s
+5 491 M
+( */) s
+5 480 M
+(natl alloca_res\(addr base, natq size\)) s
+5 469 M
+({) s
+5 458 M
+(    res_des *r = 0;) s
+5 436 M
+(    natl id = 0xffffffff;) s
+5 414 M
+(    for \(int i = 0; i < MAX_RES; i++\)) s
+5 403 M
+(    {) s
+5 392 M
+(        r = &array_res[i];) s
+5 370 M
+(        if \(r->proc == 0\)) s
+5 359 M
+(        {) s
+5 348 M
+(            id = i;) s
+5 326 M
+(            break;) s
+5 315 M
+(        }) s
+5 304 M
+(    }) s
+5 282 M
+(    if \(r\)) s
+5 271 M
+(    {) s
+5 260 M
+(        r->base = base;) s
+5 238 M
+(        r->size = size;) s
+5 216 M
+(        r->proc = esecuzione->id;) s
+5 205 M
+(    }) s
+5 183 M
+(    return id;) s
+5 172 M
+(}) s
+5 150 M
+(/**) s
+5 139 M
+( *) s
+5 128 M
+( */) s
+5 117 M
+(bool res_valido\(natl id\)) s
+5 106 M
+({) s
+5 95 M
+(    return \(id < MAX_RES\) && \(esecuzione->id == array_res[id].proc\);) s
+5 84 M
+(}) s
+5 62 M
+(/**) s
+5 51 M
+( *) s
+5 40 M
+( */) s
+5 29 M
+(void rilascia_res\(natl id\)) s
+5 18 M
+({) s
+5 7 M
+(    array_res[id].proc = 0;) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 3 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:25:31 2019) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(}) s
+5 744 M
+(/**) s
+5 733 M
+( *) s
+5 722 M
+( */) s
+5 711 M
+(extern "C" natq c_countres\(\)) s
+5 700 M
+({) s
+5 689 M
+(    natq c = 0;) s
+5 667 M
+(    for \(natq i = 0; i < N_DF; i++\)) s
+5 656 M
+(    {) s
+5 645 M
+(        des_frame* ppf = &vdf[i];) s
+5 623 M
+(        if \(ppf->livello >= 0 && ppf->residente > 0\)) s
+5 612 M
+(        {) s
+5 601 M
+(            c++;) s
+5 590 M
+(        }) s
+5 579 M
+(    }) s
+5 557 M
+(    return c | \(pf_count << 32\);) s
+5 546 M
+(}) s
+5 524 M
+(// decrementa i campi resident per tutte le tabelle o pagine) s
+5 513 M
+(// di livello i che coprono gli indirizzi [base, stop\) ) s
+5 502 M
+(void undo_res\(natq base, natq stop, int i\)) s
+5 491 M
+({) s
+5 480 M
+(    natl proc = esecuzione->id;) s
+5 458 M
+(    // per capire quali tabelle/pagine di livello j dobbiamo) s
+5 447 M
+(    // rendere non residenti calcoliamo:) s
+5 436 M
+(    // vi: l'indirizzo virtuale di partenza della prima pagina di livello) s
+5 425 M
+(    //     i+1 che interseca [base, base+size\)) s
+5 414 M
+(    // vf: l'indirizzo virtuale di partenza della prima pagina di livello) s
+5 403 M
+(    //     i+1 che si trova oltre a e non interseca [base, base+size\)) s
+5 392 M
+(    natq mask = dim_region\(i\) - 1;) s
+5 381 M
+(    vaddr vi = base & ~mask;) s
+5 370 M
+(    vaddr vf = \(stop + mask\) & ~mask;) s
+5 348 M
+(    for \(natq v = vi; v != vf; v += dim_region\(i\)\)) s
+5 337 M
+(    {) s
+5 326 M
+(        // otteniamo il descrittore che punta a questa tabella/pagina) s
+5 315 M
+(        natq& d = get_des\(proc, i + 1, v\);) s
+5 304 M
+(        // se prima era residente, deve essere presente, quindi) s
+5 293 M
+(        // possiamo estrarre l'indirizzo fisico e ottenere da questo) s
+5 282 M
+(        // il puntatore al descrittore di pagina fisica) s
+5 271 M
+(        des_frame *ppf = descrittore_frame\(extr_IND_FISICO\(d\)\);) s
+5 260 M
+(        ppf->residente--;) s
+5 249 M
+(    }) s
+5 238 M
+(}) s
+5 216 M
+(/**) s
+5 205 M
+( * @param  base) s
+5 194 M
+( * @param  size) s
+5 183 M
+( */) s
+5 172 M
+(extern "C" void c_resident\(addr base, natq s\)) s
+5 161 M
+({) s
+5 150 M
+(    natl proc = esecuzione->id, id;) s
+5 139 M
+(    int i;) s
+5 128 M
+(    natq v, a = \(natq\)base;) s
+5 117 M
+(    des_proc *self = des_p\(proc\);) s
+5 95 M
+(    self->contesto[I_RAX] = 0xFFFFFFFF;) s
+5 73 M
+(    if \(a < ini_utn_p || a + s < a || a + s > fin_utn_p\)) s
+5 62 M
+(    {) s
+5 51 M
+(        flog\(LOG_WARN, "parametri non validi: %p, %p", a, s\);) s
+5 40 M
+(        return;) s
+5 29 M
+(    }) s
+5 7 M
+(    for \(i = 3; i >= 0; i--\)) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 4 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Mon Sep 23 00:25:31 2019) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    {) s
+5 755 M
+(                natq mask = dim_region\(i\) - 1;) s
+5 744 M
+(                vaddr vi = a & ~mask;) s
+5 733 M
+(                vaddr vf = \(a + s + mask\) & ~mask;) s
+5 722 M
+(                //flog\(LOG_DEBUG, "liv %d: vi %p vf %p", i, vi, vf\);) s
+5 711 M
+(                for \(v = vi; v != vf; v += dim_region\(i\)\) {) s
+5 700 M
+(                        natq& d = get_des\(proc, i + 1, v\);) s
+5 689 M
+(                        des_frame *ppf;) s
+5 678 M
+(                        if \(!extr_P\(d\)\) {) s
+5 667 M
+(                                ppf = swap\(proc, i, v\);) s
+5 656 M
+(                                if \(!ppf\)) s
+5 645 M
+(                                        goto error;) s
+5 634 M
+(                        } else {) s
+5 623 M
+(                                ppf = descrittore_frame\(extr_IND_FISICO\(d\)\);) s
+5 612 M
+(                        }) s
+5 601 M
+(                        ppf->residente++;) s
+5 590 M
+(                }) s
+5 579 M
+(        }) s
+5 568 M
+(        id = alloca_res\(base, s\);) s
+5 557 M
+(        if \(id == 0xffffffff\)) s
+5 546 M
+(                goto error;) s
+5 524 M
+(        self->contesto[I_RAX] = id;) s
+5 513 M
+(        return;) s
+5 491 M
+(error:) s
+5 480 M
+(        for \(int j = 3; j >= i + 1; j--\)) s
+5 469 M
+(                undo_res\(a, a + s, j\);) s
+5 458 M
+(        undo_res\(a, v, i\);) s
+5 447 M
+(}) s
+5 425 M
+(/**) s
+5 414 M
+( *) s
+5 403 M
+( */) s
+5 392 M
+(extern "C" void c_nonresident\(natl id\)) s
+5 381 M
+({) s
+5 370 M
+(        res_des *r;) s
+5 348 M
+(        if \(!res_valido\(id\)\) {) s
+5 337 M
+(                flog\(LOG_WARN, "id non valido: %d", id\);) s
+5 326 M
+(                c_abort_p\(\);) s
+5 315 M
+(                return;) s
+5 304 M
+(        }) s
+5 293 M
+(        r = &array_res[id];) s
+5 271 M
+(        natq a = \(natq\)r->base;) s
+5 260 M
+(        natq s = r->size;) s
+5 238 M
+(        for \(int i = 3; i >= 0; i--\) {) s
+5 227 M
+(                undo_res\(a, a + s, i\);) s
+5 216 M
+(        }) s
+5 205 M
+(        rilascia_res\(id\);) s
+5 194 M
+(}) s
+5 172 M
+(// EXTENSION 2017-02-24) s
+_R
+S
+%%Trailer
+%%Pages: 4
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF
