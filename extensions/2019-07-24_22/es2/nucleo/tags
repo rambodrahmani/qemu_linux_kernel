@@ -1,0 +1,1873 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	//
+$(SWAP)	Makefile	/^$(SWAP): util\/start.mk$/;"	t
+A	util/creatimg.cpp	/^		uint64_t A:		1;	\/\/ Accessed$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+A	util/decode.c	/^		uint64_t A:		1;	\/\/ Accessed$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+ACCB_MASK	sistema/sistema.cpp	/^const natq ACCB_MASK  = 0x00000000000000FF; \/\/ maschera per il byte di accesso$/;"	v	typeref:typename:const natq
+ADDR_MASK	sistema/sistema.cpp	/^const natq ADDR_MASK  = 0x7FFFFFFFFFFFF000; \/\/ maschera per l'indirizzo$/;"	v	typeref:typename:const natq
+AOUTHDR	util/coff.h	/^AOUTHDR;$/;"	t	typeref:struct:__anon3754ae660108
+AOUTSZ	util/coff.h	/^#define AOUTSZ /;"	d
+AUXENT	util/coff.h	/^#define	AUXENT	/;"	d
+AUXESZ	util/coff.h	/^#define	AUXESZ	/;"	d
+BIT_A	sistema/sistema.cpp	/^const natq BIT_A    = 1U << 5; \/\/ il bit di accesso$/;"	v	typeref:typename:const natq
+BIT_D	sistema/sistema.cpp	/^const natq BIT_D    = 1U << 6; \/\/ il bit "dirty"$/;"	v	typeref:typename:const natq
+BIT_IF	sistema/sistema.cpp	/^const natl BIT_IF = 1L << 9;$/;"	v	typeref:typename:const natl
+BIT_P	sistema/sistema.cpp	/^const natq BIT_P    = 1U << 0; \/\/ il bit di presenza$/;"	v	typeref:typename:const natq
+BIT_PCD	sistema/sistema.cpp	/^const natq BIT_PCD  = 1U << 4; \/\/ il bit Page Cache Disable$/;"	v	typeref:typename:const natq
+BIT_PS	sistema/sistema.cpp	/^const natq BIT_PS   = 1U << 7; \/\/ il bit "page size"$/;"	v	typeref:typename:const natq
+BIT_PWT	sistema/sistema.cpp	/^const natq BIT_PWT  = 1U << 3; \/\/ il bit Page Wright Through$/;"	v	typeref:typename:const natq
+BIT_RW	sistema/sistema.cpp	/^const natq BIT_RW   = 1U << 1; \/\/ il bit di lettura\/scrittura$/;"	v	typeref:typename:const natq
+BIT_SEGNO	sistema/sistema.cpp	/^static const natq BIT_SEGNO = (1UL << 47);$/;"	v	typeref:typename:const natq	file:
+BIT_US	sistema/sistema.cpp	/^const natq BIT_US   = 1U << 2; \/\/ il bit utente\/sistema(*)$/;"	v	typeref:typename:const natq
+BIT_ZERO	sistema/sistema.cpp	/^const natq BIT_ZERO = 1U << 9; \/\/ (* nuova pagina, da azzerare *)$/;"	v	typeref:typename:const natq
+BLOCK_SIZE	util/showb.c	/^#define BLOCK_SIZE /;"	d	file:
+BPS	util/doswap.cpp	/^#define	BPS	/;"	d	file:
+BPU	util/creatimg.cpp	/^const uint32_t BPU = sizeof(uint64_t) * 8;$/;"	v	typeref:typename:const uint32_t
+BTYPE	util/coff.h	/^#define BTYPE(/;"	d
+CHECKSW	util/creatimg.cpp	/^#define CHECKSW(/;"	d	file:
+COLS	io/io.cpp	/^const natl COLS = 80; 	\/\/$/;"	v	typeref:typename:const natl
+COL_BLACK	utente/include/colors.h	/^#define COL_BLACK	/;"	d
+COL_BLUE	utente/include/colors.h	/^#define COL_BLUE	/;"	d
+COL_BROWN	utente/include/colors.h	/^#define COL_BROWN	/;"	d
+COL_CYAN	utente/include/colors.h	/^#define COL_CYAN	/;"	d
+COL_DARKGRAY	utente/include/colors.h	/^#define COL_DARKGRAY	/;"	d
+COL_GREEN	utente/include/colors.h	/^#define COL_GREEN	/;"	d
+COL_LIGHGREEN	utente/include/colors.h	/^#define COL_LIGHGREEN	/;"	d
+COL_LIGHMAGENTA	utente/include/colors.h	/^#define COL_LIGHMAGENTA	/;"	d
+COL_LIGHTBLUE	utente/include/colors.h	/^#define COL_LIGHTBLUE	/;"	d
+COL_LIGHTCYAN	utente/include/colors.h	/^#define COL_LIGHTCYAN	/;"	d
+COL_LIGHTGRAY	utente/include/colors.h	/^#define COL_LIGHTGRAY	/;"	d
+COL_LIGHTRED	utente/include/colors.h	/^#define COL_LIGHTRED	/;"	d
+COL_MAGENTA	utente/include/colors.h	/^#define COL_MAGENTA	/;"	d
+COL_RED	utente/include/colors.h	/^#define COL_RED	/;"	d
+COL_WHITE	utente/include/colors.h	/^#define COL_WHITE	/;"	d
+COL_YELLOW	utente/include/colors.h	/^#define COL_YELLOW	/;"	d
+COMM_CFLAGS	Makefile	/^COMM_CFLAGS=$(CFLAGS) \\$/;"	m
+COMM_LDFLAGS	Makefile	/^COMM_LDFLAGS=\\$/;"	m
+COMM_LDLIBS	Makefile	/^COMM_LDLIBS=$/;"	m
+CR3	sistema/sistema.s	/^.set CR3,104$/;"	d
+CTR_LSB	sistema/sistema.s	/^.set CTR_LSB, 0x40$/;"	d
+CTR_MSB	sistema/sistema.s	/^.set CTR_MSB, 0x40$/;"	d
+CUR_HIGH	io/io.s	/^.set CUR_HIGH, 0x0e$/;"	d
+CUR_LOW	io/io.s	/^.set CUR_LOW, 0x0f$/;"	d
+CWR	sistema/sistema.s	/^.set CWR,     0x43$/;"	d
+C_ALIAS	util/coff.h	/^#define C_ALIAS	/;"	d
+C_ARG	util/coff.h	/^#define C_ARG	/;"	d
+C_AUTO	util/coff.h	/^#define C_AUTO	/;"	d
+C_AUTOARG	util/coff.h	/^#define C_AUTOARG	/;"	d
+C_BLOCK	util/coff.h	/^#define C_BLOCK	/;"	d
+C_EFCN	util/coff.h	/^#define C_EFCN	/;"	d
+C_ENTAG	util/coff.h	/^#define C_ENTAG	/;"	d
+C_EOS	util/coff.h	/^#define C_EOS	/;"	d
+C_EXT	util/coff.h	/^#define C_EXT	/;"	d
+C_EXTDEF	util/coff.h	/^#define C_EXTDEF	/;"	d
+C_FCN	util/coff.h	/^#define C_FCN	/;"	d
+C_FIELD	util/coff.h	/^#define C_FIELD	/;"	d
+C_FILE	util/coff.h	/^#define C_FILE	/;"	d
+C_HIDDEN	util/coff.h	/^#define C_HIDDEN	/;"	d
+C_LABEL	util/coff.h	/^#define C_LABEL	/;"	d
+C_LASTENT	util/coff.h	/^#define C_LASTENT	/;"	d
+C_LINE	util/coff.h	/^#define C_LINE	/;"	d
+C_MOE	util/coff.h	/^#define C_MOE	/;"	d
+C_MOS	util/coff.h	/^#define C_MOS	/;"	d
+C_MOU	util/coff.h	/^#define C_MOU	/;"	d
+C_NULL	util/coff.h	/^#define C_NULL	/;"	d
+C_REG	util/coff.h	/^#define C_REG	/;"	d
+C_REGPARM	util/coff.h	/^#define C_REGPARM	/;"	d
+C_STAT	util/coff.h	/^#define C_STAT	/;"	d
+C_STRTAG	util/coff.h	/^#define C_STRTAG	/;"	d
+C_TPDEF	util/coff.h	/^#define C_TPDEF	/;"	d
+C_ULABEL	util/coff.h	/^#define C_ULABEL	/;"	d
+C_UNTAG	util/coff.h	/^#define C_UNTAG	/;"	d
+C_USTATIC	util/coff.h	/^#define C_USTATIC	/;"	d
+Color	debug/nucleo.py	/^class Color:$/;"	c
+Context	debug/nucleo.py	/^class Context(gdb.Command):$/;"	c
+D	util/creatimg.cpp	/^		uint64_t D:		1;	\/\/ Dirty$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+D	util/decode.c	/^		uint64_t D:		1;	\/\/ Dirty$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+DAT	io/io.s	/^.set DAT, 0x03d5$/;"	d
+DECREF	util/coff.h	/^#define DECREF(/;"	d
+DEFAULT_BSS_SECTION_ALIGNMENT	util/coff.h	/^#define DEFAULT_BSS_SECTION_ALIGNMENT /;"	d
+DEFAULT_DATA_SECTION_ALIGNMENT	util/coff.h	/^#define DEFAULT_DATA_SECTION_ALIGNMENT /;"	d
+DEFAULT_SECTION_ALIGNMENT	util/coff.h	/^#define DEFAULT_SECTION_ALIGNMENT /;"	d
+DEFAULT_TEXT_SECTION_ALIGNMENT	util/coff.h	/^#define DEFAULT_TEXT_SECTION_ALIGNMENT /;"	d
+DEF_PRIO	util/parse.c	/^#define DEF_PRIO	/;"	d	file:
+DELAY	sistema/sistema.cpp	/^const natl DELAY = 59659;$/;"	v	typeref:typename:const natl
+DIM_BLOCK	include/costanti.h	/^#define DIM_BLOCK	/;"	d
+DIM_DESP	include/costanti.h	/^#define DIM_DESP /;"	d
+DIM_IO_HEAP	include/costanti.h	/^#define DIM_IO_HEAP	/;"	d
+DIM_PAGINA	include/costanti.h	/^#define DIM_PAGINA	/;"	d
+DIM_SWAP	include/costanti.h	/^#define DIM_SWAP	/;"	d
+DIM_SYS_STACK	include/costanti.h	/^#define DIM_SYS_STACK	/;"	d
+DIM_USR_HEAP	include/costanti.h	/^#define DIM_USR_HEAP	/;"	d
+DIM_USR_STACK	include/costanti.h	/^#define DIM_USR_STACK	/;"	d
+DLR_LSB1	io/io.s	/^.set DLR_LSB1, 0x03f8$/;"	d
+DLR_LSB2	io/io.s	/^.set DLR_LSB2, 0x02f8$/;"	d
+DLR_MSB1	io/io.s	/^.set DLR_MSB1, 0x03f9$/;"	d
+DLR_MSB2	io/io.s	/^.set DLR_MSB2, 0x02f9$/;"	d
+DOS_EXE	util/dos.h	/^struct DOS_EXE {$/;"	s
+DOS_H_	util/dos.h	/^#define DOS_H_$/;"	d
+DOS_MAGIC	util/dos.h	/^const unsigned short DOS_MAGIC = 0x5a4D;$/;"	v	typeref:typename:const unsigned short
+DOSwap	util/doswap.cpp	/^	DOSwap(const partizione *p_, int d) : p(*p_), bios_disk(d) {}$/;"	f	class:DOSwap	file:
+DOSwap	util/doswap.cpp	/^class DOSwap: public Swap$/;"	c	file:
+DT_ARY	util/coff.h	/^#define DT_ARY	/;"	d
+DT_FCN	util/coff.h	/^#define DT_FCN	/;"	d
+DT_NON	util/coff.h	/^#define DT_NON	/;"	d
+DT_PTR	util/coff.h	/^#define DT_PTR	/;"	d
+DUMMY_PRIORITY	sistema/sistema.cpp	/^const natl DUMMY_PRIORITY = 0x0000000;$/;"	v	typeref:typename:const natl
+DesProc	debug/nucleo.py	/^class DesProc(gdb.Function):$/;"	c
+EI_CLASS	include/elf.h	/^#define EI_CLASS	/;"	d
+EI_DATA	include/elf.h	/^#define EI_DATA	/;"	d
+EI_MAG0	include/elf.h	/^#define EI_MAG0	/;"	d
+EI_MAG1	include/elf.h	/^#define EI_MAG1	/;"	d
+EI_MAG2	include/elf.h	/^#define EI_MAG2	/;"	d
+EI_MAG3	include/elf.h	/^#define EI_MAG3	/;"	d
+EI_NIDENT	include/elf.h	/^#define EI_NIDENT /;"	d
+EI_PAD	include/elf.h	/^#define EI_PAD	/;"	d
+EI_VERSION	include/elf.h	/^#define EI_VERSION /;"	d
+ELF32_H_	util/elf32.h	/^#define ELF32_H_$/;"	d
+ELF64_H_	include/elf64.h	/^#define ELF64_H_$/;"	d
+ELFCLASS32	include/elf.h	/^#define ELFCLASS32	/;"	d
+ELFCLASS64	include/elf.h	/^#define ELFCLASS64	/;"	d
+ELFCLASSNONE	include/elf.h	/^#define ELFCLASSNONE /;"	d
+ELFDATA2LSB	include/elf.h	/^#define ELFDATA2LSB	/;"	d
+ELFDATA2MSB	include/elf.h	/^#define ELFDATA2MSB	/;"	d
+ELFDATANONE	include/elf.h	/^#define ELFDATANONE	/;"	d
+ELFMAG0	include/elf.h	/^#define ELFMAG0	/;"	d
+ELFMAG1	include/elf.h	/^#define	ELFMAG1	/;"	d
+ELFMAG2	include/elf.h	/^#define	ELFMAG2	/;"	d
+ELFMAG3	include/elf.h	/^#define	ELFMAG3	/;"	d
+ELF_H_	include/elf.h	/^#define ELF_H_$/;"	d
+EM_386	include/elf.h	/^#define EM_386	/;"	d
+EM_68K	include/elf.h	/^#define EM_68K	/;"	d
+EM_860	include/elf.h	/^#define EM_860	/;"	d
+EM_88K	include/elf.h	/^#define EM_88K	/;"	d
+EM_AMD64	include/elf.h	/^#define EM_AMD64	/;"	d
+EM_M32	include/elf.h	/^#define	EM_M32	/;"	d
+EM_MIPS	include/elf.h	/^#define EM_MIPS	/;"	d
+EM_NONE	include/elf.h	/^#define EM_NONE	/;"	d
+EM_SPARC	include/elf.h	/^#define	EM_SPARC	/;"	d
+ESTERN_BUSY	sistema/sistema.cpp	/^proc_elem* const ESTERN_BUSY = (proc_elem*)1;$/;"	v	typeref:typename:proc_elem * const
+ET_CORE	include/elf.h	/^#define	ET_CORE	/;"	d
+ET_DYN	include/elf.h	/^#define	ET_DYN	/;"	d
+ET_EXEC	include/elf.h	/^#define	ET_EXEC	/;"	d
+ET_HIPROC	include/elf.h	/^#define	ET_HIPROC	/;"	d
+ET_LOPROC	include/elf.h	/^#define	ET_LOPROC	/;"	d
+ET_NONE	include/elf.h	/^#define ET_NONE	/;"	d
+ET_REL	include/elf.h	/^#define	ET_REL	/;"	d
+E_DIMNUM	util/coff.h	/^#define E_DIMNUM	/;"	d
+E_FILNMLEN	util/coff.h	/^#define E_FILNMLEN	/;"	d
+E_SYMNMLEN	util/coff.h	/^#define E_SYMNMLEN	/;"	d
+Elem	util/interp.h	/^		Elem(Interprete* in_, Elem* next_ = NULL):$/;"	f	struct:ListaInterpreti::Elem
+Elem	util/interp.h	/^	struct Elem {$/;"	s	class:ListaInterpreti
+Elem	util/swap.h	/^		Elem(TipoSwap* in_, Elem* next_ = NULL):$/;"	f	struct:ListaTipiSwap::Elem
+Elem	util/swap.h	/^	struct Elem {$/;"	s	class:ListaTipiSwap
+Elf32_Addr	util/elf32.h	/^typedef uint32_t   Elf32_Addr;$/;"	t	typeref:typename:uint32_t
+Elf32_Ehdr	util/elf32.h	/^} Elf32_Ehdr;$/;"	t	typeref:struct:__anonb4c38d640108
+Elf32_Half	util/elf32.h	/^typedef uint16_t   Elf32_Half;$/;"	t	typeref:typename:uint16_t
+Elf32_Off	util/elf32.h	/^typedef uint32_t   Elf32_Off;$/;"	t	typeref:typename:uint32_t
+Elf32_Phdr	util/elf32.h	/^} Elf32_Phdr;$/;"	t	typeref:struct:__anonb4c38d640208
+Elf32_Shdr	util/elf32.h	/^} Elf32_Shdr;$/;"	t	typeref:struct:__anonb4c38d640308
+Elf32_Word	util/elf32.h	/^typedef uint32_t   Elf32_Word;$/;"	t	typeref:typename:uint32_t
+Elf64_Addr	include/elf64.h	/^typedef uint64_t   Elf64_Addr;$/;"	t	typeref:typename:uint64_t
+Elf64_Ehdr	include/elf64.h	/^} Elf64_Ehdr;$/;"	t	typeref:struct:__anon9e1f9d4f0108
+Elf64_Half	include/elf64.h	/^typedef uint16_t   Elf64_Half;$/;"	t	typeref:typename:uint16_t
+Elf64_Off	include/elf64.h	/^typedef uint64_t   Elf64_Off;$/;"	t	typeref:typename:uint64_t
+Elf64_Phdr	include/elf64.h	/^} Elf64_Phdr;$/;"	t	typeref:struct:__anon9e1f9d4f0208
+Elf64_Shdr	include/elf64.h	/^} Elf64_Shdr;$/;"	t	typeref:struct:__anon9e1f9d4f0308
+Elf64_Word	include/elf64.h	/^typedef uint32_t   Elf64_Word;$/;"	t	typeref:typename:uint32_t
+Elf64_XWord	include/elf64.h	/^typedef unsigned long long Elf64_XWord;$/;"	t	typeref:typename:unsigned long long
+Eseguibile	util/interp.h	/^class Eseguibile {$/;"	c
+EseguibileCoff_go32	util/coff.cpp	/^EseguibileCoff_go32::EseguibileCoff_go32(FILE* pexe_)$/;"	f	class:EseguibileCoff_go32
+EseguibileCoff_go32	util/coff.cpp	/^class EseguibileCoff_go32: public Eseguibile {$/;"	c	file:
+EseguibileElf32	util/elf32.cpp	/^EseguibileElf32::EseguibileElf32(FILE* pexe_)$/;"	f	class:EseguibileElf32
+EseguibileElf32	util/elf32.cpp	/^class EseguibileElf32: public Eseguibile {$/;"	c	file:
+EseguibileElf64	util/elf64.cpp	/^EseguibileElf64::EseguibileElf64(FILE* pexe_)$/;"	f	class:EseguibileElf64
+EseguibileElf64	util/elf64.cpp	/^class EseguibileElf64: public Eseguibile {$/;"	c	file:
+FILHDR	util/coff.h	/^#define	FILHDR	/;"	d
+FILHSZ	util/coff.h	/^#define	FILHSZ	/;"	d
+F_EXEC	util/coff.h	/^#define F_EXEC	/;"	d
+F_LNNO	util/coff.h	/^#define F_LNNO	/;"	d
+F_LSYMS	util/coff.h	/^#define F_LSYMS	/;"	d
+F_RELFLG	util/coff.h	/^#define F_RELFLG	/;"	d
+FileSwap	util/fswap.cpp	/^	FileSwap(FILE* img): img(img) { dim = ftell(img); }$/;"	f	class:FileSwap	file:
+FileSwap	util/fswap.cpp	/^class FileSwap: public Swap {$/;"	c	file:
+Frame	debug/nucleo.py	/^class Frame(gdb.Command):$/;"	c
+FrameNum	debug/nucleo.py	/^class FrameNum(gdb.Function):$/;"	c
+FrameParam	debug/nucleo.py	/^class FrameParam(gdb.Parameter):$/;"	c
+GLOB	util/parse.c	/^#define GLOB /;"	d	file:
+GLOB_FMT	util/parse.c	/^#define GLOB_FMT /;"	d	file:
+GNU_AOUT	util/coff.h	/^	} GNU_AOUT;$/;"	t	typeref:struct:gnu_aout
+GiB	include/costanti.h	/^#define GiB	/;"	d
+HD_IRQ	io/io.cpp	/^const natb HD_IRQ = 15;$/;"	v	typeref:typename:const natb
+HEAP_SIZE	sistema/sistema.cpp	/^const natq HEAP_SIZE = (natq)&start - HEAP_START;$/;"	v	typeref:typename:const natq
+HEAP_START	sistema/sistema.cpp	/^const natq HEAP_START = 1*MiB;$/;"	v	typeref:typename:const natq
+I386AIXMAGIC	util/coff.h	/^#define I386AIXMAGIC	/;"	d
+I386BADMAG	util/coff.h	/^#define I386BADMAG(/;"	d
+I386MAGIC	util/coff.h	/^#define	I386MAGIC	/;"	d
+IER1	io/io.s	/^.set IER1, 0x03f9$/;"	d
+IER2	io/io.s	/^.set IER2, 0x02f9$/;"	d
+INDMASS_MASK	sistema/sistema.cpp	/^const natq INDMASS_MASK = 0x7FFFFFFFFFFFF000; \/\/ maschera per l'indirizzo in mem. di massa$/;"	v	typeref:typename:const natq
+INDMASS_SHIFT	sistema/sistema.cpp	/^const natq INDMASS_SHIFT = 12;	    \/\/ primo bit che contiene l'ind. in mem. di massa$/;"	v	typeref:typename:const natq
+INTERP_H__	util/interp.h	/^#define INTERP_H__$/;"	d
+INT_FMT	util/parse.c	/^#define INT_FMT /;"	d	file:
+IO_TIPO_DMAHDR	include/costanti.h	/^#define IO_TIPO_DMAHDR	/;"	d
+IO_TIPO_DMAHDW	include/costanti.h	/^#define IO_TIPO_DMAHDW	/;"	d
+IO_TIPO_HDR	include/costanti.h	/^#define IO_TIPO_HDR	/;"	d
+IO_TIPO_HDW	include/costanti.h	/^#define IO_TIPO_HDW	/;"	d
+IO_TIPO_INIC	include/costanti.h	/^#define IO_TIPO_INIC	/;"	d
+IO_TIPO_RCON	include/costanti.h	/^#define IO_TIPO_RCON	/;"	d
+IO_TIPO_RSELN	include/costanti.h	/^#define IO_TIPO_RSELN	/;"	d
+IO_TIPO_RSEN	include/costanti.h	/^#define IO_TIPO_RSEN	/;"	d
+IO_TIPO_WCON	include/costanti.h	/^#define IO_TIPO_WCON	/;"	d
+IO_TIPO_WSE0	include/costanti.h	/^#define IO_TIPO_WSE0	/;"	d
+IO_TIPO_WSEN	include/costanti.h	/^#define IO_TIPO_WSEN	/;"	d
+ISARY	util/coff.h	/^#define ISARY(/;"	d
+ISFCN	util/coff.h	/^#define ISFCN(/;"	d
+ISPTR	util/coff.h	/^#define ISPTR(/;"	d
+ISTAG	util/coff.h	/^#define ISTAG(/;"	d
+I_MIO_C	include/costanti.h	/^#define I_MIO_C	/;"	d
+I_R10	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_R11	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anond897b8910203	file:
+I_R12	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anond897b8910203	file:
+I_R13	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anond897b8910203	file:
+I_R14	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anond897b8910203	file:
+I_R15	sistema/sistema.cpp	/^	I_R11, I_R12, I_R13, I_R14, I_R15 };$/;"	e	enum:__anond897b8910203	file:
+I_R8	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_R9	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_RAX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anond897b8910203	file:
+I_RBP	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_RBX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anond897b8910203	file:
+I_RCX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anond897b8910203	file:
+I_RDI	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_RDX	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	e	enum:__anond897b8910203	file:
+I_RSI	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_RSP	sistema/sistema.cpp	/^	I_RSP, I_RBP, I_RSI, I_RDI, I_R8, I_R9, I_R10,$/;"	e	enum:__anond897b8910203	file:
+I_SIS_C	include/costanti.h	/^#define I_SIS_C	/;"	d
+I_SIS_P	include/costanti.h	/^#define I_SIS_P	/;"	d
+I_UTN_C	include/costanti.h	/^#define I_UTN_C /;"	d
+I_UTN_P	include/costanti.h	/^#define I_UTN_P	/;"	d
+Interprete	util/interp.cpp	/^Interprete::Interprete()$/;"	f	class:Interprete
+Interprete	util/interp.h	/^class Interprete {$/;"	c
+InterpreteCoff_go32	util/coff.cpp	/^InterpreteCoff_go32::InterpreteCoff_go32()$/;"	f	class:InterpreteCoff_go32
+InterpreteCoff_go32	util/coff.cpp	/^class InterpreteCoff_go32: public Interprete {$/;"	c	file:
+InterpreteElf32	util/elf32.cpp	/^InterpreteElf32::InterpreteElf32()$/;"	f	class:InterpreteElf32
+InterpreteElf32	util/elf32.cpp	/^class InterpreteElf32: public Interprete {$/;"	c	file:
+InterpreteElf64	util/elf64.cpp	/^InterpreteElf64::InterpreteElf64()$/;"	f	class:InterpreteElf64
+InterpreteElf64	util/elf64.cpp	/^class InterpreteElf64: public Interprete {$/;"	c	file:
+KBD_0	utente/include/keycodes.h	/^#define KBD_0	/;"	d
+KBD_1	utente/include/keycodes.h	/^#define KBD_1	/;"	d
+KBD_102ND	utente/include/keycodes.h	/^#define KBD_102ND	/;"	d
+KBD_2	utente/include/keycodes.h	/^#define KBD_2	/;"	d
+KBD_3	utente/include/keycodes.h	/^#define KBD_3	/;"	d
+KBD_4	utente/include/keycodes.h	/^#define KBD_4	/;"	d
+KBD_5	utente/include/keycodes.h	/^#define KBD_5	/;"	d
+KBD_6	utente/include/keycodes.h	/^#define KBD_6	/;"	d
+KBD_7	utente/include/keycodes.h	/^#define KBD_7	/;"	d
+KBD_8	utente/include/keycodes.h	/^#define KBD_8	/;"	d
+KBD_9	utente/include/keycodes.h	/^#define KBD_9	/;"	d
+KBD_A	utente/include/keycodes.h	/^#define KBD_A	/;"	d
+KBD_APOSTROPHE	utente/include/keycodes.h	/^#define KBD_APOSTROPHE	/;"	d
+KBD_B	utente/include/keycodes.h	/^#define KBD_B	/;"	d
+KBD_BACKSLASH	utente/include/keycodes.h	/^#define KBD_BACKSLASH	/;"	d
+KBD_BACKSPACE	utente/include/keycodes.h	/^#define KBD_BACKSPACE	/;"	d
+KBD_C	utente/include/keycodes.h	/^#define KBD_C	/;"	d
+KBD_CAPSLOCK	utente/include/keycodes.h	/^#define KBD_CAPSLOCK	/;"	d
+KBD_COMMA	utente/include/keycodes.h	/^#define KBD_COMMA	/;"	d
+KBD_D	utente/include/keycodes.h	/^#define KBD_D	/;"	d
+KBD_DELETE	utente/include/keycodes.h	/^#define KBD_DELETE	/;"	d
+KBD_DOT	utente/include/keycodes.h	/^#define KBD_DOT	/;"	d
+KBD_DOWN	utente/include/keycodes.h	/^#define KBD_DOWN	/;"	d
+KBD_E	utente/include/keycodes.h	/^#define KBD_E	/;"	d
+KBD_END	utente/include/keycodes.h	/^#define KBD_END	/;"	d
+KBD_ENTER	utente/include/keycodes.h	/^#define KBD_ENTER	/;"	d
+KBD_EQUAL	utente/include/keycodes.h	/^#define KBD_EQUAL	/;"	d
+KBD_ESC	utente/include/keycodes.h	/^#define KBD_ESC	/;"	d
+KBD_F	utente/include/keycodes.h	/^#define KBD_F	/;"	d
+KBD_F1	utente/include/keycodes.h	/^#define KBD_F1	/;"	d
+KBD_F10	utente/include/keycodes.h	/^#define KBD_F10	/;"	d
+KBD_F11	utente/include/keycodes.h	/^#define KBD_F11	/;"	d
+KBD_F12	utente/include/keycodes.h	/^#define KBD_F12	/;"	d
+KBD_F2	utente/include/keycodes.h	/^#define KBD_F2	/;"	d
+KBD_F3	utente/include/keycodes.h	/^#define KBD_F3	/;"	d
+KBD_F4	utente/include/keycodes.h	/^#define KBD_F4	/;"	d
+KBD_F5	utente/include/keycodes.h	/^#define KBD_F5	/;"	d
+KBD_F6	utente/include/keycodes.h	/^#define KBD_F6	/;"	d
+KBD_F7	utente/include/keycodes.h	/^#define KBD_F7	/;"	d
+KBD_F8	utente/include/keycodes.h	/^#define KBD_F8	/;"	d
+KBD_F9	utente/include/keycodes.h	/^#define KBD_F9	/;"	d
+KBD_FAKELSHIFT	utente/include/keycodes.h	/^#define KBD_FAKELSHIFT	/;"	d
+KBD_FAKERSHIFT	utente/include/keycodes.h	/^#define KBD_FAKERSHIFT	/;"	d
+KBD_G	utente/include/keycodes.h	/^#define KBD_G	/;"	d
+KBD_GRAVE	utente/include/keycodes.h	/^#define KBD_GRAVE	/;"	d
+KBD_H	utente/include/keycodes.h	/^#define KBD_H	/;"	d
+KBD_HOME	utente/include/keycodes.h	/^#define KBD_HOME	/;"	d
+KBD_I	utente/include/keycodes.h	/^#define KBD_I	/;"	d
+KBD_INSERT	utente/include/keycodes.h	/^#define KBD_INSERT	/;"	d
+KBD_IRQ	io/io.cpp	/^const int KBD_IRQ = 1;$/;"	v	typeref:typename:const int
+KBD_J	utente/include/keycodes.h	/^#define KBD_J	/;"	d
+KBD_K	utente/include/keycodes.h	/^#define KBD_K	/;"	d
+KBD_KP0	utente/include/keycodes.h	/^#define KBD_KP0	/;"	d
+KBD_KP1	utente/include/keycodes.h	/^#define KBD_KP1	/;"	d
+KBD_KP2	utente/include/keycodes.h	/^#define KBD_KP2	/;"	d
+KBD_KP3	utente/include/keycodes.h	/^#define KBD_KP3	/;"	d
+KBD_KP4	utente/include/keycodes.h	/^#define KBD_KP4	/;"	d
+KBD_KP5	utente/include/keycodes.h	/^#define KBD_KP5	/;"	d
+KBD_KP6	utente/include/keycodes.h	/^#define KBD_KP6	/;"	d
+KBD_KP7	utente/include/keycodes.h	/^#define KBD_KP7	/;"	d
+KBD_KP8	utente/include/keycodes.h	/^#define KBD_KP8	/;"	d
+KBD_KP9	utente/include/keycodes.h	/^#define KBD_KP9	/;"	d
+KBD_KPASTERISK	utente/include/keycodes.h	/^#define KBD_KPASTERISK	/;"	d
+KBD_KPDOT	utente/include/keycodes.h	/^#define KBD_KPDOT	/;"	d
+KBD_KPENTER	utente/include/keycodes.h	/^#define KBD_KPENTER	/;"	d
+KBD_KPMINUS	utente/include/keycodes.h	/^#define KBD_KPMINUS	/;"	d
+KBD_KPPLUS	utente/include/keycodes.h	/^#define KBD_KPPLUS	/;"	d
+KBD_KPSLASH	utente/include/keycodes.h	/^#define KBD_KPSLASH	/;"	d
+KBD_L	utente/include/keycodes.h	/^#define KBD_L	/;"	d
+KBD_LEFT	utente/include/keycodes.h	/^#define KBD_LEFT	/;"	d
+KBD_LEFTALT	utente/include/keycodes.h	/^#define KBD_LEFTALT	/;"	d
+KBD_LEFTBRACE	utente/include/keycodes.h	/^#define KBD_LEFTBRACE	/;"	d
+KBD_LEFTCTRL	utente/include/keycodes.h	/^#define KBD_LEFTCTRL	/;"	d
+KBD_LEFTSHIFT	utente/include/keycodes.h	/^#define KBD_LEFTSHIFT	/;"	d
+KBD_LEFTWIN	utente/include/keycodes.h	/^#define KBD_LEFTWIN	/;"	d
+KBD_M	utente/include/keycodes.h	/^#define KBD_M	/;"	d
+KBD_MENU	utente/include/keycodes.h	/^#define KBD_MENU	/;"	d
+KBD_MINUS	utente/include/keycodes.h	/^#define KBD_MINUS	/;"	d
+KBD_N	utente/include/keycodes.h	/^#define KBD_N	/;"	d
+KBD_NUMLOCK	utente/include/keycodes.h	/^#define KBD_NUMLOCK	/;"	d
+KBD_O	utente/include/keycodes.h	/^#define KBD_O	/;"	d
+KBD_P	utente/include/keycodes.h	/^#define KBD_P	/;"	d
+KBD_PAGEDOWN	utente/include/keycodes.h	/^#define KBD_PAGEDOWN	/;"	d
+KBD_PAGEUP	utente/include/keycodes.h	/^#define KBD_PAGEUP	/;"	d
+KBD_PAUSE	utente/include/keycodes.h	/^#define KBD_PAUSE	/;"	d
+KBD_Q	utente/include/keycodes.h	/^#define KBD_Q	/;"	d
+KBD_R	utente/include/keycodes.h	/^#define KBD_R	/;"	d
+KBD_RCB	io/io.s	/^.set KBD_RCB,	0x20$/;"	d
+KBD_RESERVED	utente/include/keycodes.h	/^#define KBD_RESERVED	/;"	d
+KBD_RIGHT	utente/include/keycodes.h	/^#define KBD_RIGHT	/;"	d
+KBD_RIGHTALT	utente/include/keycodes.h	/^#define KBD_RIGHTALT	/;"	d
+KBD_RIGHTBRACE	utente/include/keycodes.h	/^#define KBD_RIGHTBRACE	/;"	d
+KBD_RIGHTCTRL	utente/include/keycodes.h	/^#define KBD_RIGHTCTRL	/;"	d
+KBD_RIGHTSHIFT	utente/include/keycodes.h	/^#define KBD_RIGHTSHIFT	/;"	d
+KBD_RIGHTWIN	utente/include/keycodes.h	/^#define KBD_RIGHTWIN	/;"	d
+KBD_S	utente/include/keycodes.h	/^#define KBD_S	/;"	d
+KBD_SCROLLLOCK	utente/include/keycodes.h	/^#define KBD_SCROLLLOCK	/;"	d
+KBD_SEMICOLON	utente/include/keycodes.h	/^#define KBD_SEMICOLON	/;"	d
+KBD_SLASH	utente/include/keycodes.h	/^#define KBD_SLASH	/;"	d
+KBD_SPACE	utente/include/keycodes.h	/^#define KBD_SPACE	/;"	d
+KBD_SYSRQ	utente/include/keycodes.h	/^#define KBD_SYSRQ	/;"	d
+KBD_T	utente/include/keycodes.h	/^#define KBD_T	/;"	d
+KBD_TAB	utente/include/keycodes.h	/^#define KBD_TAB	/;"	d
+KBD_U	utente/include/keycodes.h	/^#define KBD_U	/;"	d
+KBD_UP	utente/include/keycodes.h	/^#define KBD_UP	/;"	d
+KBD_V	utente/include/keycodes.h	/^#define KBD_V	/;"	d
+KBD_W	utente/include/keycodes.h	/^#define KBD_W	/;"	d
+KBD_WCB	io/io.s	/^.set KBD_WCB,	0x60$/;"	d
+KBD_X	utente/include/keycodes.h	/^#define KBD_X	/;"	d
+KBD_Y	utente/include/keycodes.h	/^#define KBD_Y	/;"	d
+KBD_Z	utente/include/keycodes.h	/^#define KBD_Z	/;"	d
+KiB	include/costanti.h	/^#define KiB	/;"	d
+LCR1	io/io.s	/^.set LCR1, 0x03fb$/;"	d
+LCR2	io/io.s	/^.set LCR2, 0x02fb$/;"	d
+LIBCECONF	Makefile	/^LIBCECONF ?= $(firstword $(wildcard \/usr\/local\/etc\/libce.conf) $(wildcard \/etc\/libce.conf)/;"	m
+LINENO	util/coff.h	/^#define	LINENO	/;"	d
+LINESZ	util/coff.h	/^#define	LINESZ	/;"	d
+LIV	io/io.cpp	/^const natl LIV = LIV_SISTEMA;$/;"	v	typeref:typename:const natl
+LIV_SISTEMA	include/costanti.h	/^#define LIV_SISTEMA	/;"	d
+LIV_UTENTE	include/costanti.h	/^#define LIV_UTENTE	/;"	d
+LUN_NOME	util/parse.c	/^#define LUN_NOME /;"	d	file:
+LUN_OGGETTI	util/parse.c	/^#define LUN_OGGETTI /;"	d	file:
+LUN_RIGA	util/parse.c	/^#define LUN_RIGA /;"	d	file:
+ListaInterpreti	util/interp.h	/^	ListaInterpreti() : testa(NULL), curr(NULL) {}$/;"	f	class:ListaInterpreti
+ListaInterpreti	util/interp.h	/^class ListaInterpreti {$/;"	c
+ListaTipiSwap	util/swap.h	/^	ListaTipiSwap() : testa(NULL), curr(NULL) {}$/;"	f	class:ListaTipiSwap
+ListaTipiSwap	util/swap.h	/^class ListaTipiSwap {$/;"	c
+Log	util/creatimg.cpp	/^verbose Log;$/;"	v	typeref:typename:verbose
+MAIN	util/parse.c	/^#define MAIN /;"	d	file:
+MAIN_HEAD	util/parse.c	/^#define MAIN_HEAD /;"	d	file:
+MAIN_TAIL	util/parse.c	/^#define MAIN_TAIL /;"	d	file:
+MASCHERA_MODULO	sistema/sistema.cpp	/^static const natq MASCHERA_MODULO = BIT_SEGNO - 1;$/;"	v	typeref:typename:const natq	file:
+MAX_CODE	io/io.cpp	/^const natl MAX_CODE = 40; \/\/$/;"	v	typeref:typename:const natl
+MAX_DISCHI	util/doswap.cpp	/^	static const int MAX_DISCHI = 8;$/;"	m	class:TipoDOSwap	typeref:typename:const int	file:
+MAX_INT_LEN	util/parse.c	/^#define MAX_INT_LEN /;"	d	file:
+MAX_IRQ	sistema/sistema.cpp	/^const natl MAX_IRQ  = 24;$/;"	v	typeref:typename:const natl
+MAX_LOG	sistema/sistema.cpp	/^int MAX_LOG = 4;$/;"	v	typeref:typename:int
+MAX_LOG	sistema/sistema.cpp	/^int MAX_LOG = 5;$/;"	v	typeref:typename:int
+MAX_PRD	include/costanti.h	/^#define MAX_PRD	/;"	d
+MAX_PRIORITY	sistema/sistema.cpp	/^const natl MAX_PRIORITY	= 0xfffffff;$/;"	v	typeref:typename:const natl
+MAX_PROC_ID	include/costanti.h	/^#define MAX_PROC_ID	/;"	d
+MAX_SEM	include/costanti.h	/^#define MAX_SEM	/;"	d
+MCR1	io/io.s	/^.set MCR1, 0x03fc$/;"	d
+MCR2	io/io.s	/^.set MCR2, 0x02fc$/;"	d
+MEM	util/start.mk	/^MEM=8$/;"	m
+MEM_TOT	include/costanti.h	/^#define MEM_TOT	/;"	d
+MIN_PRIORITY	sistema/sistema.cpp	/^const natl MIN_PRIORITY	= 0x0000001;$/;"	v	typeref:typename:const natl
+MIN_PROC_ID	include/costanti.h	/^#define MIN_PROC_ID	/;"	d
+MiB	include/costanti.h	/^#define MiB	/;"	d
+NCC	Makefile	/^NCC ?= g++$/;"	m
+NCFLAGS	Makefile	/^NCFLAGS=$(COMM_CFLAGS) -m64 -Wno-builtin-declaration-mismatch -DX86_64$/;"	m
+NLDFLAGS	Makefile	/^NLDFLAGS=$(COMM_LDFLAGS) -melf_x86_64 -L$(LIB64)$/;"	m
+NLDLIBS	Makefile	/^NLDLIBS=$(COMM_LDLIBS) -lce64$/;"	m
+NUM_TSS	include/costanti.h	/^#define NUM_TSS /;"	d
+NX	util/creatimg.cpp	/^		uint64_t NX:	1;$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+NX	util/creatimg.cpp	/^		uint64_t NX:	1;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+NX	util/decode.c	/^		uint64_t NX:		1;$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+NX	util/decode.c	/^		uint64_t NX:		1;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:1	file:
+N_ABS	util/coff.h	/^#define N_ABS	/;"	d
+N_BTMASK	util/coff.h	/^#define N_BTMASK	/;"	d
+N_BTSHFT	util/coff.h	/^#define N_BTSHFT	/;"	d
+N_DEBUG	util/coff.h	/^#define N_DEBUG	/;"	d
+N_DF	sistema/sistema.cpp	/^natq N_DF;			\/\/ numero di frame in M2$/;"	v	typeref:typename:natq
+N_MIO_C	include/costanti.h	/^#define N_MIO_C	/;"	d
+N_REG	sistema/sistema.cpp	/^const int N_REG = 16;	\/\/ numero di registri nel campo contesto$/;"	v	typeref:typename:const int
+N_SIS_C	include/costanti.h	/^#define N_SIS_C	/;"	d
+N_SIS_P	include/costanti.h	/^#define N_SIS_P	/;"	d
+N_TMASK	util/coff.h	/^#define N_TMASK	/;"	d
+N_TSHIFT	util/coff.h	/^#define N_TSHIFT	/;"	d
+N_TV	util/coff.h	/^#define N_TV	/;"	d
+N_UNDEF	util/coff.h	/^#define N_UNDEF	/;"	d
+N_UTN_C	include/costanti.h	/^#define N_UTN_C	/;"	d
+N_UTN_P	include/costanti.h	/^#define N_UTN_P	/;"	d
+NucleoFrameFilter	debug/nucleo.py	/^class NucleoFrameFilter:$/;"	c
+NucleoFrameIterator	debug/nucleo.py	/^class NucleoFrameIterator():$/;"	c
+OMAGIC	util/coff.h	/^#define OMAGIC /;"	d
+P	util/creatimg.cpp	/^		uint64_t P:		1;	\/\/ bit di presenza$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+P	util/creatimg.cpp	/^		uint64_t P:	1;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+P	util/decode.c	/^		uint64_t P:		1;	\/\/ bit di presenza$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+P	util/decode.c	/^		uint64_t P:		1;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:1	file:
+PAT	util/creatimg.cpp	/^		uint64_t PAT:	1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+PAT	util/decode.c	/^		uint64_t PAT:		1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+PCD	util/creatimg.cpp	/^		uint64_t PCD:	1;	\/\/ Page Cache Disable$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+PCD	util/creatimg.cpp	/^		uint64_t PCD:	1;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+PCD	util/decode.c	/^		uint64_t PCD:		1;	\/\/ Page Cache Disable$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+PCD	util/decode.c	/^		uint64_t PCD:		1;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:1	file:
+PF_R	include/elf.h	/^#define PF_R /;"	d
+PF_W	include/elf.h	/^#define PF_W /;"	d
+PF_X	include/elf.h	/^#define PF_X /;"	d
+PRELOAD_LEVEL	include/costanti.h	/^#define PRELOAD_LEVEL	/;"	d
+PRIO	io/io.cpp	/^const natl PRIO = 1000;$/;"	v	typeref:typename:const natl
+PROC_FMT	util/parse.c	/^#define PROC_FMT /;"	d	file:
+PT_DYNAMIC	include/elf.h	/^#define PT_DYNAMIC	/;"	d
+PT_HIPROC	include/elf.h	/^#define PT_HIPROC	/;"	d
+PT_INTERP	include/elf.h	/^#define PT_INTERP	/;"	d
+PT_LOAD	include/elf.h	/^#define PT_LOAD	/;"	d
+PT_LOPROC	include/elf.h	/^#define PT_LOPROC	/;"	d
+PT_NOTE	include/elf.h	/^#define PT_NOTE	/;"	d
+PT_NULL	include/elf.h	/^#define	PT_NULL	/;"	d
+PT_PHDR	include/elf.h	/^#define PT_PHDR	/;"	d
+PT_SHLIB	include/elf.h	/^#define PT_SHLIB	/;"	d
+PWT	util/creatimg.cpp	/^		uint64_t PWT:	1;	\/\/ Page Write Through$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+PWT	util/creatimg.cpp	/^		uint64_t PWT:	1;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+PWT	util/decode.c	/^		uint64_t PWT:		1;	\/\/ Page Write Through$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+PWT	util/decode.c	/^		uint64_t PWT:		1;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:1	file:
+P_TV	util/coff.h	/^#define P_TV	/;"	d
+Process	debug/nucleo.py	/^class Process(gdb.Command):$/;"	c
+ProcessDump	debug/nucleo.py	/^class ProcessDump(gdb.Command):$/;"	c
+ProcessList	debug/nucleo.py	/^class ProcessList(gdb.Command):$/;"	c
+R10	sistema/sistema.s	/^.set R10,CR3+88$/;"	d
+R11	sistema/sistema.s	/^.set R11,CR3+96$/;"	d
+R12	sistema/sistema.s	/^.set R12,CR3+104$/;"	d
+R13	sistema/sistema.s	/^.set R13,CR3+112$/;"	d
+R14	sistema/sistema.s	/^.set R14,CR3+120$/;"	d
+R15	sistema/sistema.s	/^.set R15,CR3+128$/;"	d
+R8	sistema/sistema.s	/^.set R8, CR3+72$/;"	d
+R9	sistema/sistema.s	/^.set R9, CR3+80$/;"	d
+RAX	sistema/sistema.s	/^.set RAX,CR3+8$/;"	d
+RBP	sistema/sistema.s	/^.set RBP,CR3+48$/;"	d
+RBR1	io/io.s	/^.set RBR1, 0x03f8$/;"	d
+RBR2	io/io.s	/^.set RBR2, 0x02f8$/;"	d
+RBX	sistema/sistema.s	/^.set RBX,CR3+32$/;"	d
+RCX	sistema/sistema.s	/^.set RCX,CR3+16$/;"	d
+RDI	sistema/sistema.s	/^.set RDI,CR3+64$/;"	d
+RDX	sistema/sistema.s	/^.set RDX,CR3+24$/;"	d
+READ_DMA	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+READ_SECT	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+RELOC	util/coff.h	/^#define RELOC /;"	d
+RELOC_ADDR32	util/coff.h	/^#define RELOC_ADDR32	/;"	d
+RELOC_REL32	util/coff.h	/^#define RELOC_REL32	/;"	d
+RELSZ	util/coff.h	/^#define RELSZ /;"	d
+ROWS	io/io.cpp	/^const natl ROWS = 25;	\/\/$/;"	v	typeref:typename:const natl
+RSI	sistema/sistema.s	/^.set RSI,CR3+56$/;"	d
+RSP	sistema/sistema.s	/^.set RSP,CR3+40$/;"	d
+RW	util/creatimg.cpp	/^		uint64_t RW:	1;	\/\/ Read\/Write$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+RW	util/creatimg.cpp	/^		uint64_t RW:	1;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+RW	util/decode.c	/^		uint64_t RW:		1;	\/\/ Read\/Write$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+RW	util/decode.c	/^		uint64_t RW:		1;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:1	file:
+S	io/io.cpp	/^const natl S = 2;$/;"	v	typeref:typename:const natl
+SCNHDR	util/coff.h	/^#define	SCNHDR	/;"	d
+SCNHSZ	util/coff.h	/^#define	SCNHSZ	/;"	d
+SEL_CODICE_SISTEMA	include/costanti.h	/^#define SEL_CODICE_SISTEMA	/;"	d
+SEL_CODICE_UTENTE	include/costanti.h	/^#define SEL_CODICE_UTENTE	/;"	d
+SEL_DATI_UTENTE	include/costanti.h	/^#define SEL_DATI_UTENTE /;"	d
+SEM_FMT	util/parse.c	/^#define SEM_FMT /;"	d	file:
+SHF_ALLOC	include/elf.h	/^#define SHF_ALLOC /;"	d
+SHF_EXECINSTR	include/elf.h	/^#define SHF_EXECINSTR /;"	d
+SHF_MASKPROC	include/elf.h	/^#define SHF_MASKPROC /;"	d
+SHF_WRITE	include/elf.h	/^#define SHF_WRITE /;"	d
+SHMAGIC	util/coff.h	/^#define SHMAGIC	/;"	d
+SHT_DYNAMIC	include/elf.h	/^#define SHT_DYNAMIC /;"	d
+SHT_DYNSYM	include/elf.h	/^#define SHT_DYNSYM /;"	d
+SHT_HASH	include/elf.h	/^#define SHT_HASH /;"	d
+SHT_HIPROC	include/elf.h	/^#define SHT_HIPROC /;"	d
+SHT_HIUSER	include/elf.h	/^#define SHT_HIUSER /;"	d
+SHT_LOPROC	include/elf.h	/^#define SHT_LOPROC /;"	d
+SHT_LOUSER	include/elf.h	/^#define SHT_LOUSER /;"	d
+SHT_NOBITS	include/elf.h	/^#define SHT_NOBITS /;"	d
+SHT_NOTE	include/elf.h	/^#define SHT_NOTE /;"	d
+SHT_NULL	include/elf.h	/^#define SHT_NULL /;"	d
+SHT_PROGBITS	include/elf.h	/^#define SHT_PROGBITS /;"	d
+SHT_REL	include/elf.h	/^#define SHT_REL /;"	d
+SHT_RELA	include/elf.h	/^#define SHT_RELA /;"	d
+SHT_SHLIB	include/elf.h	/^#define SHT_SHLIB /;"	d
+SHT_STRTAB	include/elf.h	/^#define SHT_STRTAB /;"	d
+SHT_SYMTAB	include/elf.h	/^#define SHT_SYMTAB /;"	d
+STACK_SIZE	sistema/sistema.s	/^#define STACK_SIZE /;"	d	file:
+START_IO	util/start.mk	/^START_IO=0x10000000000$/;"	m
+START_SISTEMA	Makefile	/^START_SISTEMA=   0x0000000000200000$/;"	m
+START_UTENTE	util/start.mk	/^START_UTENTE=0xffff800000000000$/;"	m
+STMAGIC	util/coff.h	/^#define STMAGIC	/;"	d
+STYP_BSS	util/coff.h	/^#define STYP_BSS	/;"	d
+STYP_DATA	util/coff.h	/^#define STYP_DATA	/;"	d
+STYP_TEXT	util/coff.h	/^#define STYP_TEXT	/;"	d
+SWAP	Makefile	/^SWAP=		 swap.img$/;"	m
+SWAP_H__	util/swap.h	/^#define SWAP_H__$/;"	d
+SWAP_SIZE	util/start.mk	/^SWAP_SIZE=83886080$/;"	m
+SYMENT	util/coff.h	/^#define	SYMENT	/;"	d
+SYMESZ	util/coff.h	/^#define	SYMESZ	/;"	d
+SYS_H_	utente/include/sys.h	/^#define SYS_H_$/;"	d
+SaveBreakpointsCommand	debug/example.py	/^class SaveBreakpointsCommand (gdb.Command):$/;"	c
+SavePrefixCommand	debug/example.py	/^class SavePrefixCommand (gdb.Command):$/;"	c
+Segmento	util/interp.h	/^class Segmento {$/;"	c
+SegmentoCoff_go32	util/coff.cpp	/^	class SegmentoCoff_go32: public Segmento {$/;"	c	class:EseguibileCoff_go32	file:
+SegmentoCoff_go32	util/coff.cpp	/^EseguibileCoff_go32::SegmentoCoff_go32::SegmentoCoff_go32(EseguibileCoff_go32* padre_, SCNHDR* p/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32
+SegmentoElf32	util/elf32.cpp	/^	class SegmentoElf32: public Segmento {$/;"	c	class:EseguibileElf32	file:
+SegmentoElf32	util/elf32.cpp	/^EseguibileElf32::SegmentoElf32::SegmentoElf32(EseguibileElf32* padre_, Elf32_Phdr* ph_)$/;"	f	class:EseguibileElf32::SegmentoElf32
+SegmentoElf64	util/elf64.cpp	/^	class SegmentoElf64: public Segmento {$/;"	c	class:EseguibileElf64	file:
+SegmentoElf64	util/elf64.cpp	/^EseguibileElf64::SegmentoElf64::SegmentoElf64(EseguibileElf64* padre_, Elf64_Phdr* ph_)$/;"	f	class:EseguibileElf64::SegmentoElf64
+Semaphore	debug/nucleo.py	/^class Semaphore(gdb.Command):$/;"	c
+Swap	util/swap.h	/^class Swap {$/;"	c
+TIPO_A	include/costanti.h	/^#define TIPO_A	/;"	d
+TIPO_AB	include/costanti.h	/^#define TIPO_AB	/;"	d
+TIPO_APE	include/costanti.h	/^#define TIPO_APE	/;"	d
+TIPO_BPA	include/costanti.h	/^#define TIPO_BPA	/;"	d
+TIPO_BPD	include/costanti.h	/^#define TIPO_BPD	/;"	d
+TIPO_BPW	include/costanti.h	/^#define TIPO_BPW	/;"	d
+TIPO_D	include/costanti.h	/^#define TIPO_D	/;"	d
+TIPO_FG	include/costanti.h	/^#define TIPO_FG	/;"	d
+TIPO_H_	utente/include/tipo.h	/^#define TIPO_H_$/;"	d
+TIPO_L	include/costanti.h	/^#define TIPO_L	/;"	d
+TIPO_P	include/costanti.h	/^#define TIPO_P	/;"	d
+TIPO_RE	include/costanti.h	/^#define TIPO_RE	/;"	d
+TIPO_S	include/costanti.h	/^#define TIPO_S	/;"	d
+TIPO_SI	include/costanti.h	/^#define TIPO_SI	/;"	d
+TIPO_T	include/costanti.h	/^#define TIPO_T	/;"	d
+TIPO_TRA	include/costanti.h	/^#define TIPO_TRA	/;"	d
+TIPO_W	include/costanti.h	/^#define TIPO_W	/;"	d
+TIPO_WFI	include/costanti.h	/^#define TIPO_WFI	/;"	d
+T_CHAR	util/coff.h	/^#define T_CHAR	/;"	d
+T_DOUBLE	util/coff.h	/^#define T_DOUBLE	/;"	d
+T_ENUM	util/coff.h	/^#define T_ENUM	/;"	d
+T_FLOAT	util/coff.h	/^#define T_FLOAT	/;"	d
+T_INT	util/coff.h	/^#define T_INT	/;"	d
+T_LNGDBL	util/coff.h	/^#define T_LNGDBL	/;"	d
+T_LONG	util/coff.h	/^#define T_LONG	/;"	d
+T_MOE	util/coff.h	/^#define T_MOE	/;"	d
+T_NULL	util/coff.h	/^#define T_NULL	/;"	d
+T_SHORT	util/coff.h	/^#define T_SHORT	/;"	d
+T_STRUCT	util/coff.h	/^#define T_STRUCT	/;"	d
+T_UCHAR	util/coff.h	/^#define T_UCHAR	/;"	d
+T_UINT	util/coff.h	/^#define T_UINT	/;"	d
+T_ULONG	util/coff.h	/^#define T_ULONG	/;"	d
+T_UNION	util/coff.h	/^#define T_UNION	/;"	d
+T_USHORT	util/coff.h	/^#define T_USHORT	/;"	d
+T_VOID	util/coff.h	/^#define T_VOID	/;"	d
+TabCache	util/creatimg.cpp	/^	TabCache() {$/;"	f	class:TabCache	file:
+TabCache	util/creatimg.cpp	/^class TabCache {$/;"	c	file:
+TipoDOSwap	util/doswap.cpp	/^TipoDOSwap::TipoDOSwap()$/;"	f	class:TipoDOSwap
+TipoDOSwap	util/doswap.cpp	/^class TipoDOSwap: public TipoSwap$/;"	c	file:
+TipoFileSwap	util/fswap.cpp	/^	TipoFileSwap() {}$/;"	f	class:TipoFileSwap	file:
+TipoFileSwap	util/fswap.cpp	/^class TipoFileSwap: public TipoSwap$/;"	c	file:
+TipoSwap	util/swap.cpp	/^TipoSwap::TipoSwap()$/;"	f	class:TipoSwap
+TipoSwap	util/swap.h	/^class TipoSwap {$/;"	c
+UPB	util/creatimg.cpp	/^const uint32_t UPB = DIM_PAGINA \/ sizeof(uint64_t);$/;"	v	typeref:typename:const uint32_t
+US	util/creatimg.cpp	/^		uint64_t US:	1;	\/\/ User\/Supervisor$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+US	util/creatimg.cpp	/^		uint64_t US:	1;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+US	util/decode.c	/^		uint64_t US:		1;	\/\/ User\/Supervisor$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+US	util/decode.c	/^		uint64_t US:		1;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:1	file:
+VETT_0	include/costanti.h	/^#define VETT_0	/;"	d
+VETT_1	include/costanti.h	/^#define VETT_1 /;"	d
+VETT_10	include/costanti.h	/^#define VETT_10 /;"	d
+VETT_11	include/costanti.h	/^#define VETT_11 /;"	d
+VETT_12	include/costanti.h	/^#define VETT_12 /;"	d
+VETT_13	include/costanti.h	/^#define VETT_13 /;"	d
+VETT_14	include/costanti.h	/^#define VETT_14 /;"	d
+VETT_15	include/costanti.h	/^#define VETT_15 /;"	d
+VETT_16	include/costanti.h	/^#define VETT_16 /;"	d
+VETT_17	include/costanti.h	/^#define VETT_17 /;"	d
+VETT_18	include/costanti.h	/^#define VETT_18 /;"	d
+VETT_19	include/costanti.h	/^#define VETT_19 /;"	d
+VETT_2	include/costanti.h	/^#define VETT_2 /;"	d
+VETT_20	include/costanti.h	/^#define VETT_20 /;"	d
+VETT_21	include/costanti.h	/^#define VETT_21 /;"	d
+VETT_22	include/costanti.h	/^#define VETT_22 /;"	d
+VETT_23	include/costanti.h	/^#define VETT_23 /;"	d
+VETT_3	include/costanti.h	/^#define VETT_3 /;"	d
+VETT_4	include/costanti.h	/^#define VETT_4 /;"	d
+VETT_5	include/costanti.h	/^#define VETT_5 /;"	d
+VETT_6	include/costanti.h	/^#define VETT_6 /;"	d
+VETT_7	include/costanti.h	/^#define VETT_7 /;"	d
+VETT_8	include/costanti.h	/^#define VETT_8 /;"	d
+VETT_9	include/costanti.h	/^#define VETT_9 /;"	d
+VETT_S	include/costanti.h	/^#define VETT_S	/;"	d
+VIDEO_SIZE	io/io.cpp	/^const natl VIDEO_SIZE = COLS * ROWS;	\/\/$/;"	v	typeref:typename:const natl
+VaddrParam	debug/nucleo.py	/^class VaddrParam(gdb.Parameter):$/;"	c
+Vm	debug/nucleo.py	/^class Vm(gdb.Command):$/;"	c
+VmMaps	debug/nucleo.py	/^class VmMaps(gdb.Command):$/;"	c
+VmPath	debug/nucleo.py	/^class VmPath(gdb.Command):$/;"	c
+VmTable	debug/nucleo.py	/^class VmTable(gdb.Command):$/;"	c
+VmTree	debug/nucleo.py	/^class VmTree(gdb.Command):$/;"	c
+VmWindow	debug/nucleo.py	/^class VmWindow(gdb.Command):$/;"	c
+WRITE_DMA	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+WRITE_SECT	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	e	enum:hd_cmd	file:
+ZMAGIC	util/coff.h	/^#define ZMAGIC /;"	d
+_BSS	util/coff.h	/^#define _BSS	/;"	d
+_COMMENT	util/coff.h	/^#define _COMMENT /;"	d
+_DATA	util/coff.h	/^#define _DATA	/;"	d
+_ETEXT	util/coff.h	/^#	define _ETEXT	/;"	d
+_LIB	util/coff.h	/^#define _LIB /;"	d
+_LIB_H_	utente/include/lib.h	/^#define _LIB_H_$/;"	d
+_TEXT	util/coff.h	/^#define _TEXT	/;"	d
+__anon3754ae660108	util/coff.h	/^{$/;"	s
+__anon3754ae66020a	util/coff.h	/^	union {$/;"	u	struct:external_lineno
+__anon3754ae66030a	util/coff.h	/^  union {$/;"	u	struct:external_syment
+__anon3754ae660408	util/coff.h	/^    struct {$/;"	s	union:external_syment::__anon3754ae66030a
+__anon3754ae660508	util/coff.h	/^	struct {$/;"	s	union:external_auxent
+__anon3754ae66060a	util/coff.h	/^		union {$/;"	u	struct:external_auxent::__anon3754ae660508
+__anon3754ae660708	util/coff.h	/^			struct {$/;"	s	union:external_auxent::__anon3754ae660508::__anon3754ae66060a
+__anon3754ae66080a	util/coff.h	/^		union {$/;"	u	struct:external_auxent::__anon3754ae660508
+__anon3754ae660908	util/coff.h	/^			struct {					\/* if ISFCN, tag, or .bb *\/$/;"	s	union:external_auxent::__anon3754ae660508::__anon3754ae66080a
+__anon3754ae660a08	util/coff.h	/^			struct {					\/* if ISARY, up to 4 dimen. *\/$/;"	s	union:external_auxent::__anon3754ae660508::__anon3754ae66080a
+__anon3754ae660b0a	util/coff.h	/^	union {$/;"	u	union:external_auxent
+__anon3754ae660c08	util/coff.h	/^		struct {$/;"	s	union:external_auxent::__anon3754ae660b0a
+__anon3754ae660d08	util/coff.h	/^	struct {$/;"	s	union:external_auxent
+__anon3754ae660e08	util/coff.h	/^        struct {$/;"	s	union:external_auxent
+__anon43764de70108	util/decode.c	/^	struct {$/;"	s	union:entrata	file:
+__anon43764de70208	util/decode.c	/^	struct {$/;"	s	union:entrata	file:
+__anon599044af0108	util/creatimg.cpp	/^	struct {$/;"	s	union:entrata	file:
+__anon599044af0208	util/creatimg.cpp	/^	struct {$/;"	s	union:entrata	file:
+__anon599044af030a	util/creatimg.cpp	/^	union {$/;"	u	struct:pagina	file:
+__anon9e1f9d4f0108	include/elf64.h	/^typedef struct {$/;"	s
+__anon9e1f9d4f0208	include/elf64.h	/^typedef struct {$/;"	s
+__anon9e1f9d4f0308	include/elf64.h	/^typedef struct {$/;"	s
+__anonacd4a4510108	util/doswap.cpp	/^	{$/;"	s	function:lba_biosdisk	file:
+__anonacd4a4510208	util/doswap.cpp	/^	struct {$/;"	s	function:get_disk_size	file:
+__anonb4c38d640108	util/elf32.h	/^typedef struct {$/;"	s
+__anonb4c38d640208	util/elf32.h	/^typedef struct {$/;"	s
+__anonb4c38d640308	util/elf32.h	/^typedef struct {$/;"	s
+__anond897b8910108	sistema/sistema.cpp	/^	struct __attribute__ ((packed)) {$/;"	s	struct:des_proc	file:
+__anond897b8910203	sistema/sistema.cpp	/^enum { I_RAX, I_RCX, I_RDX, I_RBX,$/;"	g	file:
+__anond897b891030a	sistema/sistema.cpp	/^	union {$/;"	u	struct:des_frame	file:
+__dj_include_coff_h_	util/coff.h	/^#define __dj_include_coff_h_$/;"	d
+__init__	debug/example.py	/^    def __init__ (self):$/;"	m	class:SaveBreakpointsCommand
+__init__	debug/example.py	/^    def __init__(self):$/;"	m	class:SavePrefixCommand
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:Context
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:DesProc
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:Frame
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:FrameNum
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:FrameParam
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:NucleoFrameFilter
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:Process
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:ProcessDump
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:ProcessList
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:Semaphore
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:VaddrParam
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:Vm
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:VmMaps
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:VmPath
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:VmTable
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:VmTree
+__init__	debug/nucleo.py	/^    def __init__(self):$/;"	m	class:VmWindow
+__init__	debug/nucleo.py	/^    def __init__(self, frame_iter):$/;"	m	class:NucleoFrameIterator
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:des_framePrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:des_frame_ptrPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:des_procPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:des_semPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:faddrPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:ioaddrPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:natPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:proc_elemPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:richiestaPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:tab_entryPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val):$/;"	m	class:vaddrPrinter
+__init__	debug/nucleo.py	/^    def __init__(self, val, omit=False):$/;"	m	class:ptrPrinter
+__iter__	debug/nucleo.py	/^    def __iter__(self):$/;"	m	class:NucleoFrameIterator
+__next__	debug/nucleo.py	/^    def __next__(self):$/;"	m	class:NucleoFrameIterator
+_start	io/io.s	/^_start:$/;"	l
+_start	sistema/sistema.s	/^_start:				\/\/ entry point$/;"	l
+_start	utente/utente.s	/^_start:$/;"	l
+a	util/creatimg.cpp	/^	} a;$/;"	m	union:entrata	typeref:struct:entrata::__anon599044af0208	file:
+a	util/decode.c	/^	} a;	$/;"	m	union:entrata	typeref:struct:entrata::__anon43764de70208	file:
+a_abort_p	sistema/sistema.s	/^a_abort_p:$/;"	l
+a_activate_p	sistema/sistema.s	/^a_activate_p:	\/\/ routine int $tipo_a$/;"	l
+a_activate_pe	sistema/sistema.s	/^a_activate_pe:$/;"	l
+a_bpattach	sistema/sistema.s	/^a_bpattach:$/;"	l
+a_bpdetach	sistema/sistema.s	/^a_bpdetach:$/;"	l
+a_bpwait	sistema/sistema.s	/^a_bpwait:$/;"	l
+a_delay	sistema/sistema.s	/^a_delay:	\/\/ routine int $tipo_d$/;"	l
+a_dmareadhd_n	io/io.s	/^a_dmareadhd_n: 	# routine INT $dma_tipob_r$/;"	l
+a_dmawritehd_n	io/io.s	/^a_dmawritehd_n:	# routine INT $dma_tipob_w$/;"	l
+a_fill_gate	sistema/sistema.s	/^a_fill_gate:$/;"	l
+a_iniconsole	io/io.s	/^a_iniconsole:$/;"	l
+a_log	sistema/sistema.s	/^a_log:$/;"	l
+a_p	sistema/sistema.cpp	/^proc_elem *a_p[MAX_IRQ];  \/\/$/;"	v	typeref:typename:proc_elem * []
+a_panic	sistema/sistema.s	/^a_panic:	\/\/ routine int $tipo_p$/;"	l
+a_readconsole	io/io.s	/^a_readconsole:$/;"	l
+a_readhd_n	io/io.s	/^a_readhd_n:	# routine INT $io_tipo_hdr$/;"	l
+a_readse_ln	io/io.s	/^a_readse_ln:$/;"	l
+a_readse_n	io/io.s	/^a_readse_n:$/;"	l
+a_sem_ini	sistema/sistema.s	/^a_sem_ini:	\/\/ routine int $tipo_si$/;"	l
+a_sem_signal	sistema/sistema.s	/^a_sem_signal:	\/\/ routine int $tipo_s$/;"	l
+a_sem_wait	sistema/sistema.s	/^a_sem_wait:	\/\/ routine int $tipo_w$/;"	l
+a_terminate_p	sistema/sistema.s	/^a_terminate_p:	\/\/ routine int $tipo_t$/;"	l
+a_trasforma	sistema/sistema.s	/^a_trasforma:$/;"	l
+a_wfi	sistema/sistema.s	/^a_wfi:		\/\/ routine int $tipo_wfi$/;"	l
+a_writeconsole	io/io.s	/^a_writeconsole:$/;"	l
+a_writehd_n	io/io.s	/^a_writehd_n:	# routine INT $io_tipo_hdw$/;"	l
+a_writese_0	io/io.s	/^a_writese_0:$/;"	l
+a_writese_n	io/io.s	/^a_writese_n:$/;"	l
+abort_p	io/io.s	/^abort_p:$/;"	l
+ac_exc	sistema/sistema.s	/^ac_exc:$/;"	l
+activate_p	io/io.s	/^activate_p:$/;"	l
+activate_p	sistema/sistema.s	/^activate_p:$/;"	l
+activate_p	utente/utente.s	/^activate_p:$/;"	l
+activate_pe	io/io.s	/^activate_pe:	\/\/$/;"	l
+active	util/doswap.cpp	/^		unsigned int active	: 8;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:8	file:
+addr	include/tipo.h	/^typedef void* addr; \/\/ indirizzo virtuale e indirizzo fisico nello spazio di memoria$/;"	t	typeref:typename:void *
+addr	utente/include/tipo.h	/^typedef void* addr;$/;"	t	typeref:typename:void *
+address	util/creatimg.cpp	/^		uint64_t address:	40;	\/\/ indirizzo fisico$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:40	file:
+address	util/decode.c	/^		uint64_t address:	40;	\/\/ indirizzo fisico$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:40	file:
+advance_tss	sistema/sistema.s	/^advance_tss:$/;"	l
+agg_proc	util/parse.c	/^void agg_proc(const char *nome_proc, const char *corpo_proc, const char *par_att,$/;"	f	typeref:typename:void
+agg_riga	util/parse.c	/^void agg_riga(int sez, char *r)$/;"	f	typeref:typename:void
+agg_sem	util/parse.c	/^void agg_sem(const char *nome_sem, int valore)$/;"	f	typeref:typename:void
+aggiungi	util/interp.h	/^	void aggiungi(Interprete* in) { testa = new Elem(in, testa); }$/;"	f	class:ListaInterpreti	typeref:typename:void
+aggiungi	util/swap.h	/^	void aggiungi(TipoSwap* in) { testa = new Elem(in, testa); }$/;"	f	class:ListaTipiSwap	typeref:typename:void
+aggiungi_pe	sistema/sistema.cpp	/^bool aggiungi_pe(proc_elem *p, natb irq)$/;"	f	typeref:typename:bool
+ah	util/coff.cpp	/^	AOUTHDR ah;$/;"	m	class:EseguibileCoff_go32	typeref:typename:AOUTHDR	file:
+all	Makefile	/^all: \\$/;"	t
+allinea	sistema/sistema.cpp	/^natq allinea(natq a, natq m)$/;"	f	typeref:typename:natq
+alloca_blocco	sistema/sistema.cpp	/^natq alloca_blocco()$/;"	f	typeref:typename:natq
+alloca_frame	sistema/sistema.cpp	/^des_frame* alloca_frame(natl proc, int livello, vaddr ind_virt)$/;"	f	typeref:typename:des_frame *
+alloca_frame_libero	sistema/sistema.cpp	/^des_frame* alloca_frame_libero()$/;"	f	typeref:typename:des_frame *
+alloca_sem	sistema/sistema.cpp	/^natl alloca_sem()$/;"	f	typeref:typename:natl
+alloca_tss	sistema/sistema.s	/^alloca_tss:$/;"	l
+ancora	util/elf32.cpp	/^		uint32_t ancora;$/;"	m	class:EseguibileElf32::SegmentoElf32	typeref:typename:uint32_t	file:
+ancora	util/elf64.cpp	/^		uint32_t ancora;$/;"	m	class:EseguibileElf64::SegmentoElf64	typeref:typename:uint32_t	file:
+ancora	util/interp.h	/^	bool ancora() { return curr != NULL; }$/;"	f	class:ListaInterpreti	typeref:typename:bool
+ancora	util/swap.h	/^	bool ancora() { return curr != NULL; }$/;"	f	class:ListaTipiSwap	typeref:typename:bool
+apic_fill	sistema/sistema.cpp	/^void apic_fill()$/;"	f	typeref:typename:void
+apri	util/doswap.cpp	/^Swap* TipoDOSwap::apri(const char *nome)$/;"	f	class:TipoDOSwap	typeref:typename:Swap *
+apri	util/fswap.cpp	/^Swap* TipoFileSwap::apri(const char *nome)$/;"	f	class:TipoFileSwap	typeref:typename:Swap *
+array_dess	sistema/sistema.cpp	/^des_sem array_dess[MAX_SEM];$/;"	v	typeref:typename:des_sem[]
+atteso	util/parse.c	/^void atteso(const char *msg, char c)$/;"	f	typeref:typename:void
+attiva_timer	sistema/sistema.s	/^attiva_timer:$/;"	l
+attr	io/io.cpp	/^	natw attr;$/;"	m	struct:des_vid	typeref:typename:natw	file:
+avail	util/creatimg.cpp	/^		uint64_t avail:	3;	\/\/ non usati$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:3	file:
+avail	util/decode.c	/^		uint64_t avail:		3;	\/\/ non usati$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:3	file:
+avail2	util/creatimg.cpp	/^		uint64_t avail2:	11;$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:11	file:
+avail2	util/decode.c	/^		uint64_t avail2:	11;$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:11	file:
+avanza	util/parse.c	/^void avanza()$/;"	f	typeref:typename:void
+base	sistema/sistema.cpp	/^static inline vaddr base(vaddr v, int liv)$/;"	f	typeref:typename:vaddr	file:
+bios_disk	util/doswap.cpp	/^	int bios_disk;$/;"	m	class:DOSwap	typeref:typename:int	file:
+black	debug/nucleo.py	/^    black   = esc(30)$/;"	v	class:Color
+block	util/creatimg.cpp	/^		uint64_t block:	51;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:51	file:
+block	util/creatimg.cpp	/^	block_t block[3];$/;"	m	class:TabCache	typeref:typename:block_t[3]	file:
+block	util/decode.c	/^		uint64_t block:		51;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:51	file:
+block_t	util/decode.c	/^typedef uint64_t block_t;$/;"	t	typeref:typename:uint64_t	file:
+block_t	util/swap.h	/^typedef uint64_t block_t;$/;"	t	typeref:typename:uint64_t
+blocks	sistema/sistema.cpp	/^	natq	blocks;$/;"	m	struct:superblock_t	typeref:typename:natq	file:
+blocks	util/creatimg.cpp	/^bm_t blocks;$/;"	v	typeref:typename:bm_t
+blocks	util/decode.c	/^	uint64_t	blocks;$/;"	m	struct:superblock_t	typeref:typename:uint64_t	file:
+blocks	util/swap.h	/^	uint64_t	blocks;$/;"	m	struct:superblock_t	typeref:typename:uint64_t
+blocks_in_file	util/dos.h	/^  unsigned short blocks_in_file;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+blue	debug/nucleo.py	/^    blue    = esc(34)$/;"	v	class:Color
+bm_alloc	util/creatimg.cpp	/^bool bm_alloc(bm_t *bm, uint64_t& pos)$/;"	f	typeref:typename:bool
+bm_clear	util/creatimg.cpp	/^inline void bm_clear(bm_t *bm, uint64_t pos)$/;"	f	typeref:typename:void
+bm_create	util/creatimg.cpp	/^void bm_create(bm_t *bm, uint64_t *buffer, uint64_t size)$/;"	f	typeref:typename:void
+bm_free	util/creatimg.cpp	/^void bm_free(bm_t *bm, uint64_t pos)$/;"	f	typeref:typename:void
+bm_isset	util/creatimg.cpp	/^inline uint64_t bm_isset(bm_t *bm, uint64_t pos)$/;"	f	typeref:typename:uint64_t
+bm_set	util/creatimg.cpp	/^inline void bm_set(bm_t *bm, uint64_t pos)$/;"	f	typeref:typename:void
+bm_start	sistema/sistema.cpp	/^	natq	bm_start;$/;"	m	struct:superblock_t	typeref:typename:natq	file:
+bm_start	util/decode.c	/^	block_t		bm_start;$/;"	m	struct:superblock_t	typeref:typename:block_t	file:
+bm_start	util/swap.h	/^	block_t		bm_start;$/;"	m	struct:superblock_t	typeref:typename:block_t
+bm_t	util/creatimg.cpp	/^struct bm_t {$/;"	s	file:
+bound_re	sistema/sistema.s	/^bound_re:$/;"	l
+bp_addr	sistema/sistema.cpp	/^	vaddr	bp_addr;$/;"	m	struct:des_proc	typeref:typename:vaddr	file:
+bp_master	sistema/sistema.cpp	/^	des_proc *bp_master;$/;"	m	struct:des_proc	typeref:typename:des_proc *	file:
+bp_orig	sistema/sistema.cpp	/^	natb	bp_orig;$/;"	m	struct:des_proc	typeref:typename:natb	file:
+bp_slave	sistema/sistema.cpp	/^	des_proc *bp_slave;$/;"	m	struct:des_proc	typeref:typename:des_proc *	file:
+bp_slave_id	sistema/sistema.cpp	/^	natl	bp_slave_id;$/;"	m	struct:des_proc	typeref:typename:natl	file:
+bp_waiting	sistema/sistema.cpp	/^	struct proc_elem  *bp_waiting;$/;"	m	struct:des_proc	typeref:struct:proc_elem *	file:
+bpattach	utente/utente.s	/^bpattach:$/;"	l
+bpdetach	utente/utente.s	/^bpdetach:$/;"	l
+bps	util/doswap.cpp	/^		uint16_t	bps;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint16_t	file:
+bpwait	utente/utente.s	/^bpwait:$/;"	l
+breakpoint	sistema/sistema.s	/^breakpoint:$/;"	l
+bsize	util/coff.h	/^	unsigned long bsize;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+bsize	util/coff.h	/^  unsigned long	bsize;		\/* uninitialized data "   "		*\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned long
+buf_offset	util/doswap.cpp	/^		uint16_t buf_offset;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint16_t	file:
+buf_segment	util/doswap.cpp	/^		uint16_t buf_segment;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint16_t	file:
+buff_size	util/doswap.cpp	/^		uint16_t 	buff_size;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint16_t	file:
+build	Makefile	/^build:$/;"	t
+build/creatimg	Makefile	/^build\/creatimg: util\/creatimg.o util\/elf32.o util\/elf64.o util\/coff.o util\/interp.o util\//;"	t
+build/io	Makefile	/^build\/io: io\/io_s.o io\/io_cpp.o$/;"	t
+build/mkstart	Makefile	/^build\/mkstart: include\/costanti.h util\/mkstart.cpp$/;"	t
+build/parse	Makefile	/^build\/parse: util\/parse.c util\/src.h$/;"	t
+build/sistema	Makefile	/^build\/sistema: sistema\/sist_s.o sistema\/sist_cpp.o$/;"	t
+build/utente	Makefile	/^build\/utente: utente\/uten_s.o utente\/lib.o utente\/uten_cpp.o$/;"	t
+bus_master	io/io.cpp	/^	pci_ata bus_master;$/;"	m	struct:des_ata	typeref:typename:pci_ata	file:
+bus_name	util/doswap.cpp	/^		uint8_t		bus_name[4];$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t[4]	file:
+byte	util/creatimg.cpp	/^		uint8_t byte[DIM_PAGINA];$/;"	m	union:pagina::__anon599044af030a	typeref:typename:uint8_t[]	file:
+bytes_in_last_block	util/dos.h	/^  unsigned short bytes_in_last_block;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+c	debug/nucleo.py	/^    r, c = m_parts[i].split('_')$/;"	v
+c_abort_p	sistema/sistema.cpp	/^extern "C" void c_abort_p()$/;"	f	typeref:typename:void
+c_activate_p	sistema/sistema.cpp	/^c_activate_p(void f(int), int a, natl prio, natl liv)$/;"	f	typeref:typename:void
+c_activate_pe	sistema/sistema.cpp	/^extern "C" void c_activate_pe(void f(int), int a, natl prio, natl liv, natb type)$/;"	f	typeref:typename:void
+c_bpattach	sistema/sistema.cpp	/^extern "C" void c_bpattach(natl id, vaddr rip)$/;"	f	typeref:typename:void
+c_bpdetach	sistema/sistema.cpp	/^extern "C" void c_bpdetach()$/;"	f	typeref:typename:void
+c_bpwait	sistema/sistema.cpp	/^extern "C" void c_bpwait()$/;"	f	typeref:typename:void
+c_breakpoint_exception	sistema/sistema.cpp	/^extern "C" void c_breakpoint_exception(int tipo, natq errore, vaddr *p_rip)$/;"	f	typeref:typename:void
+c_delay	sistema/sistema.cpp	/^extern "C" void c_delay(natl n)$/;"	f	typeref:typename:void
+c_dmareadhd_n	io/io.cpp	/^extern "C" void c_dmareadhd_n(natw vetti[], natl primo, natb quanti,$/;"	f	typeref:typename:void
+c_dmawritehd_n	io/io.cpp	/^extern "C" void c_dmawritehd_n(natw vetto[], natl primo, natb quanti,$/;"	f	typeref:typename:void
+c_driver_td	sistema/sistema.cpp	/^extern "C" void c_driver_td(void)$/;"	f	typeref:typename:void
+c_iniconsole	io/io.cpp	/^extern "C" void c_iniconsole(natb cc)$/;"	f	typeref:typename:void
+c_log	sistema/sistema.cpp	/^extern "C" void c_log(log_sev sev, const char* buf, natl quanti)$/;"	f	typeref:typename:void
+c_nmi	sistema/sistema.cpp	/^extern "C" void c_nmi()$/;"	f	typeref:typename:void
+c_panic	sistema/sistema.cpp	/^extern "C" void c_panic(const char *msg)$/;"	f	typeref:typename:void
+c_pre_routine_pf	sistema/sistema.cpp	/^extern "C" void c_pre_routine_pf($/;"	f	typeref:typename:void
+c_readconsole	io/io.cpp	/^extern "C" void c_readconsole(str buff, natl& quanti) \/\/$/;"	f	typeref:typename:void
+c_readhd_n	io/io.cpp	/^extern "C" void c_readhd_n(natw vetti[], natl primo,$/;"	f	typeref:typename:void
+c_readse_ln	io/io.cpp	/^extern "C" void c_readse_ln(natl serial, natb vetti[], int& quanti, natb& errore)$/;"	f	typeref:typename:void
+c_readse_n	io/io.cpp	/^extern "C" void c_readse_n(natl serial, natb vetti[], natl quanti, natb& errore) \/\/ [9.2.1]$/;"	f	typeref:typename:void
+c_routine_pf	sistema/sistema.cpp	/^bool c_routine_pf()$/;"	f	typeref:typename:bool
+c_sem_ini	sistema/sistema.cpp	/^extern "C" natl c_sem_ini(int val)$/;"	f	typeref:typename:natl
+c_sem_signal	sistema/sistema.cpp	/^extern "C" void c_sem_signal(natl sem)$/;"	f	typeref:typename:void
+c_sem_wait	sistema/sistema.cpp	/^extern "C" void c_sem_wait(natl sem)$/;"	f	typeref:typename:void
+c_terminate_p	sistema/sistema.cpp	/^extern "C" void c_terminate_p()$/;"	f	typeref:typename:void
+c_trasforma	sistema/sistema.cpp	/^extern "C" faddr c_trasforma(vaddr ind_virt)$/;"	f	typeref:typename:faddr
+c_writeconsole	io/io.cpp	/^extern "C" void c_writeconsole(cstr buff) \/\/$/;"	f	typeref:typename:void
+c_writehd_n	io/io.cpp	/^extern "C" void c_writehd_n(natw vetto[], natl primo,$/;"	f	typeref:typename:void
+c_writese_0	io/io.cpp	/^extern "C" void c_writese_0(natl serial, natb vetto[], natl &quanti)$/;"	f	typeref:typename:void
+c_writese_n	io/io.cpp	/^extern "C" void c_writese_n(natl serial, natb vetto[], natl quanti)	\/\/ [9.2.2]$/;"	f	typeref:typename:void
+carica	sistema/sistema.cpp	/^void carica(des_frame* df) \/\/$/;"	f	typeref:typename:void
+carica_gate	sistema/sistema.s	/^.macro carica_gate num routine dpl$/;"	m
+carica_pila_sistema	sistema/sistema.cpp	/^faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)$/;"	f	typeref:typename:faddr
+carica_ric	sistema/sistema.cpp	/^bool carica_ric(natl proc, faddr tab, int liv, vaddr ind, natl n)$/;"	f	typeref:typename:bool
+carica_stato	sistema/sistema.s	/^carica_stato:$/;"	l
+carica_tutto	sistema/sistema.cpp	/^bool carica_tutto(natl proc, natl i, natl n)$/;"	f	typeref:typename:bool
+cavallo_di_troia	io/io.s	/^.macro cavallo_di_troia reg$/;"	m
+cavallo_di_troia	sistema/sistema.s	/^.macro cavallo_di_troia reg$/;"	m
+cavallo_di_troia2	io/io.s	/^.macro cavallo_di_troia2 base dim$/;"	m
+cavallo_di_troia2	sistema/sistema.s	/^.macro cavallo_di_troia2 base dim$/;"	m
+cavallo_di_troia3	io/io.s	/^.macro cavallo_di_troia3 base sec$/;"	m
+cavallo_di_troia3	sistema/sistema.s	/^.macro cavallo_di_troia3 base sec$/;"	m
+ceild	sistema/sistema.cpp	/^natl ceild(natl v, natl q)$/;"	f	typeref:typename:natl
+checksum	sistema/sistema.cpp	/^	int	checksum;$/;"	m	struct:superblock_t	typeref:typename:int	file:
+checksum	util/decode.c	/^	uint64_t	checksum;$/;"	m	struct:superblock_t	typeref:typename:uint64_t	file:
+checksum	util/dos.h	/^  unsigned short checksum;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+checksum	util/doswap.cpp	/^		uint8_t		checksum;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t	file:
+checksum	util/swap.h	/^	uint64_t	checksum;$/;"	m	struct:superblock_t	typeref:typename:uint64_t
+clean	Makefile	/^clean:$/;"	t
+clear_IND_MASSA	sistema/sistema.cpp	/^void clear_IND_MASSA(tab_entry& descrittore)$/;"	f	typeref:typename:void
+cmain	io/io.cpp	/^extern "C" void cmain(int sem_io)$/;"	f	typeref:typename:void
+cmain	sistema/sistema.cpp	/^extern "C" void cmain()$/;"	f	typeref:typename:void
+code_sys_seg	sistema/sistema.s	/^code_sys_seg:$/;"	l
+code_usr_seg	sistema/sistema.s	/^code_usr_seg:$/;"	l
+collega	sistema/sistema.cpp	/^void collega(des_frame *df)	\/\/$/;"	f	typeref:typename:void
+colonna	util/parse.c	/^int riga, colonna, pos;		\/* posizione corrente *\/$/;"	v	typeref:typename:int
+colorize	debug/nucleo.py	/^def colorize(name, value):$/;"	f
+com	io/io.cpp	/^des_se com[S] = {$/;"	v	typeref:typename:des_se[]
+com_init	io/io.cpp	/^bool com_init()$/;"	f	typeref:typename:bool
+com_irq	io/io.cpp	/^int com_irq[S] = { 4, 3 };$/;"	v	typeref:typename:int[]
+com_setup	io/io.s	/^com_setup:$/;"	l
+comando	io/io.cpp	/^	hd_cmd comando;$/;"	m	struct:des_ata	typeref:typename:hd_cmd	file:
+complete	debug/nucleo.py	/^    def complete(self, text, word):$/;"	m	class:Frame
+complete	debug/nucleo.py	/^    def complete(self, text, word):$/;"	m	class:ProcessList
+complete	debug/nucleo.py	/^    def complete(self, text, word):$/;"	m	class:Semaphore
+conf	debug/nucleo.py	/^    conf = {$/;"	v	class:Color
+console	io/io.cpp	/^des_console console = {$/;"	v	typeref:typename:des_console
+console_init	io/io.cpp	/^bool console_init()$/;"	f	typeref:typename:bool
+cont	io/io.cpp	/^	natb cont;$/;"	m	struct:des_ata	typeref:typename:natb	file:
+cont	io/io.cpp	/^	natl cont;$/;"	m	struct:des_kbd	typeref:typename:natl	file:
+cont	io/io.cpp	/^	natl cont;$/;"	m	struct:des_se	typeref:typename:natl	file:
+contatore	sistema/sistema.cpp	/^	natl	contatore;	\/\/ contatore per le statistiche$/;"	m	struct:des_frame	typeref:typename:natl	file:
+contesto	sistema/sistema.cpp	/^	natq contesto[N_REG];$/;"	m	struct:des_proc	typeref:typename:natq[]	file:
+context_event	debug/nucleo.py	/^def context_event(event):$/;"	f
+conv_id_tss	sistema/sistema.s	/^.macro conv_id_tss$/;"	m
+converti	io/io.cpp	/^natb converti(des_kbd* p_des, natb c) { \/\/$/;"	f	typeref:typename:natb
+copia_car	util/parse.c	/^void copia_car()$/;"	f	typeref:typename:void
+copia_nome	util/parse.c	/^void copia_nome()$/;"	f	typeref:typename:void
+copia_pagina	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::copia_pagina(void* dest)$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:bool
+copia_pagina	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::copia_pagina(void* dest)$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:bool
+copia_pagina	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::copia_pagina(void* dest)$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:bool
+coproc_so	sistema/sistema.s	/^coproc_so:$/;"	l
+copy_des	sistema/sistema.cpp	/^void copy_des(faddr src, faddr dst, natl i, natl n)$/;"	f	typeref:typename:void
+counter	sistema/sistema.cpp	/^	int counter;$/;"	m	struct:des_sem	typeref:typename:int	file:
+cpl	sistema/sistema.cpp	/^	natl cpl;$/;"	m	struct:des_proc	typeref:typename:natl	file:
+cr3	sistema/sistema.cpp	/^	faddr cr3;$/;"	m	struct:des_proc	typeref:typename:faddr	file:
+crea	sistema/sistema.cpp	/^bool crea(natl proc, vaddr ind_virt, int liv, natl priv)$/;"	f	typeref:typename:bool
+crea_dummy	sistema/sistema.cpp	/^natl crea_dummy()$/;"	f	typeref:typename:natl
+crea_finestra_FM	sistema/sistema.cpp	/^bool crea_finestra_FM(faddr tab4)$/;"	f	typeref:typename:bool
+crea_main_sistema	sistema/sistema.cpp	/^natl crea_main_sistema()$/;"	f	typeref:typename:natl
+crea_pagina	sistema/sistema.cpp	/^bool crea_pagina(natl proc, vaddr ind_virt, natl priv)$/;"	f	typeref:typename:bool
+crea_pila	sistema/sistema.cpp	/^bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)$/;"	f	typeref:typename:bool
+crea_processo	sistema/sistema.cpp	/^proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)$/;"	f	typeref:typename:proc_elem *
+crea_spazio_condiviso	sistema/sistema.cpp	/^bool crea_spazio_condiviso()$/;"	f	typeref:typename:bool
+crea_tab4	sistema/sistema.cpp	/^faddr crea_tab4()$/;"	f	typeref:typename:faddr
+crea_tab4	sistema/sistema.cpp	/^void crea_tab4(faddr dest)$/;"	f	typeref:typename:void
+cs	util/dos.h	/^  unsigned short cs;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+cstr	include/tipo.h	/^typedef const void* cstr;$/;"	t	typeref:typename:const void *
+curr	util/coff.cpp	/^		size_t curr;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:size_t	file:
+curr	util/elf32.cpp	/^		uint32_t curr;$/;"	m	class:EseguibileElf32::SegmentoElf32	typeref:typename:uint32_t	file:
+curr	util/elf64.cpp	/^		uint64_t curr;$/;"	m	class:EseguibileElf64::SegmentoElf64	typeref:typename:uint64_t	file:
+curr	util/interp.h	/^	} *testa, *curr;$/;"	m	class:ListaInterpreti	typeref:struct:ListaInterpreti::Elem **
+curr	util/swap.h	/^	} *testa, *curr;$/;"	m	class:ListaTipiSwap	typeref:struct:ListaTipiSwap::Elem **
+curr_offset	util/coff.cpp	/^		uint curr_offset;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:uint	file:
+curr_offset	util/elf32.cpp	/^		uint32_t curr_offset;$/;"	m	class:EseguibileElf32::SegmentoElf32	typeref:typename:uint32_t	file:
+curr_offset	util/elf64.cpp	/^		uint64_t curr_offset;$/;"	m	class:EseguibileElf64::SegmentoElf64	typeref:typename:uint64_t	file:
+curr_seg	util/coff.cpp	/^	int curr_seg;$/;"	m	class:EseguibileCoff_go32	typeref:typename:int	file:
+curr_seg	util/elf32.cpp	/^	int curr_seg;$/;"	m	class:EseguibileElf32	typeref:typename:int	file:
+curr_seg	util/elf64.cpp	/^	int curr_seg;$/;"	m	class:EseguibileElf64	typeref:typename:int	file:
+curr_vaddr	util/coff.cpp	/^		uint curr_vaddr;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:uint	file:
+currfile	util/parse.c	/^const char* currfile;$/;"	v	typeref:typename:const char *
+cursore	io/io.s	/^cursore:$/;"	l
+cyan	debug/nucleo.py	/^    cyan    = esc(36)$/;"	v	class:Color
+cyl	util/doswap.cpp	/^		uint32_t	cyl;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint32_t	file:
+cyl_end_H	util/doswap.cpp	/^		unsigned int cyl_end_H	: 2;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:2	file:
+cyl_end_L	util/doswap.cpp	/^		unsigned int cyl_end_L	: 8;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:8	file:
+cyl_start_H	util/doswap.cpp	/^		unsigned int cyl_start_H: 2;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:2	file:
+cyl_start_L	util/doswap.cpp	/^		unsigned int cyl_start_L: 8;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:8	file:
+d_attesa	sistema/sistema.cpp	/^	natl d_attesa;$/;"	m	struct:richiesta	typeref:typename:natl	file:
+da_leggere	util/coff.cpp	/^		uint da_leggere;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:uint	file:
+da_leggere	util/elf32.cpp	/^		uint32_t da_leggere;$/;"	m	class:EseguibileElf32::SegmentoElf32	typeref:typename:uint32_t	file:
+da_leggere	util/elf64.cpp	/^		uint32_t da_leggere;$/;"	m	class:EseguibileElf64::SegmentoElf64	typeref:typename:uint32_t	file:
+data_start	util/coff.h	/^  unsigned long 	data_start;	\/* base of data used for this file *\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned long
+data_usr_seg	sistema/sistema.s	/^data_usr_seg:$/;"	l
+dd	sistema/sistema.cpp	/^void dd(int i)$/;"	f	typeref:typename:void
+dealloca_blocco	sistema/sistema.cpp	/^void dealloca_blocco(natl blocco)$/;"	f	typeref:typename:void
+debug	sistema/sistema.s	/^debug:$/;"	l
+decodeAddr	util/show_log.pl	/^	sub decodeAddr($) {$/;"	s
+deduplica	sistema/sistema.cpp	/^void deduplica(natl id, vaddr v)$/;"	f	typeref:typename:void
+delay	io/io.s	/^delay:$/;"	l
+delay	utente/utente.s	/^delay:$/;"	l
+des_ata	io/io.cpp	/^struct des_ata {$/;"	s	file:
+des_console	io/io.cpp	/^struct des_console { \/\/$/;"	s	file:
+des_frame	sistema/sistema.cpp	/^struct des_frame {$/;"	s	file:
+des_frameLookup	debug/nucleo.py	/^def des_frameLookup(val):$/;"	f
+des_framePrinter	debug/nucleo.py	/^class des_framePrinter:$/;"	c
+des_frame_ptrPrinter	debug/nucleo.py	/^class des_frame_ptrPrinter:$/;"	c
+des_frame_ptr_type	debug/nucleo.py	/^des_frame_ptr_type = gdb.Type.pointer(des_frame_type)$/;"	v
+des_frame_type	debug/nucleo.py	/^des_frame_type = gdb.lookup_type('des_frame')$/;"	v
+des_kbd	io/io.cpp	/^struct des_kbd { \/\/$/;"	s	file:
+des_p	sistema/sistema.s	/^des_p:$/;"	l
+des_part	util/doswap.cpp	/^	struct des_part {$/;"	s	function:TipoDOSwap::leggi_partizioni	file:
+des_proc	sistema/sistema.cpp	/^struct des_proc {$/;"	s	file:
+des_procLookup	debug/nucleo.py	/^def des_procLookup(val):$/;"	f
+des_procPrinter	debug/nucleo.py	/^class des_procPrinter:$/;"	c
+des_proc_ptr_type	debug/nucleo.py	/^des_proc_ptr_type = gdb.Type.pointer(des_proc_type)$/;"	v
+des_proc_std_fields	debug/nucleo.py	/^des_proc_std_fields = [ None, 'cr3', 'contesto', 'cpl', 'bp_other' ]$/;"	v
+des_proc_type	debug/nucleo.py	/^des_proc_type = gdb.lookup_type('des_proc')$/;"	v
+des_se	io/io.cpp	/^struct des_se {		\/\/$/;"	s	file:
+des_sem	sistema/sistema.cpp	/^struct des_sem {$/;"	s	file:
+des_semLookup	debug/nucleo.py	/^def des_semLookup(val):$/;"	f
+des_semPrinter	debug/nucleo.py	/^class des_semPrinter:$/;"	c
+des_sem_p	debug/nucleo.py	/^des_sem_p = gdb.Type.pointer(des_sem_type)$/;"	v
+des_sem_type	debug/nucleo.py	/^des_sem_type = gdb.lookup_type('des_sem')$/;"	v
+des_swap	sistema/sistema.cpp	/^struct des_swap {$/;"	s	file:
+des_tss	sistema/sistema.s	/^des_tss:$/;"	l
+des_vid	io/io.cpp	/^struct des_vid {	\/\/$/;"	s	file:
+descrittore_frame	sistema/sistema.cpp	/^des_frame* descrittore_frame(faddr indirizzo_frame)$/;"	f	typeref:typename:des_frame *
+dev_na	sistema/sistema.s	/^dev_na:$/;"	l
+dev_path	util/doswap.cpp	/^		uint8_t		dev_path[8];$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t[8]	file:
+dev_path_len	util/doswap.cpp	/^		uint8_t		dev_path_len;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t	file:
+dim	util/doswap.cpp	/^	unsigned int dim;	\/\/ dimensione in settori$/;"	m	struct:partizione	typeref:typename:unsigned int	file:
+dim	util/fswap.cpp	/^	uint64_t dim;$/;"	m	class:FileSwap	typeref:typename:uint64_t	file:
+dim_region	sistema/sistema.cpp	/^static inline natq dim_region(int liv)$/;"	f	typeref:typename:natq	file:
+dimensione	util/coff.cpp	/^uint64_t EseguibileCoff_go32::SegmentoCoff_go32::dimensione() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:uint64_t
+dimensione	util/doswap.cpp	/^unsigned int DOSwap::dimensione() const$/;"	f	class:DOSwap	typeref:typename:unsigned int
+dimensione	util/elf32.cpp	/^uint64_t EseguibileElf32::SegmentoElf32::dimensione() const$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:uint64_t
+dimensione	util/elf64.cpp	/^uint64_t EseguibileElf64::SegmentoElf64::dimensione() const$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:uint64_t
+dimensione	util/fswap.cpp	/^unsigned int FileSwap::dimensione() const$/;"	f	class:FileSwap	typeref:typename:unsigned int
+directory	sistema/sistema.cpp	/^	natq	directory;$/;"	m	struct:superblock_t	typeref:typename:natq	file:
+directory	util/decode.c	/^	block_t		directory;$/;"	m	struct:superblock_t	typeref:typename:block_t	file:
+directory	util/swap.h	/^	block_t		directory;$/;"	m	struct:superblock_t	typeref:typename:block_t
+dirty	util/creatimg.cpp	/^	bool dirty[3];$/;"	m	class:TabCache	typeref:typename:bool[3]	file:
+disp1	sistema/sistema.cpp	/^		natq disp1[2];$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natq[2]	file:
+disp2	sistema/sistema.cpp	/^		natq disp2[7];$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natq[7]	file:
+distruggi_pila_precedente	sistema/sistema.cpp	/^extern "C" void distruggi_pila_precedente() {$/;"	f	typeref:typename:void
+distruggi_processo	sistema/sistema.cpp	/^void distruggi_processo(proc_elem* p)$/;"	f	typeref:typename:void
+divide_error	sistema/sistema.s	/^divide_error:$/;"	l
+dmareadhd_n	io/io.s	/^dmareadhd_n:	$/;"	l
+dmareadhd_n	utente/utente.s	/^dmareadhd_n:$/;"	l
+dmastarthd_in	io/io.cpp	/^void dmastarthd_in(des_ata *p_des, natw vetti[], natl primo, natb quanti)$/;"	f	typeref:typename:void
+dmastarthd_out	io/io.cpp	/^void dmastarthd_out(des_ata *p_des, natw vetto[], natl primo, natb quanti)$/;"	f	typeref:typename:void
+dmawritehd_n	io/io.s	/^dmawritehd_n:	$/;"	l
+dmawritehd_n	utente/utente.s	/^dmawritehd_n:$/;"	l
+do_heap	util/creatimg.cpp	/^void do_heap(const char *name, int liv, uint64_t start_addr, uint64_t dim) {$/;"	f	typeref:typename:void
+do_log	io/io.s	/^do_log:$/;"	l
+do_log	utente/utente.s	/^do_log:$/;"	l
+do_map	util/creatimg.cpp	/^void do_map(char* fname, int liv, uint64_t& entry_point, uint64_t& last_address)$/;"	f	typeref:typename:void
+double_fault	sistema/sistema.s	/^double_fault:$/;"	l
+driver_td	sistema/sistema.s	/^driver_td:$/;"	l
+dsize	util/coff.h	/^	unsigned long dsize;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+dsize	util/coff.h	/^  unsigned long	dsize;		\/* initialized data "  "		*\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned long
+dtrel	util/coff.h	/^	unsigned long dtrel;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+dummy_prio	debug/nucleo.py	/^dummy_prio = int(gdb.parse_and_eval('DUMMY_PRIORITY'))$/;"	v
+dummy_proc	sistema/sistema.cpp	/^natl dummy_proc;$/;"	v	typeref:typename:natl
+dump_flags	debug/nucleo.py	/^def dump_flags(rflags):$/;"	f
+dump_selector	debug/nucleo.py	/^def dump_selector(sel):$/;"	f
+duplica	sistema/sistema.cpp	/^bool duplica(natl id, vaddr v)$/;"	f	typeref:typename:bool
+e	util/coff.h	/^    } e;$/;"	m	union:external_syment::__anon3754ae66030a	typeref:struct:external_syment::__anon3754ae66030a::__anon3754ae660408
+e	util/coff.h	/^  } e;$/;"	m	struct:external_syment	typeref:union:external_syment::__anon3754ae66030a
+e	util/creatimg.cpp	/^	entrata e[512];$/;"	m	struct:tabella	typeref:typename:entrata[512]	file:
+e_ehsize	include/elf64.h	/^        Elf64_Half    e_ehsize;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_ehsize	util/elf32.h	/^        Elf32_Half    e_ehsize;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_entry	include/elf64.h	/^        Elf64_Addr    e_entry;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Addr
+e_entry	util/elf32.h	/^        Elf32_Addr    e_entry;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Addr
+e_flags	include/elf64.h	/^        Elf64_Word    e_flags;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Word
+e_flags	util/elf32.h	/^        Elf32_Word    e_flags;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Word
+e_ident	include/elf64.h	/^        unsigned char e_ident[EI_NIDENT];$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:unsigned char[]
+e_ident	util/elf32.h	/^        unsigned char e_ident[EI_NIDENT];$/;"	m	struct:__anonb4c38d640108	typeref:typename:unsigned char[]
+e_machine	include/elf64.h	/^        Elf64_Half    e_machine;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_machine	util/elf32.h	/^        Elf32_Half    e_machine;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_name	util/coff.h	/^    char e_name[E_SYMNMLEN];$/;"	m	union:external_syment::__anon3754ae66030a	typeref:typename:char[]
+e_numaux	util/coff.h	/^  unsigned char e_numaux;$/;"	m	struct:external_syment	typeref:typename:unsigned char
+e_offset	util/coff.h	/^      unsigned long e_offset __attribute__((packed));$/;"	m	struct:external_syment::__anon3754ae66030a::__anon3754ae660408	typeref:typename:unsigned long
+e_phentsize	include/elf64.h	/^        Elf64_Half    e_phentsize;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_phentsize	util/elf32.h	/^        Elf32_Half    e_phentsize;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_phnum	include/elf64.h	/^        Elf64_Half    e_phnum;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_phnum	util/elf32.h	/^        Elf32_Half    e_phnum;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_phoff	include/elf64.h	/^        Elf64_Off     e_phoff;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Off
+e_phoff	util/elf32.h	/^        Elf32_Off     e_phoff;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Off
+e_sclass	util/coff.h	/^  unsigned char e_sclass;$/;"	m	struct:external_syment	typeref:typename:unsigned char
+e_scnum	util/coff.h	/^  short e_scnum;$/;"	m	struct:external_syment	typeref:typename:short
+e_shentsize	include/elf64.h	/^        Elf64_Half    e_shentsize;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_shentsize	util/elf32.h	/^        Elf32_Half    e_shentsize;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_shnum	include/elf64.h	/^        Elf64_Half    e_shnum;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_shnum	util/elf32.h	/^        Elf32_Half    e_shnum;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_shoff	include/elf64.h	/^        Elf64_Off     e_shoff;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Off
+e_shoff	util/elf32.h	/^        Elf32_Off     e_shoff;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Off
+e_shstrndx	include/elf64.h	/^        Elf64_Half    e_shstrndx;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_shstrndx	util/elf32.h	/^        Elf32_Half    e_shstrndx;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_type	include/elf64.h	/^        Elf64_Half    e_type;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Half
+e_type	util/coff.h	/^  unsigned short e_type;$/;"	m	struct:external_syment	typeref:typename:unsigned short
+e_type	util/elf32.h	/^        Elf32_Half    e_type;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Half
+e_value	util/coff.h	/^  unsigned long e_value __attribute__((packed));$/;"	m	struct:external_syment	typeref:typename:unsigned long
+e_version	include/elf64.h	/^        Elf64_Word    e_version;$/;"	m	struct:__anon9e1f9d4f0108	typeref:typename:Elf64_Word
+e_version	util/elf32.h	/^        Elf32_Word    e_version;$/;"	m	struct:__anonb4c38d640108	typeref:typename:Elf32_Word
+e_zeroes	util/coff.h	/^      unsigned long e_zeroes __attribute__((packed));$/;"	m	struct:external_syment::__anon3754ae66030a::__anon3754ae660408	typeref:typename:unsigned long
+eccezioni	sistema/sistema.cpp	/^static const char *eccezioni[] = {$/;"	v	typeref:typename:const char * []	file:
+edd_parm	util/doswap.cpp	/^		uint32_t	edd_parm;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint32_t	file:
+emetti	util/parse.c	/^void emetti(const char *t)$/;"	f	typeref:typename:void
+emetti_line	util/parse.c	/^void emetti_line()$/;"	f	typeref:typename:void
+emetti_line2	util/parse.c	/^void emetti_line2()$/;"	f	typeref:typename:void
+end_gdt	sistema/sistema.s	/^end_gdt:$/;"	l
+end_idt	sistema/sistema.s	/^end_idt:$/;"	l
+end_program	sistema/sistema.s	/^end_program:$/;"	l
+end_tss	sistema/sistema.s	/^end_tss:$/;"	l
+entrata	util/creatimg.cpp	/^union entrata {$/;"	u	file:
+entrata	util/decode.c	/^union entrata {$/;"	u	file:
+entry	util/coff.h	/^	unsigned long entry;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+entry	util/coff.h	/^  unsigned long	entry;		\/* entry pt.				*\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned long
+entry_point	util/coff.cpp	/^uint64_t EseguibileCoff_go32::entry_point() const$/;"	f	class:EseguibileCoff_go32	typeref:typename:uint64_t
+entry_point	util/elf32.cpp	/^uint64_t EseguibileElf32::entry_point() const$/;"	f	class:EseguibileElf32	typeref:typename:uint64_t
+entry_point	util/elf64.cpp	/^uint64_t EseguibileElf64::entry_point() const$/;"	f	class:EseguibileElf64	typeref:typename:uint64_t
+errore	io/io.cpp	/^	natb errore;$/;"	m	struct:des_ata	typeref:typename:natb	file:
+errore	util/parse.c	/^void errore(const char *msg)$/;"	f	typeref:typename:void
+esc	debug/nucleo.py	/^def esc(c = ''):$/;"	f
+esecuzione	sistema/sistema.cpp	/^proc_elem *esecuzione;$/;"	v	typeref:typename:proc_elem *
+esternAta	io/io.cpp	/^void esternAta(int h)			\/\/ codice commune ai 2 processi esterni ATA$/;"	f	typeref:typename:void
+estern_com	io/io.cpp	/^void estern_com(int i) \/\/$/;"	f	typeref:typename:void
+estern_kbd	io/io.cpp	/^void estern_kbd(int h) \/\/$/;"	f	typeref:typename:void
+estrai_base	sistema/sistema.s	/^.macro estrai_base$/;"	m
+exc_error	sistema/sistema.s	/^exc_error:$/;"	l
+external_auxent	util/coff.h	/^union external_auxent {$/;"	u
+external_filehdr	util/coff.h	/^struct external_filehdr {$/;"	s
+external_lineno	util/coff.h	/^struct external_lineno {$/;"	s
+external_reloc	util/coff.h	/^struct external_reloc {$/;"	s
+external_scnhdr	util/coff.h	/^struct external_scnhdr {$/;"	s
+external_syment	util/coff.h	/^struct external_syment$/;"	s
+extr_A	sistema/sistema.cpp	/^bool extr_A(tab_entry descrittore)$/;"	f	typeref:typename:bool
+extr_D	sistema/sistema.cpp	/^bool extr_D(tab_entry descrittore)$/;"	f	typeref:typename:bool
+extr_IND_FISICO	sistema/sistema.cpp	/^faddr extr_IND_FISICO(tab_entry descrittore)$/;"	f	typeref:typename:faddr
+extr_IND_MASSA	sistema/sistema.cpp	/^natq extr_IND_MASSA(tab_entry descrittore)$/;"	f	typeref:typename:natq
+extr_P	sistema/sistema.cpp	/^bool  extr_P(tab_entry descrittore)$/;"	f	typeref:typename:bool
+extr_PS	sistema/sistema.cpp	/^bool  extr_PS(tab_entry descrittore)$/;"	f	typeref:typename:bool
+extr_ZERO	sistema/sistema.cpp	/^bool extr_ZERO(tab_entry descrittore)$/;"	f	typeref:typename:bool
+f_flags	util/coff.h	/^	unsigned short f_flags;		\/* flags			*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned short
+f_magic	util/coff.h	/^	unsigned short f_magic;		\/* magic number			*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned short
+f_nscns	util/coff.h	/^	unsigned short f_nscns;		\/* number of sections		*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned short
+f_nsyms	util/coff.h	/^	unsigned long f_nsyms;		\/* number of symtab entries	*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned long
+f_opthdr	util/coff.h	/^	unsigned short f_opthdr;	\/* sizeof(optional hdr)		*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned short
+f_symptr	util/coff.h	/^	unsigned long f_symptr;	\/* file pointer to symtab	*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned long
+f_timdat	util/coff.h	/^	unsigned long f_timdat;	\/* time & date stamp		*\/$/;"	m	struct:external_filehdr	typeref:typename:unsigned long
+faddr	sistema/sistema.cpp	/^typedef natq faddr;$/;"	t	typeref:typename:natq	file:
+faddrLookup	debug/nucleo.py	/^def faddrLookup(val):$/;"	f
+faddrPrinter	debug/nucleo.py	/^class faddrPrinter:$/;"	c
+file_elem	util/parse.c	/^struct file_elem {$/;"	s	file:
+fill_gate	io/io.s	/^fill_gate:$/;"	l
+fill_io_gate	io/io.s	/^.macro fill_io_gate gate off$/;"	m
+fill_io_gates	io/io.s	/^fill_io_gates:$/;"	l
+filter	debug/nucleo.py	/^    def filter(self, frame_iter):$/;"	m	class:NucleoFrameFilter
+fin_mio_c	sistema/sistema.cpp	/^const vaddr fin_mio_c = ini_mio_c + dim_region(3) * N_MIO_C;$/;"	v	typeref:typename:const vaddr
+fin_sis_c	sistema/sistema.cpp	/^const vaddr fin_sis_c = ini_sis_c + dim_region(3) * N_SIS_C;$/;"	v	typeref:typename:const vaddr
+fin_sis_p	sistema/sistema.cpp	/^const vaddr fin_sis_p = ini_sis_p + dim_region(3) * N_SIS_P;$/;"	v	typeref:typename:const vaddr
+fin_utn_c	sistema/sistema.cpp	/^const vaddr fin_utn_c = ini_utn_c + dim_region(3) * N_UTN_C;$/;"	v	typeref:typename:const vaddr
+fin_utn_p	sistema/sistema.cpp	/^const vaddr fin_utn_p = ini_utn_p + dim_region(3) * N_UTN_P;$/;"	v	typeref:typename:const vaddr
+find_boot	run	/^find_boot() {$/;"	f
+find_qemu	run	/^find_qemu() {$/;"	f
+fine	util/parse.c	/^struct file_elem *utente[2], *fine[2];$/;"	v	typeref:struct:file_elem * [2]* [2]
+fine_codice_sistema	sistema/sistema.s	/^fine_codice_sistema:$/;"	l
+finito	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::finito() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:bool
+finito	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::finito() const$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:bool
+finito	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::finito() const$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:bool
+first	util/doswap.cpp	/^	unsigned int first;	\/\/ primo settore della partizione$/;"	m	struct:partizione	typeref:typename:unsigned int	file:
+flags	debug/nucleo.py	/^flags  = { 1: 'W', 2: 'U', 5: 'A', 6: 'D' }$/;"	v
+flags	util/doswap.cpp	/^		uint16_t	flags;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint16_t	file:
+fp_exc	sistema/sistema.s	/^fp_exc:$/;"	l
+frame_liberi	sistema/sistema.cpp	/^des_frame* frame_liberi;	\/\/ indice del descrittore del primo frame libero$/;"	v	typeref:typename:des_frame *
+frame_list	debug/frame.py	/^def frame_list():$/;"	f
+frame_list	debug/nucleo.py	/^def frame_list(cond='active'):$/;"	f
+frame_verbose	debug/nucleo.py	/^frame_verbose = FrameParam()$/;"	v
+free	sistema/sistema.cpp	/^	natl *free;		\/\/ bitmap dei blocchi liberi$/;"	m	struct:des_swap	typeref:typename:natl *	file:
+funz	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	g	file:
+funzione	io/io.cpp	/^	funz funzione;$/;"	m	struct:des_se	typeref:typename:funz	file:
+gdb_breakpoint	sistema/sistema.cpp	/^void gdb_breakpoint() {}$/;"	f	typeref:typename:void
+gdt	debug/nucleo.py	/^gdt = toi(gdb.parse_and_eval("&gdt"))$/;"	v
+gdt	sistema/sistema.s	/^gdt:$/;"	l
+gdt_pointer	sistema/sistema.s	/^gdt_pointer:$/;"	l
+gestore_eccezioni	sistema/sistema.cpp	/^extern "C" void gestore_eccezioni(int tipo, natq errore, vaddr rip)$/;"	f	typeref:typename:void
+get_bit	util/decode.c	/^int get_bit() {$/;"	f	typeref:typename:int
+get_des	sistema/sistema.cpp	/^tab_entry& get_des(natl processo, int livello, vaddr ind_virt)$/;"	f	typeref:typename:tab_entry &
+get_des_frame	debug/nucleo.py	/^def get_des_frame(addr):$/;"	f
+get_disk_size	util/doswap.cpp	/^static int get_disk_size(unsigned int13_drive_num, unsigned& nsec)$/;"	f	typeref:typename:int	file:
+get_entry	sistema/sistema.cpp	/^tab_entry& get_entry(faddr tab, natl index)$/;"	f	typeref:typename:tab_entry &
+get_frame_addr	debug/nucleo.py	/^def get_frame_addr(df):$/;"	f
+get_frame_idx	debug/nucleo.py	/^def get_frame_idx(addr):$/;"	f
+get_macro	debug/nucleo.py	/^def get_macro(m):$/;"	f
+get_process	debug/nucleo.py	/^def get_process(pid):$/;"	f
+global	util/creatimg.cpp	/^		uint64_t global:	1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon599044af0108	typeref:typename:uint64_t:1	file:
+global	util/decode.c	/^		uint64_t global:	1;	\/\/ non visto a lezione$/;"	m	struct:entrata::__anon43764de70108	typeref:typename:uint64_t:1	file:
+gnu_aout	util/coff.h	/^typedef struct gnu_aout {$/;"	s
+go_inputkbd	io/io.s	/^go_inputkbd:$/;"	l
+go_inputse	io/io.s	/^go_inputse:$/;"	l
+go_outputse	io/io.s	/^go_outputse:$/;"	l
+green	debug/nucleo.py	/^    green   = esc(32)$/;"	v	class:Color
+h	util/coff.cpp	/^	FILHDR h;$/;"	m	class:EseguibileCoff_go32	typeref:typename:FILHDR	file:
+h	util/elf32.cpp	/^	Elf32_Ehdr h;$/;"	m	class:EseguibileElf32	typeref:typename:Elf32_Ehdr	file:
+h	util/elf64.cpp	/^	Elf64_Ehdr h;$/;"	m	class:EseguibileElf64	typeref:typename:Elf64_Ehdr	file:
+halt_inputkbd	io/io.s	/^halt_inputkbd:$/;"	l
+halt_inputse	io/io.s	/^halt_inputse:$/;"	l
+halt_outputse	io/io.s	/^halt_outputse:$/;"	l
+handler_1	sistema/sistema.s	/^handler_1:$/;"	l
+handler_10	sistema/sistema.s	/^handler_10:$/;"	l
+handler_11	sistema/sistema.s	/^handler_11:$/;"	l
+handler_12	sistema/sistema.s	/^handler_12:$/;"	l
+handler_13	sistema/sistema.s	/^handler_13:$/;"	l
+handler_14	sistema/sistema.s	/^handler_14:$/;"	l
+handler_15	sistema/sistema.s	/^handler_15:$/;"	l
+handler_16	sistema/sistema.s	/^handler_16:$/;"	l
+handler_17	sistema/sistema.s	/^handler_17:$/;"	l
+handler_18	sistema/sistema.s	/^handler_18:$/;"	l
+handler_19	sistema/sistema.s	/^handler_19:$/;"	l
+handler_2	sistema/sistema.s	/^handler_2:$/;"	l
+handler_20	sistema/sistema.s	/^handler_20:$/;"	l
+handler_21	sistema/sistema.s	/^handler_21:$/;"	l
+handler_22	sistema/sistema.s	/^handler_22:$/;"	l
+handler_23	sistema/sistema.s	/^handler_23:$/;"	l
+handler_24	sistema/sistema.s	/^handler_24:$/;"	l
+handler_3	sistema/sistema.s	/^handler_3:$/;"	l
+handler_4	sistema/sistema.s	/^handler_4:$/;"	l
+handler_5	sistema/sistema.s	/^handler_5:$/;"	l
+handler_6	sistema/sistema.s	/^handler_6:$/;"	l
+handler_7	sistema/sistema.s	/^handler_7:$/;"	l
+handler_8	sistema/sistema.s	/^handler_8:$/;"	l
+handler_9	sistema/sistema.s	/^handler_9:$/;"	l
+hd	io/io.cpp	/^des_ata hd = {$/;"	v	typeref:typename:des_ata
+hd_cmd	io/io.cpp	/^enum hd_cmd { WRITE_SECT = 0x30, READ_SECT = 0x20, WRITE_DMA = 0xCA, READ_DMA = 0xC8 };$/;"	g	file:
+hd_componi_prd	io/io.cpp	/^void hd_componi_prd(des_ata* p_dmades, addr iff, natw quanti)$/;"	f	typeref:typename:void
+hd_go_inout	io/io.s	/^hd_go_inout:		#...$/;"	l
+hd_halt_inout	io/io.s	/^hd_halt_inout:$/;"	l
+hd_init	io/io.cpp	/^bool hd_init()$/;"	f	typeref:typename:bool
+hd_sel_drv	io/io.cpp	/^void hd_sel_drv(des_ata* p_des) \/\/$/;"	f	typeref:typename:void
+hd_select_device	io/io.s	/^hd_select_device:$/;"	l
+hd_wait_data	io/io.cpp	/^extern "C" bool hd_wait_data(ioaddr iSTS) \/\/ [9.3.1]$/;"	f	typeref:typename:bool
+hd_write_address	io/io.s	/^hd_write_address:$/;"	l
+hd_write_command	io/io.s	/^hd_write_command:$/;"	l
+head	util/doswap.cpp	/^		uint32_t	head;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint32_t	file:
+head_end	util/doswap.cpp	/^		unsigned int head_end	: 8;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:8	file:
+head_start	util/doswap.cpp	/^		unsigned int head_start	: 8;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:8	file:
+header_paragraphs	util/dos.h	/^  unsigned short header_paragraphs;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+iASR	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iBMCMD	io/io.cpp	/^	ioaddr iBMCMD, iBMSTR, iBMDTPR;$/;"	m	struct:pci_ata	typeref:typename:ioaddr	file:
+iBMDTPR	io/io.cpp	/^	ioaddr iBMCMD, iBMSTR, iBMDTPR;$/;"	m	struct:pci_ata	typeref:typename:ioaddr	file:
+iBMSTR	io/io.cpp	/^	ioaddr iBMCMD, iBMSTR, iBMDTPR;$/;"	m	struct:pci_ata	typeref:typename:ioaddr	file:
+iBR	io/io.cpp	/^	ioaddr iBR;$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iCMD	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iCMR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	typeref:typename:ioaddr	file:
+iCNH	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iCNL	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iDAT	io/io.cpp	/^	ioaddr iIND, iDAT;$/;"	m	struct:interfvid_reg	typeref:typename:ioaddr	file:
+iDCR	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iERR	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iHND	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iIER	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	typeref:typename:ioaddr	file:
+iIIR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	typeref:typename:ioaddr	file:
+iIND	io/io.cpp	/^	ioaddr iIND, iDAT;$/;"	m	struct:interfvid_reg	typeref:typename:ioaddr	file:
+iLSR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	typeref:typename:ioaddr	file:
+iRBR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	typeref:typename:ioaddr	file:
+iRBR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	typeref:typename:ioaddr	file:
+iSCR	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iSNR	io/io.cpp	/^	ioaddr iCNL, iCNH, iSNR, iHND, iSCR, iERR,$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iSTR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	typeref:typename:ioaddr	file:
+iSTS	io/io.cpp	/^	       iCMD, iSTS, iDCR, iASR;$/;"	m	struct:interfata_reg	typeref:typename:ioaddr	file:
+iTBR	io/io.cpp	/^	ioaddr iRBR, iTBR, iCMR, iSTR;$/;"	m	struct:interfkbd_reg	typeref:typename:ioaddr	file:
+iTHR	io/io.cpp	/^	ioaddr iRBR, iTHR, iLSR, iIER, iIIR;$/;"	m	struct:interfse_reg	typeref:typename:ioaddr	file:
+i_tab	sistema/sistema.cpp	/^int i_tab(vaddr ind_virt, int liv)$/;"	f	typeref:typename:int
+i_tabella	util/creatimg.cpp	/^int i_tabella(uint64_t ind_virt, int liv)$/;"	f	typeref:typename:int
+id	sistema/sistema.cpp	/^	natl id;$/;"	m	struct:proc_elem	typeref:typename:natl	file:
+id_to_tss	sistema/sistema.s	/^id_to_tss:$/;"	l
+idt	sistema/sistema.s	/^idt:$/;"	l
+idt_pointer	sistema/sistema.s	/^idt_pointer:$/;"	l
+iface_name	util/doswap.cpp	/^		uint8_t		iface_name[8];$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t[8]	file:
+iface_path	util/doswap.cpp	/^		uint8_t		iface_path[8];$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t[8]	file:
+img	util/fswap.cpp	/^	FILE* img;$/;"	m	class:FileSwap	typeref:typename:FILE *	file:
+in	util/interp.h	/^		Interprete* in;$/;"	m	struct:ListaInterpreti::Elem	typeref:typename:Interprete *
+in	util/swap.h	/^		TipoSwap* in;$/;"	m	struct:ListaTipiSwap::Elem	typeref:typename:TipoSwap *
+in_pf	sistema/sistema.cpp	/^bool in_pf = false;	\/\/* true mentre stiamo gestendo un page fault$/;"	v	typeref:typename:bool
+ind_massa	sistema/sistema.cpp	/^	natq	ind_massa;$/;"	m	struct:des_frame	typeref:typename:natq	file:
+ind_virtuale	sistema/sistema.cpp	/^		vaddr	ind_virtuale;$/;"	m	union:des_frame::__anond897b891030a	typeref:typename:vaddr	file:
+ind_virtuale	util/coff.cpp	/^uint64_t EseguibileCoff_go32::SegmentoCoff_go32::ind_virtuale() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:uint64_t
+ind_virtuale	util/elf32.cpp	/^uint64_t EseguibileElf32::SegmentoElf32::ind_virtuale() const$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:uint64_t
+ind_virtuale	util/elf64.cpp	/^uint64_t EseguibileElf64::SegmentoElf64::ind_virtuale() const$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:uint64_t
+indirizzo_frame	sistema/sistema.cpp	/^faddr indirizzo_frame(des_frame* df)$/;"	f	typeref:typename:faddr
+indreg	io/io.cpp	/^	interfata_reg indreg;$/;"	m	struct:des_ata	typeref:typename:interfata_reg	file:
+indreg	io/io.cpp	/^	interfkbd_reg indreg;$/;"	m	struct:des_kbd	typeref:typename:interfkbd_reg	file:
+indreg	io/io.cpp	/^	interfse_reg indreg;$/;"	m	struct:des_se	typeref:typename:interfse_reg	file:
+indreg	io/io.cpp	/^	interfvid_reg indreg;$/;"	m	struct:des_vid	typeref:typename:interfvid_reg	file:
+info	util/coff.h	/^	unsigned long info;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+ini_mio_c	sistema/sistema.cpp	/^const vaddr ini_mio_c = norm(I_MIO_C * dim_region(3)); \/\/ modulo IO$/;"	v	typeref:typename:const vaddr
+ini_sis_c	sistema/sistema.cpp	/^const vaddr ini_sis_c = norm(I_SIS_C * dim_region(3)); \/\/ sistema condivisa$/;"	v	typeref:typename:const vaddr
+ini_sis_p	sistema/sistema.cpp	/^const vaddr ini_sis_p = norm(I_SIS_P * dim_region(3)); \/\/ sistema privata$/;"	v	typeref:typename:const vaddr
+ini_utn_c	sistema/sistema.cpp	/^const vaddr ini_utn_c = norm(I_UTN_C * dim_region(3)); \/\/ utente condivisa$/;"	v	typeref:typename:const vaddr
+ini_utn_p	sistema/sistema.cpp	/^const vaddr ini_utn_p = norm(I_UTN_P * dim_region(3)); \/\/ utente privata$/;"	v	typeref:typename:const vaddr
+iniconsole	utente/utente.s	/^iniconsole:$/;"	l
+init	sistema/sistema.cpp	/^proc_elem init;$/;"	v	typeref:typename:proc_elem
+init	util/coff.cpp	/^bool EseguibileCoff_go32::init()$/;"	f	class:EseguibileCoff_go32	typeref:typename:bool
+init	util/elf32.cpp	/^bool EseguibileElf32::init()$/;"	f	class:EseguibileElf32	typeref:typename:bool
+init	util/elf64.cpp	/^bool EseguibileElf64::init()$/;"	f	class:EseguibileElf64	typeref:typename:bool
+init_des_frame	sistema/sistema.cpp	/^bool init_des_frame()$/;"	f	typeref:typename:bool
+init_gate	sistema/sistema.s	/^init_gate: \/\/rdi = indice nella idt; rsi = offset della routine; rdx = dpl$/;"	l
+init_gdt	sistema/sistema.s	/^init_gdt:$/;"	l
+init_globals	debug/nucleo.py	/^def init_globals(event):$/;"	f
+init_idt	sistema/sistema.s	/^init_idt:$/;"	l
+input	util/parse.c	/^FILE *input,*output;	        	\/* uscita del parser *\/$/;"	v	typeref:typename:FILE *
+input_com	io/io.cpp	/^void input_com(des_se *p_des) \/\/ [9.2.1]$/;"	f	typeref:typename:void
+input_ln	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+input_n	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+inserimento_lista	sistema/sistema.cpp	/^void inserimento_lista(proc_elem *&p_lista, proc_elem *p_elem)$/;"	f	typeref:typename:void
+inserimento_lista_attesa	sistema/sistema.cpp	/^void inserimento_lista_attesa(richiesta *p)$/;"	f	typeref:typename:void
+inspronti	sistema/sistema.cpp	/^extern "C" void inspronti()$/;"	f	typeref:typename:void
+instance	util/interp.cpp	/^ListaInterpreti* ListaInterpreti::instance()$/;"	f	class:ListaInterpreti	typeref:typename:ListaInterpreti *
+instance	util/swap.cpp	/^ListaTipiSwap* ListaTipiSwap::instance()$/;"	f	class:ListaTipiSwap	typeref:typename:ListaTipiSwap *
+instance_	util/interp.cpp	/^ListaInterpreti* ListaInterpreti::instance_ = NULL;$/;"	m	class:ListaInterpreti	typeref:typename:ListaInterpreti *
+instance_	util/interp.h	/^	static ListaInterpreti* instance_;$/;"	m	class:ListaInterpreti	typeref:typename:ListaInterpreti *
+instance_	util/swap.cpp	/^ListaTipiSwap* ListaTipiSwap::instance_ = NULL;$/;"	m	class:ListaTipiSwap	typeref:typename:ListaTipiSwap *
+instance_	util/swap.h	/^	static ListaTipiSwap* instance_;$/;"	m	class:ListaTipiSwap	typeref:typename:ListaTipiSwap *
+int_coff_go32	util/coff.cpp	/^InterpreteCoff_go32	int_coff_go32;$/;"	v	typeref:typename:InterpreteCoff_go32
+int_elf32	util/elf32.cpp	/^InterpreteElf32		int_elf32;$/;"	v	typeref:typename:InterpreteElf32
+int_elf64	util/elf64.cpp	/^InterpreteElf64		int_elf64;$/;"	v	typeref:typename:InterpreteElf64
+int_tipo_pf	sistema/sistema.s	/^int_tipo_pf:$/;"	l
+interfata_reg	io/io.cpp	/^struct interfata_reg {$/;"	s	file:
+interfkbd_reg	io/io.cpp	/^struct interfkbd_reg {	\/\/$/;"	s	file:
+interfse_reg	io/io.cpp	/^struct interfse_reg {	\/\/$/;"	s	file:
+interfvid_reg	io/io.cpp	/^struct interfvid_reg {	\/\/$/;"	s	file:
+interpreta	util/coff.cpp	/^Eseguibile* InterpreteCoff_go32::interpreta(FILE* pexe)$/;"	f	class:InterpreteCoff_go32	typeref:typename:Eseguibile *
+interpreta	util/elf32.cpp	/^Eseguibile* InterpreteElf32::interpreta(FILE* pexe)$/;"	f	class:InterpreteElf32	typeref:typename:Eseguibile *
+interpreta	util/elf64.cpp	/^Eseguibile* InterpreteElf64::interpreta(FILE* pexe)$/;"	f	class:InterpreteElf64	typeref:typename:Eseguibile *
+intest_utente	util/src.h	/^static const char *intest_utente[] = {$/;"	v	typeref:typename:const char * []
+invalid_opcode	sistema/sistema.s	/^invalid_opcode:$/;"	l
+invalid_tss	sistema/sistema.s	/^invalid_tss:$/;"	l
+invalida_TLB	sistema/sistema.s	/^invalida_TLB:$/;"	l
+invalida_entrata_TLB	sistema/sistema.s	/^invalida_entrata_TLB:$/;"	l
+invoke	debug/example.py	/^    def invoke (self, arg, from_tty):$/;"	m	class:SaveBreakpointsCommand
+invoke	debug/nucleo.py	/^    def invoke(self, addr):$/;"	m	class:FrameNum
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:Context
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:Frame
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:ProcessDump
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:ProcessList
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:Semaphore
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:VmMaps
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:VmPath
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:VmTable
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:VmTree
+invoke	debug/nucleo.py	/^    def invoke(self, arg, from_tty):$/;"	m	class:VmWindow
+invoke	debug/nucleo.py	/^    def invoke(self, pid):$/;"	m	class:DesProc
+io/io_cpp.o	Makefile	/^io\/io_cpp.o: io\/io.cpp include\/costanti.h$/;"	t
+io/io_s.o	Makefile	/^io\/io_s.o: io\/io.s include\/costanti.h$/;"	t
+io_end	sistema/sistema.cpp	/^	natq	io_end;$/;"	m	struct:superblock_t	typeref:typename:natq	file:
+io_end	util/decode.c	/^	uint64_t	io_end;$/;"	m	struct:superblock_t	typeref:typename:uint64_t	file:
+io_end	util/swap.h	/^	uint64_t	io_end;$/;"	m	struct:superblock_t	typeref:typename:uint64_t
+io_entry	sistema/sistema.cpp	/^	void	(*io_entry)(int);$/;"	m	struct:superblock_t	typeref:typename:void (*)(int)	file:
+io_entry	util/decode.c	/^	uint64_t	io_entry;$/;"	m	struct:superblock_t	typeref:typename:uint64_t	file:
+io_entry	util/swap.h	/^	uint64_t	io_entry;$/;"	m	struct:superblock_t	typeref:typename:uint64_t
+ioaddr	include/tipo.h	/^typedef unsigned short ioaddr; \/\/ indirizzo (fisico) nello spazio di I\/O$/;"	t	typeref:typename:unsigned short
+ioaddr	utente/include/tipo.h	/^typedef unsigned short ioaddr;$/;"	t	typeref:typename:unsigned short
+ioaddrLookup	debug/nucleo.py	/^def ioaddrLookup(val):$/;"	f
+ioaddrPrinter	debug/nucleo.py	/^class ioaddrPrinter:$/;"	c
+iomap_base	sistema/sistema.cpp	/^		natw iomap_base; \/\/ si veda crea_processo()$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natw	file:
+ip	util/dos.h	/^  unsigned short ip;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+is_accessible	sistema/sistema.cpp	/^bool is_accessible(vaddr a)$/;"	f	typeref:typename:bool
+iter_tss	sistema/sistema.s	/^iter_tss:$/;"	l
+kbd	io/io.cpp	/^	des_kbd kbd;$/;"	m	struct:des_console	typeref:typename:des_kbd	file:
+kbd_init	io/io.cpp	/^bool kbd_init()$/;"	f	typeref:typename:bool
+l_addr	util/coff.h	/^	} l_addr;$/;"	m	struct:external_lineno	typeref:union:external_lineno::__anon3754ae66020a
+l_lnno	util/coff.h	/^	unsigned short l_lnno;						\/* line number *\/$/;"	m	struct:external_lineno	typeref:typename:unsigned short
+l_paddr	util/coff.h	/^		unsigned long l_paddr __attribute__((packed));		\/* (physical) address of line number *\/$/;"	m	union:external_lineno::__anon3754ae66020a	typeref:typename:unsigned long
+l_symndx	util/coff.h	/^		unsigned long l_symndx __attribute__((packed));	\/* function name symbol index, iff l_lnno == /;"	m	union:external_lineno::__anon3754ae66020a	typeref:typename:unsigned long
+last_tss	sistema/sistema.s	/^last_tss:$/;"	l
+lba	util/doswap.cpp	/^		uint64_t lba;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint64_t	file:
+lba_biosdisk	util/doswap.cpp	/^static int lba_biosdisk(unsigned int13_drive_num, int cmd, unsigned long lba, unsigned nsects, v/;"	f	typeref:typename:int	file:
+leggi	util/creatimg.cpp	/^	void leggi(int liv, block_t blocco) {$/;"	f	class:TabCache	typeref:typename:void	file:
+leggi	util/doswap.cpp	/^bool DOSwap::leggi(unsigned int off, void* buf, unsigned int size)$/;"	f	class:DOSwap	typeref:typename:bool
+leggi	util/fswap.cpp	/^bool FileSwap::leggi(unsigned int off, void* buf, unsigned int size)$/;"	f	class:FileSwap	typeref:typename:bool
+leggi_arg	util/parse.c	/^void leggi_arg(int salta)$/;"	f	typeref:typename:void
+leggi_blocco	util/swap.cpp	/^bool Swap::leggi_blocco(block_t b, void* buf)$/;"	f	class:Swap	typeref:typename:bool
+leggi_car	util/parse.c	/^void leggi_car()$/;"	f	typeref:typename:void
+leggi_nome	util/parse.c	/^void leggi_nome(int salta)$/;"	f	typeref:typename:void
+leggi_numero	util/parse.c	/^void leggi_numero(int salta)$/;"	f	typeref:typename:void
+leggi_partizioni	util/doswap.cpp	/^partizione* TipoDOSwap::leggi_partizioni(unsigned drv)$/;"	f	class:TipoDOSwap	typeref:typename:partizione *
+leggi_swap	sistema/sistema.cpp	/^void leggi_swap(addr dest, natl blocco)$/;"	f	typeref:typename:void
+lib_init	utente/lib.cpp	/^extern "C" void lib_init()$/;"	f	typeref:typename:void
+line	util/coff.cpp	/^		uint line;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:uint	file:
+line_needed	util/parse.c	/^int line_needed = 0;$/;"	v	typeref:typename:int
+livello	sistema/sistema.cpp	/^	int	livello;	\/\/ 0=pagina, -1=libera, >0=livello tabella$/;"	m	struct:des_frame	typeref:typename:int	file:
+loadCR3	sistema/sistema.s	/^loadCR3:$/;"	l
+look	util/parse.c	/^char look;			\/* carattere sotto esame *\/$/;"	v	typeref:typename:char
+m_ini	debug/nucleo.py	/^m_ini = []$/;"	v
+m_names	debug/nucleo.py	/^m_names = []$/;"	v
+m_parts	debug/nucleo.py	/^m_parts = [ 'sis_c', 'sis_p', 'mio_c', 'utn_c', 'utn_p' ]$/;"	v
+magenta	debug/nucleo.py	/^    magenta = esc(35)$/;"	v	class:Color
+magic	sistema/sistema.cpp	/^	char	magic[8];$/;"	m	struct:superblock_t	typeref:typename:char[8]	file:
+magic	util/coff.h	/^  unsigned short 	magic;		\/* type of file				*\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned short
+magic	util/decode.c	/^	int8_t		magic[8];$/;"	m	struct:superblock_t	typeref:typename:int8_t[8]	file:
+magic	util/swap.h	/^	int8_t		magic[8];$/;"	m	struct:superblock_t	typeref:typename:int8_t[8]
+main	util/creatimg.cpp	/^int main(int argc, char* argv[])$/;"	f	typeref:typename:int
+main	util/decode.c	/^int main(int argc, char* argv[])$/;"	f	typeref:typename:int
+main	util/mkstart.cpp	/^int main()$/;"	f	typeref:typename:int
+main	util/parse.c	/^int main(int argc, char* argv[])$/;"	f	typeref:typename:int
+main	util/showb.c	/^int main(int argc, char* argv[])$/;"	f	typeref:typename:int
+main_sistema	sistema/sistema.cpp	/^void main_sistema(int n)$/;"	f	typeref:typename:void
+max_extra_paragraphs	util/dos.h	/^  unsigned short max_extra_paragraphs;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+max_prio	debug/nucleo.py	/^max_prio = int(gdb.parse_and_eval('MAX_PRIORITY'))$/;"	v
+mc_exc	sistema/sistema.s	/^mc_exc:$/;"	l
+mem_alloc	io/io.cpp	/^void* mem_alloc(natl dim)$/;"	f	typeref:typename:void *
+mem_alloc	utente/lib.cpp	/^void* mem_alloc(natl dim)$/;"	f	typeref:typename:void *
+mem_free	io/io.cpp	/^void mem_free(void* p)$/;"	f	typeref:typename:void
+mem_free	utente/lib.cpp	/^void mem_free(void* p)$/;"	f	typeref:typename:void
+mem_mutex	io/io.cpp	/^natl mem_mutex;$/;"	v	typeref:typename:natl
+mem_mutex	utente/lib.cpp	/^natl mem_mutex;$/;"	v	typeref:typename:natl
+min_extra_paragraphs	util/dos.h	/^  unsigned short min_extra_paragraphs;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+min_prio	debug/nucleo.py	/^min_prio = int(gdb.parse_and_eval('MIN_PRIORITY'))$/;"	v
+ms_out	io/io.s	/^ms_out:	movw %si,%dx$/;"	l
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_ata	typeref:typename:natl	file:
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_console	typeref:typename:natl	file:
+mutex	io/io.cpp	/^	natl mutex;$/;"	m	struct:des_se	typeref:typename:natl	file:
+natPrinter	debug/nucleo.py	/^class natPrinter:$/;"	c
+natb	include/tipo.h	/^typedef unsigned char natb;$/;"	t	typeref:typename:unsigned char
+natb	utente/include/tipo.h	/^typedef unsigned char natb;$/;"	t	typeref:typename:unsigned char
+natl	include/tipo.h	/^typedef unsigned int natl;$/;"	t	typeref:typename:unsigned int
+natl	utente/include/tipo.h	/^typedef unsigned long natl;$/;"	t	typeref:typename:unsigned long
+natlLookup	debug/nucleo.py	/^def natlLookup(val):$/;"	f
+natq	include/tipo.h	/^typedef unsigned  long natq;$/;"	t	typeref:typename:unsigned long
+natw	include/tipo.h	/^typedef unsigned short natw;$/;"	t	typeref:typename:unsigned short
+natw	utente/include/tipo.h	/^typedef unsigned short natw;$/;"	t	typeref:typename:unsigned short
+next	util/doswap.cpp	/^	partizione*  next;$/;"	m	struct:partizione	typeref:typename:partizione *	file:
+next	util/interp.h	/^		Elem* next;$/;"	m	struct:ListaInterpreti::Elem	typeref:typename:Elem *
+next	util/swap.h	/^		Elem* next;$/;"	m	struct:ListaTipiSwap::Elem	typeref:typename:Elem *
+nflags	debug/nucleo.py	/^nflags = { 1: 'R', 2: 'S', 5: '-', 6: '-' }$/;"	v
+nmi	sistema/sistema.s	/^nmi:$/;"	l
+nome	util/parse.c	/^char nome[LUN_NOME];		\/* ultimo identificatore (o intero) letto *\/$/;"	v	typeref:typename:char[]
+norm	sistema/sistema.cpp	/^static inline vaddr norm(vaddr a)$/;"	f	typeref:typename:vaddr	file:
+norm	util/mkstart.cpp	/^static inline natq norm(natq a)$/;"	f	typeref:typename:natq	file:
+normal	debug/nucleo.py	/^    normal  = esc()$/;"	v	class:Color
+nsec	util/doswap.cpp	/^		uint64_t	nsec;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint64_t	file:
+nsects	util/doswap.cpp	/^		uint8_t  nsects;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint8_t	file:
+num_relocs	util/dos.h	/^  unsigned short num_relocs;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+num_tss	debug/nucleo.py	/^    num_tss  = get_macro('NUM_TSS')$/;"	v
+num_tss	debug/nucleo.py	/^    num_tss = 1024$/;"	v
+nuova	util/creatimg.cpp	/^	block_t nuova(int liv) {$/;"	f	class:TabCache	typeref:typename:block_t	file:
+offset	util/doswap.cpp	/^		unsigned int offset;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int	file:
+oggetti	util/parse.c	/^char oggetti[LUN_OGGETTI];$/;"	v	typeref:typename:char[]
+operator <<	util/creatimg.cpp	/^	template<class T> verbose& operator << (const T& t) {$/;"	f	class:verbose	typeref:typename:verbose &	file:
+outname	util/parse.c	/^const char* outname = "utente.cpp";$/;"	v	typeref:typename:const char *
+output	util/parse.c	/^FILE *input,*output;	        	\/* uscita del parser *\/$/;"	v	typeref:typename:FILE **
+output_0	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+output_com	io/io.cpp	/^void output_com(des_se *p_des)	\/\/ [9.2.2]$/;"	f	typeref:typename:void
+output_n	io/io.cpp	/^enum funz { input_n, input_ln, output_n, output_0 };  \/\/$/;"	e	enum:funz	file:
+overflow	sistema/sistema.s	/^overflow:$/;"	l
+overlay_number	util/dos.h	/^  unsigned short overlay_number;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+p	util/creatimg.cpp	/^	} p;$/;"	m	union:entrata	typeref:struct:entrata::__anon599044af0108	file:
+p	util/decode.c	/^	} p;$/;"	m	union:entrata	typeref:struct:entrata::__anon43764de70108	file:
+p	util/doswap.cpp	/^	partizione p;$/;"	m	class:DOSwap	typeref:typename:partizione	file:
+p_align	include/elf64.h	/^        Elf64_XWord p_align;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_XWord
+p_align	util/elf32.h	/^        Elf32_Word p_align;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Word
+p_dpl_type	sistema/sistema.s	/^.set p_dpl_type, 0b10001001 \/\/p=1,dpl=00,type=1001=tss ready$/;"	d
+p_filesz	include/elf64.h	/^        Elf64_XWord p_filesz;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_XWord
+p_filesz	util/elf32.h	/^        Elf32_Word p_filesz;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Word
+p_flags	include/elf64.h	/^	Elf64_Word p_flags;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_Word
+p_flags	util/elf32.h	/^        Elf32_Word p_flags;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Word
+p_memsz	include/elf64.h	/^        Elf64_XWord p_memsz;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_XWord
+p_memsz	util/elf32.h	/^        Elf32_Word p_memsz;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Word
+p_offset	include/elf64.h	/^        Elf64_Off  p_offset;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_Off
+p_offset	util/elf32.h	/^        Elf32_Off  p_offset;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Off
+p_paddr	include/elf64.h	/^        Elf64_Addr p_paddr;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_Addr
+p_paddr	util/elf32.h	/^        Elf32_Addr p_paddr;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Addr
+p_rich	sistema/sistema.cpp	/^	richiesta *p_rich;$/;"	m	struct:richiesta	typeref:typename:richiesta *	file:
+p_sospesi	sistema/sistema.cpp	/^richiesta *p_sospesi;$/;"	v	typeref:typename:richiesta *
+p_type	include/elf64.h	/^        Elf64_Word p_type;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_Word
+p_type	util/elf32.h	/^        Elf32_Word p_type;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Word
+p_vaddr	include/elf64.h	/^        Elf64_Addr p_vaddr;$/;"	m	struct:__anon9e1f9d4f0208	typeref:typename:Elf64_Addr
+p_vaddr	util/elf32.h	/^        Elf32_Addr p_vaddr;$/;"	m	struct:__anonb4c38d640208	typeref:typename:Elf32_Addr
+packet_len	util/doswap.cpp	/^		uint8_t  packet_len;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint8_t	file:
+pad	sistema/sistema.cpp	/^	natq pad   : 60; \/\/ bit non significativi$/;"	m	struct:pf_error	typeref:typename:natq:60	file:
+padre	util/coff.cpp	/^		EseguibileCoff_go32 *padre;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:EseguibileCoff_go32 *	file:
+padre	util/elf32.cpp	/^		EseguibileElf32 *padre;$/;"	m	class:EseguibileElf32::SegmentoElf32	typeref:typename:EseguibileElf32 *	file:
+padre	util/elf64.cpp	/^		EseguibileElf64 *padre;$/;"	m	class:EseguibileElf64::SegmentoElf64	typeref:typename:EseguibileElf64 *	file:
+pag	util/creatimg.cpp	/^pagina pag;$/;"	v	typeref:typename:pagina
+page_size	debug/nucleo.py	/^page_size = { 4: '512GiB', 3: '1GiB', 2: '2MiB', 1: '4KiB' }$/;"	v
+pagina	util/creatimg.cpp	/^struct pagina {$/;"	s	file:
+pagina_di_zeri	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::pagina_di_zeri() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:bool
+pagina_di_zeri	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::pagina_di_zeri() const {$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:bool
+pagina_di_zeri	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::pagina_di_zeri() const {$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:bool
+pagina_puntata	util/creatimg.cpp	/^pagina* pagina_puntata(entrata* e) {$/;"	f	typeref:typename:pagina *
+panic	io/io.s	/^panic:$/;"	l
+panic	sistema/sistema.s	/^panic:$/;"	l
+panic	utente/lib.cpp	/^extern "C" void panic(const char* msg)$/;"	f	typeref:typename:void
+param_err	io/io.s	/^param_err:$/;"	l
+param_err	sistema/sistema.s	/^param_err:$/;"	l
+parole_lunghe	util/creatimg.cpp	/^		uint64_t parole_lunghe[DIM_PAGINA \/ sizeof(uint64_t)];$/;"	m	union:pagina::__anon599044af030a	typeref:typename:uint64_t[]	file:
+parse_file	util/parse.c	/^void parse_file(const char* inname, FILE* output)$/;"	f	typeref:typename:void
+parse_process	debug/nucleo.py	/^def parse_process(a):$/;"	f
+partizione	util/doswap.cpp	/^struct partizione {$/;"	s	file:
+partizioni	util/doswap.cpp	/^	partizione *partizioni[MAX_DISCHI];$/;"	m	class:TipoDOSwap	typeref:typename:partizione * []	file:
+pause	utente/lib.cpp	/^void pause()$/;"	f	typeref:typename:void
+pause_buf	utente/lib.cpp	/^char pause_buf[1];$/;"	v	typeref:typename:char[1]
+pause_len	utente/lib.cpp	/^natl pause_len = 1;$/;"	v	typeref:typename:natl
+pci_ata	io/io.cpp	/^struct pci_ata$/;"	s	file:
+pexe	util/coff.cpp	/^	FILE *pexe;$/;"	m	class:EseguibileCoff_go32	typeref:typename:FILE *	file:
+pexe	util/elf32.cpp	/^	FILE *pexe;$/;"	m	class:EseguibileElf32	typeref:typename:FILE *	file:
+pexe	util/elf64.cpp	/^	FILE *pexe;$/;"	m	class:EseguibileElf64	typeref:typename:FILE *	file:
+pf_error	sistema/sistema.cpp	/^struct pf_error {$/;"	s	file:
+ph	util/coff.cpp	/^		SCNHDR* ph;$/;"	m	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:SCNHDR *	file:
+ph	util/elf32.cpp	/^		Elf32_Phdr* ph;$/;"	m	class:EseguibileElf32::SegmentoElf32	typeref:typename:Elf32_Phdr *	file:
+ph	util/elf64.cpp	/^		Elf64_Phdr* ph;$/;"	m	class:EseguibileElf64::SegmentoElf64	typeref:typename:Elf64_Phdr *	file:
+pointer	sistema/sistema.cpp	/^	proc_elem *pointer;$/;"	m	struct:des_sem	typeref:typename:proc_elem *	file:
+pos	util/parse.c	/^int riga, colonna, pos;		\/* posizione corrente *\/$/;"	v	typeref:typename:int
+pp	sistema/sistema.cpp	/^	proc_elem *pp;$/;"	m	struct:richiesta	typeref:typename:proc_elem *	file:
+prd	io/io.cpp	/^	natl prd[2];$/;"	m	struct:des_ata	typeref:typename:natl[2]	file:
+precedenza	sistema/sistema.cpp	/^	natl precedenza;$/;"	m	struct:proc_elem	typeref:typename:natl	file:
+pres_bit	sistema/sistema.s	/^.set pres_bit,   0b10000000$/;"	d
+primo_frame_utile	sistema/sistema.cpp	/^faddr primo_frame_utile;	\/\/ indirizzo fisico del primo frame di M2$/;"	v	typeref:typename:faddr
+print_context	debug/nucleo.py	/^def print_context():$/;"	f
+printf	utente/lib.cpp	/^int printf(const char *fmt, ...)$/;"	f	typeref:typename:int
+proc_elem	sistema/sistema.cpp	/^struct proc_elem {$/;"	s	file:
+proc_elemLookup	debug/nucleo.py	/^def proc_elemLookup(val):$/;"	f
+proc_elemPrinter	debug/nucleo.py	/^class proc_elemPrinter:$/;"	c
+proc_elem_ptr_type	debug/nucleo.py	/^proc_elem_ptr_type = gdb.Type.pointer(proc_elem_type)$/;"	v
+proc_elem_type	debug/nucleo.py	/^proc_elem_type = gdb.lookup_type('proc_elem')$/;"	v
+process	util/parse.c	/^void process()$/;"	f	typeref:typename:void
+process_body	util/parse.c	/^void process_body()$/;"	f	typeref:typename:void
+process_dump	debug/nucleo.py	/^def process_dump(proc, indent=0, verbosity=3):$/;"	f
+process_dump	sistema/sistema.cpp	/^void process_dump(natl id, log_sev sev)$/;"	f	typeref:typename:void
+process_list	debug/nucleo.py	/^def process_list(t='all'):$/;"	f
+processi	sistema/sistema.cpp	/^volatile natl processi;$/;"	v	typeref:typename:volatile natl
+processo	sistema/sistema.cpp	/^	natl	processo;$/;"	m	struct:des_frame	typeref:typename:natl	file:
+pronti	sistema/sistema.cpp	/^proc_elem *pronti;$/;"	v	typeref:typename:proc_elem *
+prossima_pagina	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::prossima_pagina()$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:bool
+prossima_pagina	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::prossima_pagina()$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:bool
+prossima_pagina	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::prossima_pagina()$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:bool
+prossimo	util/interp.cpp	/^Interprete* ListaInterpreti::prossimo()$/;"	f	class:ListaInterpreti	typeref:typename:Interprete *
+prossimo	util/swap.cpp	/^TipoSwap* ListaTipiSwap::prossimo()$/;"	f	class:ListaTipiSwap	typeref:typename:TipoSwap *
+prossimo_libero	sistema/sistema.cpp	/^		des_frame*	prossimo_libero;$/;"	m	union:des_frame::__anond897b891030a	typeref:typename:des_frame *	file:
+prossimo_segmento	util/coff.cpp	/^Segmento* EseguibileCoff_go32::prossimo_segmento()$/;"	f	class:EseguibileCoff_go32	typeref:typename:Segmento *
+prossimo_segmento	util/elf32.cpp	/^Segmento* EseguibileElf32::prossimo_segmento()$/;"	f	class:EseguibileElf32	typeref:typename:Segmento *
+prossimo_segmento	util/elf64.cpp	/^Segmento* EseguibileElf64::prossimo_segmento()$/;"	f	class:EseguibileElf64	typeref:typename:Segmento *
+prot	sistema/sistema.cpp	/^	natq prot  : 1;$/;"	m	struct:pf_error	typeref:typename:natq:1	file:
+prot_fault	sistema/sistema.s	/^prot_fault:$/;"	l
+ptrPrinter	debug/nucleo.py	/^class ptrPrinter:$/;"	c
+punt	io/io.cpp	/^	addr punt;$/;"	m	struct:des_ata	typeref:typename:addr	file:
+punt	io/io.cpp	/^	addr punt;$/;"	m	struct:des_kbd	typeref:typename:addr	file:
+punt	io/io.cpp	/^	addr punt;$/;"	m	struct:des_se	typeref:typename:addr	file:
+punt_nucleo	sistema/sistema.cpp	/^		vaddr punt_nucleo;$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:vaddr	file:
+puntatore	sistema/sistema.cpp	/^	proc_elem *puntatore;$/;"	m	struct:proc_elem	typeref:typename:proc_elem *	file:
+qemu	debug/nucleo.py	/^qemu = gdb.selected_inferior()$/;"	v
+r	debug/nucleo.py	/^    r, c = m_parts[i].split('_')$/;"	v
+r_symndx	util/coff.h	/^  unsigned long r_symndx __attribute__((packed));$/;"	m	struct:external_reloc	typeref:typename:unsigned long
+r_type	util/coff.h	/^  unsigned short r_type;$/;"	m	struct:external_reloc	typeref:typename:unsigned short
+r_vaddr	util/coff.h	/^  unsigned long r_vaddr __attribute__((packed));$/;"	m	struct:external_reloc	typeref:typename:unsigned long
+readCR2	sistema/sistema.s	/^readCR2:$/;"	l
+readCR3	sistema/sistema.s	/^readCR3:$/;"	l
+read_all_partitions	util/doswap.cpp	/^void TipoDOSwap::read_all_partitions()$/;"	f	class:TipoDOSwap	typeref:typename:void
+read_buf	sistema/sistema.cpp	/^natw read_buf[256];$/;"	v	typeref:typename:natw[256]
+readconsole	utente/utente.s	/^readconsole:$/;"	l
+readfis	debug/nucleo.py	/^def readfis(addr):$/;"	f
+readhd_n	io/io.s	/^readhd_n:$/;"	l
+readhd_n	utente/utente.s	/^readhd_n:$/;"	l
+readse_ln	utente/utente.s	/^readse_ln:$/;"	l
+readse_n	utente/utente.s	/^readse_n:$/;"	l
+red	debug/nucleo.py	/^    red     = esc(31)$/;"	v	class:Color
+registers	debug/nucleo.py	/^registers = [ 'RAX', 'RCX', 'RDX', 'RBX', 'RSP', 'RBP', 'RSI', 'RDI', 'R8', 'R9', 'R10', 'R11', /;"	v
+reloc_table_offset	util/dos.h	/^  unsigned short reloc_table_offset;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+res	sistema/sistema.cpp	/^	natq res   : 1;$/;"	m	struct:pf_error	typeref:typename:natq:1	file:
+reserved1	util/doswap.cpp	/^		uint8_t		reserved1[3];$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t[3]	file:
+reserved1	util/doswap.cpp	/^		uint8_t  reserved1;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint8_t	file:
+reserved2	util/doswap.cpp	/^		uint8_t  reserved2;$/;"	m	struct:lba_biosdisk::__anonacd4a4510108	typeref:typename:uint8_t	file:
+reserverd2	util/doswap.cpp	/^		uint8_t		reserverd2;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint8_t	file:
+reset	Makefile	/^reset: clean$/;"	t
+residente	sistema/sistema.cpp	/^	bool	residente;	\/\/ pagina residente o meno$/;"	m	struct:des_frame	typeref:typename:bool	file:
+resvd	util/creatimg.cpp	/^		uint64_t resvd:	4;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:4	file:
+resvd	util/decode.c	/^		uint64_t resvd:		7;$/;"	m	struct:entrata::__anon43764de70208	typeref:typename:uint64_t:7	file:
+resvd2	util/creatimg.cpp	/^		uint64_t resvd2:	2;$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:2	file:
+reverse	debug/nucleo.py	/^    reverse = esc(7)$/;"	v	class:Color
+rewind	util/interp.h	/^	void rewind() { curr = testa; }$/;"	f	class:ListaInterpreti	typeref:typename:void
+rewind	util/swap.h	/^	void rewind() { curr = testa; }$/;"	f	class:ListaTipiSwap	typeref:typename:void
+riassegna_ric	sistema/sistema.cpp	/^void riassegna_ric(natl proc, faddr tab, int liv, natl i, natl n)$/;"	f	typeref:typename:void
+riassegna_tutto	sistema/sistema.cpp	/^void riassegna_tutto(natl proc, faddr tab4, natl i, natl n)$/;"	f	typeref:typename:void
+richiesta	sistema/sistema.cpp	/^struct richiesta {$/;"	s	file:
+richiestaLookup	debug/nucleo.py	/^def richiestaLookup(val):$/;"	f
+richiestaPrinter	debug/nucleo.py	/^class richiestaPrinter:$/;"	c
+richiesta_ptr_type	debug/nucleo.py	/^richiesta_ptr_type = gdb.Type.pointer(richiesta_type)$/;"	v
+richiesta_type	debug/nucleo.py	/^richiesta_type = gdb.lookup_type('richiesta')$/;"	v
+riga	util/parse.c	/^int riga, colonna, pos;		\/* posizione corrente *\/$/;"	v	typeref:typename:int
+riga_out	util/parse.c	/^int riga_out = 1;$/;"	v	typeref:typename:int
+rilascia_frame	sistema/sistema.cpp	/^void rilascia_frame(des_frame* df)$/;"	f	typeref:typename:void
+rilascia_ric	sistema/sistema.cpp	/^void rilascia_ric(faddr tab, int liv, natl i, natl n)$/;"	f	typeref:typename:void
+rilascia_righe	util/parse.c	/^void rilascia_righe()$/;"	f	typeref:typename:void
+rilascia_tss	sistema/sistema.s	/^rilascia_tss:$/;"	l
+rilascia_tutto	sistema/sistema.cpp	/^void rilascia_tutto(faddr tab4, natl i, natl n)$/;"	f	typeref:typename:void
+rimozione_lista	sistema/sistema.cpp	/^void rimozione_lista(proc_elem *&p_lista, proc_elem *&p_elem)$/;"	f	typeref:typename:void
+riservato1	sistema/sistema.cpp	/^		natl riservato1;$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natl	file:
+riservato2	sistema/sistema.cpp	/^		natq riservato2;$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natq	file:
+riservato3	sistema/sistema.cpp	/^		natq riservato3;$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natq	file:
+riservato4	sistema/sistema.cpp	/^		natw riservato4;$/;"	m	struct:des_proc::__anond897b8910108	typeref:typename:natw	file:
+s_flags	util/coff.h	/^	unsigned long		s_flags;	\/* flags			*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+s_lnnoptr	util/coff.h	/^	unsigned long		s_lnnoptr;	\/* file ptr to line numbers	*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+s_name	util/coff.h	/^	char		s_name[8];	\/* section name			*\/$/;"	m	struct:external_scnhdr	typeref:typename:char[8]
+s_nlnno	util/coff.h	/^	unsigned short		s_nlnno;	\/* number of line number entries*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned short
+s_nreloc	util/coff.h	/^	unsigned short		s_nreloc;	\/* number of relocation entries	*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned short
+s_paddr	util/coff.h	/^	unsigned long		s_paddr;	\/* physical address, aliased s_nlib *\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+s_relptr	util/coff.h	/^	unsigned long		s_relptr;	\/* file ptr to relocation	*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+s_scnptr	util/coff.h	/^	unsigned long		s_scnptr;	\/* file ptr to raw data for section *\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+s_size	util/coff.h	/^	unsigned long		s_size;		\/* section size			*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+s_vaddr	util/coff.h	/^	unsigned long		s_vaddr;	\/* virtual address		*\/$/;"	m	struct:external_scnhdr	typeref:typename:unsigned long
+salta_a_main	sistema/sistema.s	/^salta_a_main:$/;"	l
+salta_commento	util/parse.c	/^void salta_commento()$/;"	f	typeref:typename:void
+salta_spazi	util/parse.c	/^void salta_spazi()$/;"	f	typeref:typename:void
+salva_stato	sistema/sistema.s	/^salva_stato:$/;"	l
+sb	sistema/sistema.cpp	/^	superblock_t sb;	\/\/ contenuto del superblocco$/;"	m	struct:des_swap	typeref:typename:superblock_t	file:
+scarica	sistema/sistema.cpp	/^void scarica(des_frame* df) \/\/$/;"	f	typeref:typename:void
+scegli_vittima	sistema/sistema.cpp	/^des_frame* scegli_vittima(natl proc, int liv, vaddr ind_virt)$/;"	f	typeref:typename:des_frame *
+schedulatore	sistema/sistema.cpp	/^extern "C" void schedulatore(void)$/;"	f	typeref:typename:void
+scollega	sistema/sistema.cpp	/^bool scollega(des_frame* df)	\/\/$/;"	f	typeref:typename:bool
+scrivi	util/creatimg.cpp	/^	void scrivi(int liv) {$/;"	f	class:TabCache	typeref:typename:void	file:
+scrivi	util/doswap.cpp	/^bool DOSwap::scrivi(unsigned int off, const void* buf, unsigned int size)$/;"	f	class:DOSwap	typeref:typename:bool
+scrivi	util/fswap.cpp	/^bool FileSwap::scrivi(unsigned int off, const void* buf, unsigned int size)$/;"	f	class:FileSwap	typeref:typename:bool
+scrivi_bitmap	util/swap.cpp	/^bool Swap::scrivi_bitmap(const void* vec, int nb)$/;"	f	class:Swap	typeref:typename:bool
+scrivi_blocco	util/swap.cpp	/^bool Swap::scrivi_blocco(block_t b, const void* buf)$/;"	f	class:Swap	typeref:typename:bool
+scrivi_superblocco	util/swap.cpp	/^bool Swap::scrivi_superblocco(const superblock_t& sb)$/;"	f	class:Swap	typeref:typename:bool
+scrivi_swap	sistema/sistema.cpp	/^void scrivi_swap(addr src, natl blocco)$/;"	f	typeref:typename:void
+scrivi_utente	util/parse.c	/^void scrivi_utente()$/;"	f	typeref:typename:void
+scrivibile	util/coff.cpp	/^bool EseguibileCoff_go32::SegmentoCoff_go32::scrivibile() const$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	typeref:typename:bool
+scrivibile	util/elf32.cpp	/^bool EseguibileElf32::SegmentoElf32::scrivibile() const$/;"	f	class:EseguibileElf32::SegmentoElf32	typeref:typename:bool
+scrivibile	util/elf64.cpp	/^bool EseguibileElf64::SegmentoElf64::scrivibile() const$/;"	f	class:EseguibileElf64::SegmentoElf64	typeref:typename:bool
+scroll	io/io.cpp	/^void scroll(des_vid *p_des)	\/\/$/;"	f	typeref:typename:void
+sec_buf	util/elf32.cpp	/^	char *sec_buf;$/;"	m	class:EseguibileElf32	typeref:typename:char *	file:
+sec_buf	util/elf64.cpp	/^	char *sec_buf;$/;"	m	class:EseguibileElf64	typeref:typename:char *	file:
+sec_end	util/doswap.cpp	/^		unsigned int sec_end	: 6;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:6	file:
+sec_start	util/doswap.cpp	/^		unsigned int sec_start	: 6;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:6	file:
+sectors	util/doswap.cpp	/^		unsigned int sectors;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int	file:
+seg_buf	util/coff.cpp	/^	char *seg_buf;$/;"	m	class:EseguibileCoff_go32	typeref:typename:char *	file:
+seg_buf	util/elf32.cpp	/^	char *seg_buf;$/;"	m	class:EseguibileElf32	typeref:typename:char *	file:
+seg_buf	util/elf64.cpp	/^	char *seg_buf;$/;"	m	class:EseguibileElf64	typeref:typename:char *	file:
+segm_fault	sistema/sistema.s	/^segm_fault:$/;"	l
+sem_allocati	sistema/sistema.cpp	/^natl sem_allocati = 0;$/;"	v	typeref:typename:natl
+sem_ini	io/io.s	/^sem_ini:$/;"	l
+sem_ini	sistema/sistema.s	/^sem_ini:$/;"	l
+sem_ini	utente/utente.s	/^sem_ini:$/;"	l
+sem_list	debug/nucleo.py	/^def sem_list(cond='all'):$/;"	f
+sem_signal	io/io.s	/^sem_signal:$/;"	l
+sem_signal	utente/utente.s	/^sem_signal:$/;"	l
+sem_valido	sistema/sistema.cpp	/^bool sem_valido(natl sem)$/;"	f	typeref:typename:bool
+sem_wait	io/io.s	/^sem_wait:$/;"	l
+sem_wait	sistema/sistema.s	/^sem_wait:$/;"	l
+sem_wait	utente/utente.s	/^sem_wait:$/;"	l
+semaphore	util/parse.c	/^void semaphore()$/;"	f	typeref:typename:void
+set_A	sistema/sistema.cpp	/^void set_A(tab_entry& descrittore, bool bitA)$/;"	f	typeref:typename:void
+set_D	sistema/sistema.cpp	/^void set_D(tab_entry& descrittore, bool bitD) \/\/$/;"	f	typeref:typename:void
+set_IND_FISICO	sistema/sistema.cpp	/^void  set_IND_FISICO(tab_entry& descrittore, faddr ind_fisico) \/\/$/;"	f	typeref:typename:void
+set_IND_MASSA	sistema/sistema.cpp	/^void set_IND_MASSA(tab_entry& descrittore, natq ind_massa) \/\/$/;"	f	typeref:typename:void
+set_P	sistema/sistema.cpp	/^void set_P(tab_entry& descrittore, bool bitP)$/;"	f	typeref:typename:void
+set_ZERO	sistema/sistema.cpp	/^void set_ZERO(tab_entry& descrittore, bool bitZERO)$/;"	f	typeref:typename:void
+set_entry_tss	sistema/sistema.s	/^set_entry_tss:$/;"	l
+set_verbose	util/creatimg.cpp	/^	void set_verbose(bool v_) {$/;"	f	class:verbose	typeref:typename:void	file:
+sh_addr	include/elf64.h	/^        Elf64_Addr sh_addr;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Addr
+sh_addr	util/elf32.h	/^        Elf32_Addr sh_addr;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Addr
+sh_addralign	include/elf64.h	/^        Elf64_Word sh_addralign;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_addralign	util/elf32.h	/^        Elf32_Word sh_addralign;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_entsize	include/elf64.h	/^        Elf64_Word sh_entsize;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_entsize	util/elf32.h	/^        Elf32_Word sh_entsize;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_flags	include/elf64.h	/^        Elf64_Word sh_flags;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_flags	util/elf32.h	/^        Elf32_Word sh_flags;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_info	include/elf64.h	/^        Elf64_Word sh_info;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_info	util/elf32.h	/^        Elf32_Word sh_info;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_link	include/elf64.h	/^        Elf64_Word sh_link;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_link	util/elf32.h	/^        Elf32_Word sh_link;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_name	include/elf64.h	/^        Elf64_Word sh_name;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_name	util/elf32.h	/^        Elf32_Word sh_name;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_offset	include/elf64.h	/^        Elf64_Off  sh_offset;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Off
+sh_offset	util/elf32.h	/^        Elf32_Off  sh_offset;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Off
+sh_size	include/elf64.h	/^        Elf64_Word sh_size;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_size	util/elf32.h	/^        Elf32_Word sh_size;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+sh_type	include/elf64.h	/^        Elf64_Word sh_type;$/;"	m	struct:__anon9e1f9d4f0308	typeref:typename:Elf64_Word
+sh_type	util/elf32.h	/^        Elf32_Word sh_type;$/;"	m	struct:__anonb4c38d640308	typeref:typename:Elf32_Word
+shd_ms	io/io.s	/^shd_ms:	movb $0xe0,%al$/;"	l
+shd_sl	io/io.s	/^shd_sl:	movb $0xf0,%al$/;"	l
+shift	io/io.cpp	/^	bool shift;$/;"	m	struct:des_kbd	typeref:typename:bool	file:
+show_lines	debug/nucleo.py	/^def show_lines(sal, indent=0):$/;"	f
+show_lines_asm	debug/nucleo.py	/^def show_lines_asm(rip, indent=0):$/;"	f
+show_list	debug/nucleo.py	/^def show_list(head, link, nmax=20, trunk='...'):$/;"	f
+signature	util/dos.h	/^  unsigned short signature; \/* == 0x5a4D *\/$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+signature	util/doswap.cpp	/^		uint16_t	signature;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint16_t	file:
+simd_exc	sistema/sistema.s	/^simd_exc:$/;"	l
+sincr	io/io.cpp	/^	natl sincr;$/;"	m	struct:des_ata	typeref:typename:natl	file:
+sincr	io/io.cpp	/^	natl sincr;$/;"	m	struct:des_console	typeref:typename:natl	file:
+sincr	io/io.cpp	/^	natl sincr;$/;"	m	struct:des_se	typeref:typename:natl	file:
+sistema/sist_cpp.o	Makefile	/^sistema\/sist_cpp.o: sistema\/sistema.cpp include\/costanti.h$/;"	t
+sistema/sist_s.o	Makefile	/^sistema\/sist_s.o: sistema\/sistema.s include\/costanti.h$/;"	t
+size	util/creatimg.cpp	/^	uint64_t size;$/;"	m	struct:bm_t	typeref:typename:uint64_t	file:
+soff	util/coff.cpp	/^	unsigned int soff;$/;"	m	class:EseguibileCoff_go32	typeref:typename:unsigned int	file:
+source	debug/nucleo.py	/^source = 'Source language is '$/;"	v
+sp	util/dos.h	/^  unsigned short sp;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+sprintf	utente/lib.cpp	/^int sprintf(char *buf, natq size, const char *fmt, ...)$/;"	f	typeref:typename:int
+spt	util/doswap.cpp	/^		uint32_t	spt;$/;"	m	struct:get_disk_size::__anonacd4a4510208	typeref:typename:uint32_t	file:
+ss	util/dos.h	/^  unsigned short ss;$/;"	m	struct:DOS_EXE	typeref:typename:unsigned short
+stack	sistema/sistema.s	/^stack:$/;"	l
+stack_fault	sistema/sistema.s	/^stack_fault:$/;"	l
+start	io/io.s	/^start:	jmp cmain$/;"	l
+start	sistema/sistema.s	/^start:$/;"	l
+start	utente/utente.s	/^start:$/;"	l
+starthd_in	io/io.cpp	/^void starthd_in(des_ata *p_des, natw vetti[], natl primo, natb quanti)$/;"	f	typeref:typename:void
+starthd_out	io/io.cpp	/^void starthd_out(des_ata *p_des, natw vetto[], natl primo, natb quanti)$/;"	f	typeref:typename:void
+startkbd_in	io/io.cpp	/^void startkbd_in(des_kbd* p_des, str buff, natl dim)$/;"	f	typeref:typename:void
+startse_in	io/io.cpp	/^void startse_in(des_se *p_des, natb vetti[], natl quanti, funz op) \/\/ [9.2.1]$/;"	f	typeref:typename:void
+startse_out	io/io.cpp	/^void startse_out(des_se *p_des, natb vetto[], natl quanti, funz op) \/\/ [9.2.2]$/;"	f	typeref:typename:void
+stat	sistema/sistema.cpp	/^void stat()$/;"	f	typeref:typename:void
+stato	io/io.cpp	/^	natb stato;$/;"	m	struct:des_se	typeref:typename:natb	file:
+str	include/tipo.h	/^typedef void* str;$/;"	t	typeref:typename:void *
+succ	util/parse.c	/^	struct file_elem *succ;$/;"	m	struct:file_elem	typeref:struct:file_elem *	file:
+superblock	util/creatimg.cpp	/^superblock_t superblock;$/;"	v	typeref:typename:superblock_t
+superblock_t	sistema/sistema.cpp	/^struct superblock_t {$/;"	s	file:
+superblock_t	util/decode.c	/^struct superblock_t {$/;"	s	file:
+superblock_t	util/swap.h	/^struct superblock_t {$/;"	s
+swap	Makefile	/^swap: build\/creatimg build\/io build\/utente $(SWAP)$/;"	t
+swap	sistema/sistema.cpp	/^des_frame* swap(natl proc, int livello, vaddr ind_virt)$/;"	f	typeref:typename:des_frame *
+swap	util/creatimg.cpp	/^Swap* swap = NULL;$/;"	v	typeref:typename:Swap *
+swap_dev	sistema/sistema.cpp	/^} swap_dev; 	\/\/ c'e' un unico oggetto swap$/;"	v	typeref:struct:des_swap
+swap_init	sistema/sistema.cpp	/^bool swap_init()$/;"	f	typeref:typename:bool
+symsize	util/coff.h	/^	unsigned long symsize;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+tab	io/io.cpp	/^	natb tab[MAX_CODE];$/;"	m	struct:des_kbd	typeref:typename:natb[]	file:
+tab	util/creatimg.cpp	/^tabella tab[5];$/;"	v	typeref:typename:tabella[5]
+tab_entry	sistema/sistema.cpp	/^typedef natq tab_entry;$/;"	t	typeref:typename:natq	file:
+tab_entryLookup	debug/nucleo.py	/^def tab_entryLookup(val):$/;"	f
+tab_entryPrinter	debug/nucleo.py	/^class tab_entryPrinter:$/;"	c
+tabella	util/creatimg.cpp	/^struct tabella {$/;"	s	file:
+tabella_puntata	util/creatimg.cpp	/^tabella *tabella_puntata(entrata *e)$/;"	f	typeref:typename:tabella *
+tabmai	io/io.cpp	/^	natb tabmai[MAX_CODE];$/;"	m	struct:des_kbd	typeref:typename:natb[]	file:
+tabmin	io/io.cpp	/^	natb tabmin[MAX_CODE];$/;"	m	struct:des_kbd	typeref:typename:natb[]	file:
+term_cur_proc	sistema/sistema.cpp	/^void term_cur_proc(log_sev sev, const char *mode)$/;"	f	typeref:typename:void
+terminate_p	io/io.s	/^terminate_p:$/;"	l
+terminate_p	sistema/sistema.s	/^terminate_p:$/;"	l
+terminate_p	utente/utente.s	/^terminate_p:$/;"	l
+testa	util/interp.h	/^	} *testa, *curr;$/;"	m	class:ListaInterpreti	typeref:struct:ListaInterpreti::Elem *
+testa	util/swap.h	/^	} *testa, *curr;$/;"	m	class:ListaTipiSwap	typeref:struct:ListaTipiSwap::Elem *
+testo	util/parse.c	/^	char *testo;$/;"	m	struct:file_elem	typeref:typename:char *	file:
+text_start	util/coff.h	/^  unsigned long 	text_start;	\/* base of text used for this file *\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned long
+tipoDOSwap	util/doswap.cpp	/^TipoDOSwap tipoDOSwap;$/;"	v	typeref:typename:TipoDOSwap
+tipoFileSwap	util/fswap.cpp	/^TipoFileSwap tipoFileSwap;$/;"	v	typeref:typename:TipoFileSwap
+toLine	util/show_log.pl	/^	sub toLine($) {$/;"	s
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:des_framePrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:des_frame_ptrPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:des_procPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:des_semPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:faddrPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:ioaddrPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:natPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:proc_elemPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:ptrPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:richiestaPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:tab_entryPrinter
+to_string	debug/nucleo.py	/^    def to_string(self):$/;"	m	class:vaddrPrinter
+toi	debug/nucleo.py	/^def toi(v):$/;"	f
+toparse	Makefile	/^toparse := $(wildcard utente\/prog\/*)$/;"	m
+toshow	debug/nucleo.py	/^toshow = [ f for f in des_proc_type.fields() if f.name not in des_proc_std_fields ]$/;"	v
+tr	debug/nucleo.py	/^    tr = { 'sis': 'system', 'mio': 'IO module', 'utn': 'user' }$/;"	v
+trasforma	io/io.s	/^trasforma:$/;"	l
+trasforma	sistema/sistema.cpp	/^faddr trasforma(natl id, vaddr ind_virt)$/;"	f	typeref:typename:faddr
+triple_fault_idt	sistema/sistema.s	/^triple_fault_idt:$/;"	l
+trova	util/parse.c	/^void trova(char c, int salta)$/;"	f	typeref:typename:void
+trova_nome	util/parse.c	/^void trova_nome(const char *n, int salta)$/;"	f	typeref:typename:void
+tsize	util/coff.h	/^	unsigned long tsize;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+tsize	util/coff.h	/^  unsigned long	tsize;		\/* text size in bytes, padded to FW bdry*\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned long
+tss_to_id	sistema/sistema.s	/^tss_to_id:$/;"	l
+txrel	util/coff.h	/^	unsigned long txrel;$/;"	m	struct:gnu_aout	typeref:typename:unsigned long
+type	util/doswap.cpp	/^		unsigned int type	: 8;$/;"	m	struct:TipoDOSwap::leggi_partizioni::des_part	typeref:typename:unsigned int:8	file:
+type	util/doswap.cpp	/^	int	     type;	\/\/ tipo della partizione$/;"	m	struct:partizione	typeref:typename:int	file:
+uc_desc	debug/nucleo.py	/^    uc_desc  = get_macro('SEL_CODICE_UTENTE')$/;"	v
+uc_desc	debug/nucleo.py	/^    uc_desc = 0x13$/;"	v
+ud_desc	debug/nucleo.py	/^    ud_desc  = get_macro('SEL_DATI_UTENTE')$/;"	v
+ud_desc	debug/nucleo.py	/^    ud_desc = 0x1b$/;"	v
+uint	util/coff.cpp	/^typedef unsigned int uint;$/;"	t	typeref:typename:unsigned int	file:
+uint16_t	util/doswap.cpp	/^typedef unsigned short		uint16_t;$/;"	t	typeref:typename:unsigned short	file:
+uint32_t	util/doswap.cpp	/^typedef unsigned long		uint32_t;$/;"	t	typeref:typename:unsigned long	file:
+uint32_t	util/elf32.cpp	/^typedef unsigned int uint32_t;$/;"	t	typeref:typename:unsigned int	file:
+uint64_t	util/doswap.cpp	/^typedef unsigned long long	uint64_t;$/;"	t	typeref:typename:unsigned long long	file:
+uint8_t	util/doswap.cpp	/^typedef unsigned char		uint8_t;$/;"	t	typeref:typename:unsigned char	file:
+ulong_type	debug/nucleo.py	/^ulong_type = gdb.lookup_type('unsigned long')$/;"	v
+ultima_riga	util/parse.c	/^char ultima_riga[LUN_RIGA];$/;"	v	typeref:typename:char[]
+ultimo_terminato	sistema/sistema.cpp	/^faddr ultimo_terminato;$/;"	v	typeref:typename:faddr
+user	sistema/sistema.cpp	/^	natq user  : 1;$/;"	m	struct:pf_error	typeref:typename:natq:1	file:
+user_end	sistema/sistema.cpp	/^	natq	user_end;$/;"	m	struct:superblock_t	typeref:typename:natq	file:
+user_end	util/decode.c	/^	uint64_t	user_end;$/;"	m	struct:superblock_t	typeref:typename:uint64_t	file:
+user_end	util/swap.h	/^	uint64_t	user_end;$/;"	m	struct:superblock_t	typeref:typename:uint64_t
+user_entry	sistema/sistema.cpp	/^	void	(*user_entry)(int);$/;"	m	struct:superblock_t	typeref:typename:void (*)(int)	file:
+user_entry	util/decode.c	/^	uint64_t	user_entry;$/;"	m	struct:superblock_t	typeref:typename:uint64_t	file:
+user_entry	util/swap.h	/^	uint64_t	user_entry;$/;"	m	struct:superblock_t	typeref:typename:uint64_t
+utente	util/parse.c	/^struct file_elem *utente[2], *fine[2];$/;"	v	typeref:struct:file_elem * [2]
+utente/lib.o	Makefile	/^utente\/lib.o: utente\/lib.cpp utente\/include\/lib.h$/;"	t
+utente/prog	Makefile	/^utente\/prog:$/;"	t
+utente/uten_cpp.o	Makefile	/^utente\/uten_cpp.o: utente\/utente.cpp$/;"	t
+utente/uten_s.o	Makefile	/^utente\/uten_s.o: utente\/utente.s include\/costanti.h$/;"	t
+utente/utente.cpp	Makefile	/^utente\/utente.cpp: build\/parse utente\/include\/* utente\/prog $(toparse)$/;"	t
+util/coff.o	Makefile	/^util\/coff.o: include\/costanti.h util\/interp.h util\/coff.h util\/dos.h util\/coff.cpp$/;"	t
+util/creatimg.o	Makefile	/^util\/creatimg.o: include\/costanti.h util\/interp.h util\/swap.h util\/creatimg.cpp$/;"	t
+util/elf32.o	Makefile	/^util\/elf32.o:  include\/costanti.h util\/interp.h include\/elf.h util\/elf32.h util\/elf32.cpp$/;"	t
+util/elf64.o	Makefile	/^util\/elf64.o:  include\/costanti.h util\/interp.h include\/elf.h include\/elf64.h util\/elf64.c/;"	t
+util/fswap.o	Makefile	/^util\/fswap.o: include\/costanti.h util\/swap.h util\/fswap.cpp$/;"	t
+util/interp.o	Makefile	/^util\/interp.o: include\/costanti.h util\/interp.h util\/interp.cpp$/;"	t
+util/start.gdb	Makefile	/^util\/start.gdb: build\/io build\/utente$/;"	t
+util/start.mk	Makefile	/^util\/start.mk: include\/costanti.h include\/tipo.h build\/mkstart$/;"	t
+util/swap.o	Makefile	/^util\/swap.o: include\/costanti.h util\/swap.h util\/swap.cpp$/;"	t
+v	util/creatimg.cpp	/^	bool v;$/;"	m	class:verbose	typeref:typename:bool	file:
+v2p	debug/nucleo.py	/^def v2p(proc, addr):$/;"	f
+vaddr	sistema/sistema.cpp	/^typedef natq vaddr;$/;"	t	typeref:typename:natq	file:
+vaddr	utente/include/sys.h	/^typedef natq vaddr;$/;"	t	typeref:typename:natq
+vaddrLookup	debug/nucleo.py	/^def vaddrLookup(val):$/;"	f
+vaddrPrinter	debug/nucleo.py	/^class vaddrPrinter:$/;"	c
+vaddr_verbose	debug/nucleo.py	/^vaddr_verbose = VaddrParam()$/;"	v
+valid	util/creatimg.cpp	/^	bool valid[3];$/;"	m	class:TabCache	typeref:typename:bool[3]	file:
+vdf	sistema/sistema.cpp	/^des_frame* vdf;		\/\/ vettore di descrittori di frame$/;"	v	typeref:typename:des_frame *
+vect	util/creatimg.cpp	/^	uint64_t *vect;$/;"	m	struct:bm_t	typeref:typename:uint64_t *	file:
+verbose	util/creatimg.cpp	/^class verbose {$/;"	c	file:
+vid	io/io.cpp	/^	des_vid vid;$/;"	m	struct:des_console	typeref:typename:des_vid	file:
+vid_init	io/io.cpp	/^bool vid_init()$/;"	f	typeref:typename:bool
+video	io/io.cpp	/^	natw* video;$/;"	m	struct:des_vid	typeref:typename:natw *	file:
+vietato	sistema/sistema.cpp	/^bool vietato(des_frame* df, natl proc, int liv, vaddr ind_virt)$/;"	f	typeref:typename:bool
+violazione	io/io.s	/^violazione:$/;"	l
+violazione	sistema/sistema.s	/^violazione:$/;"	l
+vm_access_byte_to_str	debug/nucleo.py	/^def vm_access_byte_to_str(a):$/;"	f
+vm_decode	debug/nucleo.py	/^def vm_decode(indent, df, stop=4, nonpresent=False, rngs=[range(512)]*4):$/;"	f
+vm_decode_raw	debug/nucleo.py	/^def vm_decode_raw(indent, f, liv, fl):$/;"	f
+vm_dump_map	debug/nucleo.py	/^def vm_dump_map(v, a):$/;"	f
+vm_faddr_to_str	debug/nucleo.py	/^def vm_faddr_to_str(f):$/;"	f
+vm_last	debug/nucleo.py	/^vm_last = 0xffff$/;"	v
+vm_show_maps	debug/nucleo.py	/^def vm_show_maps(proc):$/;"	f
+vm_show_maps_rec	debug/nucleo.py	/^def vm_show_maps_rec(tab, liv, virt, cur):$/;"	f
+vm_show_path	debug/nucleo.py	/^def vm_show_path(v, cr3):$/;"	f
+vm_show_table	debug/nucleo.py	/^def vm_show_table(f):$/;"	f
+vm_show_tree	debug/nucleo.py	/^def vm_show_tree(f):$/;"	f
+vm_show_window	debug/nucleo.py	/^def vm_show_window():$/;"	f
+vm_tab_entry_to_str	debug/nucleo.py	/^def vm_tab_entry_to_str(d):$/;"	f
+vm_vaddr_split	debug/nucleo.py	/^def vm_vaddr_split(v):$/;"	f
+vm_vaddr_to_str	debug/nucleo.py	/^def vm_vaddr_to_str(v, liv=0, verbose='default'):$/;"	f
+void_ptr_type	debug/nucleo.py	/^void_ptr_type = gdb.Type.pointer(gdb.lookup_type('void'))$/;"	v
+vstamp	util/coff.h	/^  unsigned short	vstamp;		\/* version stamp			*\/$/;"	m	struct:__anon3754ae660108	typeref:typename:unsigned short
+wait_kbd_out	io/io.s	/^.macro wait_kbd_out$/;"	m
+wfi	io/io.s	/^wfi:$/;"	l
+white	debug/nucleo.py	/^    white   = esc(37)$/;"	v	class:Color
+write	sistema/sistema.cpp	/^	natq write : 1;$/;"	m	struct:pf_error	typeref:typename:natq:1	file:
+write_key	debug/nucleo.py	/^def write_key(k, v, indent=0):$/;"	f
+writeconsole	utente/utente.s	/^writeconsole:$/;"	l
+writeelem	io/io.cpp	/^void writeelem(natb c) {	\/\/$/;"	f	typeref:typename:void
+writehd_n	io/io.s	/^writehd_n:	$/;"	l
+writehd_n	utente/utente.s	/^writehd_n:$/;"	l
+writese_0	utente/utente.s	/^writese_0:$/;"	l
+writese_n	utente/utente.s	/^writese_n:$/;"	l
+writeseq	io/io.cpp	/^void writeseq(cstr seq)	\/\/$/;"	f	typeref:typename:void
+writevid	io/io.s	/^writevid:$/;"	l
+x	io/io.cpp	/^	natl x, y;$/;"	m	struct:des_vid	typeref:typename:natl	file:
+x_ary	util/coff.h	/^			} x_ary;$/;"	m	union:external_auxent::__anon3754ae660508::__anon3754ae66080a	typeref:struct:external_auxent::__anon3754ae660508::__anon3754ae66080a::__anon3754ae660a08
+x_dimen	util/coff.h	/^			    unsigned short x_dimen[E_DIMNUM];$/;"	m	struct:external_auxent::__anon3754ae660508::__anon3754ae66080a::__anon3754ae660a08	typeref:typename:unsigned short[]
+x_endndx	util/coff.h	/^			    unsigned long x_endndx __attribute__((packed));	\/* entry ndx past block end *\/$/;"	m	struct:external_auxent::__anon3754ae660508::__anon3754ae66080a::__anon3754ae660908	typeref:typename:unsigned long
+x_fcn	util/coff.h	/^			} x_fcn;$/;"	m	union:external_auxent::__anon3754ae660508::__anon3754ae66080a	typeref:struct:external_auxent::__anon3754ae660508::__anon3754ae66080a::__anon3754ae660908
+x_fcnary	util/coff.h	/^		} x_fcnary;$/;"	m	struct:external_auxent::__anon3754ae660508	typeref:union:external_auxent::__anon3754ae660508::__anon3754ae66080a
+x_file	util/coff.h	/^	} x_file;$/;"	m	union:external_auxent	typeref:union:external_auxent::__anon3754ae660b0a
+x_fname	util/coff.h	/^		char x_fname[E_FILNMLEN];$/;"	m	union:external_auxent::__anon3754ae660b0a	typeref:typename:char[]
+x_fsize	util/coff.h	/^			unsigned long x_fsize __attribute__((packed));		\/* size of function *\/$/;"	m	union:external_auxent::__anon3754ae660508::__anon3754ae66060a	typeref:typename:unsigned long
+x_lnno	util/coff.h	/^			    unsigned short  x_lnno;				\/* declaration line number *\/$/;"	m	struct:external_auxent::__anon3754ae660508::__anon3754ae66060a::__anon3754ae660708	typeref:typename:unsigned short
+x_lnnoptr	util/coff.h	/^			    unsigned long x_lnnoptr __attribute__((packed));	\/* ptr to fcn line # *\/$/;"	m	struct:external_auxent::__anon3754ae660508::__anon3754ae66080a::__anon3754ae660908	typeref:typename:unsigned long
+x_lnsz	util/coff.h	/^			} x_lnsz;$/;"	m	union:external_auxent::__anon3754ae660508::__anon3754ae66060a	typeref:struct:external_auxent::__anon3754ae660508::__anon3754ae66060a::__anon3754ae660708
+x_misc	util/coff.h	/^		} x_misc;$/;"	m	struct:external_auxent::__anon3754ae660508	typeref:union:external_auxent::__anon3754ae660508::__anon3754ae66060a
+x_n	util/coff.h	/^		} x_n;$/;"	m	union:external_auxent::__anon3754ae660b0a	typeref:struct:external_auxent::__anon3754ae660b0a::__anon3754ae660c08
+x_nlinno	util/coff.h	/^		unsigned short x_nlinno;					\/* # line numbers *\/$/;"	m	struct:external_auxent::__anon3754ae660d08	typeref:typename:unsigned short
+x_nreloc	util/coff.h	/^		unsigned short x_nreloc;					\/* # relocation entries *\/$/;"	m	struct:external_auxent::__anon3754ae660d08	typeref:typename:unsigned short
+x_offset	util/coff.h	/^			unsigned long x_offset __attribute__((packed));$/;"	m	struct:external_auxent::__anon3754ae660b0a::__anon3754ae660c08	typeref:typename:unsigned long
+x_scn	util/coff.h	/^	} x_scn;$/;"	m	union:external_auxent	typeref:struct:external_auxent::__anon3754ae660d08
+x_scnlen	util/coff.h	/^		unsigned long x_scnlen __attribute__((packed));		\/* section length *\/$/;"	m	struct:external_auxent::__anon3754ae660d08	typeref:typename:unsigned long
+x_size	util/coff.h	/^			    unsigned short  x_size; 				\/* str\/union\/array size *\/$/;"	m	struct:external_auxent::__anon3754ae660508::__anon3754ae66060a::__anon3754ae660708	typeref:typename:unsigned short
+x_sym	util/coff.h	/^	} x_sym;$/;"	m	union:external_auxent	typeref:struct:external_auxent::__anon3754ae660508
+x_tagndx	util/coff.h	/^		unsigned long x_tagndx __attribute__((packed));		\/* str, un, or enum tag indx *\/$/;"	m	struct:external_auxent::__anon3754ae660508	typeref:typename:unsigned long
+x_tv	util/coff.h	/^	} x_tv;		\/* info about .tv section (in auxent of symbol .tv)) *\/$/;"	m	union:external_auxent	typeref:struct:external_auxent::__anon3754ae660e08
+x_tvfill	util/coff.h	/^		unsigned long x_tvfill __attribute__((packed));		\/* tv fill value *\/$/;"	m	struct:external_auxent::__anon3754ae660e08	typeref:typename:unsigned long
+x_tvlen	util/coff.h	/^		unsigned short x_tvlen;						\/* length of .tv *\/$/;"	m	struct:external_auxent::__anon3754ae660e08	typeref:typename:unsigned short
+x_tvndx	util/coff.h	/^		unsigned short x_tvndx;						\/* tv index *\/$/;"	m	struct:external_auxent::__anon3754ae660508	typeref:typename:unsigned short
+x_tvran	util/coff.h	/^		unsigned short x_tvran[2];					\/* tv range *\/$/;"	m	struct:external_auxent::__anon3754ae660e08	typeref:typename:unsigned short[2]
+x_zeroes	util/coff.h	/^			unsigned long x_zeroes __attribute__((packed));$/;"	m	struct:external_auxent::__anon3754ae660b0a::__anon3754ae660c08	typeref:typename:unsigned long
+xmalloc	util/parse.c	/^void *xmalloc(size_t s)$/;"	f	typeref:typename:void *
+y	io/io.cpp	/^	natl x, y;$/;"	m	struct:des_vid	typeref:typename:natl	file:
+yellow	debug/nucleo.py	/^    yellow  = esc(33)$/;"	v	class:Color
+zeroed	util/creatimg.cpp	/^		uint64_t zeroed:	1;	\/\/ pagina di zeri (ottimizzazione)$/;"	m	struct:entrata::__anon599044af0208	typeref:typename:uint64_t:1	file:
+~DOSwap	util/doswap.cpp	/^	~DOSwap() {}$/;"	f	class:DOSwap	file:
+~Eseguibile	util/interp.h	/^	virtual ~Eseguibile() {}$/;"	f	class:Eseguibile
+~EseguibileCoff_go32	util/coff.cpp	/^EseguibileCoff_go32::~EseguibileCoff_go32()$/;"	f	class:EseguibileCoff_go32
+~EseguibileElf32	util/elf32.cpp	/^EseguibileElf32::~EseguibileElf32()$/;"	f	class:EseguibileElf32
+~EseguibileElf64	util/elf64.cpp	/^EseguibileElf64::~EseguibileElf64()$/;"	f	class:EseguibileElf64
+~FileSwap	util/fswap.cpp	/^FileSwap::~FileSwap()$/;"	f	class:FileSwap
+~Interprete	util/interp.h	/^	virtual ~Interprete() {};$/;"	f	class:Interprete
+~InterpreteCoff_go32	util/coff.cpp	/^	~InterpreteCoff_go32() {}$/;"	f	class:InterpreteCoff_go32	file:
+~InterpreteElf32	util/elf32.cpp	/^	~InterpreteElf32() {}$/;"	f	class:InterpreteElf32	file:
+~InterpreteElf64	util/elf64.cpp	/^	~InterpreteElf64() {}$/;"	f	class:InterpreteElf64	file:
+~Segmento	util/interp.h	/^	virtual ~Segmento() {}$/;"	f	class:Segmento
+~SegmentoCoff_go32	util/coff.cpp	/^		~SegmentoCoff_go32() {}$/;"	f	class:EseguibileCoff_go32::SegmentoCoff_go32	file:
+~SegmentoElf32	util/elf32.cpp	/^		~SegmentoElf32() {}$/;"	f	class:EseguibileElf32::SegmentoElf32	file:
+~SegmentoElf64	util/elf64.cpp	/^		~SegmentoElf64() {}$/;"	f	class:EseguibileElf64::SegmentoElf64	file:
+~Swap	util/swap.h	/^	virtual ~Swap() {}$/;"	f	class:Swap
+~TabCache	util/creatimg.cpp	/^	~TabCache() {$/;"	f	class:TabCache	file:
+~TipoDOSwap	util/doswap.cpp	/^TipoDOSwap::~TipoDOSwap()$/;"	f	class:TipoDOSwap
+~TipoFileSwap	util/fswap.cpp	/^	~TipoFileSwap() {}$/;"	f	class:TipoFileSwap	file:
+~TipoSwap	util/swap.h	/^	virtual ~TipoSwap() {};$/;"	f	class:TipoSwap

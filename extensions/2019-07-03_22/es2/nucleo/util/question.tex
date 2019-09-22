@@ -1,0 +1,45 @@
+Vogliamo fornire ai processi la possibilit\`a di bloccare l'esecuzione di tutti i processi che passano da una certa istruzione.
+Per far questo forniamo alcune primitive. Con la primitiva \verb|bpadd(vaddr rip)| si installa un breakpoint (istruzione \verb|int3|, codice operativo \verb|0xCC|) 
+all'indirizzo \verb|rip|. Da quel momento in poi, tutti i processi che passano da \verb|rip| si bloccano e vengono accodati opportunamente.
+Nel frattempo, usando la primitiva \verb|bpwait()|, un processo pu\`o sospendersi in attesa che un qualche altro processo passi dal breakpoint.
+La primitiva pu\`o essere invocata pi\`u volte, per attendere tutti i processi che si suppone debbano passare dal breakpoint.
+Infine, con la primitiva \verb|bpremove()|, si rimuove il breakpoint e si risvegliano tutti i processi che vi si erano bloccati. I processi
+cos\`i risvegliati devono proseguire la loro esecuzione come se non fossero mai stati intercettati.
+
+Prevediamo la seguente limitazione: ad ogni istante, nel sistema ci pu\`o essere al massimo un breakpoint installato tramite da \verb|bpadd()|.
+
+Si noti che se un processo esegue \verb|int3| senza che ci\`o sia richiesto da una primitiva \verb|bpadd()| attiva, il processo
+deve essere abortito.
+
+Aggiungiamo al nucleo la seguente struttura dati:
+\begin{verbatim}
+    struct b_info {
+        proc_elem *waiting;
+        proc_elem *intercepted;
+        proc_elem *to_wakeup;
+        vaddr rip;
+        natb orig;
+        bool busy;
+    } b_info;
+\end{verbatim}
+dove: \verb|waiting| \`e una coda di processi che hanno invocato \verb|bpwait()| e sono in attesa che qualche processo passi dal breakpoint;
+\verb|intercepted| \`e una coda di processi che sono bloccati sul breakpoint e il cui identificatore non \`e stato ancora restituisto
+da una \verb|bpwait()|; \verb|to_wakeup| \`e una coda di processi bloccati sul breakpoint e i cui indentificatori sono stati gi\`a
+restituiti tramite \verb|bpwait()|; \verb|rip| \`e l'indirizzo a cui \`e installato il breakpoint; \verb|orig| \`e il byte
+originariamente contenuto all'indirizzo \verb|rip|; \verb|busy| vale \verb|true| se c'\`e un breakpoint installato.
+
+Si modifichino i file \verb|sistema/sistema.s| e \verb|sistema/sistema.cpp| per implementare le seguenti primitive
+(abortiscono il processo in caso di errore):
+\begin{itemize}
+\item 	\verb|bool bpadd(vaddr rip)|: (tipo 0x59, gi\`a realizzata): se non c'\`e un altro breakpoint gi\`a installato,
+	installa il breakpoint all'indirizzo \verb|rip| e restituisce \verb|true|, altrimenti restituisce \verb|false|;
+        \`e un errore se \verb|rip| non appartiene all'intervallo $[\mathtt{ini\_utn\_c}, \mathtt{fin\_utn\_c})$ (zona utente/condivisa).
+\item   \verb|natl bpwait()|: (tipo 0x5a, gi\`a realizzata): attende che un qualche processo passi dal breakpoint e ne restituisce
+	l'identificatore; pu\`o essere invocata pi\`u volte per ottenere gli identificatori di tutti i processi intercettati;
+	\`e un errore invocare questa primitiva se non ci sono breakpoint installati;
+\item   \verb|void bpremove()| (tipo 0x5b, da realizzare): rimuove il breakpoint e risveglia tutti i processi che erano stati intercettati;
+	\`e un errore invocare questa primitiva se non ci sono breakpoint installati.
+\end{itemize}
+
+{\bf Suggerimento}: Il comando \verb|process dump| del debugger \`e stato modificato in modo da mostrare il disassemblato del codice
+intorno al valore di \verb|rip| salvato in pila.
