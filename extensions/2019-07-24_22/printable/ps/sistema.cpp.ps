@@ -1,0 +1,1298 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 24 24 571 818
+%%Title: Enscript Output
+%%For: Rambod Rahmani
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Sun Sep 22 23:34:30 2019
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 547 def
+/d_page_h 794 def
+/d_header_x 0 def
+/d_header_y 779 def
+/d_header_w 547 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 547 def
+/d_footer_h 0 def
+/d_output_w 547 def
+/d_output_h 779 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 1 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(/**) s
+5 755 M
+( * File: system.cpp) s
+5 744 M
+( *       System Module C++ implementation.) s
+5 733 M
+( *) s
+5 722 M
+( * Author: Rambod Rahmani <rambodrahmani@autistici.org>) s
+5 711 M
+( *         Created on 30/08/2019.) s
+5 700 M
+( */) s
+5 678 M
+(#include "constants.h") s
+5 667 M
+(#include <libqlk.h>) s
+5 656 M
+(#include <log.h>) s
+5 645 M
+(#include <apic.h>) s
+5 623 M
+(////////////////////////////////////////////////////////////////////////////////) s
+5 612 M
+(//                                PROCESSES                                   //) s
+5 601 M
+(////////////////////////////////////////////////////////////////////////////////) s
+5 579 M
+(/**) s
+5 568 M
+( * Maximum process priority.) s
+5 557 M
+( */) s
+5 546 M
+(const natl MAX_PRIORITY = 0xfffffff;) s
+5 524 M
+(/**) s
+5 513 M
+( * Minimum process priority.) s
+5 502 M
+( */) s
+5 491 M
+(const natl MIN_PRIORITY = 0x0000001;) s
+5 469 M
+(/**) s
+5 458 M
+( * Dummy processo priority.) s
+5 447 M
+( */) s
+5 436 M
+(const natl DUMMY_PRIORITY = 0x0000000;) s
+5 414 M
+(/**) s
+5 403 M
+( * Number of registers of the contest array field of the des_proc struct.) s
+5 392 M
+( */) s
+5 381 M
+(const int N_REG = 16;) s
+5 359 M
+(/**) s
+5 348 M
+( * Memory Virtual Address.) s
+5 337 M
+( */) s
+5 326 M
+(typedef natq vaddr;) s
+5 304 M
+(/**) s
+5 293 M
+( * Memory Physical Address.) s
+5 282 M
+( */) s
+5 271 M
+(typedef natq faddr;) s
+5 249 M
+(/**) s
+5 238 M
+( *) s
+5 227 M
+( */) s
+5 216 M
+(typedef natq tab_entry;) s
+5 194 M
+(/**) s
+5 183 M
+( * Process Descriptor. Each process has its own process descriptor, a system) s
+5 172 M
+( * stack and its own memory \(which contains its code, data and user stack\).) s
+5 161 M
+( * In order to be able to switch between processes and allow for a little) s
+5 150 M
+( * parallel execution we will have to take a full snapshot of the system state) s
+5 139 M
+( * \(CPU, memory, devices etc..\) in order to be able to come back to the) s
+5 128 M
+( * execution where it has been left.) s
+5 117 M
+( */) s
+5 106 M
+(struct des_proc) s
+5 95 M
+({) s
+5 84 M
+(    // hardware required) s
+5 73 M
+(    struct __attribute__ \(\(packed\)\)) s
+5 62 M
+(    {) s
+5 51 M
+(        natl riservato1;) s
+5 29 M
+(        /**) s
+5 18 M
+(         * Each process has its own system stack and the way the system stack is) s
+5 7 M
+(         * changed moving from one process to another is up to the hardware) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 2 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(         * interrupt mechanism. We will place this pointer to the process system) s
+5 755 M
+(         * stack where we know the hardware will look for it. When the process) s
+5 744 M
+(         * is started, the CPU will save in this stack the pointer to the) s
+5 733 M
+(         * previous stack, the content of the RFLAGS register, the previous) s
+5 722 M
+(         * privilege level, and the address of the next instruction to be) s
+5 711 M
+(         * executed.) s
+5 700 M
+(         * When a process is at user level its system stack is always empty. The) s
+5 689 M
+(         * system stack will be filled when moving to the system level and) s
+5 678 M
+(         * emptied out when returning to user level.) s
+5 667 M
+(         */) s
+5 656 M
+(        vaddr system_stack;) s
+5 634 M
+(        // due quad  a disposizione \(puntatori alle pile ring 1 e 2\)) s
+5 623 M
+(        natq disp1[2];) s
+5 612 M
+(        natq riservato2;) s
+5 590 M
+(        //entry della IST, non usata) s
+5 579 M
+(        natq disp2[7];) s
+5 568 M
+(        natq riservato3;) s
+5 557 M
+(        natw riservato4;) s
+5 546 M
+(        natw iomap_base; // si veda crea_processo\(\)) s
+5 535 M
+(    };) s
+5 513 M
+(    // custom data) s
+5 502 M
+(    faddr cr3;) s
+5 480 M
+(    // process context: contains a copy of the CPU registers content) s
+5 469 M
+(    natq context[N_REG];) s
+5 447 M
+(    natl cpl;) s
+5 425 M
+(/**) s
+5 414 M
+( * New fields must be added to the process descriptor in order to be able to) s
+5 403 M
+( * distinguish between master and slave process.) s
+5 392 M
+( */) s
+5 370 M
+(// EXTENSION 2019-07-24) s
+5 348 M
+(    /**) s
+5 337 M
+(     * Pointer to the master process. Might be null if no master has been) s
+5 326 M
+(     * defined for this process.) s
+5 315 M
+(     */) s
+5 304 M
+(    des_proc *bp_master;) s
+5 282 M
+(    /**) s
+5 271 M
+(     * Pointer to the slave process. Might be null if no slave has been defined) s
+5 260 M
+(     * for this process.) s
+5 249 M
+(     */) s
+5 238 M
+(    des_proc *bp_slave;) s
+5 216 M
+(    /**) s
+5 205 M
+(     * Breakpoint instruction address. Meaningful only for a master process.) s
+5 194 M
+(     */) s
+5 183 M
+(    vaddr bp_addr;) s
+5 161 M
+(    /**) s
+5 150 M
+(     * Original byte contained at the address where the breakpoint has been) s
+5 139 M
+(     * placed. Meaningful only for a master process.) s
+5 128 M
+(     */) s
+5 117 M
+(    natb bp_orig;) s
+5 95 M
+(    /**) s
+5 84 M
+(     * Slave process ID. Meaningful only for a master process.) s
+5 73 M
+(     */) s
+5 62 M
+(    natl bp_slave_id;) s
+5 40 M
+(    /**) s
+5 29 M
+(     * Process queue which can be used by the master or the slave process to) s
+5 18 M
+(     * wait.) s
+5 7 M
+(     */) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 3 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    struct proc_elem  *bp_waiting;) s
+5 744 M
+(// EXTENSION 2019-07-24) s
+5 733 M
+(};) s
+5 711 M
+(// [...]) s
+5 689 M
+(// EXTENSION 2019-07-24) s
+5 667 M
+(/**) s
+5 656 M
+( * Can be used only by master processes to be palced in the corresponding slave) s
+5 645 M
+( * process wait queue for them to reach the breakpoint address. Theese master ) s
+5 634 M
+( * processes must have a bp_slave process set in their descriptor.) s
+5 623 M
+( */) s
+5 612 M
+(extern "C" void c_bpwait\(\)) s
+5 601 M
+({) s
+5 590 M
+(    // retrieve calling process descriptor) s
+5 579 M
+(    des_proc *self = des_p\(esecuzione->id\);) s
+5 557 M
+(    // check if the calling process is a master process) s
+5 546 M
+(    if \(!self->bp_slave\)) s
+5 535 M
+(    {) s
+5 524 M
+(        // if so,  print a warning log message) s
+5 513 M
+(        flog\(LOG_WARN, "Only master processes can use the bpwait\(\) primitive."\);) s
+5 491 M
+(        // abort calling process: it must be a master process to use this) s
+5 480 M
+(        // primitive) s
+5 469 M
+(        c_abort_p\(\);) s
+5 458 M
+(    }) s
+5 436 M
+(    // check if there is a slave process waiting) s
+5 425 M
+(    if \(!self->bp_waiting\)) s
+5 414 M
+(    {) s
+5 403 M
+(        // if not, insert the current process in the slave process waiting queue) s
+5 392 M
+(        self->bp_slave->bp_waiting = esecuzione;) s
+5 370 M
+(        // schedule a new process) s
+5 359 M
+(        schedulatore\(\);) s
+5 348 M
+(    }) s
+5 337 M
+(}) s
+5 315 M
+(/**) s
+5 304 M
+( * This subroutine is called in case of a breakpoint exception.) s
+5 293 M
+( *) s
+5 282 M
+( * @param  tipo    exception type \(3\);) s
+5 271 M
+( * @param  errore  exception error \(0\);) s
+5 260 M
+( * @param  p_rip   address contained in %rsp.) s
+5 249 M
+( */) s
+5 238 M
+(extern "C" void c_breakpoint_exception\(int tipo, natq errore, vaddr *p_rip\)) s
+5 227 M
+({) s
+5 216 M
+(    // retrieve calling process descriptor) s
+5 205 M
+(    des_proc *self = des_p\(esecuzione->id\);) s
+5 183 M
+(    // check if the calling process is a slave process: this breakpoint was) s
+5 172 M
+(    // added using the bpattach\(\) primitive) s
+5 161 M
+(    if \(!self->bp_master\)) s
+5 150 M
+(    {) s
+5 139 M
+(        // if not, just handle the exception: the gestore_eccezioni will also) s
+5 128 M
+(        // abort the calling process as all interrupt 3 not placed using the) s
+5 117 M
+(        // bpattach must be aborted) s
+5 106 M
+(        gestore_eccezioni\(tipo, errore, *p_rip\);) s
+5 84 M
+(        // and return to the caller) s
+5 73 M
+(        return;) s
+5 62 M
+(    }) s
+5 40 M
+(    // retrieve current rsp value) s
+5 29 M
+(    natq* rip = reinterpret_cast<natq*>\(p_rip\);) s
+5 7 M
+(    // decrease it by one) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 4 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    \(*rip\)--;) s
+5 744 M
+(    // insert the current slave process in the master process bp queue) s
+5 733 M
+(    self->bp_master->bp_waiting = esecuzione;) s
+5 711 M
+(    // check if the master process is in this slave process bp queue) s
+5 700 M
+(    if \(self->bp_waiting\)) s
+5 689 M
+(    {) s
+5 678 M
+(        // if so, move the process in the system ready processes queue) s
+5 667 M
+(        inserimento_lista\(pronti, self->bp_waiting\);) s
+5 645 M
+(        // clear waiting master processes for this slave process) s
+5 634 M
+(        self->bp_waiting = 0;) s
+5 623 M
+(    }) s
+5 601 M
+(    // schedule a new process) s
+5 590 M
+(    schedulatore\(\);) s
+5 579 M
+(} ) s
+5 557 M
+(// normalmente, le parti condivise della memoria virtuale \(come quelle che) s
+5 546 M
+(// contengono il codice dei processi\) sono realizzate condividendo tutto a) s
+5 535 M
+(// partire dalle tabelle di livello 3.  Questa funzione installa nell'albero di) s
+5 524 M
+(// traduzione del processo id una copia privata del percorso di traduzione e) s
+5 513 M
+(// della pagina che contiene l'indirizzo v, creando, copiando e modificando) s
+5 502 M
+(// opportunamente le tabelle di livello 3, 2 e 1 e la pagina finale.) s
+5 491 M
+(bool duplica\(natl id, vaddr v\)) s
+5 480 M
+({) s
+5 469 M
+(        // per ogni livello a partire dal 3 andando a scendere...) s
+5 458 M
+(        for \(int i = 3; i >= 0; i--\) {) s
+5 447 M
+(                // prendiamo l'entrata della tabella di livello superiore) s
+5 436 M
+(                // che punta all'entita' che stiamo considerando) s
+5 425 M
+(                tab_entry& e = get_des\(id, i + 1, v\);) s
+5 403 M
+(                // allochiamo un frame per la copia) s
+5 392 M
+(                des_frame *df_dst = alloca_frame\(id, i, v\);) s
+5 381 M
+(                if \(!df_dst\) {) s
+5 370 M
+(                        flog\(LOG_WARN, "memoria esaurita"\);) s
+5 359 M
+(                        return false;) s
+5 348 M
+(                }) s
+5 337 M
+(                // riempiamo i campi del descrittore di frame) s
+5 326 M
+(                // \(per consistenza e debugging\)) s
+5 315 M
+(                df_dst->processo = id;) s
+5 304 M
+(                df_dst->residente = true;) s
+5 293 M
+(                df_dst->livello = i;) s
+5 282 M
+(                df_dst->ind_virtuale = v;) s
+5 271 M
+(                df_dst->ind_massa = 0;) s
+5 260 M
+(                df_dst->contatore = 0;) s
+5 238 M
+(                // copiamo l'entita' vecchia nel nuovo frame) s
+5 227 M
+(                faddr src = extr_IND_FISICO\(e\);) s
+5 216 M
+(                faddr dst = indirizzo_frame\(df_dst\);) s
+5 205 M
+(                memcpy\(reinterpret_cast<void *>\(dst\), reinterpret_cast<void *>\(src\), 4096) s
+5 194 M
+(\);) s
+5 183 M
+(                // facciamo in modo che la tabella di livello superiore punti alla copia) s
+5 172 M
+(                set_IND_FISICO\(e, dst\);) s
+5 161 M
+(        }) s
+5 150 M
+(        return true;) s
+5 139 M
+(}) s
+5 117 M
+(/**) s
+5 106 M
+( * Attaches a breakpoint in the processes having the given id at the instruction) s
+5 95 M
+( * having the given address.) s
+5 84 M
+( *) s
+5 73 M
+( * @param  id   slave destination process id;) s
+5 62 M
+( * @param  rip  instruction address.) s
+5 51 M
+( */) s
+5 40 M
+(extern "C" void c_bpattach\(natl id, vaddr rip\)) s
+5 29 M
+({) s
+5 18 M
+(    // retrieve calling process descriptor \(the master one\)) s
+5 7 M
+(    des_proc *self = des_p\(esecuzione->id\);) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 5 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 755 M
+(    // retrieve slave process id) s
+5 744 M
+(    des_proc *dest = des_p\(id\);) s
+5 722 M
+(    // check if the calling process \(master\) and the slave process are the same) s
+5 711 M
+(    // process) s
+5 700 M
+(    if \(dest == self\)) s
+5 689 M
+(    {) s
+5 678 M
+(        // if so, print a warning log message) s
+5 667 M
+(        flog\(LOG_WARN, "A master process can not call the bpattach\(\) on itself."\);) s
+5 645 M
+(        // abort calling process) s
+5 634 M
+(        c_abort_p\(\);) s
+5 612 M
+(        // just return to the caller) s
+5 601 M
+(        return;) s
+5 590 M
+(    }) s
+5 568 M
+(    // chec if the given instruction address belongs to the user process shared) s
+5 557 M
+(    // memory area) s
+5 546 M
+(    if \(rip < ini_utn_c || rip >= fin_utn_c\)) s
+5 535 M
+(    {) s
+5 524 M
+(        // if not, print a warning log message) s
+5 513 M
+(        flog\(LOG_WARN, "rip %p out of bounds [%p, %p\)", rip, ini_utn_p, fin_utn_p\);) s
+5 491 M
+(        // abort calling process) s
+5 480 M
+(        c_abort_p\(\);) s
+5 458 M
+(        // return to the caller) s
+5 447 M
+(        return;) s
+5 436 M
+(    }) s
+5 414 M
+(    // set return value) s
+5 403 M
+(    self->contesto[I_RAX] = false;) s
+5 381 M
+(    // check if the slave process is valid, if it does not have a master process) s
+5 370 M
+(    // already set nor a slave process) s
+5 359 M
+(    if \(!dest || dest->bp_master || dest->bp_slave\)) s
+5 348 M
+(    {) s
+5 337 M
+(        // otherwise, just return to the caller) s
+5 326 M
+(        return;) s
+5 315 M
+(    }) s
+5 293 M
+(    // set slave process for the calling master process) s
+5 282 M
+(    self->bp_slave = dest;) s
+5 260 M
+(    // no slave processes waiting in the master bp queue) s
+5 249 M
+(    self->bp_waiting = 0;) s
+5 227 M
+(    // set slave process id for the calling master process) s
+5 216 M
+(    self->bp_slave_id = id;) s
+5 194 M
+(    // set master process for the destination slave process) s
+5 183 M
+(    dest->bp_master = self;) s
+5 161 M
+(    // no master processes waiting in the slave bp queue) s
+5 150 M
+(    dest->bp_waiting = 0;) s
+5 128 M
+(    // update return value) s
+5 117 M
+(    self->contesto[I_RAX] = true;) s
+5 95 M
+(// SOLUTION 2019-07-24) s
+5 73 M
+(    // create private memory area for the given instruction address) s
+5 62 M
+(    if \(!duplica\(id, rip\)\)) s
+5 51 M
+(    {) s
+5 40 M
+(        // in case of error, just return to the caller) s
+5 29 M
+(        return;) s
+5 18 M
+(    }) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 6 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(    // retrieve byte pointed by the given address) s
+5 755 M
+(    natb *bytes = reinterpret_cast<natb*>\(trasforma\(id, rip\)\);) s
+5 733 M
+(    // set breakpoint address) s
+5 722 M
+(    self->bp_addr = rip;) s
+5 700 M
+(    // save original instruction byte) s
+5 689 M
+(    self->bp_orig = *bytes;) s
+5 667 M
+(    // replace addressed byte with the int3 opcode byte) s
+5 656 M
+(    *bytes = 0xCC;) s
+5 634 M
+(//   SOLUZIONE 2019-07-24 \)) s
+5 623 M
+(}) s
+5 612 M
+(//   ESAME 2019-07-24 \)) s
+5 590 M
+(// \( SOLUZIONE 2019-07-24) s
+5 568 M
+(/**) s
+5 557 M
+( * Undoes the operation performed by the bpattach at memory level.) s
+5 546 M
+( */) s
+5 535 M
+(void deduplica\(natl id, vaddr v\)) s
+5 524 M
+({) s
+5 513 M
+(        for \(int i = 0; i <= 3; i++\) {) s
+5 502 M
+(                tab_entry e = get_des\(id, i + 1, v\);) s
+5 491 M
+(                faddr dst = extr_IND_FISICO\(e\);) s
+5 480 M
+(                des_frame *pf_dst = descrittore_frame\(dst\);) s
+5 469 M
+(                rilascia_frame\(pf_dst\); ) s
+5 458 M
+(        }) s
+5 447 M
+(        tab_entry& e_slave = get_des\(id, 4, v\);) s
+5 436 M
+(        tab_entry e_master = get_des\(esecuzione->id, 4, v\);) s
+5 425 M
+(        e_slave = e_master;) s
+5 414 M
+(}) s
+5 392 M
+(/**) s
+5 381 M
+( * Removes the breakpoint inserted by the master process and reschedules the) s
+5 370 M
+( * slave process.) s
+5 359 M
+( */) s
+5 348 M
+(extern "C" void c_bpdetach\(\)) s
+5 337 M
+({) s
+5 326 M
+(    // retrieve calling process descriptor) s
+5 315 M
+(    des_proc *self = des_p\(esecuzione->id\);) s
+5 293 M
+(    // destination \(slave\) process descriptor) s
+5 282 M
+(    des_proc *dest;) s
+5 260 M
+(    // check if the calling process is a master process \(actually has a slave) s
+5 249 M
+(    // process\)) s
+5 238 M
+(    if \(!self->bp_slave\)) s
+5 227 M
+(    {) s
+5 216 M
+(        // if not, print a warning log message) s
+5 205 M
+(        flog\(LOG_WARN, "Only master processes can use the bpdetach\(\) primitive."\);) s
+5 183 M
+(        // abort calling process) s
+5 172 M
+(        c_abort_p\(\);) s
+5 150 M
+(        // just return to the caller) s
+5 139 M
+(        return;) s
+5 128 M
+(    }) s
+5 106 M
+(    // set retrieved slave process as destination process) s
+5 95 M
+(    dest = self->bp_slave;) s
+5 73 M
+(    // undo the duplication operation performed by the bpattach\(\)) s
+5 62 M
+(    deduplica\(self->bp_slave_id, self->bp_addr\);) s
+5 40 M
+(    // check if there is a slave process in the master process bp queue) s
+5 29 M
+(    if \(self->bp_waiting\)) s
+5 18 M
+(    {) s
+5 7 M
+(        // insert the calling master process in the system ready processes list) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+24 24 translate
+/pagenum 7 def
+/fname (printable/sistema.cpp) def
+/fdir (printable) def
+/ftail (sistema.cpp) def
+% User defined strings:
+/fmodstr (Sun Sep 22 23:34:23 2019) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 766 M
+(        inspronti\(\);) s
+5 744 M
+(        // insert the slave process in the system ready processes list) s
+5 733 M
+(        inserimento_lista\(pronti, self->bp_waiting\);) s
+5 711 M
+(        // clear any waiting slave processes) s
+5 700 M
+(        self->bp_waiting = 0;) s
+5 678 M
+(        // schedule a new process) s
+5 667 M
+(        schedulatore\(\);) s
+5 656 M
+(        }) s
+5 634 M
+(    // no more waiting slave process for the master process) s
+5 623 M
+(    self->bp_slave = 0;) s
+5 601 M
+(    // no more breakpoint address for the master process) s
+5 590 M
+(    self->bp_addr = 0;) s
+5 568 M
+(    // no more original byte for the master process) s
+5 557 M
+(    self->bp_orig = 0;) s
+5 535 M
+(    // no more slave process ID for the master process) s
+5 524 M
+(    self->bp_slave_id = 0;) s
+5 502 M
+(    // no more waiting master process for the slave process) s
+5 491 M
+(    dest->bp_master = 0;) s
+5 480 M
+(}) s
+5 458 M
+(// SOLUTION 2019-07-24) s
+_R
+S
+%%Trailer
+%%Pages: 7
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF
