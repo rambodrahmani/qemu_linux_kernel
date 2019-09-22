@@ -17,7 +17,8 @@ typedef natq faddr;
 typedef natq tab_entry;
 
 /**
- * New fields must be added to the process descriptor.
+ * New fields must be added to the process descriptor in order to be able to
+ * distinguish between master and slave process.
  */
 struct des_proc
 {
@@ -40,6 +41,7 @@ struct des_proc
 	natl cpl;
 
 // EXTENSION 2019-07-24
+
     /**
      * Pointer to the master process. Might be null if no master has been
      * defined for this process.
@@ -73,6 +75,7 @@ struct des_proc
      * wait.
      */
     struct proc_elem  *bp_waiting;
+
 // EXTENSION 2019-07-24
 };
 
@@ -2018,21 +2021,23 @@ extern "C" void c_log(log_sev sev, const char* buf, natl quanti)
 // EXTENSION 2019-07-24
 
 /**
- * Can be used only my master processes. Theese process must have a
- * bp_slave process descriptor.
+ * Can be used only by master processes to be palced in the corresponding slave
+ * process wait queue for them to reach the breakpoint address. Theese master 
+ * processes must have a bp_slave process set in their descriptor.
  */
 extern "C" void c_bpwait()
 {
     // retrieve calling process descriptor
     des_proc *self = des_p(esecuzione->id);
 
-    // check if the calling process is a slave process
+    // check if the calling process is a master process
     if (!self->bp_slave)
     {
         // if so,  print a warning log message
         flog(LOG_WARN, "Only master processes can use the bpwait() primitive.");
 
-        // abort calling process
+        // abort calling process: it must be a master process to use this
+        // primitive
         c_abort_p();
     }
 
@@ -2059,11 +2064,13 @@ extern "C" void c_breakpoint_exception(int tipo, natq errore, vaddr *p_rip)
     // retrieve calling process descriptor
     des_proc *self = des_p(esecuzione->id);
 
-    // check if the calling process is not a slave process: this is not a
-    // breakpoint inserted manually
+    // check if the calling process is a slave process: this breakpoint was
+    // added using the bpattach() primitive
     if (!self->bp_master)
     {
-        // if not, just handle the exception
+        // if not, just handle the exception: the gestore_eccezioni will also
+        // abort the calling process as all interrupt 3 not placed using the
+        // bpattach must be aborted
         gestore_eccezioni(tipo, errore, *p_rip);
 
         // and return to the caller
@@ -2248,14 +2255,15 @@ void deduplica(natl id, vaddr v)
 }
 
 /**
- * Removes the breakpoint inserted by the calling master process.
+ * Removes the breakpoint inserted by the master process and reschedules the
+ * slave process.
  */
 extern "C" void c_bpdetach()
 {
     // retrieve calling process descriptor
     des_proc *self = des_p(esecuzione->id);
 
-    // retrieve destination (slave) process descriptor
+    // destination (slave) process descriptor
     des_proc *dest;
 
     // check if the calling process is a master process (actually has a slave
@@ -2263,7 +2271,7 @@ extern "C" void c_bpdetach()
     if (!self->bp_slave)
     {
         // if not, print a warning log message
-        flog(LOG_WARN, "bpremove() errata");
+        flog(LOG_WARN, "Only master processes can use the bpdetach() primitive.");
 
         // abort calling process
         c_abort_p();
@@ -2278,7 +2286,7 @@ extern "C" void c_bpdetach()
     // undo the duplication operation performed by the bpattach()
     deduplica(self->bp_slave_id, self->bp_addr);
 
-    // check if the slave queue is in the bp queue
+    // check if there is a slave process in the master process bp queue
     if (self->bp_waiting)
     {
         // insert the calling master process in the system ready processes list
@@ -2294,13 +2302,13 @@ extern "C" void c_bpdetach()
         schedulatore();
 	}
 
-    // not more waiting slave process for the master process
+    // no more waiting slave process for the master process
     self->bp_slave = 0;
 
-    // not more breakpoint address for the master process
+    // no more breakpoint address for the master process
     self->bp_addr = 0;
 
-    // not more original byte for the master process
+    // no more original byte for the master process
     self->bp_orig = 0;
 
     // no more slave process ID for the master process

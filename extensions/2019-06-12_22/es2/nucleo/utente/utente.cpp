@@ -1,88 +1,158 @@
-#line 1 "utente/prog/pbreak.in"
-/*
- * Mailbox
+#line 1 "utente/prog/pbreak.cpp"
+/**
+ * File: pbreak.in
+ *       Extension 2019-06-12_22 test program.
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 22/09/2019.
  */
 
 #include <sys.h>
 #include <lib.h>
 
+/**
+ * 
+ */
 
-#line 9 "utente/prog/pbreak.in"
+#line 17 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 10 "utente/prog/pbreak.in"
+#line 22 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 11 "utente/prog/pbreak.in"
+#line 27 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 12 "utente/prog/pbreak.in"
+#line 32 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 13 "utente/prog/pbreak.in"
+#line 37 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 14 "utente/prog/pbreak.in"
+#line 42 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 15 "utente/prog/pbreak.in"
+#line 47 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 16 "utente/prog/pbreak.in"
+#line 52 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 17 "utente/prog/pbreak.in"
+#line 57 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 18 "utente/prog/pbreak.in"
+#line 62 "utente/prog/pbreak.cpp"
+/**
+ *
+ */
 
-#line 20 "utente/prog/pbreak.in"
+#line 67 "utente/prog/pbreak.cpp"
 extern int sync;
-#line 22 "utente/prog/pbreak.in"
+#line 69 "utente/prog/pbreak.cpp"
+/**
+ * Bad process body 1: calls the int3 instruction without using the breakpoint()
+ * primitive.
+ */
 void bad(int a)
-#line 23 "utente/prog/pbreak.in"
+#line 74 "utente/prog/pbreak.cpp"
 {
-	asm("int3");
-	printf("processo errato %d", a);
+    asm("int3");
+    printf("processo errato %d", a);
 
 	terminate_p();
 }
+/**
+ *
+ */
 void catch_me(int a)
 {
-	printf("proc%d: eseguo funzione", a);
+    printf("proc%d: eseguo funzione", a);
 }
 
+/**
+ *
+ */
 vaddr bad_addr[] = { 1000, 0xffffc00000000000 };
 
+/**
+ * Bad process body 2: calls the breakpoint() primitive with the wrong address.
+ * The breakpoint() primitive can be called only from addresses belonging to the
+ * user process shared memory area.
+ */
 void badb(int a)
-#line 36 "utente/prog/pbreak.in"
+#line 98 "utente/prog/pbreak.cpp"
 {
-	breakpoint(bad_addr[a - 3]);
-	printf("processo errato %d", a);
+    breakpoint(bad_addr[a - 3]);
+    printf("processo errato %d", a);
 
 	terminate_p();
 }
+/**
+ * User process: 
+ */
 void usr(int a)
-#line 42 "utente/prog/pbreak.in"
+#line 107 "utente/prog/pbreak.cpp"
 {
-	if (a % 2 == 0) {
-		sem_wait(sync);
-	}
-	printf("proc%d: prima della funzione", a);
-	catch_me(a);
-	printf("proc%d: dopo la funzione", a);
+    if (a % 2 == 0)
+    {
+        sem_wait(sync);
+    }
+
+    printf("proc%d: prima della funzione", a);
+
+    catch_me(a);
+
+    printf("proc%d: dopo la funzione", a);
 
 	terminate_p();
 }
+/**
+ *
+ */
 void debugger(int a)
-#line 52 "utente/prog/pbreak.in"
+#line 124 "utente/prog/pbreak.cpp"
 {
-	printf("debugger %d: chiamo breakpoint", a);
-	natl proc = breakpoint(reinterpret_cast<natq>(catch_me));
-	if (proc == 0xFFFFFFFF) {
-		printf("debugger %d: occupato", a);
-	} else {
-		sem_signal(sync);
-		printf("debugger %d: breapoint intercettato, processo: %d", a, proc);
+    printf("debugger %d: chiamo breakpoint", a);
+
+    natl proc = breakpoint(reinterpret_cast<natq>(catch_me));
+
+    if (proc == 0xFFFFFFFF)
+    {
+        printf("debugger %d: occupato", a);
 	}
+    else
+    {
+        sem_signal(sync);
+        printf("debugger %d: breapoint intercettato, processo: %d", a, proc);
+    }
 
 	terminate_p();
 }
+/**
+ *
+ */
 void last_body(int a)
-#line 64 "utente/prog/pbreak.in"
+#line 144 "utente/prog/pbreak.cpp"
 {
-	pause();
+    pause();
 
 	terminate_p();
 }
@@ -98,7 +168,7 @@ short dbg2;
 short dbg3;
 short last;
 int sync;
-#line 102 "utente/utente.cpp"
+#line 172 "utente/utente.cpp"
 
 int main()
 {

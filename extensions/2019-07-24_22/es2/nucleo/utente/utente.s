@@ -159,6 +159,8 @@ do_log:
 #-------------------------------------------------------------------------------
 .GLOBAL bpattach
 #-------------------------------------------------------------------------------
+#                Implementation for extern "C" bool bpattach(natl id, vaddr rip)
+#-------------------------------------------------------------------------------
 bpattach:
     .cfi_startproc
     int $TIPO_BPA
@@ -166,7 +168,7 @@ bpattach:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.global bpwait
+.GLOBAL bpwait                     # Implementation for extern "C" void bpwait()
 #-------------------------------------------------------------------------------
 bpwait:
     .cfi_startproc
@@ -175,7 +177,7 @@ bpwait:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.GLOBAL bpdetach
+.GLOBAL bpdetach                 # Implementation for extern "C" void bpdetach()
 #-------------------------------------------------------------------------------
 bpdetach:
     .cfi_startproc

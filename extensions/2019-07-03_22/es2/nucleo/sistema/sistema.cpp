@@ -1988,7 +1988,8 @@ extern "C" faddr trasforma(natl id, vaddr ind_virt)
 struct b_info
 {
     /**
-     * Wait queue of the processes which called the bpwait() primitive.
+     * Wait queue of the processes which called the bpwait() primitive and are
+     * waiting for a process to reach the breakpoint address.
      */
     proc_elem *waiting;
 
@@ -1999,7 +2000,7 @@ struct b_info
     proc_elem *intercepted;
 
     /**
-     * Wait queue for all the process which have reached the brakpoint and
+     * Wait queue for all the processes which have reached the brakpoint and
      * which IDs have already been retrieved using the bpwait() and need to
      * be rescheduled.
      */
@@ -2024,107 +2025,232 @@ struct b_info
 } b_info;
 
 /**
- * @param  rip
+ * Adds a breakpoint at the given virtual address.
+ *
+ * @param  rip  the address where to add the breakpoint.
  */
 extern "C" void c_bpadd(vaddr rip)
 {
-	des_proc *self = des_p(esecuzione->id);
+    // retrieve calling process descriptor
+    des_proc *self = des_p(esecuzione->id);
 
-	if (b_info.busy) {
-		self->contesto[I_RAX] = false;
-		return;
+    // check if there is a global system breakpoint installed
+    if (b_info.busy)
+    {
+        // if so, return false: breakpoint already present
+        self->contesto[I_RAX] = false;
+
+        // just return to the caller
+        return;
+    }
+
+    // check if the given address belongs to the user process shared memory area
+    if (rip < ini_utn_c || rip >= fin_utn_c)
+    {
+        // print a warning log message
+        flog(LOG_WARN, "rip %p out of bounds [%p, %p)", rip, ini_utn_p, fin_utn_p);
+
+        // abort the calling process
+        c_abort_p();
+
+        // just return to the caller
+        return;
 	}
 
-	if (rip < ini_utn_c || rip >= fin_utn_c) {
-		flog(LOG_WARN, "rip %p out of bounds [%p, %p)", rip, ini_utn_p, fin_utn_p);
-		c_abort_p();
-		return;
-	}
+    // retrieve byte address by the given virtual address
+    natb *bytes = reinterpret_cast<natb*>(rip);
 
-	natb *bytes = reinterpret_cast<natb*>(rip);
-	b_info.rip = rip;
-	b_info.orig = *bytes;
-	*bytes = 0xCC;
-	b_info.busy = true;
-	self->contesto[I_RAX] = true;
+    // save the given virtual address for later use
+    b_info.rip = rip;
+
+    // save the original byte being replace for later use
+    b_info.orig = *bytes;
+
+    // replace the retrieved byte with the opcode of the int3 instruction
+    *bytes = 0xCC;
+
+    // set system global breakpoint descriptor busy flag to true: one breakpoint
+    // is already present and no more will be accepted
+    b_info.busy = true;
+
+    // return true: breakpoint successfully placed
+    self->contesto[I_RAX] = true;
 }
 
+/**
+ *
+ */
 extern "C" void c_bpwait()
 {
-	des_proc *self = des_p(esecuzione->id);
+    // retrieve calling process descriptor
+    des_proc *self = des_p(esecuzione->id);
 
-	if (!b_info.busy) {
-		self->contesto[I_RAX] = 0xFFFFFFFF;
-		return;
-	}
+    // check if there is a breakpoint already placed
+    if (!b_info.busy)
+    {
+        // if not, return no breakpoints present
+        self->contesto[I_RAX] = 0xFFFFFFFF;
 
-	if (b_info.intercepted) {
-		proc_elem *work;
+        // just return to the caller
+        return;
+    }
 
-		rimozione_lista(b_info.intercepted, work);
-		self->contesto[I_RAX] = work->id;
-		inserimento_lista(b_info.to_wakeup, work);
-	} else {
-		inserimento_lista(b_info.waiting, esecuzione);
-		schedulatore();
-	}
+    // check if there is any process which have rached the breakpoint address
+    if (b_info.intercepted)
+    {
+        // if so, we need a process descriptor
+        proc_elem *work;
+
+        // remove one of such processes from the queue
+        rimozione_lista(b_info.intercepted, work);
+
+        // return the process id to the caller
+        self->contesto[I_RAX] = work->id;
+
+        // place the process in the wakup list
+        inserimento_lista(b_info.to_wakeup, work);
+    }
+    else
+    {
+        // otherwise, place the calling process in the waiting queue
+        inserimento_lista(b_info.waiting, esecuzione);
+
+        // schedule a new process
+        schedulatore();
+    }
 }
 // EXTENSION 2019-07-03 )
 
 // SOLUTION 2019-07-03
 
 /**
- *
+ * Removes the breakpoint and reschedules all the process which had reached the
+ * breakpoint address and were placed in the intercepted wait queue.
  */
 extern "C" void c_bpremove()
 {
-	if (b_info.waiting || !b_info.busy) {
-		flog(LOG_WARN, "bpremove() errata");
-		c_abort_p();
-		return;
+    // check if there is any process which have called the bpwait()
+    // or the busy flag is set
+    if (b_info.waiting || !b_info.busy)
+    {
+        // if not, no breakpoint can be removed either because there is none or
+        // because there are process waiting
+        flog(LOG_WARN, "Unable to perform bpremove().");
+
+        // abort calling process
+        c_abort_p();
+
+        // just return to the caller
+        return;
+    }
+
+    // retrieve address to the replaced byte
+    natb *bytes = reinterpret_cast<natb*>(b_info.rip);
+
+    // replace the byte with the original value
+    *bytes = b_info.orig;
+
+    // process descriptor
+    proc_elem *work;
+
+    // while there are processes which have reached the breakpoint address
+    while (b_info.intercepted)
+    {
+        // remove them from the intercepted queue
+        rimozione_lista(b_info.intercepted, work);
+
+        // place them in the wakeup queue
+        inserimento_lista(b_info.to_wakeup, work);
 	}
 
-	natb *bytes = reinterpret_cast<natb*>(b_info.rip);
-	*bytes = b_info.orig;
-	proc_elem *work;
-	while (b_info.intercepted) {
-		rimozione_lista(b_info.intercepted, work);
-		inserimento_lista(b_info.to_wakeup, work);
-	}
-	inspronti();
-	while (b_info.to_wakeup) {
-		rimozione_lista(b_info.to_wakeup, work);
-		des_proc *dp = des_p(work->id);
-		natq rsp_v = dp->contesto[I_RSP];
-		natq *rsp = reinterpret_cast<natq*>(trasforma(work->id, rsp_v));
-		(*rsp)--;
-		inserimento_lista(pronti, work);
-	}
-	b_info.busy = false;
-	schedulatore();
+    // place the calling process in the system ready processes queue
+    inspronti();
+
+    // while there are processes which have reached the breakpoint address and
+    // need to be rescheduled
+    while (b_info.to_wakeup)
+    {
+        // retrieve next process to wake up
+        rimozione_lista(b_info.to_wakeup, work);
+
+        // retrieve process descriptor
+        des_proc *dp = des_p(work->id);
+
+        // retrieve process virtual %rsp value
+        natq rsp_v = dp->contesto[I_RSP];
+
+        // retrieve physical address of %rsp
+        natq *rsp = reinterpret_cast<natq*>(trasforma(work->id, rsp_v));
+
+        // decrease it of one
+        (*rsp)--;
+
+        // place the process in the system ready processes list
+        inserimento_lista(pronti, work);
+    }
+
+    //
+    b_info.busy = false;
+
+    // schedule a new process
+    schedulatore();
 }
 
 /**
+ * Called when a breakpoint exception occurs.
  *
+ * @param  tipo    interrupt type (3);
+ * @param  errore  error type (0);
+ * @param  rip     current value address by %rsp.
  */
 extern "C" void c_breakpoint_exception(int tipo, natq errore, vaddr rip)
 {
-	if (!b_info.busy || rip != b_info.rip + 1) {
-		gestore_eccezioni(tipo, errore, rip);
-		return;
-	}
-	if (b_info.waiting) {
-		proc_elem *work;
+    // check if there is any breakpoint in the system global breakpoint
+    // descriptor
+    if (!b_info.busy || rip != b_info.rip + 1)
+    {
+        // if not, the bpadd() primitive was not used: handle the exception and
+        // abort the calling process
+        gestore_eccezioni(tipo, errore, rip);
 
-		rimozione_lista(b_info.waiting, work);
-		des_proc *dp = des_p(work->id);
-		dp->contesto[I_RAX] = esecuzione->id;
-		inserimento_lista(b_info.to_wakeup, esecuzione);
-		inserimento_lista(pronti, work);
-	} else {
-		inserimento_lista(b_info.intercepted, esecuzione);
+        // just return to the caller
+        return;
+    }
+
+    // check if there is any process waiting for a breakpoint
+    if (b_info.waiting)
+    {
+        // if so, we need to notify such processes that an external process has
+        // reached the breakpoint
+        proc_elem *work;
+
+        // retrieve such process proc_elem
+        rimozione_lista(b_info.waiting, work);
+
+        // retrieve process descriptor
+        des_proc *dp = des_p(work->id);
+
+        // notify the waiting process that the current process in execution has
+        // reached the breakpoint address
+        dp->contesto[I_RAX] = esecuzione->id;
+
+        // place the current process in the breakpoint descriptor to_wakeup
+        // queue
+        inserimento_lista(b_info.to_wakeup, esecuzione);
+
+        // insert the waiting process in the system ready processes queue
+        inserimento_lista(pronti, work);
 	}
-	schedulatore();
+    else
+    {
+        // otherwise, just place the current process under execution in the
+        // intercepted processes queue to wait for a process to call the
+        // bpwait() primitive
+        inserimento_lista(b_info.intercepted, esecuzione);
+    }
+
+    // schedule a new process
+    schedulatore();
 }
 
 // SOLUTION 2019-07-03
