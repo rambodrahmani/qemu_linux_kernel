@@ -2052,7 +2052,7 @@ extern "C" void c_bpwait()
  *
  * @param  tipo    exception type (3);
  * @param  errore  exception error (0);
- * @param  p_rip   current %rsp value.
+ * @param  p_rip   address contained in %rsp.
  */
 extern "C" void c_breakpoint_exception(int tipo, natq errore, vaddr *p_rip)
 {

@@ -813,10 +813,12 @@ breakpoint:
 	call salva_stato                # save current process state
 
 # SOLUTION 2019-07-24
+
     movq $3, %rdi                   # exception type
     movq $0, %rsi                   # exception error
-    movq %rsp, %rdx                 # current %rsp value
+    movq %rsp, %rdx                 # %address contained in rsp
     call c_breakpoint_exception     # call C++ exception handler
+
 # SOLUTION 2019-07-24
 
 	call carica_stato               # load new process state

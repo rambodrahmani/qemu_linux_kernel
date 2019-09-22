@@ -1953,38 +1953,79 @@ extern "C" void c_log(log_sev sev, const char* buf, natl quanti)
 	do_log(sev, buf, quanti);
 }
 
-// ( ESAME 2019-07-03
+// EXTENSION 2019-07-03
 
 // traduce l'indirizzo virtuale ind_virt nel corrispondente
 // indirizzo fisico nello spazio virtuale del processo di
 // identificatore id (il processo deve esistere)
 extern "C" faddr trasforma(natl id, vaddr ind_virt)
 {
-	natq d;
-	for (int liv = 4; liv > 0; liv--) {
-		d = get_des(id, liv, ind_virt);
-		if (!extr_P(d)) {
-			flog(LOG_WARN, "impossibile trasformare %lx: non presente a livello %d",
-				ind_virt, liv);
-			return 0;
-		}
-		if (extr_PS(d)) {
-			// pagina di grandi dimensioni
-			natq mask = (1UL << ((liv - 1) * 9 + 12)) - 1;
-			return norm((d & ~mask) | (ind_virt & mask));
-		}
-	}
-	return extr_IND_FISICO(d) | (ind_virt & 0xfff);
+    natq d;
+    for (int liv = 4; liv > 0; liv--)
+    {
+        d = get_des(id, liv, ind_virt);
+
+        if (!extr_P(d))
+        {
+            flog(LOG_WARN, "impossibile trasformare %lx: non presente a livello %d", ind_virt, liv);
+            return 0;
+	    }
+
+        if (extr_PS(d))
+        {
+            // pagina di grandi dimensioni
+            natq mask = (1UL << ((liv - 1) * 9 + 12)) - 1;
+            return norm((d & ~mask) | (ind_virt & mask));
+        }
+    }
+
+    return extr_IND_FISICO(d) | (ind_virt & 0xfff);
 }
-struct b_info {
-	proc_elem *waiting;
-	proc_elem *intercepted;
-	proc_elem *to_wakeup;
-	vaddr rip;
-	natb orig;
-	bool busy;
+
+/**
+ * System global breakpoint descriptor struct.
+ */
+struct b_info
+{
+    /**
+     * Wait queue of the processes which called the bpwait() primitive.
+     */
+    proc_elem *waiting;
+
+    /**
+     * Wait queue for all the process which have reached the breakpoint and
+     * which IDs have not been yet retrieved using the bpwait() primitive.
+     */
+    proc_elem *intercepted;
+
+    /**
+     * Wait queue for all the process which have reached the brakpoint and
+     * which IDs have already been retrieved using the bpwait() and need to
+     * be rescheduled.
+     */
+    proc_elem *to_wakeup;
+
+    /**
+     * Breakpoint virtual address.
+     */
+    vaddr rip;
+
+    /**
+     * Original byte in the replaced instruction.
+     */
+    natb orig;
+
+    /**
+     * True when there is a breakpoint installed.
+     */
+    bool busy;
+
+  // system global breakpoint descriptor
 } b_info;
 
+/**
+ * @param  rip
+ */
 extern "C" void c_bpadd(vaddr rip)
 {
 	des_proc *self = des_p(esecuzione->id);
@@ -2028,7 +2069,63 @@ extern "C" void c_bpwait()
 		schedulatore();
 	}
 }
-//   ESAME 2019-07-03 )
+// EXTENSION 2019-07-03 )
 
-// ( SOLUZIONE 2019-07-03
-//   SOLUZIONE 2019-07-03 )
+// SOLUTION 2019-07-03
+
+/**
+ *
+ */
+extern "C" void c_bpremove()
+{
+	if (b_info.waiting || !b_info.busy) {
+		flog(LOG_WARN, "bpremove() errata");
+		c_abort_p();
+		return;
+	}
+
+	natb *bytes = reinterpret_cast<natb*>(b_info.rip);
+	*bytes = b_info.orig;
+	proc_elem *work;
+	while (b_info.intercepted) {
+		rimozione_lista(b_info.intercepted, work);
+		inserimento_lista(b_info.to_wakeup, work);
+	}
+	inspronti();
+	while (b_info.to_wakeup) {
+		rimozione_lista(b_info.to_wakeup, work);
+		des_proc *dp = des_p(work->id);
+		natq rsp_v = dp->contesto[I_RSP];
+		natq *rsp = reinterpret_cast<natq*>(trasforma(work->id, rsp_v));
+		(*rsp)--;
+		inserimento_lista(pronti, work);
+	}
+	b_info.busy = false;
+	schedulatore();
+}
+
+/**
+ *
+ */
+extern "C" void c_breakpoint_exception(int tipo, natq errore, vaddr rip)
+{
+	if (!b_info.busy || rip != b_info.rip + 1) {
+		gestore_eccezioni(tipo, errore, rip);
+		return;
+	}
+	if (b_info.waiting) {
+		proc_elem *work;
+
+		rimozione_lista(b_info.waiting, work);
+		des_proc *dp = des_p(work->id);
+		dp->contesto[I_RAX] = esecuzione->id;
+		inserimento_lista(b_info.to_wakeup, esecuzione);
+		inserimento_lista(pronti, work);
+	} else {
+		inserimento_lista(b_info.intercepted, esecuzione);
+	}
+	schedulatore();
+}
+
+// SOLUTION 2019-07-03
+

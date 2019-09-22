@@ -73,11 +73,29 @@
 #define TIPO_AB			0x56	// *abort_p
 #define TIPO_L			0x57	// *log
 #define TIPO_TRA		0x58	// trasforma
-// ( ESAME 2019-07-03
-#define TIPO_BPA		0x59	// bpadd
-#define TIPO_BPW		0x5a	// bpwait
-#define TIPO_BPR		0x5b	// bpremove
-//   ESAME 2019-07-03 )
+
+// EXTENSION 2019-07-03
+
+/**
+ * User Primitives interrupt types declarations.
+ */
+
+/**
+ * extern "C" bool bpadd(vaddr rip);
+ */
+#define  TIPO_BPA  0x59
+
+/**
+ * extern "C" natl bpwait();
+ */
+#define  TIPO_BPW  0x5a
+
+/**
+ * extern "C" void bpremove();
+ */
+#define  TIPO_BPR  0x5b
+
+// EXTENSION 2019-07-03
 
 #define IO_TIPO_HDR		0x62	// readhd_n
 #define IO_TIPO_HDW		0x63	// writehd_n
