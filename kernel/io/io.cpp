@@ -17,7 +17,7 @@
 const natl PRIO = 1000;
 
 /**
- *
+ * Privilege level for the I/O Module: System Level.
  */
 const natl LIV = LEV_SYSTEM;
 
@@ -51,12 +51,12 @@ extern "C" void sem_signal(natl sem);
 extern "C" natl sem_ini(int val);
 
 /**
- *
+ * Sends the EOI to the APIC and schedules a new process.
  */
 extern "C" void wfi();
 
 /**
- *
+ * Abort current process under execution.
  */
 extern "C" void abort_p();
 

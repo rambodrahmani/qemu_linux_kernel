@@ -1,10 +1,18 @@
-#define KBD_RESERVED		0x0000
-#define KBD_ESC			0x0001
-#define KBD_1			0x0002
-#define KBD_2			0x0003
-#define KBD_3			0x0004
-#define KBD_4			0x0005
-#define KBD_5			0x0006
+/**
+ * File: keycodes.h
+ *       Keyboard keycodes.
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 30/08/2019.
+ */
+
+#define KBD_RESERVED    0x0000
+#define KBD_ESC         0x0001
+#define KBD_1           0x0002
+#define KBD_2           0x0003
+#define KBD_3           0x0004
+#define KBD_4           0x0005
+#define KBD_5           0x0006
 #define KBD_6			0x0007
 #define KBD_7			0x0008
 #define KBD_8			0x0009
@@ -106,3 +114,4 @@
 #define KBD_RIGHTWIN		0xe05c
 #define KBD_MENU		0xe05d
 #define KBD_PAUSE		0xe17f
+

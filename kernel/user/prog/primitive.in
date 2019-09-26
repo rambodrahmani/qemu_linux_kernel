@@ -45,14 +45,18 @@
 #include <lib.h>
 
 /**
- * User Level process implemented by sample_body.
+ * User Level process implemented by sample_body having priority 20.
  */
 process sample body sample_body(0), 20, LEV_USER;
 
 /**
+ * Each process_body definition corresponds to a void function having a single
+ * integer parameter. This is done for simplicity. The integer parameter can be
+ * omitted in the definition.
+ *
  * Developer harness test shows how to use the getid() primitive.
  *
- * @param  a  
+ * @param  a  process void function argument.
  */
 process_body sample_body(int a)
 {
@@ -74,6 +78,7 @@ process_body sample_body(int a)
     // write the content of buf to the video output
     writeconsole(buf);
 
+    // print pause message and wait for the ESC key
     pause();
 }
 
