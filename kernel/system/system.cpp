@@ -556,6 +556,10 @@ void process_dump(natl id, log_sev sev);
  * All exception are handled in the same way. This function writes a log message
  * containing info about the handled exception, dumps the current process data 
  * which caused the exception data and aborts it.
+ *
+ * @param  type  interrupt type;
+ * @param  err   error type;
+ * @param  eip   value addressed by %rsp.
  */
 extern "C" void handle_exception(int type, natq err, addr eip)
 {
@@ -2502,31 +2506,55 @@ extern "C" void c_panic(const char *msg)
     end_program();
 }
 
-// se riceviamo un non-maskerable-interrupt, fermiamo il sistema
+/**
+ * If a non-maskerable interrupt is received, the system must be shut down.
+ */
 extern "C" void c_nmi()
 {
-	panic("INTERRUZIONE FORZATA");
+    panic("Forced interrupt.");
 }
 
-// restituisce l'indirizzo fisico che corrisponde a ind_virt nello
-// spazio di indirizzamento del processo corrente.
+/**
+ * Returns the physical address corresponding to the given virtual address
+ * inside the addressing space of the currently active process.
+ *
+ * @param  ind_virt  the virtual address to be translated into physical address.
+ *
+ * @return  the retrieved physical address or 0 if the virtual address is not
+ *          successfully translated.
+ */
 extern "C" faddr c_trasforma(vaddr ind_virt)
 {
-	natq d;
-	for (int liv = 4; liv > 0; liv--) {
-		d = get_des(execution->id, liv, ind_virt);
-		if (!extr_P(d)) {
-			flog(LOG_WARN, "impossibile trasformare %lx: non presente a livello %d",
-				ind_virt, liv);
-			return 0;
-		}
-		if (extr_PS(d)) {
-			// pagina di grandi dimensioni
-			natq mask = (1UL << ((liv - 1) * 9 + 12)) - 1;
-			return norm((d & ~mask) | (ind_virt & mask));
-		}
-	}
-	return extr_IND_FISICO(d) | (ind_virt & 0xfff);
+    // memory table descriptor
+    natq d;
+
+    // loop through available memory tables levels starting from level 4,
+    // for each level
+    for (int liv = 4; liv > 0; liv--)
+    {
+        // get the entry descriptor for the given virtual address
+        d = get_des(execution->id, liv, ind_virt);
+
+        // check if the entry P bit is set
+        if (!extr_P(d))
+        {
+            // if not, the entry is not available, print a warning log message
+            flog(LOG_WARN, "Unable to transform %lx: not present at level %d", ind_virt, liv);
+
+            // return 0
+            return 0;
+        }
+
+        // if the P bit is set
+        if (extr_PS(d))
+        {
+            // pagina di grandi dimensioni
+            natq mask = (1UL << ((liv - 1) * 9 + 12)) - 1;
+            return norm((d & ~mask) | (ind_virt & mask));
+        }
+    }
+
+    return extr_IND_FISICO(d) | (ind_virt & 0xfff);
 }
 
 /**
@@ -2685,7 +2713,8 @@ error:
 void gdb_breakpoint() {}
 
 /**
- *
+ * Defined in system/sysyem.s calls an interrupt TIPO_A which will led to
+ * a call to c_activate_p(...).
  */
 extern "C" natl activate_p(void f(int), int a, natl prio, natl liv);
 
@@ -2699,6 +2728,7 @@ extern "C" void terminate_p();
  */
 void main_sistema(int n)
 {
+    // I/O module sync semaphore
     natl sync_io;
 
     // ( caricamento delle tabelle e pagine residenti degli spazi condivisi ()
@@ -2710,24 +2740,36 @@ void main_sistema(int n)
     }
  	// )
 
-	gdb_breakpoint();
+    gdb_breakpoint();
 
-	// ( inizializzazione del modulo di io
-	flog(LOG_INFO, "creazione del processo main I/O...");
-	sync_io = sem_ini(0);
-	if (sync_io == 0xFFFFFFFF) {
-		flog(LOG_ERR, "Impossibile allocare il semaforo di sincr per l'IO");
-		goto error;
-	}
-	// occupiamo l'entrata del timer
-	aggiungi_pe(ESTERN_BUSY, 2);
-	if (activate_p(swap_dev.sb.io_entry, sync_io, MAX_PRIORITY, LEV_SYSTEM) == 0xFFFFFFFF) {
-		flog(LOG_ERR, "impossibile creare il processo main I/O");
-		goto error;
-	}
-	flog(LOG_INFO, "attendo inizializzazione modulo I/O...");
-	sem_wait(sync_io);
-	// )
+    // create I/O module process
+    flog(LOG_INFO, "Creating I/O Module main process.");
+
+    // initialize I/O module synchronization semaphore
+    sync_io = sem_ini(0);
+
+    if (sync_io == 0xFFFFFFFF)
+    {
+        flog(LOG_ERR, "Unable to allocate the semaphore for I/O Module synchronization.");
+        goto error;
+    }
+
+    // occupiamo l'entrata del timer
+    aggiungi_pe(ESTERN_BUSY, 2);
+
+    // try to activate the I/O module process
+    if (activate_p(swap_dev.sb.io_entry, sync_io, MAX_PRIORITY, LEV_SYSTEM) == 0xFFFFFFFF)
+    {
+        // in case of error, print a warning log message
+        flog(LOG_ERR, "Unable to create I/O module main process.");
+        goto error;
+    }
+
+    // waiting for the I/O module initialization to be complted
+    flog(LOG_INFO, "Waiting for the I/O module initialization to be complted.");
+
+    // wait I/O module synchronization sempahore
+    sem_wait(sync_io);
 
 	// ( creazione del processo start_utente
 	flog(LOG_INFO, "creazione del processo start_utente...");

@@ -773,6 +773,11 @@ a_log:
 // 0.
 //
 
+#-------------------------------------------------------------------------------
+# The current process state is saved a new process state is loaded because the
+# C++ implementation (handle_exception) will abort che current calling process.
+#-------------------------------------------------------------------------------
+
 #*******************************************************************************
 # Interrupt 0 -- Divide Error
 # The divide-error fault occurs during a DIV or an IDIV instruction when the
@@ -783,7 +788,7 @@ divide_error:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state                # save curren process state
     movq  $0, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -813,12 +818,12 @@ debug:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
-    movq  $1, %rdi
-    movq  $0, %rsi
-    movq  (%rsp), %rdx
-    call  handle_exception
-    call  load_state
+    call  save_state                # save curren process state
+    movq  $1, %rdi                  # interrupt type
+    movq  $0, %rsi                  # error type
+    movq  (%rsp), %rdx              # value addressed by %rsp
+    call  handle_exception          # call C++ implementation
+    call  load_state                # load new process state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -834,9 +839,9 @@ nmi:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
-    call  c_nmi
-    call  load_state
+    call  save_state                # save current process state
+    call  c_nmi                     # call C++ implementation
+    call  load_state                # load new process state
     iretq
     .cfi_endproc
 #-------------------------------------------------------------------------------
@@ -860,7 +865,7 @@ breakpoint:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state                # save curren process state
     movq  $3, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -885,7 +890,7 @@ overflow:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state                # save curren process state
     movq  $4, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -907,7 +912,7 @@ bound_re:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state                # save curren process state
     movq  $5, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -932,7 +937,7 @@ invalid_opcode:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state                # save curren process state
     movq  $6, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -957,7 +962,7 @@ dev_na:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state                # save curren process state
     movq  $7, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -1853,8 +1858,8 @@ sem_wait:
 #-------------------------------------------------------------------------------
 activate_p:
     .cfi_startproc
-    int $TIPO_A
-    ret
+    int $TIPO_A             # call interrupt TIPO_A
+    ret                     # return to the caller
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
@@ -1880,8 +1885,8 @@ panic:
 #-------------------------------------------------------------------------------
 salta_a_main:
     .cfi_startproc
-    call load_state     // carichiamo tr
-    iretq				// torniamo al chiamante "trasformati" in processo
+    call load_state             # load the TR
+    iretq				        # return to the caller as a process
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
