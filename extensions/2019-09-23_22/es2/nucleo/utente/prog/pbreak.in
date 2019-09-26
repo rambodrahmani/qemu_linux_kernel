@@ -1,0 +1,80 @@
+/*
+ * Mailbox
+ */
+
+#include <sys.h>
+#include <lib.h>
+
+process bad1 body bad(1), 40, LIV_UTENTE;
+process bad2 body bad(2), 16, LIV_UTENTE;
+process usr1 body usr(2), 10, LIV_UTENTE;
+process usr2 body usr(3), 23, LIV_UTENTE;
+process usr3 body usr(1), 22, LIV_UTENTE;
+process dbg1  body debugger(usr1), 20, LIV_UTENTE;
+process dbg2  body debugger(usr3), 6, LIV_UTENTE;
+process last body last_body(0), 1, LIV_UTENTE;
+
+semaphore sync value 0;
+semaphore sync2 value 0;
+
+natq nframes;
+
+#define MSG(fmt, ...)	do { printf("proc %d: " fmt, getpid(), ## __VA_ARGS__); } while (0)
+
+process_body bad(int a)
+{
+	asm("int3");
+	MSG("processo errato");
+}
+
+void catch_me(int a)
+{
+	MSG("eseguo catch_me(%d)", a);
+}
+
+vaddr bad_addr[] = { 1000, 0xffffc00000000000 };
+
+process_body badb(int a)
+{
+}
+
+process_body usr(int a)
+{
+	switch (a % 4) {
+	case 1:
+		sem_wait(sync);
+		break;
+	case 3:
+		sem_wait(sync2);
+		break;
+	}
+	for (int i = 0; i < 2; i++) {
+		MSG("prima di catch_me()");
+		catch_me(i);
+		//MSG("dopo catch_me()");
+	}
+}
+
+process_body debugger(int a)
+{
+	MSG("debugger di %d: chiamo bpattach", a);
+	if (!bpattach(a, reinterpret_cast<natq>(catch_me))) {
+		MSG("debugger di %d: occupato", a);
+	} else {
+		if (a == usr3) {
+			sem_signal(sync);
+			sem_signal(sync2);
+		}
+		for (int i = 0; i < 2; i++) {
+			bpwait();
+			MSG("debugger di %d: breapoint intercettato", a);
+			bpcontinue();
+		}
+		bpdetach();
+	}
+}
+
+process_body last_body(int a)
+{
+	pause();
+}

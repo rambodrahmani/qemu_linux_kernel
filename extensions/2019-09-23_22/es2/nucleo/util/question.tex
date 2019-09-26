@@ -1,0 +1,56 @@
+Vogliamo fornire ai processi la possibilit\`a di bloccare l'esecuzione di un processo a scelta, ogni volta che questo passa da una certa istruzione.
+Per far questo forniamo alcune primitive. Con la primitiva \verb|bpattach(natl id, vaddr rip)| un processo {\em master} 
+installa un breakpoint (istruzione \verb|int3|, codice operativo \verb|0xCC|) 
+all'indirizzo \verb|rip| nella memoria virtuale del processo \verb|id|, che diventa {\em slave}. Da quel momento in poi il processo slave si blocca se passa da \verb|rip|.
+Nel frattempo, usando la primitiva \verb|bpwait()|, il processo master
+pu\`o sospendersi in attesa che lo slave passi dal breakpoint.
+A quel punto il processo master pu\`o invocare la primitiva \verb|bpcontinue()| per permettere al processo
+slave di continuare la propria esecuzione come se non fosse mai stato intercettato. Se lo slave ripassa dal breakpoint
+viene intercettato nuovamente e il meccanismo di ripete.
+Infine, con la primitiva \verb|bpdetach()|, il processo master rimuove il breakpoint e, se necessario, risveglia un'ultima volta lo slave.
+
+Si noti che  processi che non sono slave non devono essere intercettati. 
+Inoltre, se un processo esegue \verb|int3| senza che ci\`o sia stato richiesto da un master, il processo
+deve essere abortito.
+
+Aggiungiamo i seguenti campi ai descrittori di processo:
+\begin{verbatim}
+    des_proc *bp_master;
+    des_proc *bp_slave;
+    vaddr	bp_addr;
+    natb	bp_orig;
+    natl	bp_slave_id;
+    struct proc_elem  *bp_waiting;
+\end{verbatim}
+dove: \verb|bp_master| punta al processo master di questo processo (nullo se il
+processo non ha un master); \verb|bp_slave| punta al processo slave di
+questo processo (nullo se il processo non ha uno slave);
+\verb|bp_addr| e \verb|bp_orig| sono sinificativi
+solo per i processi slave e contengono, rispettivamente,
+l'indirizzo a cui \`e installato il breakpoint e il byte
+originariamente contenuto a quell'indirizzo; 
+il campo \verb|bp_slave_id| \`e significativo solo per il processo
+master e contiene l'id dello slave;
+\verb|bp_waiting| \`e una coda su cui i processi master e slave si possono
+bloccare: il master su quella dello slave e viceversa.
+
+Si modifichino i file \verb|sistema/sistema.s| e \verb|sistema/sistema.cpp| per implementare le seguenti primitive
+(abortiscono il processo in caso di errore):
+\begin{itemize}
+\item 	\verb|bool bpattach(natl id, vaddr rip)|: (tipo 0x59, gi\`a realizzata): 
+	se il processo che invoca la primitiva non \`e uno slave e il processo \verb|id| esiste e non \`e gi\`a uno slave o un master,
+	installa il breakpoint all'indirizzo \verb|rip| e restituisce \verb|true|, altrimenti restituisce \verb|false|;
+        \`e un errore se \verb|rip| non appartiene all'intervallo $[\mathtt{ini\_utn\_c}, \mathtt{fin\_utn\_c})$ (zona utente/condivisa)
+	o se il processo \`e gi\`a master o cerca di diventare master di se stesso.
+	\item   \verb|void bpwait()|: (tipo 0x5a, gi\`a realizzata): attende che il processo slave passi dal breakpoint;
+	\`e un errore invocare questa primitiva se il processo non \`e master;
+	\item \verb|void bpcontinue()|: (tipo 0x5c, da realizzare):  permette allo slave di proseguire l'esecuzione, facendo
+	in modo che venga intercettato nuovamente se ripassa dal breakpoint; \`e un errore invocare questa primitiva se il
+	processo non \`e master o se lo slave non \`e bloccato sul breakpoint;
+\item   \verb|void bpdetach()| (tipo 0x5b, gi\`a realizzata): disfa tutto ci\`o che ha fatto la \verb|bpattach()| e risveglia
+	eventualmente il processo slave; \`e un errore invocare questa primitiva se il processo non \`e master;
+\end{itemize}
+
+{\bf Suggerimento}: per realizzare la \verb|bpcontinue()| si deve temporaneamente rimuovere il breakpoint, quindi
+reinserirlo non appena lo slave ha eseguito una istruzione. Per intercettare questo evento si pu\`o abilitare
+temporaneamente il single-step trap nel processo slave.
