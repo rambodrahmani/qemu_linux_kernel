@@ -17,11 +17,11 @@
 
 void internal_free(addr address, size_t size)
 {
-    // size can be 0, in which case no allocate will take place
+    // size can be 0, in which case no allocation will take place
     if (size == 0) return;
 
-    // address, on the other hand, can not be zero
-    if (address == 0) panic("free_interna(0)");
+    // starting address, on the other hand, can not be zero
+    if (address == 0) panic("Invalid starting address for internal_free() call.");
 
     // the newly freed memory space must be inserted in the available free
     // heap memory space list (ordered by starting address)
