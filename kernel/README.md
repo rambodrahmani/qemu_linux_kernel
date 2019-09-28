@@ -7,7 +7,8 @@ The Kernel is made up of the following modules
 3. user
 
 The `system` module must be loaded by the boot-loader while the `io` and the
-`user` modules have to be loaded from the swap partition.
+`user` modules have to be loaded from the swap partition. This is done by the
+`system` module once it has finished its startup sequence.
 
 The `io` module contains the external processes concerning the I/O devices:
 

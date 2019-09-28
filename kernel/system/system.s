@@ -50,43 +50,96 @@ start:
     hlt
 
 #-------------------------------------------------------------------------------
-// macro per estrarre la base da un descrittore di TSS
-// si aspetta l indirizzo del segmento in %rax e
-// lascia il risultato in %rbx
-.macro estrai_base
-    movl 8(%eax), %ebx
-    shlq $32, %rbx      	// bit 63:32 nella parte alta di %rbx
-    movb 7(%eax), %bh	// bit 31:24 della base in %bh
-    movb 4(%eax), %bl	// bit 23:16 della base in %bl
-    shll $16, %ebx		// bit 31:16 nella parte alta di %ebx
-    movw 2(%eax), %bx	// bit 15:0 nella parte basse di %ebx
+# Returns in %rbx the Base Address of the TSS descriptor addressed in %rax.
+# Keep in mind that in 64-bit mode, task structure and task state are similar to
+# those in protected mode. However, the task switchingmechanism available in
+# protected mode is not supported in 64-bit mode. Task management and switching
+# must beperformed by software.
+#
+# In 64-bit mode, the TSS descriptor is expanded to 16 bytes
+#
+# 31                                       13 12          8 7                  0
+# |____________________________________________________________________________|
+# |                                           |             |                  |
+# |        Reserved                           |     0       |     Reserved     |
+# |                                           |             |                  |
+# |----------------------------------------------------------------------------|
+#
+# 31                                     15                                    0
+# |____________________________________________________________________________|
+# |                                                                            |
+# |                             Base Address: 63-32                            |
+# |                                                                            |
+# |----------------------------------------------------------------------------|
+#
+# 31            24 23 22 21 20 19       15                   7                 0
+# |____________________________________________________________________________|
+# |                 |  |  |  |A |  |                         |                 |
+# |   Base 31:24    |G |0 |0 |V |  |                         |   Base 23:16    |
+# |                 |  |  |  |L |  |                         |                 |
+# |----------------------------------------------------------------------------|
+#
+#
+# 31                                  16 15                                    0
+# |____________________________________________________________________________|
+# |                                      |                                     |
+# |         Base Address 15:00           |         Segment Limit 15:00         |
+# |                                      |                                     |
+# |----------------------------------------------------------------------------|
+#-------------------------------------------------------------------------------
+.macro extract_base
+    movl 8(%eax), %ebx          
+    shlq $32, %rbx              # bit 63:32 -> %rbx
+    movb 7(%eax), %bh           # bit 31:24 -> %bh
+    movb 4(%eax), %bl           # bit 23:16 -> %bl
+    shll $16, %ebx              # bit 31:16 -> %ebx
+    movw 2(%eax), %bx           # bit 15:0  -> %ebx
 .endm
 
 #-------------------------------------------------------------------------------
+# Returns in %rbx the GDT gate offset for the given process ID (in %rbx).
 .macro conv_id_tss
     shlq $4, %rbx
     addq $(des_tss - gdt), %rbx
 .endm
 
 #-------------------------------------------------------------------------------
-# Registers offsets inside the process descriptor.
-.set CR3,104
-.set RAX,CR3+8
-.set RCX,CR3+16
-.set RDX,CR3+24
-.set RBX,CR3+32
-.set RSP,CR3+40
-.set RBP,CR3+48
-.set RSI,CR3+56
-.set RDI,CR3+64
-.set R8, CR3+72
-.set R9, CR3+80
-.set R10,CR3+88
-.set R11,CR3+96
-.set R12,CR3+104
-.set R13,CR3+112
-.set R14,CR3+120
-.set R15,CR3+128
+# Registers offsets inside the process descriptor context field.
+# struct des_proc
+# {
+#     struct __attribute__ ((packed))
+#     {
+#         natl riservato1;                  +4
+#         vaddr system_stack;               +8
+#         natq disp1[2];                    +16
+#         natq riservato2;                  +8
+#         natq disp2[7];                    +56
+#         natq riservato3;                  +8
+#         natw riservato4;                  +2
+#         natw iomap_base;                  +2
+#     };
+#     faddr cr3;
+#     natq context[N_REG];
+#     natl cpl;
+# };
+#-------------------------------------------------------------------------------
+.set CR3, 104
+.set RAX, CR3+8
+.set RCX, CR3+16
+.set RDX, CR3+24
+.set RBX, CR3+32
+.set RSP, CR3+40
+.set RBP, CR3+48
+.set RSI, CR3+56
+.set RDI, CR3+64
+.set R8,  CR3+72
+.set R9,  CR3+80
+.set R10, CR3+88
+.set R11, CR3+96
+.set R12, CR3+104
+.set R13, CR3+112
+.set R14, CR3+120
+.set R15, CR3+128
 
 #-------------------------------------------------------------------------------
 # Saves the CPU state to the process descriptor relative to the process
@@ -109,7 +162,7 @@ save_state:
     movw (%rax), %bx                # copy process id
     conv_id_tss                     # retrieve gdt offset using process id
     leaq gdt(%rbx), %rax            # retrieve gdt entry address
-    estrai_base                     # extract TSS descriptor base into %rbx
+    extract_base                    # extract TSS descriptor base into %rbx
 
     movq (%rsp), %rax               # retrieve %rax from stack
     movq %rax, RAX(%rbx)            # save %rax state
@@ -159,7 +212,7 @@ load_state:
 	conv_id_tss
 	movq %rbx, %rcx
 	leaq gdt(%rbx), %rax
-	estrai_base
+	extract_base
 
 	// carichiamo TR con l id del nuovo processo
 	// (in modo che il meccanismo delle interruzioni usi la
@@ -311,7 +364,7 @@ des_p:
 	xorq %rbx, %rbx
 	testb $pres_bit, 5(%rax)
 	jz 1f
-	estrai_base
+	extract_base
 1:	movq %rbx, %rax
 	popq %rbx
 	.cfi_adjust_cfa_offset -8
@@ -338,13 +391,14 @@ id_to_tss:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-# Provides a process ID for the given TSS offset.
 .GLOBAL tss_to_id
+#-------------------------------------------------------------------------------
+# Provides the process ID for the given process TSS offset.
 #-------------------------------------------------------------------------------
 tss_to_id:
     .cfi_startproc
     movq %rdi, %rax                     # TSS offset -> %rax
-    subq $(des_tss - gdt), %rax         
+    subq $(des_tss - gdt), %rax         #
     shrq $4, %rax
     ret
     .cfi_endproc

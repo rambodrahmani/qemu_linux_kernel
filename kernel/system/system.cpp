@@ -60,7 +60,8 @@ typedef natq tab_entry;
  */
 struct des_proc
 {
-    // hardware required
+    // hardware required: packed means it will use the smallest possible space
+    // for struct Ball - i.e. it will cram fields together without padding
     struct __attribute__ ((packed))
     {
         natl riservato1;
