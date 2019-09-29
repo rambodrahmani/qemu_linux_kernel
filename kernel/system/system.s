@@ -98,7 +98,9 @@ start:
 
 #-------------------------------------------------------------------------------
 # Returns in %rbx the GDT gate offset for the given process ID (in %rbx).
-.macro conv_id_tss
+# TSS_Offset = Process_ID * 16.
+#-------------------------------------------------------------------------------
+.macro conv_id_to_tss
     shlq $4, %rbx
     addq $(des_tss - gdt), %rbx
 .endm
@@ -147,6 +149,7 @@ start:
 # be corrupted. All modules accessing the system modules using the interrupt
 # mechanism must go through this function. All registers content are saved to
 # with the state they had just before calling save_state
+#-------------------------------------------------------------------------------
 save_state:
     .cfi_startproc
     .cfi_def_cfa_offset 8
@@ -160,7 +163,7 @@ save_state:
     movq execution, %rax            # retrieve proc_elem descriptor 
     movq $0, %rbx
     movw (%rax), %bx                # copy process id
-    conv_id_tss                     # retrieve gdt offset using process id
+    conv_id_to_tss                  # retrieve gdt offset using process id
     leaq gdt(%rbx), %rax            # retrieve gdt entry address
     extract_base                    # extract TSS descriptor base into %rbx
 
@@ -201,56 +204,76 @@ save_state:
 # relative to the process currently pointed by 'execution' (system/system.cpp).
 # All processes returning from the system module after an interrupt must go
 # through this function. All CPU registers will be affected by this method.
+#-------------------------------------------------------------------------------
 load_state:
-	.cfi_startproc
-	.cfi_def_cfa_offset 8
-	// otteniamo la base del des_proc del processo in execution
-	// (come per save_state)
-	movq execution, %rdx
-	movq $0, %rbx
-	movw (%rdx), %bx
-	conv_id_tss
-	movq %rbx, %rcx
-	leaq gdt(%rbx), %rax
-	extract_base
+    .cfi_startproc
+    .cfi_def_cfa_offset 8
 
-	// carichiamo TR con l id del nuovo processo
-	// (in modo che il meccanismo delle interruzioni usi la
-	// pila sistema del nuovo processo)
-	andb $0b11111101, 5(%rax)	// reset del bit BUSY
-					// (richiesto dal processore
-					// per compatibilita* con il modo
-					// a 32 bit)
+# retrieve current process under execution TSS base
+    movq execution, %rdx        # current process under execution address -> %rdx
+    movq $0, %rbx               # zero out %rbx
+    movw (%rdx), %bx            # current process under execution Id -> %bx
+    conv_id_to_tss              # current process under execution TSS offset -> %rbx
+    movq %rbx, %rcx
+    leaq gdt(%rbx), %rax
+    extract_base                # extract current process under execution TSS base
 
-    # load new process TR ID
-    ltr %cx
+# reset BUSY bit: required for 32-bit compatibility
+# TSS Descriptor for 32-bit TSS
+#
+#  31                23                15                7               0
+# +-----------------+-+-+-+-+---------+-+-----+---------+-----------------+
+# |                 | | | |A| LIMIT   | |     |  TYPE   |                 |
+# |   BASE 31..24   |G|0|0|V|         |P| DPL |         |   BASE 23..16   | 4
+# |                 | | | |L|  19..16 | |     |0|1|0|B|1|                 |
+# |-----------------+-+-+-+-+---------+-+-----+-+-+-+-+-+-----------------|
+# |                                   |                                   |
+# |             BASE 15..0            |             LIMIT 15..0           | 0
+# |                                   |                                   |
+# +-----------------+-----------------+-----------------+-----------------+
+#
+# The B-bit in the type field indicates whether the task is busy. A type code of
+# 9 indicates a non-busy task; a type code of 11 indicates a busy task. Tasks
+# are not reentrant. The B-bit allows the processor to detect an attempt to
+# switch to a task that is already busy. 
 
-	popq %rcx   //ind di ritorno, va messo nella nuova pila
-	.cfi_adjust_cfa_offset -8
-	.cfi_register rip, rcx
+    andb $0b11111101, 5(%rax)
 
-	// nuovo valore per cr3
-	movq CR3(%rbx), %r10
-	movq %cr3, %rax
-	cmpq %rax, %r10
-	je 1f			// evitiamo di invalidare il TLB
-				// se cr3 non cambia
-	movq %r10, %rax
-	movq %rax, %cr3		// il TLB viene invalidato
+    ltr %cx                     # load new process ID in the CPU TR
+
+    popq %rcx                   # place return address in the new stack
+    .cfi_adjust_cfa_offset -8
+    .cfi_register rip, rcx
+
+# load the new address for the CR3 register: keep in mind to check if the TLB
+# has to be invalidated.
+# A translation lookaside buffer (TLB) is a memory cache that is used to reduce
+# the time taken to access a user memory location. It is a part of the chip's
+# memory-management unit (MMU). The TLB stores the recent translations of
+# virtual memory to physical memory and can be called an address-translation
+# cache. A TLB may reside between the CPU and the CPU cache, between CPU cache
+# and the main memory or between the different levels of the multi-level cache.
+# The majority of desktop, laptop, and server processors include one or more
+# TLBs in the memory-management hardware, and it is nearly always present in any
+# processor that utilizes paged or segmented virtual memory. 
+    movq CR3(%rbx), %r10
+    movq %cr3, %rax
+    cmpq %rax, %r10
+    je 1f               # if the new CR3 address is equal to the previous one,
+                        # do not invalidate the TLB
+    movq %r10, %rax
+    movq %rax, %cr3     # otherwise, invalidate the TLB
 1:
 
-	// anche se abbiamo cambiato cr3 siamo sicuri che
-	// l'esecuzione prosegue da qui, perche' ci troviamo dentro
-	// la finestra FM che e* comune a tutti i processi
-	movq RSP(%rbx), %rsp    //cambiamo pila
-	pushq %rcx              //rimettiamo l indirizzo di ritorno
-	.cfi_adjust_cfa_offset 8
-	.cfi_offset rip, -8
+# Even though the CR3 address has changed, we are sure that the executiong will
+# continue from this point because we are currently using the Physical Memory
+# window
+    movq RSP(%rbx), %rsp        # exchange stack
+    pushq %rcx                  # restore return address
+    .cfi_adjust_cfa_offset 8
+    .cfi_offset rip, -8
 
-	// se il processo precedente era terminato o abortito la sua pila sistema
-	// non era stata distrutta, in modo da permettere a noi di continuare
-	// ad usarla. Ora che abbiamo cambiato pila possiamo disfarci della
-	// precedente.
+# destroy previous process stack
     cmpq $0, ultimo_terminato
     je 1f
     call distruggi_pila_precedente
@@ -278,54 +301,57 @@ load_state:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
+.set p_dpl_type, 0b10001001 # p=1, dpl=00, type=1001=tss ready
+.set pres_bit,   0b10000000
+.GLOBAL allocate_tss
+#-------------------------------------------------------------------------------
 # Used when creating a new process, allocates a new empty TSS descriptor,
 # initializes the TSS using the given process descriptor and returns the offset
 # of the newly allocated TSS which can be used to identify the process.
-.set p_dpl_type, 0b10001001 //p=1,dpl=00,type=1001=tss ready
-.set pres_bit,   0b10000000
-.GLOBAL allocate_tss
 #-------------------------------------------------------------------------------
 allocate_tss:
     movq last_tss, %rdx
 
+# loop through TSS descriptors and use the P bit to find an empty entry to be
+# used for the new process
 iter_tss:
     .cfi_startproc
-    // usiamo il bit di presenza nel descrittore per
-    // distiunguere i descrittori liberi da quelli allocati
     testb $pres_bit, 5(%rdx)
-	jz set_entry_tss	// libero, saltiamo all inizializzazione
-	addq $16, %rdx		// occupato, passiamo al prossimo
-	cmpq $end_gdt, %rdx
-	jne advance_tss
-	movq $des_tss, %rdx
+    jz set_entry_tss            # empty, jump to initialization
+    addq $16, %rdx              # not empty, check the next one
+    cmpq $end_gdt, %rdx
+    jne advance_tss
+    movq $des_tss, %rdx
 
+# no empty entry found
 advance_tss:
-	cmpq last_tss, %rdx
-	jne iter_tss
-	movq $0, %rax		// terminati, restituiamo 0
-	jmp end_tss
+    cmpq last_tss, %rdx     # check if the last TSS entry has been reached
+    jne iter_tss            # if not, check the next one
+    movq $0, %rax           # otherwise, return 0
+    jmp end_tss             # return
 
+# TSS entry initialization
 set_entry_tss:
-	movq %rdx, last_tss
-	movw $DIM_DESP, (%rdx) 	//[15:0] = limit[15:0]
-	decw (%rdx)
-	movq %rdi, %rax
-	movw %ax, 2(%rdx)	//[31:16] = base[15:0]
-	shrq $16,%rax
-	movb %al, 4(%rdx)	//[39:32] = base[24:16]
-	movb $p_dpl_type, 5(%rdx)	//[47:40] = p_dpl_type
-	movb $0, 6(%rdx)	//[55:48] = 0
-	movb %ah, 7(%rdx)	//[63:56] = base[31:24]
-	shrq $16, %rax
-	movl %eax, 8(%rdx) 	//[95:64] = base[63:32]
-	movl $0, 12(%rdx)	//[127:96] = 0
+    movq %rdx, last_tss
+    movw $DIM_DESP, (%rdx)      # [15:0] = limit[15:0]
+    decw (%rdx)
+    movq %rdi, %rax
+    movw %ax, 2(%rdx)           # [31:16] = base[15:0]
+    shrq $16,%rax
+    movb %al, 4(%rdx)           # [39:32] = base[24:16]
+    movb $p_dpl_type, 5(%rdx)   # [47:40] = p_dpl_type
+    movb $0, 6(%rdx)            # [55:48] = 0
+    movb %ah, 7(%rdx)           # [63:56] = base[31:24]
+    shrq $16, %rax
+    movl %eax, 8(%rdx)          # [95:64] = base[63:32]
+    movl $0, 12(%rdx)           # [127:96] = 0
 
-	movq %rdx,%rax
-	subq $gdt, %rax
+    movq %rdx,%rax
+    subq $gdt, %rax
 
 end_tss:
-	retq
-	.cfi_endproc
+    retq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 // rilascia_tss: usata alla terminazione di un processo
@@ -342,58 +368,62 @@ rilascia_tss:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-// dato l identificatore di un processo,
-// ne restituisce il puntatore al descrittore
-// (0 se non allocato)
 .GLOBAL des_p
 #-------------------------------------------------------------------------------
+# Returns the process descriptor for the given process ID, if not empty.
+# The Process ID is placed as first and only argument in %rdi.
+#-------------------------------------------------------------------------------
 des_p:
-	.cfi_startproc
-	.cfi_def_cfa_offset 8
-	pushq %rbx
-	.cfi_adjust_cfa_offset 8
-	.cfi_offset rbx, -16
-	xorq %rbx, %rbx
-	cmpq $0, %rdi
-	jl 1f
-	cmpq $NUM_TSS, %rdi
-	jge 1f
-	movq %rdi, %rbx
-	conv_id_tss
-	leaq gdt(%rbx), %rax
-	xorq %rbx, %rbx
-	testb $pres_bit, 5(%rax)
-	jz 1f
-	extract_base
-1:	movq %rbx, %rax
-	popq %rbx
-	.cfi_adjust_cfa_offset -8
-	.cfi_restore rbx
-	retq
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 8
+    pushq %rbx                      # use %rbx as work register
+    .cfi_adjust_cfa_offset 8
+    .cfi_offset rbx, -16
+    xorq %rbx, %rbx                 # zero out %rbx
+    cmpq $0, %rdi                   # check if the given process ID is < 0
+    jl 1f                           # if not, return
+    cmpq $NUM_TSS, %rdi             # check if the process ID is > NUM_TSS
+    jge 1f                          # if so, return
+    movq %rdi, %rbx                 # move the process ID in %rbx
+    conv_id_to_tss                  # call macro to retrieve TSS offset
+    leaq gdt(%rbx), %rax            # load TSS entry in %rax
+    xorq %rbx, %rbx                 # zero out %rbx
+    testb $pres_bit, 5(%rax)        # check the entry present bit
+    jz 1f                           # if not present, return
+    extract_base                    # entract TSS entry base
+1:  movq %rbx, %rax                 # move TSS entry base into %rax for return
+    popq %rbx                       # restore %rbx work register content
+    .cfi_adjust_cfa_offset -8
+    .cfi_restore rbx
+    retq                            # return to the caller
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 .GLOBAL id_to_tss
 #-------------------------------------------------------------------------------
+# API to the conv_id_to_tss macro for system.cpp. Returns the TSS offset for the
+# given process ID. The macro expects the process ID in the %rbx register.
+#-------------------------------------------------------------------------------
 id_to_tss:
-	.cfi_startproc
-	.cfi_def_cfa_offset 8
-	pushq %rbx
-	.cfi_adjust_cfa_offset 8
-	.cfi_offset rbx, -16
-	movq %rdi, %rbx
-	conv_id_tss
-	movq %rbx, %rax
-	popq %rbx
-	.cfi_adjust_cfa_offset -8
-	.cfi_restore rbx
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 8
+    pushq %rbx                      # use %rbx as work register
+    .cfi_adjust_cfa_offset 8
+    .cfi_offset rbx, -16
+    movq %rdi, %rbx                 # move process id to the %rbx register
+    conv_id_to_tss                  # call macro
+    movq %rbx, %rax                 # return macro result
+    popq %rbx                       # restore work register
+    .cfi_adjust_cfa_offset -8
+    .cfi_restore rbx
+    ret                             # return to the caller
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 .GLOBAL tss_to_id
 #-------------------------------------------------------------------------------
 # Provides the process ID for the given process TSS offset.
+# Process_ID = TSS_Offset / 16.
 #-------------------------------------------------------------------------------
 tss_to_id:
     .cfi_startproc
@@ -404,15 +434,26 @@ tss_to_id:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-// dato un indirizzo virtuale (come parametro) usa l istruzione invlpg per
-// eliminare la corrispondente traduzione dal TLB
-.GLOBAL invalida_entrata_TLB //
+.GLOBAL invalida_entrata_TLB
+#-------------------------------------------------------------------------------
+# Invalidates any translation lookaside buffer (TLB) entries specified with the
+# source operand. The source operand is a memory address. The processor
+# determines the page that contains that address and flushes all TLB entries for
+# that page. The INVLPG instruction is a privileged instruction. When the
+# processor is running in protected mode, the CPL must be 0 to execute this
+# instruction. The INVLPG instruction normally flushes TLB entries only for the
+# specified page; however, in some cases, it may flush more entries, even the
+# entire TLB. The instruction invalidates TLB entries associated with the
+# current PCID and may or may not do so for TLB entries associated with other
+# PCIDs. (If PCIDs are disabled — CR4.PCIDE = 0 — the current PCID is 000H.) The
+# instruction also invalidates any global TLB entries for the specified page,
+# regardless of PCID.
 #-------------------------------------------------------------------------------
 invalida_entrata_TLB:
-	.cfi_startproc
-	invlpg (%rdi)
-	ret
-	.cfi_endproc
+    .cfi_startproc
+    invlpg (%rdi)
+    ret
+    .cfi_endproc
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                TROJAN HORSES                               //
@@ -425,6 +466,7 @@ invalida_entrata_TLB:
 
 #-------------------------------------------------------------------------------
 # Process shutdown in case of trojan horse.
+#-------------------------------------------------------------------------------
 violazione:
     movq   $2, %rdi
     movabs $param_err, %rsi
@@ -441,14 +483,15 @@ violazione:
 # aborted.
 # Parameters:
 #  - reg: assembly operand containing the address to be checked.
+#-------------------------------------------------------------------------------
 .macro trojan_horse reg
-	cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
-	je 1f
-	movabs $0xffff000000000000, %rax
-	testq \reg, %rax
-	jnz 1f
-	movq \reg, %rax
-	jmp violazione
+    cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
+    je 1f
+    movabs $0xffff000000000000, %rax
+    testq \reg, %rax
+    jnz 1f
+    movq \reg, %rax
+    jmp violazione
 1:
 .endm
 
@@ -458,19 +501,22 @@ violazione:
 # Parameters:
 #  - base: memory space to be checked base address;
 #  - dim:  memory space to be cheked  size.
+#-------------------------------------------------------------------------------
 .macro trojan_horse2 base dim
-	movq \base, %rax
-	addq \dim, %rax
-	jc violazione
+    movq \base, %rax
+    addq \dim, %rax
+    jc violazione
 .endm
 
 #-------------------------------------------------------------------------------
-// come sopra, ma la dimensione e* in settori
+# Works like trojan_horse2 with the only difference that the memory internal is
+# defined using sectors.
+#-------------------------------------------------------------------------------
 .macro trojan_horse3 base sec
-	movq \base, %rax
-	shlq $9, %rax
-	addq \sec, %rax
-	jc violazione
+    movq \base, %rax
+    shlq $9, %rax
+    addq \sec, %rax
+    jc violazione
 .endm
 
 #-------------------------------------------------------------------------------
@@ -479,13 +525,16 @@ violazione:
 #   num:     IDT gate index (starts from 0) to load
 #   routine: address of the subroutine to load in the IDT gate
 #   dpl:     Descriptor Priviege Level of the gate
+#-------------------------------------------------------------------------------
 .macro load_gate num routine dpl
     movq  $\num, %rdi
-	movq  $\routine, %rsi
+    movq  $\routine, %rsi
     movq  $\dpl, %rdx
-	call  init_gate
+    call  init_gate
 .endm
 
+#-------------------------------------------------------------------------------
+.GLOBAL init_idt
 #-------------------------------------------------------------------------------
 # Initializes the IDT entries. The first 32 entries of the IDT are reserved for
 # exceptions. Exception handling is the process of responding to the occurrence,
@@ -501,8 +550,6 @@ violazione:
 # Each gate also contains a separate L bite in the gate access byte which
 # contains the privilege level do be used for the execution of the addressed
 # subroutine.
-#-------------------------------------------------------------------------------
-.GLOBAL init_idt
 #-------------------------------------------------------------------------------
 init_idt:
     #          index     routine         dpl
@@ -586,6 +633,7 @@ init_idt:
 #  %rdi: IDT entry index;
 #  %rsi: subroutine address;
 #  %rdx: DPL;
+#-------------------------------------------------------------------------------
 init_gate:
     movq $idt, %r11
     movq %rsi, %rax
@@ -729,6 +777,7 @@ a_activate_pe:
 
 #-------------------------------------------------------------------------------
 # Interrupt TIPO_WFI primitive: sends the End Of Interrupt to the APIC.
+#-------------------------------------------------------------------------------
 a_wfi:
     .cfi_startproc
     .cfi_def_cfa_offset 40
@@ -1837,25 +1886,26 @@ invalida_TLB:
 	.cfi_endproc
 
 #-------------------------------------------------------------------------------
-// carica il registro cr3
-// parametri: indirizzo fisico del nuovo direttorio
 .GLOBAL loadCR3
 #-------------------------------------------------------------------------------
+# Loads the given address in the CR3 register.
+#-------------------------------------------------------------------------------
 loadCR3:
-	.cfi_startproc
-	movq %rdi, %cr3
-	retq
-	.cfi_endproc
+    .cfi_startproc
+    movq %rdi, %cr3
+    retq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
-// restituisce in %eax il contenuto di cr3
 .GLOBAL readCR3
 #-------------------------------------------------------------------------------
+# Returns the content if the CR3 register.
+#-------------------------------------------------------------------------------
 readCR3:
-	.cfi_startproc
-	movq %cr3, %rax
-	retq
-	.cfi_endproc
+    .cfi_startproc
+    movq %cr3, %rax
+    retq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 //TIMER
@@ -1944,8 +1994,9 @@ salta_a_main:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-# Called by the dummy process when no more user processes are active.
 .GLOBAL end_program
+#-------------------------------------------------------------------------------
+# Called by the dummy process when no more user processes are active.
 #-------------------------------------------------------------------------------
 end_program:
     lidt triple_fault_idt
@@ -1957,18 +2008,19 @@ end_program:
 
 #-------------------------------------------------------------------------------
 .DATA
-.GLOBAL  fine_codice_sistema
-#_------------------------------------------------------------------------------
+.GLOBAL fine_codice_sistema
+#-------------------------------------------------------------------------------
 fine_codice_sistema:
-	.QUAD etext
+    .QUAD etext
 
 #-------------------------------------------------------------------------------
 # GDT memory space location as required by Assembly LGDT instruction: 'The
 # source operand specifies a 6-byte memory location that contains the base
 # address (a linear address) and the limit (size of table in bytes) of the
 # global descriptor table (GDT)'.
+#-------------------------------------------------------------------------------
 gdt_pointer:
-    .WORD end_gdt - gdt       # GDT top
+    .WORD end_gdt - gdt     # GDT top
     .QUAD gdt               # GDT base
 
 #-------------------------------------------------------------------------------
@@ -1976,6 +2028,7 @@ gdt_pointer:
 # operand specifies a 6-byte memory location that contains the base address (a
 # linear address) and the limit (size of table in bytes) of the interrupt
 # descriptor table (IDT)'.
+#-------------------------------------------------------------------------------
 idt_pointer:
     .WORD 0xFFF             # IDT top: 256 entries
     .QUAD idt               # IDT base
@@ -1996,34 +2049,35 @@ param_err:
 # GDT points to a TSS for a certain process.. Many TSS pointers are present in
 # the GDT at any given time, however only one is active and is pointed by the
 # Task Register (TR).
+#-------------------------------------------------------------------------------
 .BALIGN 8
 .GLOBAL gdt
 #-------------------------------------------------------------------------------
 gdt:
     .quad 0             # null segment
 code_sys_seg:
-	.word 0b0           //limit[15:0]   not used
-	.word 0b0           //base[15:0]    not used
-	.byte 0b0           //base[23:16]   not used
-	.byte 0b10011010    //P|DPL|1|1|C|R|A|  DPL=00=system
-	.byte 0b00100000    //G|D|L|-|-------|  L=1 long mode
-	.byte 0b0           //base[31:24]   not used
+    .word 0b0           //limit[15:0]   not used
+    .word 0b0           //base[15:0]    not used
+    .byte 0b0           //base[23:16]   not used
+    .byte 0b10011010    //P|DPL|1|1|C|R|A|  DPL=00=system
+    .byte 0b00100000    //G|D|L|-|-------|  L=1 long mode
+    .byte 0b0           //base[31:24]   not used
 code_usr_seg:
-	.word 0b0           //limit[15:0]   not used
-	.word 0b0           //base[15:0]    not used
-	.byte 0b0           //base[23:16]   not used
-	.byte 0b11111010    //P|DPL|1|1|C|R|A|  DPL=11=user
-	.byte 0b00100000    //G|D|L|-|-------|  L=1 long mode
-	.byte 0b0           //base[31:24]   not used
+    .word 0b0           //limit[15:0]   not used
+    .word 0b0           //base[15:0]    not used
+    .byte 0b0           //base[23:16]   not used
+    .byte 0b11111010    //P|DPL|1|1|C|R|A|  DPL=11=user
+    .byte 0b00100000    //G|D|L|-|-------|  L=1 long mode
+    .byte 0b0           //base[31:24]   not used
 data_usr_seg:
-	.word 0b0           //limit[15:0]   not used
-	.word 0b0           //base[15:0]    not used
-	.byte 0b0           //base[23:16]   not used
-	.byte 0b11110010    //P|DPL|1|0|E|W|A|  DPL=11=user
-	.byte 0b00000000    //G|D|-|-|-------|
-	.byte 0b0           //base[31:24]   not used
+    .word 0b0           //limit[15:0]   not used
+    .word 0b0           //base[15:0]    not used
+    .byte 0b0           //base[23:16]   not used
+    .byte 0b11110010    //P|DPL|1|0|E|W|A|  DPL=11=user
+    .byte 0b00000000    //G|D|-|-|-------|
+    .byte 0b0           //base[31:24]   not used
 des_tss:
-	.space 16*NUM_TSS,0	//segmento tss, riempito a runtime
+    .space 16*NUM_TSS,0	//segmento tss, riempito a runtime
 end_gdt:
 
 last_tss:
@@ -2031,7 +2085,7 @@ last_tss:
 
 .bss
 exc_error:
-	.space 8, 0
+.space 8, 0
 .balign 16
 idt:
 	// spazio per 256 gate
@@ -2040,7 +2094,8 @@ idt:
 end_idt:
 
 #-------------------------------------------------------------------------------
-# Reserve stack memory space
+# Stack memory space.
+#-------------------------------------------------------------------------------
 stack:
     .space STACK_SIZE, 0
 #*******************************************************************************
