@@ -84,11 +84,19 @@ struct des_proc
         natq disp1[2];
         natq riservato2;
 
-        //entry della IST, non usata
+        // entry della IST, non usata
         natq disp2[7];
         natq riservato3;
         natw riservato4;
-        natw iomap_base; // si veda crea_processo()
+
+        /**
+         * Contains the offset inside the TSS entry of the I/O bitmap. This 
+         * bitmap contains one bit for each possible I/O address. The I/O
+         * operations executed by the process at user level will be allowed if
+         * and only if the corresponding bit of the involved I/O address is set
+         * to 1. See the create_process() method to see how to disable this.
+         */
+        natw iomap_base;
     };
 
     /**
@@ -1457,20 +1465,10 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
         // set current privilege level to user level
         pdes_proc->cpl = LEV_USER;
 	
-		//   il campo iomap_base contiene l'offset (nel TSS) dell'inizio 
-		//   della "I/O bitmap". Questa bitmap contiene un bit per ogni
-		//   possibile indirizzo di I/O. Le istruzioni in e out eseguite
-		//   da livello utente verranno permesse se il bit corrispondente
-		//   all'indirizzo di I/O a cui si riferiscono vale 1.
-		//   Per disattivare questo meccanismo dobbiamo inizializzare
-		//   il campo iomap_base con un offset maggiore o uguale
-		//   della dimensione del segmento TSS (come scritta nel
-		//   descrittore di segmento TSS nella GDT, vedere 'set_entry_tss'
-		//   in sistema.S)
+        // initialize with TSS segment length in order to disable I/O bitmap
 		pdes_proc->iomap_base = DIM_DESP;
 
-		//   tutti gli altri campi valgono 0
-		// )
+		// all remaining fields are equal to 0
 	} else {
 		// ( inizializzazione della pila sistema
 		natq* pl = reinterpret_cast<natq*>(pila_sistema);
