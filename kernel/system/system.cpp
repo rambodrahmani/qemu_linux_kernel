@@ -60,7 +60,8 @@ typedef natq tab_entry;
  */
 struct des_proc
 {
-    // hardware required
+    // hardware required: packed means it will use the smallest possible space
+    // for struct Ball - i.e. it will cram fields together without padding
     struct __attribute__ ((packed))
     {
         natl riservato1;
@@ -445,68 +446,131 @@ extern "C" void c_sem_signal(natl sem)
 ////////////////////////////////////////////////////////////////////////////////
 //                                   TIMER                                    //
 ////////////////////////////////////////////////////////////////////////////////
+// The system timer can be used to implement the delay function. In order to do
+// so we have a suspended processes queue (all of them have called the delay()
+// primitive) and will initialize the Timer with the required time constant. The
+// Timer driver (c_driver_td) is called every time the timer sends an interrupt
+// request and will check the suspended processes queue. If the duration of the
+// delay for a given timer request is over, the process will be placed in the
+// system ready process queue in order to be available for rescheduling.
+////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Timer request.
+ * Timer request. Each timer request as a duration, the requesting process
+ * pointer and a pointer to the next timer request.
  */
-struct richiesta
+struct timer_req
 {
-    natl d_attesa;
-    richiesta *p_rich;
+    // delay duration
+    natl duration;
+
+    // next delay request
+    timer_req *p_req;
+
+    // suspended process
     proc_elem *pp;
 };
 
 /**
- *
+ * Timer requests queue. The queue is ordered based on the timer requests delay
+ * duration. The request with the highest duration is placed at the bottom of
+ * the queue.
  */
-richiesta *p_sospesi;
+timer_req *timer_requests;
 
 /**
- *
+ * Places the given timer request in the requests queue.
  */
-void inserimento_lista_attesa(richiesta *p);
+void insert_timer_req(timer_req *p);
 
-// parte "C++" della primitiva delay
+/**
+ * C++ implementation for the delay() primitive.
+ */
 extern "C" void c_delay(natl n)
 {
-	richiesta *p;
+    // timer request
+    timer_req *p;
 
-	p = static_cast<richiesta*>(alloca(sizeof(richiesta)));
-	p->d_attesa = n;
-	p->pp = execution;
+    // allocate memory space for new timer request
+    p = static_cast<timer_req*>(alloca(sizeof(timer_req)));
 
-	inserimento_lista_attesa(p);
-	schedule();
+    // set delay duration
+    p->duration = n;
+
+    // set requesting process
+    p->pp = execution;
+
+    // place the request in the queue
+    insert_timer_req(p);
+
+    // schedule a new process
+    schedule();
 }
 
-// inserisce P nella coda delle richieste al timer
-void inserimento_lista_attesa(richiesta *p)
+/**
+ * Places the given timer request in the requests queue. This methods loops
+ * through the timer requests already present in the queue and places the new
+ * request based on its dealy duration. The process with the highest duration is
+ * placed at the bottom of the queue and its duration is decreased everytime
+ * an item in the queue is skipped.
+ *
+ * @param  p  the request to be placed in the queue.
+ */
+void insert_timer_req(timer_req *p)
 {
-	richiesta *r, *precedente;
-	bool ins;
+    // current timer request
+    timer_req *r;
 
-	r = p_sospesi;
-	precedente = 0;
-	ins = false;
+    // previous timer request
+    timer_req *prev;
 
-	while (r != 0 && !ins)
+    // insert result
+    bool ins;
+
+    // pointer to the top of the timer requests queue
+    r = timer_requests;
+
+    // the loop must be yet started
+    prev = 0;
+
+    // no insert made so far
+    ins = false;
+
+    // loop through timer requests queue to find a spot
+    while (r != 0 && !ins)
     {
-		if (p->d_attesa > r->d_attesa) {
-			p->d_attesa -= r->d_attesa;
-			precedente = r;
-			r = r->p_rich;
-		} else
-			ins = true;
+        // check if the given timer request is higher
+        if (p->duration > r->duration)
+        {
+            // if so, decrease the duration
+            p->duration -= r->duration;
+
+            // skip to the next timer request in the queue
+            prev = r;
+            r = r->p_req;
+        }
+        else
+        {
+            // if not, we have got the right spot
+            ins = true;
+        }
     }
 
-	p->p_rich = r;
-	if (precedente != 0)
-		precedente->p_rich = p;
-	else
-		p_sospesi = p;
+    // place the given timer request before the one current pointed by r
+    p->p_req = r;
+    if (prev != 0)
+    {
+        prev->p_req = p;
+    }
+    else
+    {
+        timer_requests = p;
+    }
 
-	if (r != 0)
-		r->d_attesa -= p->d_attesa;
+    if (r != 0)
+    {
+        r->duration -= p->duration;
+    }
 }
 
 /**
@@ -1249,7 +1313,14 @@ faddr crea_tab4()
 }
 
 /**
- * Allocates a TSS for the given process descriptor.
+ * Allocates a TSS for the given process descriptor. Loops through available TSS
+ * descriptor entries in the GDT to find an empty one. If one is found it will
+ * be initialized with the process descriptor fields and the TSS entry offset is
+ * returned, otherwise the function will return 0.
+ *
+ * @param  des_proc  the process descriptor for the process TSS being allocated;
+ *
+ * @return  the TSS offset in the GDT or 0 if the TSS allocation fails.
  */
 extern "C" natl allocate_tss(des_proc*);
 
@@ -1271,7 +1342,8 @@ const natl BIT_IF = 1L << 9;
 extern "C" natl tss_to_id(natl tss_off);
 
 /**
- * Returns the TSS offset for the given process ID.
+ * Returns the TSS offset for the given process ID. This method will ultimately
+ * call the conv_id_to_tss macro defined in system/system.s
  *
  * @param  id  process ID.
  */
@@ -1761,25 +1833,44 @@ extern "C" void c_abort_p()
 	term_cur_proc(LOG_WARN, "Current execution process aborted.");
 }
 
-// driver del timer
+/**
+ * Timer driver C++ implementation: called everytime the timer sends an
+ * interrupt request. The current process under execution is placed in the
+ * system ready processes queue, the suspended processes queue is checked for
+ * process which can be rescheduled.
+ */
 extern "C" void c_driver_td(void)
 {
-	richiesta *p;
+    // timer request
+    timer_req *p;
 
-	ins_ready_proc();
+    // place the current process under execution in the system ready processes
+    // queue
+    ins_ready_proc();
 
-	if (p_sospesi != 0) {
-		p_sospesi->d_attesa--;
+    // check if there is a timer request
+    if (timer_requests != 0)
+    {
+        // if so, decrease the delay duration of the top most request
+        timer_requests->duration--;
+    }
+
+    // loop through the timer requests queue
+    while (timer_requests != 0 && timer_requests->duration == 0)
+    {
+        // if the delay duration is equal to zero, place the timer request
+        // process in the system ready processes queue
+        list_insert(ready_proc, timer_requests->pp);
+
+        // next element in the timer requests queue
+        p = timer_requests;
+        timer_requests = timer_requests->p_req;
+
+        // free memory
+        dealloca(p);
 	}
 
-	while (p_sospesi != 0 && p_sospesi->d_attesa == 0) {
-		list_insert(ready_proc, p_sospesi->pp);
-		p = p_sospesi;
-		p_sospesi = p_sospesi->p_rich;
-		dealloca(p);
-	}
-
-    // schedule next process
+    // schedule new process
     schedule();
 }
 

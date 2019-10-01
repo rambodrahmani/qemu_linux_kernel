@@ -46,17 +46,21 @@
 #include <lib.h>
 
 /**
- * User Level process implemented by sample_body.
+ * User Level process implemented by sample_body having priority 20.
  */
 
 #line 52 "user/prog/primitive.in"
 /**
+ * Each process_body definition corresponds to a void function having a single
+ * integer parameter. This is done for simplicity. The integer parameter can be
+ * omitted in the definition.
+ *
  * Developer harness test shows how to use the getid() primitive.
  *
- * @param  a  
+ * @param  a  process void function argument.
  */
 void sample_body(int a)
-#line 58 "user/prog/primitive.in"
+#line 62 "user/prog/primitive.in"
 {
     // char buffer
     char buf[10];
@@ -76,12 +80,13 @@ void sample_body(int a)
     // write the content of buf to the video output
     writeconsole(buf);
 
+    // print pause message and wait for the ESC key
     pause();
 
 	terminate_p();
 }
 short sample;
-#line 85 "user/user.cpp"
+#line 90 "user/user.cpp"
 
 int main()
 {
