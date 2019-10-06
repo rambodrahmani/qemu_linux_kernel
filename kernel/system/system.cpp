@@ -2699,7 +2699,7 @@ extern "C" void salta_a_main();
 
 /**
  * C++ STARTUP.
- * Called after the execution of _start:, start: defined in system.s.
+ * Called after the execution of _start, start defined in system.s.
  * The stack and the IDT have been initialized at this point.
  */
 extern "C" void cmain()

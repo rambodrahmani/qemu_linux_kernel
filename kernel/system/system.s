@@ -280,7 +280,7 @@ load_state:
 
 1:
 
-    # restore process registers
+    # restore process registers content
     movq RCX(%rbx), %rcx
     movq RDI(%rbx), %rdi
     movq RSI(%rbx), %rsi
@@ -660,6 +660,11 @@ init_gate:
 #-------------------------------------------------------------------------------
 .GLOBAL init_gdt
 #-------------------------------------------------------------------------------
+# Called at the beginning of cmain(), it initializes the GDT by loading into the
+# global descriptor table register (GDTR) a 16-bit limit (lower 2 bytes of the
+# 6-byte data operand) and a 32-bit base address (upper 4 bytes of the data
+# operand).
+#-------------------------------------------------------------------------------
 init_gdt:
     lgdt gdt_pointer
     retq
@@ -766,14 +771,14 @@ a_getid:
 .EXTERN c_activate_pe
 #-------------------------------------------------------------------------------
 a_activate_pe:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	trojan_horse %rdi
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    trojan_horse %rdi
     call c_activate_pe
-	iretq
-	.cfi_endproc
+    iretq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 # Interrupt TIPO_WFI primitive: sends the End Of Interrupt to the APIC.
@@ -791,14 +796,15 @@ a_wfi:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 a_fill_gate:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call init_gate
-	iretq
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call init_gate
+    iretq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 .EXTERN c_panic                            # Interrupt TIPO_P C++ primitive body
@@ -834,29 +840,29 @@ a_abort_p:                                # Interrupt TIPO_AB primitive
 .EXTERN c_trasforma
 #-------------------------------------------------------------------------------
 a_trasforma:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call c_trasforma
-	iretq
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call c_trasforma
+    iretq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 .EXTERN c_log
 #-------------------------------------------------------------------------------
 a_log:
-	.cfi_startproc
-	.cfi_def_cfa_offset 40
-	.cfi_offset rip, -40
-	.cfi_offset rsp, -16
-	call save_state
-	//trojan_horse 1
-	//trojan_horse2 1 2
-	call c_log
-	call load_state
-	iretq
-	.cfi_endproc
+    .cfi_startproc
+    .cfi_def_cfa_offset 40
+    .cfi_offset rip, -40
+    .cfi_offset rsp, -16
+    call save_state
+    //trojan_horse 1
+    //trojan_horse2 1 2
+    call c_log
+    call load_state
+    iretq
+    .cfi_endproc
 
 ////////////////////////////////////////////////////////////////////////////////
 //                              EXCEPTION HANDLING                            //
@@ -899,7 +905,6 @@ divide_error:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 1 -- Debug Exceptions
@@ -929,7 +934,6 @@ debug:
     call  load_state                # load new process state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 2 -- Non-maskable interrupt
@@ -947,7 +951,6 @@ nmi:
     call  load_state                # load new process state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 3 -- Breakpoint
@@ -976,7 +979,6 @@ breakpoint:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 4 -- Overflow
@@ -1001,7 +1003,6 @@ overflow:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 5 -- Bounds Check
@@ -1023,7 +1024,6 @@ bound_re:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 6 -- Invalid Opcode
@@ -1048,7 +1048,6 @@ invalid_opcode:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 7 -- Coprocessor Not Available
@@ -1073,7 +1072,6 @@ dev_na:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 8 -- Double Fault
@@ -1129,7 +1127,6 @@ double_fault:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 9 -- Coprocessor Segment Overrun
@@ -1150,7 +1147,6 @@ coproc_so:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 10 -- Invalid TSS
@@ -1207,7 +1203,6 @@ invalid_tss:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 11 -- Segment Not Present
@@ -1240,7 +1235,6 @@ segm_fault:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 12 -- Stack Exception
@@ -1278,7 +1272,6 @@ stack_fault:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 13 -- General Protection Exception
@@ -1332,7 +1325,6 @@ prot_fault:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 14 -- Page Fault
@@ -1360,7 +1352,6 @@ int_tipo_pf:
     call  load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 #*******************************************************************************
@@ -1370,7 +1361,6 @@ readCR2:
     movq %cr2, %rax
     retq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 16 --
@@ -1388,7 +1378,6 @@ fp_exc:
     call load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 17 --
@@ -1408,7 +1397,6 @@ ac_exc:
     call load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 18 --
@@ -1426,7 +1414,6 @@ mc_exc:
     call load_state
     iretq
     .cfi_endproc
-#-------------------------------------------------------------------------------
 
 #*******************************************************************************
 # Interrupt 19 --
@@ -1444,7 +1431,6 @@ simd_exc:
     call load_state
     iretq
     .cfi_endproc
-#----------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 //                              HANDLERS / DRIVERS                            //
@@ -2017,11 +2003,13 @@ fine_codice_sistema:
 # GDT memory space location as required by Assembly LGDT instruction: 'The
 # source operand specifies a 6-byte memory location that contains the base
 # address (a linear address) and the limit (size of table in bytes) of the
-# global descriptor table (GDT)'.
+# global descriptor table (GDT). If operand-size attribute is 32 bits, a 16-bit
+# limit (lower 2 bytes of the 6-byte data operand) and a 32-bit base address
+# (upper 4 bytes of the data operand) are loaded into the register.'.
 #-------------------------------------------------------------------------------
 gdt_pointer:
-    .WORD end_gdt - gdt     # GDT top
-    .QUAD gdt               # GDT base
+    .WORD end_gdt - gdt     # GDT limit
+    .QUAD gdt               # GDT base address
 
 #-------------------------------------------------------------------------------
 # IDT memory space location as required by Assembly IDT instruction: 'The source
