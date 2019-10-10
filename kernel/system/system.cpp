@@ -1325,9 +1325,11 @@ faddr crea_tab4()
 extern "C" natl allocate_tss(des_proc*);
 
 /**
+ * Clears the TSS entry for the given process ID.
  *
+ * @param  off  the TSS offset of the process being destroyed.
  */
-extern "C" void rilascia_tss(int indice);
+extern "C" void clear_tss(int off);
 
 /**
  *
@@ -1583,7 +1585,7 @@ error5:	rilascia_frame(dpf_tab4);
 error4:	dealloca(p);
 
 //
-error3:	rilascia_tss(tss_off);
+error3:	clear_tss(tss_off);
 
 //
 error2:	dealloca(pdes_proc);
@@ -1699,8 +1701,10 @@ extern "C" void distruggi_pila_precedente()
  */
 void destroy_process(proc_elem* p)
 {
+    // retrieve process descriptor for the given proc_elem
     des_proc* pdes_proc = des_p(p->id);
 
+    // retrieve process tab4 address from the cr3 register
     faddr tab4 = pdes_proc->cr3;
 
     riassegna_tutto(p->id, tab4, I_MIO_C, N_MIO_C);
@@ -1716,8 +1720,10 @@ void destroy_process(proc_elem* p)
         distruggi_pila_precedente();
     }
 
-    rilascia_tss(id_to_tss(p->id));
+    // empty process TSS entry
+    clear_tss(id_to_tss(p->id));
 
+    // dealloc process descriptor
     dealloca(pdes_proc);
 }
 
@@ -1725,22 +1731,32 @@ void destroy_process(proc_elem* p)
 // quella puntata dal descrittore i-esimo di tab4.
 void rilascia_ric(faddr tab, int liv, natl i, natl n)
 {
-	for (natl j = i; j < i + n && j < 512; j++) {
-		tab_entry& dt = get_entry(tab, j);
-		natl blocco;
-		if (extr_P(dt)) {
-			faddr sub = extr_IND_FISICO(dt);
-			if (liv > 1)
-				rilascia_ric(sub, liv - 1, 0, 512);
-			des_frame *df = descrittore_frame(sub);
-			blocco = df->ind_massa;
-			rilascia_frame(df);
-		} else {
-			blocco = extr_IND_MASSA(dt);
-		}
-		dealloca_blocco(blocco);
-		dt = 0;
-	}
+    for (natl j = i; j < i + n && j < 512; j++)
+    {
+        tab_entry& dt = get_entry(tab, j);
+        natl blocco;
+
+        if (extr_P(dt))
+        {
+            faddr sub = extr_IND_FISICO(dt);
+
+            if (liv > 1)
+            {
+                rilascia_ric(sub, liv - 1, 0, 512);
+            }
+
+            des_frame *df = descrittore_frame(sub);
+            blocco = df->ind_massa;
+            rilascia_frame(df);
+        }
+        else
+        {
+            blocco = extr_IND_MASSA(dt);
+        }
+
+        dealloca_blocco(blocco);
+        dt = 0;
+    }
 }
 
 /**
@@ -1788,24 +1804,25 @@ void riassegna_tutto(natl proc, faddr tab4, natl i, natl n)
 }
 
 /**
- * Aborts the current process in execution.
+ * Aborts the current process under execution. A log message with the given text
+ * and log severity is also printed.
  *
  * @param  sev  log message severity;
- * @param  mode
+ * @param  log  log message text.
  */
-void term_cur_proc(log_sev sev, const char *mode)
+void term_cur_proc(log_sev sev, const char *log)
 {
-    // retrive current process
+    // retrive pointer to the current process under execution
     proc_elem *p = execution;
 
-    // destroy the current process
+    // destroy the current process under execution
     destroy_process(p);
 
     // descrease active user processes counter
     user_processes--;
 
     // print log message
-    flog(sev, "Process %d %s", p->id, mode);
+    flog(sev, "Process %d %s", p->id, log);
 
     // dealloc memory space
     dealloca(p);
@@ -1814,10 +1831,13 @@ void term_cur_proc(log_sev sev, const char *mode)
     schedule();
 }
 
-// parte "C++" della terminate_p
+/**
+ * C++ implementation for the terminate_p() primitive. Terminates the calling
+ * process.
+ */
 extern "C" void c_terminate_p()
 {
-	term_cur_proc(LOG_INFO, "aborted");
+	term_cur_proc(LOG_INFO, "Aborted.");
 }
 
 /**

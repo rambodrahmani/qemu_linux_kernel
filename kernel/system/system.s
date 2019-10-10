@@ -8,6 +8,7 @@
 
 #-------------------------------------------------------------------------------
 #include "constants.h"
+#-------------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 //                         SYSTEM MODULE STARTUP                              //
@@ -354,18 +355,19 @@ end_tss:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-// rilascia_tss: usata alla terminazione di un processo
-// rende nuovamente libero il descrittore TSS associato al processo
-// il cui identificatore e* passato come argomento
-.GLOBAL rilascia_tss
+.GLOBAL clear_tss
 #-------------------------------------------------------------------------------
-rilascia_tss:
-	.cfi_startproc
-	movq $0, gdt(%rdi)
-	addq $8, %rdi
-	movq $0, gdt(%rdi)
-	retq
-	.cfi_endproc
+# Empties for TSS entry for the given process when the process is being
+# destroyed.
+#  %rdi: process tss offset.
+#-------------------------------------------------------------------------------
+clear_tss:
+    .cfi_startproc
+    movq $0, gdt(%rdi)
+    addq $8, %rdi
+    movq $0, gdt(%rdi)
+    retq
+    .cfi_endproc
 
 #-------------------------------------------------------------------------------
 .GLOBAL des_p
@@ -603,7 +605,7 @@ init_idt:
     load_gate  VETT_23   handler_23      LEV_SYSTEM
     load_gate  VETT_S    handler_24      LEV_SYSTEM
 
-    # user module primitives
+    # System module primitives available for the user and I/O modules
     load_gate  TIPO_A    a_activate_p    LEV_USER
     load_gate  TIPO_T    a_terminate_p   LEV_USER
     load_gate  TIPO_SI   a_sem_ini       LEV_USER
@@ -616,7 +618,7 @@ init_idt:
     load_gate  TIPO_GETID  a_getid       LEV_USER
     # USER-PRIMITIVE-EXAMPLE
 
-    # I/O primitives
+    # System module primitives available for the I/O module
     load_gate  TIPO_APE  a_activate_pe   LEV_SYSTEM
     load_gate  TIPO_WFI  a_wfi           LEV_SYSTEM
     load_gate  TIPO_FG   a_fill_gate     LEV_SYSTEM

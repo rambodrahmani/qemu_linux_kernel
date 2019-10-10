@@ -1,6 +1,30 @@
 #*******************************************************************************
 # File: io.s
 #       I/O Module Assembly implementation.
+#       Every peripheral device is controlled by writing and reading its
+#       registers. Most of the time a device has several registers, and they are
+#       accessed at consecutive addresses, either in the memory address space
+#       or in the I/O address space.
+#
+#       At the hardware level, there is no conceptual difference between memory
+#       regions and I/O regions: both of them are accessed by asserting
+#       electrical signals on the address bus and control bus (i.e., the read
+#       and write signals) and by reading from or writing to the data bus.
+#
+#       While some CPU manufacturers implement a single address space in their
+#       chips, others decided that peripheral devices are different from memory
+#       and, therefore, deserve a separate address space. Some processors (most
+#       notably the x86 family) have separate read and write electrical lines
+#       for I/O ports and special CPU instructions to access ports.
+#
+#       Even if the peripheral bus has a separate address space for I/O ports,
+#       not all devices map their registers to I/O ports. While use of I/O ports
+#       is common for ISA peripheral boards, most PCI devices map registers into
+#       a memory address region. This I/O memory approach is generally
+#       preferred, because it doesn't require the use of special-purpose
+#       processor instructions; CPU cores access memory much more efficiently,
+#       and the compiler has much more freedom in register allocation and
+#       addressing-mode selection when accessing memory. 
 #
 # Author: Rambod Rahmani <rambodrahmani@autistici.org>
 #         Created on 30/08/2019.
@@ -9,12 +33,17 @@
 #-------------------------------------------------------------------------------
 #include "constants.h"
 #-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Error message string.
+#-------------------------------------------------------------------------------
 param_err:
-	.asciz "indirizzo non valido: %p"
+	.asciz "Invalid address: %p"
 
 #-------------------------------------------------------------------------------
 # Calls fill_gate with the specified arguments. All I/O primitives have user
-# level DPL
+# level DPL.
+#-------------------------------------------------------------------------------
 .macro fill_io_gate gate off
     movq $\gate, %rdi           # set IDT gate index
     movabs $\off, %rax          # set subroutine address
@@ -24,60 +53,86 @@ param_err:
 .endm
 
 #-------------------------------------------------------------------------------
+# Process shutdown in case of trojan horse.
+#-------------------------------------------------------------------------------
 violazione:
-	movq $2, %rdi
-	movabs $param_err, %rsi
-	movq %rax, %rdx
-	xorq %rax, %rax
-	call flog
-	int $TIPO_AB
+    movq $2, %rdi
+    movabs $param_err, %rsi
+    movq %rax, %rdx
+    xorq %rax, %rax
+    call flog
+    int $TIPO_AB
 
 #-------------------------------------------------------------------------------
-# controlla che l'indirizzo virtuale op sia accessibile dal
-# livello di privilegio del chiamante della INT. Abortisce il
-# processo in caso contrario.
+# Checks if the given address contained in reg is accessible from the privilege
+# level the INT instruction was called from. If it is not, the process will be
+# aborted.
+# Parameters:
+#  - reg: assembly operand containing the address to be checked.
+#-------------------------------------------------------------------------------
 .macro trojan_horse reg
-	cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
-	je 1f
-	movabs $0xffff000000000000, %rax
-	testq \reg, %rax
-	jnz 1f
-	movq \reg, %rax
-	jmp violazione
+    cmpq $SEL_CODICE_SISTEMA, 8(%rsp)
+    je 1f
+    movabs $0xffff000000000000, %rax
+    testq \reg, %rax
+    jnz 1f
+    movq \reg, %rax
+    jmp violazione
 1:	
 .endm
 
 #-------------------------------------------------------------------------------
-# controlla che base+dim non causi un wrap-around
+# Works like trojan_horse with the only difference that a memory interval must
+# be defined with a start address and a length.
+# Parameters:
+#  - base: memory space to be checked base address;
+#  - dim:  memory space to be cheked  size.
+#-------------------------------------------------------------------------------
 .macro trojan_horse2 base dim
-	movq \base, %rax
-	addq \dim, %rax
-	jc violazione
+    movq \base, %rax
+    addq \dim, %rax
+    jc violazione
 .endm
 
 #-------------------------------------------------------------------------------
-# come sopra, ma la dimensione e' in settori
+# Works like trojan_horse2 with the only difference that the memory internal is
+# defined using sectors.
+#-------------------------------------------------------------------------------
 .macro trojan_horse3 base sec
-	movq \base, %rax
-	shlq $9, %rax
-	addq \sec, %rax
-	jc violazione
+    movq \base, %rax
+    shlq $9, %rax
+    addq \sec, %rax
+    jc violazione
 .endm
 
 #-------------------------------------------------------------------------------
 .TEXT
 .GLOBAL _start, start                                   # I/O Module Entry Point
 #-------------------------------------------------------------------------------
+# We like to write everything in C++, but we cannot avoid a little bit of
+# assembly. We will write a small file in x86 assembly-language that serves as
+# the starting point for our kernel I/O module. All our assembly file will do is
+# invoke an external function which we will write in C++.
+#-------------------------------------------------------------------------------
 _start:
 start:
-    jmp  cmain
+    jmp  cmain                      # call C++ entry point in io.cpp
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                  SYSTEM CALLS                              //
 ////////////////////////////////////////////////////////////////////////////////
+# Every access to the System module through the interrupt mechanism will result
+# in a change in the privilege level. Right after the end of the processes
+# implemented by the interrupt mechanism, the save_state function
+# (system/system.s) jumps in. On the other hand, leaving the system module using
+# the iretq instruction must go through the load_state function
+# (system/system.s).
 
 #-------------------------------------------------------------------------------
 .GLOBAL activate_p
+#-------------------------------------------------------------------------------
+# extern "C" void c_activate_p(void f(int), int a, natl prio, natl liv)
+# Copies the given process from the swap partition to the M2 memory space.
 #-------------------------------------------------------------------------------
 activate_p:
     .cfi_startproc
@@ -129,16 +184,6 @@ trasforma:
 	int $TIPO_TRA
 	ret
 	.cfi_endproc
-
-////////////////////////////////////////////////////////////////////////////////
-//                      INTERFACE TO THE SYSTEM MODULE                        //
-////////////////////////////////////////////////////////////////////////////////
-# Every access to the System module through the interrupt mechanism will result
-# in a change in the privilege level. Right after the end of the processes
-# implemented by the interrupt mechanism, the save_state function
-# (system/system.s) jumps in. On the pther hand, leaving the system module using
-# the iretq instruction must go through the load_state function
-# (system/system.s).
 
 #-------------------------------------------------------------------------------
 .GLOBAL activate_pe

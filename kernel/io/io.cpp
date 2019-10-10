@@ -2,6 +2,42 @@
  * File: io.cpp
  *       I/O Module C++ implementation.
  *
+ *       Despite the strong similarity between hardware registers and memory, a
+ *       programmer accessing I/O registers must be careful to avoid being
+ *       tricked by CPU (or compiler) optimizations that can modify the expected
+ *       I/O behavior.
+ *
+ *       The main difference between I/O registers and RAM is that I/O
+ *       operations have side effects, while memory operations have none: the
+ *       only effect of a memory write is storing a value to a location, and a
+ *       memory read returns the last value written there. Because memory access
+ *       speed is so critical to CPU performance, the no-side-effects case has
+ *       been optimized in several ways: values are cached and read/write
+ *       instructions are reordered.
+ *
+ *       The compiler can cache data values into CPU registers without writing
+ *       them to memory, and even if it stores them, both write and read
+ *       operations can operate on cache memory without ever reaching physical
+ *       RAM. Reordering can also happen both at the compiler level and at the
+ *       hardware level: often a sequence of instructions can be executed more
+ *       quickly if it is run in an order different from that which appears in
+ *       the program text, for example, to prevent interlocks in the RISC
+ *       pipeline. On CISC processors, operations that take a significant amount
+ *       of time can be executed concurrently with other, quicker ones.
+ *
+ *       These optimizations are transparent and benign when applied to
+ *       conventional memory (at least on uniprocessor systems), but they can be
+ *       fatal to correct I/O operations, because they interfere with those
+ *       "side effects" that are the main reason why a driver accesses I/O
+ *       registers. The processor cannot anticipate a situation in which some
+ *       other process (running on a separate processor, or something happening
+ *       inside an I/O controller) depends on the order of memory access. The
+ *       compiler or the CPU may just try to outsmart you and reorder the
+ *       operations you request; the result can be strange errors that are very
+ *       difficult to debug. Therefore, a driver must ensure that no caching is
+ *       performed and no read or write reordering takes place when accessing
+ *       registers.
+ *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 30/08/2019.
  */
