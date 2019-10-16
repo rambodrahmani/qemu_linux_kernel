@@ -456,7 +456,7 @@ extern "C" void c_sem_signal(natl sem)
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Timer request. Each timer request as a duration, the requesting process
+ * Timer request. Each timer request has a duration, the requesting process
  * pointer and a pointer to the next timer request.
  */
 struct timer_req
@@ -690,36 +690,44 @@ extern "C" faddr readCR3();
  */
 extern "C" natq end;	// ultimo indirizzo del codice sistema (fornito dal collegatore)
 
-bool in_pf = false;	//* true mentre stiamo gestendo un page fault
-// (* c_pre_routine_pf() e' la routine che viene chiamata in caso di page
-//    fault. Effettua dei controlli aggiuntivi prima di chiamare la
-//    routine c_routine_pf() che provvede a caricare le tabelle e pagine
-//    mancanti
-// *)
+/**
+ * True if a Page Fault is currently being handled.
+ */
+bool in_pf = false;
 
-extern "C" void c_pre_routine_pf(
-		int tipo,		/* 14 */
-		pf_error errore,	/* vedi sopra */
-		addr rip		/* ind. dell'istruzione che ha causato il fault */
-	)
+/**
+ * Called before calling the actual Page Fault routine. This subroutine makes
+ * additional checks before calling the actual page fault handler.
+ *
+ * @param  tipo   14;
+ * @param  errore
+ * @param  rip    address of the instruction which caused the page fault.
+ */
+extern "C" void c_pre_routine_pf(int tipo, pf_error errore, addr rip)
 {
+    // check if a page fault is currently being handled
+    if (in_pf)
+    {
+        // if so, panic, there must be an error in the system module
+        panic("Recorsive Page Fault. STOP.");
+    }
 
-	// (* se durante la gestione di un page fault si verifica un altro page fault
-	//    c'e' un bug nel modulo sistema.
-	if (in_pf) {
-		panic("page fault ricorsivo: STOP");
-	}
-	// *)
+    // set currently handling page fault to true
+    in_pf = true;
 
-	in_pf = true;	//* inizia la gestione del page fault
 	// (* il sistema non e' progettato per gestire page fault causati
 	//   dalle primitie di nucleo. Se cio' si e' verificato,
 	//   si tratta di un bug
-	if ((errore.user == 0 && rip < &end)|| errore.res == 1) {
+    if ((errore.user == 0 && rip < &end)|| errore.res == 1)
+    {
 		vaddr v = readCR2();
 		flog(LOG_ERR, "PAGE FAULT a %p, rip=%lx", v, rip);
-		if (v < DIM_PAGINA)
-			flog(LOG_ERR, "Probabile puntatore NULL");
+
+        if (v < DIM_PAGINA)
+        {
+            flog(LOG_ERR, "Probabile puntatore NULL");
+        }
+
 		flog(LOG_ERR, "dettagli: %s, %s, %s, %s",
 			errore.prot  ? "protezione"	: "pag/tab assente",
 			errore.write ? "scrittura"	: "lettura",
@@ -977,36 +985,158 @@ void copy_des(faddr src, faddr dst, natl i, natl n)
 
 // indirizzo virtuale di partenza delle varie zone della memoria
 // virtuale dei proceii
+/**
+ * Starting Virtual Address of the shared System memory area.
+ */
+const vaddr ini_sis_c = norm(I_SIS_C * dim_region(3));
 
-const vaddr ini_sis_c = norm(I_SIS_C * dim_region(3)); // sistema condivisa
-const vaddr ini_sis_p = norm(I_SIS_P * dim_region(3)); // sistema privata
-const vaddr ini_mio_c = norm(I_MIO_C * dim_region(3)); // modulo IO
-const vaddr ini_utn_c = norm(I_UTN_C * dim_region(3)); // utente condivisa
-const vaddr ini_utn_p = norm(I_UTN_P * dim_region(3)); // utente privata
+/**
+ * Starting Virtual Address of the private System memory area.
+ */
+const vaddr ini_sis_p = norm(I_SIS_P * dim_region(3));
 
-// indirizzo del primo byte che non appartiene alla zona specificata
+/**
+ * Starting Virtual Address of the I/O Module memory area.
+ */
+const vaddr ini_mio_c = norm(I_MIO_C * dim_region(3));
+
+/**
+ * Starting Virtual Address of the shared User memory area.
+ */
+const vaddr ini_utn_c = norm(I_UTN_C * dim_region(3));
+
+/**
+ * Starting Virtual Address of the private User memory area.
+ */
+const vaddr ini_utn_p = norm(I_UTN_P * dim_region(3));
+
+/**
+ * Address of the first byte not included in the shared System memory area.
+ */
 const vaddr fin_sis_c = ini_sis_c + dim_region(3) * N_SIS_C;
+
+/**
+ * Address of the first byte not included in the private System memory area.
+ */
 const vaddr fin_sis_p = ini_sis_p + dim_region(3) * N_SIS_P;
+
+/**
+ * Address of the first byte not included in the I/O Module memory area.
+ */
 const vaddr fin_mio_c = ini_mio_c + dim_region(3) * N_MIO_C;
+
+/**
+ * Address of the first byte no included in the shared User memory area.
+ */
 const vaddr fin_utn_c = ini_utn_c + dim_region(3) * N_UTN_C;
+
+/**
+ * Address of the first byte not included in the private User memory area.
+ */
 const vaddr fin_utn_p = ini_utn_p + dim_region(3) * N_UTN_P;
 
-//   ( definiamo alcune costanti utili per la manipolazione dei descrittori
-//     di pagina e di tabella. Assegneremo a tali descrittori il tipo "natq"
-//     e li manipoleremo tramite maschere e operazioni sui bit.
-const natq BIT_P    = 1U << 0; // il bit di presenza
-const natq BIT_RW   = 1U << 1; // il bit di lettura/scrittura
-const natq BIT_US   = 1U << 2; // il bit utente/sistema(*)
-const natq BIT_PWT  = 1U << 3; // il bit Page Wright Through
-const natq BIT_PCD  = 1U << 4; // il bit Page Cache Disable
-const natq BIT_A    = 1U << 5; // il bit di accesso
+/**
+ * Constants used to work with page descriptors and table descriptors bits.
+ */
+
+/**
+ * Segment descriptor
+ * ------------------
+ * In memory addressing for Intel x86 computer architectures, segment
+ * descriptors are a part of the segmentation unit, used for translating a
+ * logical address to a linear address. Segment descriptors describe the memory
+ * segment referred to in the logical address.
+ *
+ * In x86-64, the code segment descriptor has the following form:
+ *
+ * ------------------------------------------------------------------------------------------------
+ * 31       —       24 23 22 21 20  19       —        16 15 14 13 12 11 10 9 8  7 — 0
+ * Base Address[31:24] G  D  L  AVL Segment Limit[19:16] P  DPL   1  1  C  R A  Base Address[23:16]
+ * Base Address[15:0]                                    Segment Limit[15:0]
+ * ------------------------------------------------------------------------------------------------
+ *
+ * Where the fields stand for:
+ * Base Address
+ *   32 bit starting memory address of the segment;
+ * 
+ * Segment Limit
+ *   20 bit length of the segment. (More specifically, the address of the last
+ *   accessible data, so the length is one more that the value stored here.) How
+ *   exactly this should be interpreted depends on other bits of the segment
+ *   descriptor;
+ * 
+ * G=Granularity
+ *   If clear, the limit is in units of bytes, with a maximum of 220 bytes. If
+ *   set, the limit is in units of 4096-byte pages, for a maximum of 232 bytes;
+ *
+ * D=Default operand size
+ *   If clear, this is a 16-bit code segment; if set, this is a 32-bit segment;
+ *
+ * L=Long-mode segment
+ *   If set, this is a 64-bit segment (and D must be zero), and code in this
+ *   segment uses the 64-bit instruction encoding;
+ *
+ * AVL=Available
+ *   For software use, not used by hardware;
+ *
+ * P=Present
+ *   If clear, a "segment not present" exception is generated on any reference
+ *   to this segment;
+ *
+ * DPL=Descriptor privilege level
+ *   Privilege level required to access this descriptor;
+ *
+ * C=Conforming
+ *   Code in this segment may be called from less-privileged levels;
+ *
+ * R=Readable
+ *   If clear, the segment may be executed but not read from;
+ *
+ * A=Accessed
+ *   This bit is set to 1 by hardware when the segment is accessed, and cleared
+ *   by software.
+ */
+
+/**
+ * Presence Bit Mask.
+ */
+const natq BIT_P    = 1U << 0;
+
+/**
+ * Read/Write Bit Mask.
+ */
+const natq BIT_RW   = 1U << 1;
+
+/**
+ * User/System Bit Mask.
+ */
+const natq BIT_US   = 1U << 2;
+
+/**
+ * Page Write Through Bit Mask.
+ */
+const natq BIT_PWT  = 1U << 3;
+
+/**
+ * Page Cache Disabled Mask.
+ */
+const natq BIT_PCD  = 1U << 4;
+
+/**
+ * Access Bit Mask.
+ */
+const natq BIT_A    = 1U << 5;
+
+/**
+ * Dirty Bit Mask.
+ */
 const natq BIT_D    = 1U << 6; // il bit "dirty"
 const natq BIT_PS   = 1U << 7; // il bit "page size"
 const natq BIT_ZERO = 1U << 9; // (* nuova pagina, da azzerare *)
 
-const natq ACCB_MASK  = 0x00000000000000FF; // maschera per il byte di accesso
-const natq ADDR_MASK  = 0x7FFFFFFFFFFFF000; // maschera per l'indirizzo
-const natq INDMASS_MASK = 0x7FFFFFFFFFFFF000; // maschera per l'indirizzo in mem. di massa
+const natq ACCB_MASK     = 0x00000000000000FF; // maschera per il byte di accesso
+const natq ADDR_MASK     = 0x7FFFFFFFFFFFF000; // maschera per l'indirizzo
+const natq INDMASS_MASK  = 0x7FFFFFFFFFFFF000; // maschera per l'indirizzo in mem. di massa
 const natq INDMASS_SHIFT = 12;	    // primo bit che contiene l'ind. in mem. di massa
 
 /**
@@ -1495,82 +1625,76 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
     if (liv == LEV_USER)
     {
         // if so, allocate system stack
-		natq* pl = reinterpret_cast<natq*>(pila_sistema);
+        natq* pl = reinterpret_cast<natq*>(pila_sistema);
 
         // set RIP: execution will continue from here when the process is
         // scheduled
-		pl[-5] = reinterpret_cast<natq>(f);
-
-        // 
-		pl[-4] = SEL_CODICE_UTENTE;	    // CS (codice utente)
-
-        //
-		pl[-3] = IF ? BIT_IF : 0;	    // RFLAGS
-
-        //
-		pl[-2] = fin_utn_p - sizeof(natq);  // RSP
-
-        //
-		pl[-1] = SEL_DATI_UTENTE;	    // SS (pila utente)
+        pl[-5] = reinterpret_cast<natq>(f);
+        pl[-4] = SEL_CODICE_UTENTE;	        // CS (codice utente)
+        pl[-3] = IF ? BIT_IF : 0;           // RFLAGS
+        pl[-2] = fin_utn_p - sizeof(natq);  // RSP
+        pl[-1] = SEL_DATI_UTENTE;           // SS (pila utente)
 
         // create user stack
         if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER))
         {
             flog(LOG_WARN, "User stack creation failed.");
             goto error6;
-		}
+        }
 
-		// ( infine, inizializziamo il descrittore di processo
-		//   indirizzo del bottom della pila sistema, che verra' usato
-		//   dal meccanismo delle interruzioni
-		pdes_proc->system_stack = fin_sis_p;
+        // ( infine, inizializziamo il descrittore di processo
+        //   indirizzo del bottom della pila sistema, che verra' usato
+        //   dal meccanismo delle interruzioni
+        pdes_proc->system_stack = fin_sis_p;
 
-		//   inizialmente, il processo si trova a livello sistema, come
-		//   se avesse eseguito una istruzione INT, con la pila sistema
-		//   che contiene le 5 parole lunghe preparate precedentemente
-		pdes_proc->context[I_RSP] = fin_sis_p - 5 * sizeof(natq);
+        //   inizialmente, il processo si trova a livello sistema, come
+        //   se avesse eseguito una istruzione INT, con la pila sistema
+        //   che contiene le 5 parole lunghe preparate precedentemente
+        pdes_proc->context[I_RSP] = fin_sis_p - 5 * sizeof(natq);
 
         // set function f (RIP) parameter
         pdes_proc->context[I_RDI] = a;
 
-		//pdes_proc->context[I_FPU_CR] = 0x037f;
-		//pdes_proc->context[I_FPU_TR] = 0xffff;
+        //pdes_proc->context[I_FPU_CR] = 0x037f;
+        //pdes_proc->context[I_FPU_TR] = 0xffff;
 
         // set current privilege level to user level
         pdes_proc->cpl = LEV_USER;
 	
         // initialize with TSS segment length in order to disable I/O bitmap
-		pdes_proc->iomap_base = DIM_DESP;
+        pdes_proc->iomap_base = DIM_DESP;
 
-		// all remaining fields are equal to 0
-	} else {
-		// ( inizializzazione della pila sistema
-		natq* pl = reinterpret_cast<natq*>(pila_sistema);
-		pl[-6] = reinterpret_cast<natq>(f);  	// RIP (codice sistema)
-		pl[-5] = SEL_CODICE_SISTEMA;            // CS (codice sistema)
-		pl[-4] = IF ? BIT_IF : 0;  	        // RFLAGS
-		pl[-3] = fin_sis_p - sizeof(natq);	// RSP
-		pl[-2] = 0;			        // SS
-		pl[-1] = 0;			        // ind. rit.
-							//(non significativo)
-		//   i processi esterni lavorano esclusivamente a livello
-		//   sistema. Per questo motivo, prepariamo una sola pila (la
-		//   pila sistema)
-		// )
+        // all remaining fields are equal to 0
+    }
+    else
+    {
+        // ( inizializzazione della pila sistema
+        natq* pl = reinterpret_cast<natq*>(pila_sistema);
+        pl[-6] = reinterpret_cast<natq>(f);     // RIP (codice sistema)
+        pl[-5] = SEL_CODICE_SISTEMA;            // CS (codice sistema)
+        pl[-4] = IF ? BIT_IF : 0;  	            // RFLAGS
+        pl[-3] = fin_sis_p - sizeof(natq);      // RSP
+        pl[-2] = 0;                             // SS
+        pl[-1] = 0;                             // ind. rit.
+                                                // (non significativo)
+        //   i processi esterni lavorano esclusivamente a livello
+        //   sistema. Per questo motivo, prepariamo una sola pila (la
+        //   pila sistema)
+        // )
 
-		// ( inizializziamo il descrittore di processo
-		pdes_proc->context[I_RSP] = fin_sis_p - 6 * sizeof(natq);
-		pdes_proc->context[I_RDI] = a;
+        // ( inizializziamo il descrittore di processo
+        pdes_proc->context[I_RSP] = fin_sis_p - 6 * sizeof(natq);
+        pdes_proc->context[I_RDI] = a;
 
-		//pdes_proc->context[I_FPU_CR] = 0x037f;
-		//pdes_proc->context[I_FPU_TR] = 0xffff;
+        //pdes_proc->context[I_FPU_CR] = 0x037f;
+        //pdes_proc->context[I_FPU_TR] = 0xffff;
 
         // set current privilege level to system level
         pdes_proc->cpl = LEV_SYSTEM;
 
-		//   tutti gli altri campi valgono 0
-		// )
-	}
+        //   tutti gli altri campi valgono 0
+        // )
+    }
 
     // return newly created process descriptor
     return p;
