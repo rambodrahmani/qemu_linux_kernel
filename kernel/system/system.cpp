@@ -2877,7 +2877,7 @@ extern "C" void cmain()
     init_des_frame();
     flog(LOG_INFO, "Physical pages: %d", N_DF);
 
-    // log system initialized parameters
+    // log system initialized memory spaces parameters
     flog(LOG_INFO, "sis/cond [%p, %p)", ini_sis_c, fin_sis_c);
     flog(LOG_INFO, "sis/priv [%p, %p)", ini_sis_p, fin_sis_p);
     flog(LOG_INFO, "io /cond [%p, %p)", ini_mio_c, fin_mio_c);
@@ -2887,26 +2887,33 @@ extern "C" void cmain()
     faddr inittab4 = crea_tab4();
 
     if (!crea_finestra_FM(inittab4))
+    {
         goto error;
+    }
 
+    // load newly initialized tab4 address in the cr3 register
     loadCR3(inittab4);
-    flog(LOG_INFO, "Caricato CR3");
 
-    // [libqlk]: 
+    // print info log message
+    flog(LOG_INFO, "Initi Process CR3 loaded.");
+
+    // [libqlk]: uses PIIX3 to initialize the APIC controller
     apic_init();
 
-    // [libqlk]: 
+    // [libqlk]: resets all the APIC pins to default
     apic_reset();
 
-    // 
+    // set interrupt type for the first 23 pins of the APIC
     apic_fill();
 
+    // print info log message
     flog(LOG_INFO, "APIC Initialized.");
 
-    // ( inizializzazione dello swap, che comprende la lettura
-    //   degli entry point di start_io e start_utente
+    // initialize swap: start_io and start_user will be executed now as a result
     if (!swap_init())
+    {
         goto error;
+    }
 
     flog(LOG_INFO, "sb: blocks = %d", swap_dev.sb.blocks);
     flog(LOG_INFO, "sb: user   = %p/%p", swap_dev.sb.user_entry, swap_dev.sb.user_end);
@@ -3106,34 +3113,66 @@ void scrivi_swap(addr src, natl blocco)
 	hdd_write(sector, 8, static_cast<natw*>(src));
 }
 
-// inizializzazione del descrittore di swap
+/**
+ * SWAP HDD read buffer.
+ */
 natw read_buf[256];
+
+/**
+ * Initializes the SWAP HDD.
+ */
 bool swap_init()
 {
-	// lettura del superblocco
-	flog(LOG_DEBUG, "lettura del superblocco dall'area di swap...");
-	hdd_read(1, 1, read_buf);
+    // print info log message
+    flog(LOG_DEBUG, "Reading SWAP HDD Superblock.");
 
-	swap_dev.sb = *reinterpret_cast<superblock_t*>(read_buf);
+    // read swap hdd superblock: A superblock is a record of the characteristics
+    // of a filesystem, including its size, the block size, the empty and the
+    // filled blocks and their respective counts, the size and location of the
+    // inode tables, the disk block map and usage information, and the size of
+    // the block groups.
+    hdd_read(1, 1, read_buf);
 
-	// controlliamo che il superblocco contenga la firma di riconoscimento
-	for (int i = 0; i < 8; i++)
-		if (swap_dev.sb.magic[i] != "CE64SWAP"[i]) {
-			flog(LOG_ERR, "Firma errata nel superblocco");
-			return false;
-		}
+    // for each mounted filesystem, Linux also maintains a copy of its
+    // superblock in memory
+    swap_dev.sb = *reinterpret_cast<superblock_t*>(read_buf);
 
-	// controlliamo il checksum
-	int *w = (int*)&swap_dev.sb, sum = 0;
-	for (natl i = 0; i < sizeof(swap_dev.sb) / sizeof(int); i++)
-		sum += w[i];
+    // check if the superblock actually contains the corrent magic number
+    for (int i = 0; i < 8; i++)
+    {
+        // check
+        if (swap_dev.sb.magic[i] != "CE64SWAP"[i])
+        {
+            // if not, print a warning log message
+            flog(LOG_ERR, "SWAP HDD wrong magic number.");
 
-	if (sum != 0) {
-		flog(LOG_ERR, "Checksum errato nel superblocco");
-		return false;
+            // return swap initialization failed
+            return false;
+        }
+    }
+
+	// superblock checksum: A checksum is a small-sized datum derived from a
+    // block of digital data for the purpose of detecting errors that may have
+    // been introduced during its transmission or storage
+    int *w = (int*)&swap_dev.sb, sum = 0;
+
+    //
+    for (natl i = 0; i < sizeof(swap_dev.sb) / sizeof(int); i++)
+    {
+        sum += w[i];
+    }
+
+    // check if the sum is equal to zero
+    if (sum != 0)
+    {
+        // if so, print a warning log message
+        flog(LOG_ERR, "SWAP HDD Checksum error.");
+
+        // return swap initialization failed
+        return false;
 	}
 
-	flog(LOG_DEBUG, "lettura della bitmap dei blocchi...");
+    flog(LOG_DEBUG, "lettura della bitmap dei blocchi...");
 
 	// calcoliamo la dimensione della mappa di bit in pagine/blocchi
 	natl pages = ceild(swap_dev.sb.blocks, DIM_PAGINA * 8);

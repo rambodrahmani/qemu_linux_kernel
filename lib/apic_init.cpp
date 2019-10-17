@@ -23,19 +23,27 @@ bool apic_init()
     // look for PIIX3 device
     if (! pci_find_dev(bus, dev, fun, PIIX3_DEVICE_ID, PIIX3_VENDOR_ID))
     {
-        printf("PIIX3 no found\n");
+        // if not found, print a warning log message
+        printf("PIIX3 not found.\n");
+
+        // return apic initialization failed
         return false;
     }
 
+    // enable APIC
     if (! piix3_ioapic_enable(bus, dev, fun))
     {
+        // in case of failure, print a warning log message
         printf("IOAPIC not enabled\n");
+
+        // return apic initialization failed
         return false;
     }
 
     // disable 8259 controller
     disable_8259();
 
+    // return apic initialization succeded
     return true;
 }
 
