@@ -467,16 +467,18 @@ invalida_entrata_TLB:
 # to the system memory space.
 
 #-------------------------------------------------------------------------------
-# Process shutdown in case of trojan horse.
+# When a trojan horse is catched, the current process under execution is
+# aborted, a new one is scheduled and activated. Before aborting the current
+# process an error log message is printed containing the invalid address.
 #-------------------------------------------------------------------------------
-violazione:
-    movq   $2, %rdi
-    movabs $param_err, %rsi
+abort_trojan:
+    movq   $2, %rdi             # LOG_ERROR
+    movabs $param_err, %rsi     # log message text
     movq   %rax, %rdx
-    xorq   %rax, %rax
-    call   flog
-    call   c_abort_p
-    call   load_state
+    xorq   %rax, %rax           # zero out %rax register
+    call   flog                 # call flog to print the log message
+    call   c_abort_p            # abort the current process
+    call   load_state           # load the new scheduled process
     iretq
 
 #-------------------------------------------------------------------------------
@@ -493,7 +495,7 @@ violazione:
     testq \reg, %rax
     jnz 1f
     movq \reg, %rax
-    jmp violazione
+    jmp abort_trojan
 1:
 .endm
 
@@ -507,7 +509,7 @@ violazione:
 .macro trojan_horse2 base dim
     movq \base, %rax
     addq \dim, %rax
-    jc violazione
+    jc abort_trojan
 .endm
 
 #-------------------------------------------------------------------------------
@@ -518,7 +520,7 @@ violazione:
     movq \base, %rax
     shlq $9, %rax
     addq \sec, %rax
-    jc violazione
+    jc abort_trojan
 .endm
 
 #-------------------------------------------------------------------------------
@@ -2029,7 +2031,7 @@ gdt_pointer:
 # descriptor table (IDT)'.
 #-------------------------------------------------------------------------------
 idt_pointer:
-    .WORD 0xFFF             # IDT top: 256 entries
+    .WORD 0xFFF             # IDT top: 256 entries, 16 bytes each
     .QUAD idt               # IDT base
 
 #-------------------------------------------------------------------------------
@@ -2037,6 +2039,9 @@ triple_fault_idt:
     .WORD 0
     .QUAD 0
 
+#-------------------------------------------------------------------------------
+# Log message used when calling the flog method from the abort_trojan
+# subroutine.
 #-------------------------------------------------------------------------------
 param_err:
     .ASCIZ "Invalid address: %p"
