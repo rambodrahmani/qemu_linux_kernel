@@ -1331,9 +1331,11 @@ extern "C" void invalida_TLB();
 // (copiamo la finestra gia' creata dal boot loader)
 bool crea_finestra_FM(faddr tab4)
 {
-	faddr boot_dir = readCR3();
-	copy_des(boot_dir, tab4, I_SIS_C, N_SIS_C);
-	return true;
+    faddr boot_dir = readCR3();
+
+    copy_des(boot_dir, tab4, I_SIS_C, N_SIS_C);
+
+    return true;
 }
 
 /**
@@ -1361,31 +1363,47 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt);
  */
 bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
 {
-	tab_entry& dt = get_des(proc, liv + 1, ind_virt);
-	bool bitP = extr_P(dt);
-	if (!bitP) {
-		natl blocco = extr_IND_MASSA(dt);
-		if (!blocco) {
-			if (! (blocco = alloca_blocco()) ) {
-				flog(LOG_ERR, "swap pieno");
-				return false;
-			}
-			set_IND_MASSA(dt, blocco);
-			set_ZERO(dt, true);
-			dt = dt | BIT_RW;
-			if (priv == LEV_USER) dt = dt | BIT_US;
-		}
-		if (liv > 0) {
-			des_frame *df = swap(proc, liv, ind_virt);
-			if (!df) {
-				flog(LOG_ERR, "swap(%d, %d, %p) fallita",
+    tab_entry& dt = get_des(proc, liv + 1, ind_virt);
+
+    bool bitP = extr_P(dt);
+
+    if (!bitP)
+    {
+        natl blocco = extr_IND_MASSA(dt);
+
+        if (!blocco)
+        {
+            if (! (blocco = alloca_blocco()) )
+            {
+                flog(LOG_ERR, "swap pieno");
+
+                return false;
+            }
+
+            set_IND_MASSA(dt, blocco);
+            set_ZERO(dt, true);
+            dt = dt | BIT_RW;
+
+            if (priv == LEV_USER) dt = dt | BIT_US;
+        }
+
+        if (liv > 0)
+        {
+            des_frame *df = swap(proc, liv, ind_virt);
+
+            if (!df)
+            {
+                flog(LOG_ERR, "swap(%d, %d, %p) fallita",
 					proc, liv, ind_virt);
-				return false;
-			}
-			df->residente = (priv == LEV_SYSTEM);
-		}
-	}
-	return true;
+
+                return false;
+            }
+
+            df->residente = (priv == LEV_SYSTEM);
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1393,11 +1411,15 @@ bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
  */
 bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
 {
-	for (int i = 3; i >= 0; i--) {
-		if (!crea(proc, ind_virt, i, priv))
-			return false;
-	}
-	return true;
+    for (int i = 3; i >= 0; i--)
+    {
+        if (!crea(proc, ind_virt, i, priv))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1658,18 +1680,22 @@ proc_elem* create_process(void f(int), int a, int prio, char liv, bool IF)
         // create user stack
         if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER))
         {
-            flog(LOG_WARN, "User stack creation failed.");
+            // in case of error, print a warning error log message
+            flog(LOG_WARN, "Process User stack creation failed.");
+
+            // go to error #6
             goto error6;
         }
 
-        // ( infine, inizializziamo il descrittore di processo
-        //   indirizzo del bottom della pila sistema, che verra' usato
-        //   dal meccanismo delle interruzioni
+        // set process system stack pointer to be used by the interrupt
+        // mechanism when switching privilege level
         pdes_proc->system_stack = fin_sis_p;
 
-        //   inizialmente, il processo si trova a livello sistema, come
-        //   se avesse eseguito una istruzione INT, con la pila sistema
-        //   che contiene le 5 parole lunghe preparate precedentemente
+        // keep in mind that all processes start at system level, as if an INT
+        // instruction was executed, having the system stack which contains the
+        // 5 long words to be used to go back to user level; this is why the
+        // current RSP value points to the process system stack having skipped
+        // the 5 words used by the interrupt mechanism
         pdes_proc->context[I_RSP] = fin_sis_p - 5 * sizeof(natq);
 
         // set function f (RIP) parameter
@@ -1678,7 +1704,7 @@ proc_elem* create_process(void f(int), int a, int prio, char liv, bool IF)
         //pdes_proc->context[I_FPU_CR] = 0x037f;
         //pdes_proc->context[I_FPU_TR] = 0xffff;
 
-        // set current privilege level to user level
+        // set process privilege level to user level
         pdes_proc->cpl = LEV_USER;
 	
         // initialize with TSS segment length in order to disable I/O bitmap
