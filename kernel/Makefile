@@ -58,21 +58,21 @@ all: \
 
 toparse := $(wildcard user/prog/*)
 
-build/system: system/sist_s.o system/sist_cpp.o
-	$(NLD) $(NLDFLAGS) -o build/system -Ttext $(START_SISTEMA) system/sist_s.o system/sist_cpp.o $(NLDLIBS)
+build/system: system/syst_s.o system/syst_cpp.o
+	$(NLD) $(NLDFLAGS) -o build/system -Ttext $(START_SISTEMA) system/syst_s.o system/syst_cpp.o $(NLDLIBS)
 
 build/io: io/io_s.o io/io_cpp.o
 	$(NLD) $(NLDFLAGS) -o build/io -Ttext $(START_IO) io/io_s.o io/io_cpp.o $(NLDLIBS)
 
-build/user: user/uten_s.o user/lib.o user/uten_cpp.o
-	$(NLD) $(NLDFLAGS) -o build/user -Ttext $(START_UTENTE) user/uten_cpp.o user/uten_s.o user/lib.o $(NLDLIBS)
+build/user: user/user_s.o user/lib.o user/user_cpp.o
+	$(NLD) $(NLDFLAGS) -o build/user -Ttext $(START_UTENTE) user/user_cpp.o user/user_s.o user/lib.o $(NLDLIBS)
 
 # system.s and system.cpp compilation
-system/sist_s.o: system/system.s include/constants.h
-	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c system/system.s -o system/sist_s.o
+system/syst_s.o: system/system.s include/constants.h
+	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c system/system.s -o system/syst_s.o
 
-system/sist_cpp.o: system/system.cpp include/constants.h
-	$(NCC) $(NCFLAGS) -c system/system.cpp -o system/sist_cpp.o
+system/syst_cpp.o: system/system.cpp include/constants.h
+	$(NCC) $(NCFLAGS) -c system/system.cpp -o system/syst_cpp.o
 
 # io.s and io.cpp compilation
 io/io_s.o: io/io.s include/constants.h
@@ -82,14 +82,14 @@ io/io_cpp.o: io/io.cpp include/constants.h
 	$(NCC) $(NCFLAGS) -fpic -c io/io.cpp -o io/io_cpp.o
 
 # compilazione di user.s e user.cpp
-user/uten_s.o: user/user.s include/constants.h
-	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c user/user.s -o user/uten_s.o
+user/user_s.o: user/user.s include/constants.h
+	$(NCC) $(NCFLAGS) -x assembler-with-cpp -c user/user.s -o user/user_s.o
 
 user/user.cpp: build/parse user/include/* user/prog $(toparse)
 	build/parse -o user/user.cpp $(toparse)
 
-user/uten_cpp.o: user/user.cpp
-	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/user.cpp -o user/uten_cpp.o
+user/user_cpp.o: user/user.cpp
+	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/user.cpp -o user/user_cpp.o
 
 user/lib.o: user/lib.cpp user/include/lib.h
 	$(NCC) $(NCFLAGS) -fpic -Iuser/include -c user/lib.cpp -o user/lib.o

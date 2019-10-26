@@ -8,9 +8,9 @@ BEGIN {
 	sub toLine($) {
 		my $h = shift;
 
-		if    ($h ge $START_UTENTE)      { $exe = 'build/utente';  }
+		if    ($h ge $START_UTENTE)      { $exe = 'build/user';  }
 		elsif ($h ge $START_IO)          { $exe = 'build/io';      }
-		else 				 { $exe = "build/sistema"; }
+		else 				 { $exe = "build/system"; }
 
 		my $out = `addr2line -Cfe $exe $h`;
 		if ($?) {

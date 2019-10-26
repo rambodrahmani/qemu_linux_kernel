@@ -168,7 +168,7 @@ static void parse_args(char *cmd)
 /**
  * Boot module cmain. Called from boot.S/start.
  */
-extern "C" void cmain (natl magic, multiboot_info_t* mbi)
+extern "C" void cmain(natl magic, multiboot_info_t* mbi)
 {
     natl entry;
 	
