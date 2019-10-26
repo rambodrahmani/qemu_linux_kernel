@@ -686,7 +686,7 @@ a_activate_p:
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
     call save_state             # save current processor state
-    trojan_horse %rdi           # check for trojan_horse
+    trojan_horse %rdi           # check for trojan horse
     call c_activate_p           # call C++ subroutine implementation
     call load_state             # load new process state
     iretq                       # return from interrupt

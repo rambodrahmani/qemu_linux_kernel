@@ -1405,12 +1405,17 @@ bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
  */
 bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
 {
-	size = allinea(size, DIM_PAGINA);
+    size = allinea(size, DIM_PAGINA);
 
-	for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
-		if (!crea_pagina(proc, ind, priv))
-			return false;
-	return true;
+    for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
+    {
+        if (!crea_pagina(proc, ind, priv))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1418,14 +1423,21 @@ bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
  */
 faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
 {
-	des_frame *dp = 0;
-	for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA) {
-		dp = swap(proc, 0, ind);
-		if (!dp)
-			return 0;
-		dp->residente = true;
-	}
-	return indirizzo_frame(dp) + DIM_PAGINA;
+    des_frame *dp = 0;
+
+    for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
+    {
+        dp = swap(proc, 0, ind);
+
+        if (!dp)
+        {
+            return 0;
+        }
+
+        dp->residente = true;
+    }
+
+    return indirizzo_frame(dp) + DIM_PAGINA;
 }
 
 /**
@@ -1433,11 +1445,14 @@ faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
  */
 faddr crea_tab4()
 {
-	des_frame* df = alloca_frame_libero();
-	if (df == 0) {
-		flog(LOG_ERR, "Impossibile allocare tab4");
-		panic("errore");
-	}
+    des_frame* df = alloca_frame_libero();
+
+    // check if the frame descriptor allocation was succesful
+    if (df == 0)
+    {
+        flog(LOG_ERR, "Unable to allocate Tab4.");
+        panic("Error while creating Tab4.");
+    }
 	df->livello = 4;
 	df->residente = true;
 	df->processo = execution->id;
