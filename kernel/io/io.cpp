@@ -821,18 +821,27 @@ extern "C" void c_iniconsole(natb cc)
 const int KBD_IRQ = 1;
 
 /**
- *
+ * Initializes the keyboard external process.
  */
 bool kbd_init()
 {
-	// blocchiamo subito le interruzioni generabili dalla tastiera
-	halt_inputkbd(&console.kbd.indreg);
+    // disable keyboard interrupt requests
+    halt_inputkbd(&console.kbd.indreg);
 
-	if (activate_pe(estern_kbd, 0, PRIO, LIV, KBD_IRQ) == 0xFFFFFFFF) {
-		flog(LOG_ERR, "kbd: impossibile creare estern_kbd");
-		return false;
-	}
-	return true;
+    // activate keyboard external process: from this point, a process will be
+    // created by the system module handling interrupt requests from the
+    // keyboard
+    if (activate_pe(estern_kbd, 0, PRIO, LIV, KBD_IRQ) == 0xFFFFFFFF)
+    {
+        // if it fails, print a warning error log
+        flog(LOG_ERR, "kbd: failed to create estern_kbd");
+
+        // return false: keyboard initialization failed
+        return false;
+    }
+
+    // return true: keyboard initialized correctly
+    return true;
 }
 
 /**
@@ -841,17 +850,22 @@ bool kbd_init()
 extern "C" des_vid vid;
 
 /**
- *
+ * Initializes the video output in Textmode.
  */
 bool vid_init()
 {
-	des_vid *p_des = &console.vid;
-	for (natl i = 0; i < VIDEO_SIZE; i++)
-		p_des->video[i] = p_des->attr | ' ';
-	cursore(p_des->indreg.iIND, p_des->indreg.iDAT,
-		p_des->x, p_des->y);
-	flog(LOG_INFO, "vid: video inizializzato");
-	return true;
+    des_vid *p_des = &console.vid;
+
+    for (natl i = 0; i < VIDEO_SIZE; i++)
+    {
+        p_des->video[i] = p_des->attr | ' ';
+    }
+
+	cursore(p_des->indreg.iIND, p_des->indreg.iDAT, p_des->x, p_des->y);
+
+    flog(LOG_INFO, "vid: video initialized.");
+
+    return true;
 }
 
 /**
@@ -1318,6 +1332,9 @@ extern "C" natl end;
 
 /**
  * C++ implementation of the I/O subsystem initialization.
+ *
+ * @param  sem_io  synchronization semaphore used to wait for the I/O module to
+ *                 be completed.
  */
 extern "C" void cmain(int sem_io)
 {
@@ -1342,14 +1359,21 @@ extern "C" void cmain(int sem_io)
     heap_init((void *)end_, DIM_IO_HEAP);
 
     if (!console_init())
+    {
         abort_p();
+    }
 
     if (!com_init())
+    {
         abort_p();
+    }
 
     if (!hd_init())
+    {
         abort_p();
+    }
 
+    // signal I/O module initialization completed
     sem_signal(sem_io);
 
     // 

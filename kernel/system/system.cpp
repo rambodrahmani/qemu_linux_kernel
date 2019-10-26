@@ -3035,7 +3035,7 @@ extern "C" void cmain()
     }
 
     // log dummy process id
-    flog(LOG_INFO, "Dummy processo created: (id = %d)", dummy_proc);
+    flog(LOG_INFO, "Dummy process created: (id = %d)", dummy_proc);
 
     // schedule next process: the system main process
     schedule();
@@ -3111,8 +3111,8 @@ void system_main(int n)
         goto error;
     }
 
-    // waiting for the I/O module initialization to be complted
-    flog(LOG_INFO, "Waiting for the I/O module initialization to be complted.");
+    // waiting for the I/O module initialization to be completed
+    flog(LOG_INFO, "Waiting for the I/O module initialization to be completed.");
 
     // wait I/O module synchronization sempahore
     sem_wait(sync_io);
