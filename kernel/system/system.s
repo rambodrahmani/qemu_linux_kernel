@@ -467,16 +467,18 @@ invalida_entrata_TLB:
 # to the system memory space.
 
 #-------------------------------------------------------------------------------
-# Process shutdown in case of trojan horse.
+# When a trojan horse is catched, the current process under execution is
+# aborted, a new one is scheduled and activated. Before aborting the current
+# process an error log message is printed containing the invalid address.
 #-------------------------------------------------------------------------------
-violazione:
-    movq   $2, %rdi
-    movabs $param_err, %rsi
+abort_trojan:
+    movq   $2, %rdi             # LOG_ERROR
+    movabs $param_err, %rsi     # log message text
     movq   %rax, %rdx
-    xorq   %rax, %rax
-    call   flog
-    call   c_abort_p
-    call   load_state
+    xorq   %rax, %rax           # zero out %rax register
+    call   flog                 # call flog to print the log message
+    call   c_abort_p            # abort the current process
+    call   load_state           # load the new scheduled process
     iretq
 
 #-------------------------------------------------------------------------------
@@ -493,7 +495,7 @@ violazione:
     testq \reg, %rax
     jnz 1f
     movq \reg, %rax
-    jmp violazione
+    jmp abort_trojan
 1:
 .endm
 
@@ -507,7 +509,7 @@ violazione:
 .macro trojan_horse2 base dim
     movq \base, %rax
     addq \dim, %rax
-    jc violazione
+    jc abort_trojan
 .endm
 
 #-------------------------------------------------------------------------------
@@ -518,7 +520,7 @@ violazione:
     movq \base, %rax
     shlq $9, %rax
     addq \sec, %rax
-    jc violazione
+    jc abort_trojan
 .endm
 
 #-------------------------------------------------------------------------------
@@ -683,8 +685,8 @@ a_activate_p:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state             # save process state before switching processes
-    trojan_horse %rdi           # check for trojan_horse
+    call save_state             # save current processor state
+    trojan_horse %rdi           # check for trojan horse
     call c_activate_p           # call C++ subroutine implementation
     call load_state             # load new process state
     iretq                       # return from interrupt
@@ -698,9 +700,9 @@ a_terminate_p:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state             # save process state before switching processes
+    call save_state             # save current processor state
     call c_terminate_p          # call C++ subroutine implementation
-    call load_state             # load new process state
+    call load_state             # load new process
     iretq                       # return from interrupt
     .cfi_endproc
 
@@ -724,7 +726,7 @@ a_sem_wait:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state             # save process state before switching processes
+    call save_state             # save current processor state
     call c_sem_wait             # call C++ subroutine implementation
     call load_state             # load new process state
     iretq                       # return from interrupt
@@ -738,7 +740,7 @@ a_sem_signal:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state             # save process state before switching processes
+    call save_state             # save current processor state
     call c_sem_signal           # call C++ subroutine implementation
     call load_state             # load new process state
     iretq                       # return from interrupt
@@ -752,7 +754,7 @@ a_delay:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state             # save process state before switching processes
+    call save_state             # save current processor state
     call c_delay                # call C++ subroutine implementation
     call load_state             # load new process state
     iretq                       # return from interrupt
@@ -790,7 +792,7 @@ a_wfi:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state             # save current execution process state
+    call save_state             # save current processor state
     call apic_send_EOI          # send apic EOI
     call schedule               # schedule a new process
     call load_state             # load new scheduled process state
@@ -816,7 +818,7 @@ a_panic:                                   # Interrupt TIPO_P primitive
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
+    call save_state         # save current processor state
     //trojan_horse 1
     movq %rsp, %rsi
     call c_panic
@@ -832,7 +834,7 @@ a_abort_p:                                # Interrupt TIPO_AB primitive
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
+    call save_state         # save current processor state
     call c_abort_p
     call load_state
     iretq
@@ -858,7 +860,7 @@ a_log:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call save_state
+    call save_state         # save current processor state
     //trojan_horse 1
     //trojan_horse2 1 2
     call c_log
@@ -885,8 +887,9 @@ a_log:
 //
 
 #-------------------------------------------------------------------------------
-# The current process state is saved a new process state is loaded because the
-# C++ implementation (handle_exception) will abort che current calling process.
+# The current processor state is saved and new process state is loaded because
+# the C++ implementation (handle_exception) will abort che current calling
+# process which caused the exception.
 #-------------------------------------------------------------------------------
 
 #*******************************************************************************
@@ -899,12 +902,12 @@ divide_error:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
-    movq  $0, %rdi
-    movq  $0, %rsi
-    movq  (%rsp), %rdx
-    call  handle_exception
-    call  load_state
+    call  save_state        # save current processor state
+    movq  $0, %rdi          # set interrupt type
+    movq  $0, %rsi          # set error code
+    movq  (%rsp), %rdx      # set current %rsp value
+    call  handle_exception  # call handle_exception subroutine
+    call  load_state        # load new process as the current one was aborted
     iretq
     .cfi_endproc
 
@@ -928,12 +931,12 @@ debug:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
-    movq  $1, %rdi                  # interrupt type
-    movq  $0, %rsi                  # error type
-    movq  (%rsp), %rdx              # value addressed by %rsp
-    call  handle_exception          # call C++ implementation
-    call  load_state                # load new process state
+    call  save_state        # save the current processor state
+    movq  $1, %rdi          # set interrupt type
+    movq  $0, %rsi          # set error type
+    movq  (%rsp), %rdx      # set value addressed by %rsp
+    call  handle_exception  # call handle_exception C++ implementation
+    call  load_state        # load new process as the current one was aborted
     iretq
     .cfi_endproc
 
@@ -942,15 +945,16 @@ debug:
 # In computing, a non-maskable interrupt (NMI) is a hardware interrupt that
 # standard interrupt-masking techniques in the system cannot ignore. It
 # typically occurs to signal attention for non-recoverable hardware errors.
+# NMI are handled differently. The C++ implementation will 
 #*******************************************************************************
 nmi:
     .cfi_startproc
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save current process state
-    call  c_nmi                     # call C++ implementation
-    call  load_state                # load new process state
+    call  save_state        # save the current processoror state
+    call  c_nmi             # call subroutine C++ implementation
+    call  load_state        # load new process state
     iretq
     .cfi_endproc
 
@@ -973,7 +977,7 @@ breakpoint:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
+    call  save_state                # save current processor state
     movq  $3, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -997,7 +1001,7 @@ overflow:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
+    call  save_state                # save current processor state
     movq  $4, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -1018,7 +1022,7 @@ bound_re:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
+    call  save_state                # save current processor state
     movq  $5, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -1042,7 +1046,7 @@ invalid_opcode:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
+    call  save_state                # save current processor state
     movq  $6, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -1066,7 +1070,7 @@ dev_na:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state                # save curren process state
+    call  save_state                # save current processor state
     movq  $7, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -1121,7 +1125,7 @@ double_fault:
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
     popq  exc_error
-    call  save_state
+    call  save_state            # save current processor state
     movq  $8, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
@@ -1141,7 +1145,7 @@ coproc_so:
     .cfi_def_cfa_offset 40
     .cfi_offset rip, -40
     .cfi_offset rsp, -16
-    call  save_state
+    call  save_state            # save current processor state
     movq  $9, %rdi
     movq  $0, %rsi
     movq  (%rsp), %rdx
@@ -1197,7 +1201,7 @@ invalid_tss:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  save_state
+    call  save_state            # save current processor state
     movq  $10, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
@@ -1229,7 +1233,7 @@ segm_fault:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  save_state
+    call  save_state            # save current processor state
     movq  $11, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
@@ -1266,7 +1270,7 @@ stack_fault:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  save_state
+    call  save_state            # save current processor state
     movq  $12, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
@@ -1319,7 +1323,7 @@ prot_fault:
     .cfi_offset rsp, -16
     pop   exc_error
     .cfi_adjust_cfa_offset -8
-    call  save_state
+    call  save_state            # save current processor state
     movq  $13, %rdi
     movq  exc_error, %rsi
     movq  (%rsp), %rdx
@@ -1902,26 +1906,26 @@ readCR3:
 .set CTR_MSB, 0x40
 
 #-------------------------------------------------------------------------------
-// attiva il timer di sistema
-// parametri: il valore da caricare nel registro CTR del timer
+// Activates the system timer.
+// Parameters: the value to be loaded in the timer CTR register.
 .EXTERN apic_set_MIRQ
 .GLOBAL attiva_timer
 #-------------------------------------------------------------------------------
 attiva_timer:
-	.cfi_startproc
-	movb $0x36, %al
-	outb %al, $CWR
-	movl %edi, %eax
-	outb %al, $CTR_LSB
-	movb %ah, %al
-	outb %al, $CTR_MSB
+    .cfi_startproc
+    movb $0x36, %al
+    outb %al, $CWR
+    movl %edi, %eax
+    outb %al, $CTR_LSB
+    movb %ah, %al
+    outb %al, $CTR_MSB
 
-	movq $2, %rdi
-	movq $0, %rsi
-	call apic_set_MIRQ
+    movq $2, %rdi
+    movq $0, %rsi
+    call apic_set_MIRQ
 
-	retq
-	.cfi_endproc
+    retq
+    .cfi_endproc
 
 ////////////////////////////////////////////////////////////////////////////////
 //                             KERNEL PRIMITIVES                              //
@@ -1973,9 +1977,16 @@ panic:
     .cfi_endproc
 
 #-------------------------------------------------------------------------------
-.GLOBAL salta_a_main
+.GLOBAL load_system_main
 #-------------------------------------------------------------------------------
-salta_a_main:
+# At the time of the call to this method only the System Module main processo
+# and the dummy process have been created. Before calling this, the schedule
+# method is called which will place the System Module main process (highest
+# priority process available) in the execution pointer. When the load_state is
+# called by this method, the System Module main process state is loaded into the
+# CPU and its execution will start.
+#-------------------------------------------------------------------------------
+load_system_main:
     .cfi_startproc
     call load_state             # load the TR
     iretq				        # return to the caller as a process
@@ -2020,7 +2031,7 @@ gdt_pointer:
 # descriptor table (IDT)'.
 #-------------------------------------------------------------------------------
 idt_pointer:
-    .WORD 0xFFF             # IDT top: 256 entries
+    .WORD 0xFFF             # IDT top: 256 entries, 16 bytes each
     .QUAD idt               # IDT base
 
 #-------------------------------------------------------------------------------
@@ -2028,6 +2039,9 @@ triple_fault_idt:
     .WORD 0
     .QUAD 0
 
+#-------------------------------------------------------------------------------
+# Log message used when calling the flog method from the abort_trojan
+# subroutine.
 #-------------------------------------------------------------------------------
 param_err:
     .ASCIZ "Invalid address: %p"

@@ -276,7 +276,12 @@ void list_remove(proc_elem *&p_list, proc_elem *&p_elem)
  * Inserts the process currently under execution at the top of the ready_proc
  * queue. Once the process has been inserted in this queue a new process will be
  * scheduled (using a call to 'schedule') among all the active processes on the
- * system using the priority criteria.
+ * system using the priority criteria. Keep in mind that using this method we
+ * are not inserting the process as we do using the list_insert() method. We are
+ * not taking into account the process priority. This is because the process
+ * currently under execution is the one with the highest priority of course and
+ * since it is already under execution, in case of need we don't want to make it
+ * wait further.
  */
 extern "C" void ins_ready_proc()
 {
@@ -575,7 +580,7 @@ void insert_timer_req(timer_req *p)
 
 /**
  * In case of fatal errors, the following function can be used to shutdown the
- * system.
+ * system. The interrupt mechanism will be used to call the c_panic subroutine.
  */
 extern "C" void panic(cstr msg) __attribute__ (( noreturn ));
 
@@ -1326,9 +1331,11 @@ extern "C" void invalida_TLB();
 // (copiamo la finestra gia' creata dal boot loader)
 bool crea_finestra_FM(faddr tab4)
 {
-	faddr boot_dir = readCR3();
-	copy_des(boot_dir, tab4, I_SIS_C, N_SIS_C);
-	return true;
+    faddr boot_dir = readCR3();
+
+    copy_des(boot_dir, tab4, I_SIS_C, N_SIS_C);
+
+    return true;
 }
 
 /**
@@ -1356,31 +1363,47 @@ des_frame* swap(natl proc, int livello, vaddr ind_virt);
  */
 bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
 {
-	tab_entry& dt = get_des(proc, liv + 1, ind_virt);
-	bool bitP = extr_P(dt);
-	if (!bitP) {
-		natl blocco = extr_IND_MASSA(dt);
-		if (!blocco) {
-			if (! (blocco = alloca_blocco()) ) {
-				flog(LOG_ERR, "swap pieno");
-				return false;
-			}
-			set_IND_MASSA(dt, blocco);
-			set_ZERO(dt, true);
-			dt = dt | BIT_RW;
-			if (priv == LEV_USER) dt = dt | BIT_US;
-		}
-		if (liv > 0) {
-			des_frame *df = swap(proc, liv, ind_virt);
-			if (!df) {
-				flog(LOG_ERR, "swap(%d, %d, %p) fallita",
+    tab_entry& dt = get_des(proc, liv + 1, ind_virt);
+
+    bool bitP = extr_P(dt);
+
+    if (!bitP)
+    {
+        natl blocco = extr_IND_MASSA(dt);
+
+        if (!blocco)
+        {
+            if (! (blocco = alloca_blocco()) )
+            {
+                flog(LOG_ERR, "swap pieno");
+
+                return false;
+            }
+
+            set_IND_MASSA(dt, blocco);
+            set_ZERO(dt, true);
+            dt = dt | BIT_RW;
+
+            if (priv == LEV_USER) dt = dt | BIT_US;
+        }
+
+        if (liv > 0)
+        {
+            des_frame *df = swap(proc, liv, ind_virt);
+
+            if (!df)
+            {
+                flog(LOG_ERR, "swap(%d, %d, %p) fallita",
 					proc, liv, ind_virt);
-				return false;
-			}
-			df->residente = (priv == LEV_SYSTEM);
-		}
-	}
-	return true;
+
+                return false;
+            }
+
+            df->residente = (priv == LEV_SYSTEM);
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1388,11 +1411,15 @@ bool crea(natl proc, vaddr ind_virt, int liv, natl priv)
  */
 bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
 {
-	for (int i = 3; i >= 0; i--) {
-		if (!crea(proc, ind_virt, i, priv))
-			return false;
-	}
-	return true;
+    for (int i = 3; i >= 0; i--)
+    {
+        if (!crea(proc, ind_virt, i, priv))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1400,12 +1427,17 @@ bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
  */
 bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
 {
-	size = allinea(size, DIM_PAGINA);
+    size = allinea(size, DIM_PAGINA);
 
-	for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
-		if (!crea_pagina(proc, ind, priv))
-			return false;
-	return true;
+    for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
+    {
+        if (!crea_pagina(proc, ind, priv))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -1413,14 +1445,21 @@ bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
  */
 faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
 {
-	des_frame *dp = 0;
-	for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA) {
-		dp = swap(proc, 0, ind);
-		if (!dp)
-			return 0;
-		dp->residente = true;
-	}
-	return indirizzo_frame(dp) + DIM_PAGINA;
+    des_frame *dp = 0;
+
+    for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
+    {
+        dp = swap(proc, 0, ind);
+
+        if (!dp)
+        {
+            return 0;
+        }
+
+        dp->residente = true;
+    }
+
+    return indirizzo_frame(dp) + DIM_PAGINA;
 }
 
 /**
@@ -1428,11 +1467,14 @@ faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
  */
 faddr crea_tab4()
 {
-	des_frame* df = alloca_frame_libero();
-	if (df == 0) {
-		flog(LOG_ERR, "Impossibile allocare tab4");
-		panic("errore");
-	}
+    des_frame* df = alloca_frame_libero();
+
+    // check if the frame descriptor allocation was succesful
+    if (df == 0)
+    {
+        flog(LOG_ERR, "Unable to allocate Tab4.");
+        panic("Error while creating Tab4.");
+    }
 	df->livello = 4;
 	df->residente = true;
 	df->processo = execution->id;
@@ -1519,7 +1561,7 @@ void rilascia_tutto(faddr tab4, natl i, natl n);
  *
  * @return a pointer to the newly created process.
  */
-proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
+proc_elem* create_process(void f(int), int a, int prio, char liv, bool IF)
 {
     // new process element
     proc_elem *p;
@@ -1638,18 +1680,22 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
         // create user stack
         if (!crea_pila(p->id, fin_utn_p, DIM_USR_STACK, LEV_USER))
         {
-            flog(LOG_WARN, "User stack creation failed.");
+            // in case of error, print a warning error log message
+            flog(LOG_WARN, "Process User stack creation failed.");
+
+            // go to error #6
             goto error6;
         }
 
-        // ( infine, inizializziamo il descrittore di processo
-        //   indirizzo del bottom della pila sistema, che verra' usato
-        //   dal meccanismo delle interruzioni
+        // set process system stack pointer to be used by the interrupt
+        // mechanism when switching privilege level
         pdes_proc->system_stack = fin_sis_p;
 
-        //   inizialmente, il processo si trova a livello sistema, come
-        //   se avesse eseguito una istruzione INT, con la pila sistema
-        //   che contiene le 5 parole lunghe preparate precedentemente
+        // keep in mind that all processes start at system level, as if an INT
+        // instruction was executed, having the system stack which contains the
+        // 5 long words to be used to go back to user level; this is why the
+        // current RSP value points to the process system stack having skipped
+        // the 5 words used by the interrupt mechanism
         pdes_proc->context[I_RSP] = fin_sis_p - 5 * sizeof(natq);
 
         // set function f (RIP) parameter
@@ -1658,7 +1704,7 @@ proc_elem* crea_processo(void f(int), int a, int prio, char liv, bool IF)
         //pdes_proc->context[I_FPU_CR] = 0x037f;
         //pdes_proc->context[I_FPU_TR] = 0xffff;
 
-        // set current privilege level to user level
+        // set process privilege level to user level
         pdes_proc->cpl = LEV_USER;
 	
         // initialize with TSS segment length in order to disable I/O bitmap
@@ -1722,6 +1768,7 @@ error1:	return 0;
  * C++ implementation for a_activate_p defined in system/system.s.
  * User Modile Primitive activate_p().
  * Copies the given process from the swap partition to the M2 memory space.
+ * Returns the process ID using the RAX register.
  */
 extern "C" void c_activate_p(void f(int), int a, natl prio, natl liv)
 {
@@ -1744,38 +1791,57 @@ extern "C" void c_activate_p(void f(int), int a, natl prio, natl liv)
         // just return to the calling function
         return;
     }
-	// *)
 
-	// (* controlliamo che 'liv' contenga un valore ammesso
-	//    [segnalazione di E. D'Urso]
-	if (liv != LEV_USER && liv != LEV_SYSTEM) {
-		flog(LOG_WARN, "livello non valido: %d", liv);
-		c_abort_p();
-		return;
-	}
-	// *)
+    // check if the given privilege level is valid
+    if (liv != LEV_USER && liv != LEV_SYSTEM)
+    {
+        // if not, print a warning error log
+        flog(LOG_WARN, "Invalid privilege level: %d", liv);
 
-	if (liv == LEV_SYSTEM && des_p(execution->id)->cpl == LEV_USER) {
-		flog(LOG_WARN, "errore di protezione");
-		c_abort_p();
-		return;
-	}
+        // abort calling process
+        c_abort_p();
 
-	// (* accorpiamo le parti comuni tra c_activate_p e c_activate_pe
-	// nella funzione ausiliare crea_processo
-	// (questa svolge, tra l'altro, i punti 1-3 in)
-	p = crea_processo(f, a, prio, liv, (liv == LEV_USER));
-	// *)
+        // just return: do not continue
+        return;
+    }
 
-	if (p != 0) {
-		list_insert(ready_proc, p);
-		user_processes++;
-		id = p->id;			// id del processo creato
-						// (allocato da crea_processo)
-		flog(LOG_INFO, "proc=%d entry=%p(%d) prio=%d liv=%d", id, f, a, prio, liv);
-	}
+    // check for protection infringement: the calling processo can not activate
+    // processes with a higher privilege level
+    if (liv == LEV_SYSTEM && des_p(execution->id)->cpl == LEV_USER)
+    {
+        // if so, print a warning error log
+        flog(LOG_WARN, "Protection error.");
 
+        // abort calling process
+        c_abort_p();
+
+        // do not continue, just return
+        return;
+    }
+
+    // actually create the process
+    p = create_process(f, a, prio, liv, (liv == LEV_USER));
+
+    // check if the process was correctly created
+    if (p != 0)
+    {
+        // if so, insert it in the system ready processes queue
+        list_insert(ready_proc, p);
+
+        // increase user processes counter
+        user_processes++;
+
+        // set process id to be left in the RAX register
+        id = p->id;
+
+        // print an info log message containing the process details
+        flog(LOG_INFO, "proc=%d entry=%p(%d) prio=%d liv=%d", id, f, a, prio, liv);
+    }
+
+    // retrieve current process under execution descriptor
 	des_proc *self = des_p(execution->id);
+
+    // leave initialized process id in the RAX register for the calling process
 	self->context[I_RAX] = id;
 }
 
@@ -1929,7 +1995,8 @@ void riassegna_tutto(natl proc, faddr tab4, natl i, natl n)
 
 /**
  * Aborts the current process under execution. A log message with the given text
- * and log severity is also printed.
+ * and log severity is also printed. A new process is scehduled before
+ * returning.
  *
  * @param  sev  log message severity;
  * @param  log  log message text.
@@ -1966,7 +2033,7 @@ extern "C" void c_terminate_p()
 
 /**
  * Aborts the process currently pointed by 'execution'. A new process will be
- * scheduled without returning to the calling function.
+ * scheduled before returning.
  *
  * The only difference with c_terminate_p is that an additionally warning log is
  * also sent whem using this method. Must be used when a process is aborted as a
@@ -2401,13 +2468,16 @@ extern "C" void end_program();
 /**
  * Dummy process body.
  */
-void dd(int i)
+void dummy_body(int i)
 {
-    // wait until there is only one active user process (the dummy process)
+    // wait until there is only one active user process (the dummy process
+    // itself)
     while (user_processes != 1)
-    {}
+    {
+        // wait for all user process to end execution
+    }
 
-    // shutdown
+    // where there is only the dummy process left, the system can be shutdown
     end_program();
 }
 
@@ -2419,7 +2489,7 @@ void dd(int i)
 natl create_dummy()
 {
     // create dummy process
-    proc_elem* dummy_elem = crea_processo(dd, 0, DUMMY_PRIORITY, LEV_SYSTEM, true);
+    proc_elem* dummy_elem = create_process(dummy_body, 0, DUMMY_PRIORITY, LEV_SYSTEM, true);
     
     // check if the dummy process was correctly created
     if (dummy_elem == 0)
@@ -2442,27 +2512,43 @@ natl create_dummy()
 }
 
 /**
+ * System module main process method.
  *
+ * @param  n
  */
-void main_sistema(int n);
+void system_main(int n);
 
 /**
+ * Creates the System module main process.
  *
+ * @return  the system main process id in case of success, 0xFFFFFFFF in case of
+ *          error.
  */
-natl crea_main_sistema()
+natl create_system_main()
 {
-    proc_elem* m = crea_processo(main_sistema, 0, MAX_PRIORITY, LEV_SYSTEM, false);
+    // create system main process
+    //  process body: system_main
+    //  process prio: maximum priority
+    //  process piv:  system level privilege
+    proc_elem* m = create_process(system_main, 0, MAX_PRIORITY, LEV_SYSTEM, false);
 
+    // check if the process was correctly create
     if (m == 0)
     {
-        flog(LOG_ERR, "Impossibile creare il processo main_sistema");
+        // if not, print a warning log message
+        flog(LOG_ERR, "Unable to create the system_main process.");
+
+        // return process creationg failed
         return 0xFFFFFFFF;
     }
 
+    // insert system_main process in the system ready processes queue
     list_insert(ready_proc, m);
 
+    // increment user processes counter
     user_processes++;
 
+    // return system_main process id
     return m->id;
 }
 
@@ -2526,7 +2612,7 @@ extern "C" void c_activate_pe(void f(int), int a, natl prio, natl liv, natb type
     }
 
     // create new process with the given parameters: IF = true
-    p = crea_processo(f, a, prio, liv, true);
+    p = create_process(f, a, prio, liv, true);
 
     // check if the processo was correctly created
     if (p == 0)
@@ -2822,7 +2908,9 @@ void apic_fill()
 }
 
 /**
+ * Activates the system timer.
  *
+ * @param  count  the value to be loaded into the timer CTR register.
  */
 extern "C" void attiva_timer(natl count);
 
@@ -2837,9 +2925,12 @@ const natl DELAY = 59659;
 extern "C" void init_gdt();
 
 /**
- *
+ * When the cmain() startup method is done executing, the System Module main
+ * processo and the dummy process have been created. This method is called after
+ * calling the schedule method (which sets execution = system_main) and loads
+ * the process currently pointed by execution into the CPU.
  */
-extern "C" void salta_a_main();
+extern "C" void load_system_main();
 
 /**
  * C++ STARTUP.
@@ -2915,15 +3006,23 @@ extern "C" void cmain()
         goto error;
     }
 
+    // log initialized swap memory block parameters
     flog(LOG_INFO, "sb: blocks = %d", swap_dev.sb.blocks);
     flog(LOG_INFO, "sb: user   = %p/%p", swap_dev.sb.user_entry, swap_dev.sb.user_end);
     flog(LOG_INFO, "sb: io     = %p/%p", swap_dev.sb.io_entry, swap_dev.sb.io_end);
 
-    mid = crea_main_sistema();
-    if (mid == 0xFFFFFFFF)
-        goto error;
+    // create System module main process
+    mid = create_system_main();
 
-    flog(LOG_INFO, "Creato il processo main_sistema (id = %d)", mid);
+    // check if the process was correctly created
+    if (mid == 0xFFFFFFFF)
+    {
+        // if not, got to error
+        goto error;
+    }
+
+    // log system module main process id in case of success
+    flog(LOG_INFO, "System module main process created (id = %d).", mid);
 
     // create dummy process
     dummy_proc = create_dummy();
@@ -2938,10 +3037,11 @@ extern "C" void cmain()
     // log dummy process id
     flog(LOG_INFO, "Dummy processo created: (id = %d)", dummy_proc);
 
-    // schedule next process
+    // schedule next process: the system main process
     schedule();
 
-    salta_a_main();
+    // load the scheduled process: currently the system module main process
+    load_system_main();
 
 error:
     c_panic("Initialization Error.");
@@ -2964,9 +3064,11 @@ extern "C" natl activate_p(void f(int), int a, natl prio, natl liv);
 extern "C" void terminate_p();
 
 /**
+ * System module main process body.
  *
+ * @param  n
  */
-void main_sistema(int n)
+void system_main(int n)
 {
     // I/O module sync semaphore
     natl sync_io;
@@ -2988,9 +3090,13 @@ void main_sistema(int n)
     // initialize I/O module synchronization semaphore
     sync_io = sem_ini(0);
 
+    // check if the semaphore was correctly allocate
     if (sync_io == 0xFFFFFFFF)
     {
+        // if not, print a warning error log
         flog(LOG_ERR, "Unable to allocate the semaphore for I/O Module synchronization.");
+
+        // go to error state
         goto error;
     }
 
@@ -3011,23 +3117,34 @@ void main_sistema(int n)
     // wait I/O module synchronization sempahore
     sem_wait(sync_io);
 
-	// ( creazione del processo start_utente
-	flog(LOG_INFO, "creazione del processo start_utente...");
-	if (activate_p(swap_dev.sb.user_entry, 0, MAX_PRIORITY, LEV_USER) == 0xFFFFFFFF) {
-		flog(LOG_ERR, "impossibile creare il processo main utente");
-		goto error;
-	}
-	// )
-	// (* attiviamo il timer
-	attiva_timer(DELAY);
-	flog(LOG_INFO, "Timer initialized (DELAY=%d)", DELAY);
-	// *)
-	// ( terminazione
-	flog(LOG_INFO, "Switching to use process.");
-	terminate_p();
-	// )
+    // create the user_start process
+    flog(LOG_INFO, "Creating the start_user process.");
+
+    // check if the start_user process was correctly activated
+    if (activate_p(swap_dev.sb.user_entry, 0, MAX_PRIORITY, LEV_USER) == 0xFFFFFFFF)
+    {
+        // if not, print a warning error log
+        flog(LOG_ERR, "Unable to create the User Module main process.");
+
+        // go to error state
+        goto error;
+    }
+
+    // cctivate system timer with the given CTR register value
+    attiva_timer(DELAY);
+
+    // log system timer correctly initialized
+    flog(LOG_INFO, "Timer initialized (DELAY=%d)", DELAY);
+
+	// finally, switch to user module process
+    flog(LOG_INFO, "Switching to user process.");
+
+    // terminate the process currently under execution
+    terminate_p();
+
+// in case of error, panic
 error:
-	panic("Errore di inizializzazione");
+	panic("System main process initialization error.");
 }
 
 // ( [P_SWAP]

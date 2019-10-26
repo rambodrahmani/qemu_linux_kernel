@@ -35,7 +35,7 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Error message string.
+# Error message string used in abort_trojan to call the flog method.
 #-------------------------------------------------------------------------------
 param_err:
 	.asciz "Invalid address: %p"
@@ -53,15 +53,17 @@ param_err:
 .endm
 
 #-------------------------------------------------------------------------------
-# Process shutdown in case of trojan horse.
+# When a trojan horse is catched, the current process under execution is
+# aborted, a new one is scheduled and activated. Before aborting the current
+# process an error log message is printed containing the invalid address.
 #-------------------------------------------------------------------------------
-violazione:
-    movq $2, %rdi
-    movabs $param_err, %rsi
-    movq %rax, %rdx
-    xorq %rax, %rax
-    call flog
-    int $TIPO_AB
+abort_trojan:
+    movq   $2, %rdi             # LOG_ERROR
+    movabs $param_err, %rsi     # log message text
+    movq   %rax, %rdx           # 
+    xorq   %rax, %rax           # zero out %rax
+    call   flog                 # call flog to print the log message
+    int    $TIPO_AB             # call c_abort_p
 
 #-------------------------------------------------------------------------------
 # Checks if the given address contained in reg is accessible from the privilege
@@ -77,7 +79,7 @@ violazione:
     testq \reg, %rax
     jnz 1f
     movq \reg, %rax
-    jmp violazione
+    jmp abort_trojan
 1:	
 .endm
 
@@ -91,7 +93,7 @@ violazione:
 .macro trojan_horse2 base dim
     movq \base, %rax
     addq \dim, %rax
-    jc violazione
+    jc abort_trojan
 .endm
 
 #-------------------------------------------------------------------------------
@@ -102,7 +104,7 @@ violazione:
     movq \base, %rax
     shlq $9, %rax
     addq \sec, %rax
-    jc violazione
+    jc abort_trojan
 .endm
 
 #-------------------------------------------------------------------------------
