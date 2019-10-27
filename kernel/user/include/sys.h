@@ -32,9 +32,9 @@
 #include <log.h>
 
 /**
- *
+ * system.cpp -> c_log()
  */
-extern "C" void do_log(log_sev sev, const char* buf, natl quanti);
+extern "C" void do_log(log_sev sev, const char* log, natl length);
 
 /**
  *

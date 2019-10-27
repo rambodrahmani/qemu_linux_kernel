@@ -1,96 +1,48 @@
-#line 1 "user/prog/primitive.in"
 /**
- * File: primitive.in
- *       This user program example shows how to add a new primitive to the
- *       kernel for the User Module. Inside the System and I/O Modules all the
- *       source codes related to this example will be marked using the
- *       USER-PRIMITIVE-EXAMPLE tag.
+ * File: zero-division.cpp
+ *       This example show how the kernel handles exceptions. Keep in mind that
+ *       you must compile this with compiler optimization disabled (default mode
+ *       for our scripts) other gcc might replace the zero division with an
+ *       arbitrary peace code to avoid the exception happening.
  *
- *       For this example we will add the getid() primitive which can be used by
- *       the User Module to retrieve the id of the process where it's called. It
- *       does not take any actual arguments and just return the calling process
- *       id. In order to achieve our objective, the following implementations
- *       must be done in the Kernel:
- *        1. Assign an interrupt type to the primitive. All interrupt types are
- *           defined in kernel/include/constants.h. Keep in mind that all 
- *           interrupt types are defined as C++ macros in order to be able to
- *           use them in both C++ and Assembly code;
- *        2. Initialize an IDT gate for this interrupt. We will have to call the
- *           load_gate macro in the init_idt function defined in system/system.s
- *           specifying the interrupt type defined in kernel/include/constants.h
- *           the assembly subroutine to be called (a_getid) abd the DPL
- *           (LEV_USER);
- *        3. Define the a_getid assembly subroutine in system/system.s which
- *           will only call the corresponding C++ implementation c_getid();
- *        4. Write C++ implementation c_get() in system/system.cpp;
- *        5. Point 1-4 contain all the modifications needed for the System
- *           module. We can now compile the system module using make to make
- *           sure everything was implemented correctly;
- *        6. We must now provide to the User module a way to call the c_getid()
- *           function (use interrupt TIPO_GETID). To do so, we declare the
- *           getid() interface program in sys.h;
- *        7. And define the getid() interface program in user.s.
- *        8. Everything is ready now for the User Module to be able to use the
- *           getid() as shown in the example below.
+ *       Compile with: place the source file in the user folder and use
+ *         make
+ *         make swap
+ *         ./run
  *
- *       After placing the file in user/prog/primitive.in compile und run using:
- *          make
- *          make swap
- *          ./run
+ *       Expected outout:
+ *         INF	0	proc=7 entry=start [user.s:9](0) prio=268435455 liv=3
+ *         INF	0	Timer initialized (DELAY=59659)
+ *         INF	0	Switching to use process.
+ *         INF	0	Processo 0 aborted
+ *         WRN	0	Exception 0, error = 0000000000000000, EIP = main [user.cpp:21]
+ *
+ *         WRN	0	  RIP=0000000000000141 CPL=LEV_USER
+ *         WRN	0	  RFLAGS=0000000000000282 [nt of df IF tf SF zf af pf cf, IOPL=SYSTEM]
+ *         WRN	0	  RAX=0000000000000003 RBX=0000000000000000 RCX=00000000000000a0 RDX=0000000000000000
+ *         WRN	0	  RDI=0000000000004000 RSI=0000000000100000 RBP=00000000fffffff0 RSP=00000000ffffffd8
+ *         WRN	0	  R8 =0000000000000000 R9 =0000000000000000 R10=0000000000000000 R11=0000000000000000
+ *         WRN	0	  R12=0000000000000000 R13=0000000000000000 R14=0000000000000000 R15=0000000000000000
+ *         WRN	0	  backtrace:
+ *         WRN	0	Process 7 Current execution process aborted.
  *
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
- *         Created on 07/09/2019
+ *         Created on 31/08/2019.
  */
-
-#include <sys.h>
-#include <lib.h>
 
 /**
- * User Level process implemented by sample_body having priority 20.
- */
-
-#line 52 "user/prog/primitive.in"
-/**
- * Each process_body definition corresponds to a void function having a single
- * integer parameter. This is done for simplicity. The integer parameter can be
- * omitted in the definition.
+ * Developer harness test.
  *
- * Developer harness test shows how to use the getid() primitive.
+ * @param  argc  command line arguments counter.
+ * @param  argv  command line arguments.
  *
- * @param  a  process void function argument.
+ * @return       execution exit code.
  */
-void sample_body(int a)
-#line 62 "user/prog/primitive.in"
+int main(int argc, char * argv[])
 {
-    // char buffer
-    char buf[10];
+    int x = 3;
+    int y = 0;
 
-    // retrieved process id
-    natl id;
-
-    // write message to the video output
-    writeconsole("My process id: ");
-
-    // user the getid() primitive to retrieve process id
-    id = getid();
-
-    // convert id into string and write it in the char buffer
-    int_conv(id, buf);
-
-    // write the content of buf to the video output
-    writeconsole(buf);
-
-    // print pause message and wait for the ESC key
-    pause();
-
-	terminate_p();
+    return x/y;
 }
-short sample;
-#line 90 "user/user.cpp"
 
-int main()
-{
-	sample = activate_p(sample_body, 0, 20, LEV_USER);
-
-	terminate_p();
-}

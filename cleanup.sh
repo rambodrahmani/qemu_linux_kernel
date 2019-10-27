@@ -75,6 +75,7 @@ echo "***********************************"
 cd kernel
 rm -f system/*.o io/*.o user/*.o util/*.o
 rm -f util/start.mk util/start.gdb util/start.pl
+rm .swap
 rm swap.img
 cd ..
 echo "Completed."

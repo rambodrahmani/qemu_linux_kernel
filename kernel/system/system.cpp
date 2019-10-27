@@ -640,8 +640,11 @@ void process_dump(natl id, log_sev sev);
  */
 extern "C" void handle_exception(int type, natq err, addr eip)
 {
+    // retrieve exception descriptive string
+    const char * excp = exceptions[type];
+
     // log warning message about the Exception
-    flog(LOG_WARN, "Exception %ld, error = %lx, EIP = %p\n", type, err, eip);
+    flog(LOG_WARN, "Exception (%s) %ld, error = %lx, EIP = %p\n", excp, type, err, eip);
 
     // dump current process info
     process_dump(execution->id, LOG_WARN);
@@ -3315,35 +3318,35 @@ natl allocated_sems = 0;
 /**
  * Allocates a new semaphore and returns its number.
  *
- * @return  the number of the allocated semaphore.
+ * @return  the id of the allocated semaphore.
  */
-natl alloca_sem()
+natl allocate_sem()
 {
-    natl i;
+    natl id;
 
     // check if maximum number of allocable semaphore has been reached
     if (allocated_sems >= MAX_SEM)
     {
+        // return semaphore allocation failed
         return 0xFFFFFFFF;
     }
 
     // set semaphore number
-    i = allocated_sems;
+    id = allocated_sems;
 
-    // increment number of semaphores
+    // increment number of allocated semaphores
     allocated_sems++;
 
     // return semaphore number
-    return i;
+    return id;
 }
 
-// dal momento che i semafori non vengono mai deallocati,
-// un semaforo e' valido se e solo se il suo indice e' inferiore
-// al numero dei semafori allocat
 /**
- * Checks if the given semaphore ID is valid: since semaphore are never
+ * Checks if the given semaphore ID is valid: since semaphores are never
  * deallocated it only checks if the given id is lower than the number of
  * allocated semaphores.
+ *
+ * @param  sem  the sempahore id.
  */
 bool sem_valido(natl sem)
 {
@@ -3353,13 +3356,18 @@ bool sem_valido(natl sem)
 /**
  * C++ body implementation for the a_sem_ini primitive.
  * Together they implement the sem_ini kernel primitive.
+ *
+ * Initializes a sempahore with initial provided value.
+ *
+ * @param  val  0 if the semaphore is intended to be used for synchronization;
+ *              1 if the sempahore is intended to be used for mutex.
  */
 extern "C" natl c_sem_ini(int val)
 {
     // allocate semaphore
-    natl i = alloca_sem();
+    natl i = allocate_sem();
 
-    // check if there are still available semaphores
+    // check if the semaphore was correctl allocated
     if (i != 0xFFFFFFFF)
     {
         // set semaphore counter value
@@ -3369,16 +3377,21 @@ extern "C" natl c_sem_ini(int val)
     // return semaphore id
     return i;
 }
-// )
+
+/**
+ *
+ */
 #ifdef AUTOCORR
-int MAX_LOG = 4;
+    int MAX_LOG = 4;
 #else
-int MAX_LOG = 5;
+    int MAX_LOG = 5;
 #endif
 
+/**
+ * Primitive for the User Module to print log messages.
+ */
 extern "C" void c_log(log_sev sev, const char* buf, natl quanti)
 {
-	do_log(sev, buf, quanti);
+    do_log(sev, buf, quanti);
 }
-
 
