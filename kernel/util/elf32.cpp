@@ -1,5 +1,11 @@
-#include <stdint.h>
+/**
+ * File: elf32.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
 
+#include <stdint.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -10,20 +16,34 @@ using namespace std;
 #include "interp.h"
 #include "elf32.h"
 
+/**
+ *
+ */
 typedef unsigned int uint32_t;
 
-// interprete per formato elf
-class InterpreteElf32: public Interprete {
+
+/**
+ * Elf32 Interpreter.
+ */
+class InterpreteElf32: public Interprete
+{
 public:
 	InterpreteElf32();
 	~InterpreteElf32() {}
 	virtual Eseguibile* interpreta(FILE* pexe);
 };
 
+/**
+ *
+ */
 InterpreteElf32::InterpreteElf32()
 {}
 
-class EseguibileElf32: public Eseguibile {
+/**
+ *
+ */
+class EseguibileElf32: public Eseguibile
+{
 	FILE *pexe;
 	Elf32_Ehdr h;
 	char *seg_buf;
@@ -58,13 +78,17 @@ public:
 	~EseguibileElf32();
 };
 
+/**
+ *
+ */
 EseguibileElf32::EseguibileElf32(FILE* pexe_)
 	: pexe(pexe_), curr_seg(0),
 	  seg_buf(NULL), sec_buf(NULL)
 {}
 
-
-
+/**
+ *
+ */
 bool EseguibileElf32::init()
 {
 	if (fseek(pexe, 0, SEEK_SET) != 0)
@@ -107,6 +131,9 @@ bool EseguibileElf32::init()
 	return true;
 }
 
+/**
+ *
+ */
 Segmento* EseguibileElf32::prossimo_segmento()
 {
 	while (curr_seg < h.e_phnum) {
@@ -121,60 +148,90 @@ Segmento* EseguibileElf32::prossimo_segmento()
 	return NULL;
 }
 
+/**
+ *
+ */
 uint64_t EseguibileElf32::entry_point() const
 {
 	return h.e_entry;
 }
 
+/**
+ *
+ */
 EseguibileElf32::~EseguibileElf32()
 {
 	delete[] seg_buf;
 	delete[] sec_buf;
 }
 
+/**
+ *
+ */
 EseguibileElf32::SegmentoElf32::SegmentoElf32(EseguibileElf32* padre_, Elf32_Phdr* ph_)
 	: padre(padre_), ph(ph_),
-	  curr_offset(ph->p_offset & ~(DIM_PAGINA - 1)),
+	  curr_offset(ph->p_offset & ~(PAGE_SIZE - 1)),
 	  da_leggere(ph->p_filesz + (ph->p_offset - curr_offset)),
 	  ancora(ph->p_memsz)
 {
-	curr = (da_leggere > DIM_PAGINA ? DIM_PAGINA : da_leggere);
+	curr = (da_leggere > PAGE_SIZE ? PAGE_SIZE : da_leggere);
 }
 
+/**
+ *
+ */
 bool EseguibileElf32::SegmentoElf32::scrivibile() const
 {
 	return !!(ph->p_flags & PF_W);
 }
 
+/**
+ *
+ */
 uint64_t EseguibileElf32::SegmentoElf32::ind_virtuale() const
 {
 	return ph->p_vaddr;
 }
 
+/**
+ *
+ */
 uint64_t EseguibileElf32::SegmentoElf32::dimensione() const
 {
 	return ph->p_memsz;
 }
 
+/**
+ *
+ */
 bool EseguibileElf32::SegmentoElf32::finito() const
 {
 	return (ancora <= 0);
 }
 
+/**
+ *
+ */
 bool EseguibileElf32::SegmentoElf32::prossima_pagina()
 {
 	if (finito())
 		return false;
 	da_leggere -= curr;
 	curr_offset += curr;
-	curr = (da_leggere > DIM_PAGINA ? DIM_PAGINA : da_leggere);
+	curr = (da_leggere > PAGE_SIZE ? PAGE_SIZE : da_leggere);
 	return true;
 }
 
+/**
+ *
+ */
 bool EseguibileElf32::SegmentoElf32::pagina_di_zeri() const {
 	return (da_leggere <= 0);
 }
 
+/**
+ *
+ */
 bool EseguibileElf32::SegmentoElf32::copia_pagina(void* dest)
 {
 	if (curr == 0)
@@ -185,7 +242,7 @@ bool EseguibileElf32::SegmentoElf32::copia_pagina(void* dest)
 		exit(EXIT_FAILURE);
 	}
 
-	if (curr < DIM_PAGINA) memset(dest, 0, DIM_PAGINA);
+	if (curr < PAGE_SIZE) memset(dest, 0, PAGE_SIZE);
 	if (fread(dest, 1, curr, padre->pexe) < curr) {
 		fprintf(stderr, "errore nella lettura dal file ELF\n");
 		exit(EXIT_FAILURE);
@@ -193,6 +250,9 @@ bool EseguibileElf32::SegmentoElf32::copia_pagina(void* dest)
 	return true;
 }
 
+/**
+ *
+ */
 Eseguibile* InterpreteElf32::interpreta(FILE* pexe)
 {
 	EseguibileElf32 *pe = new EseguibileElf32(pexe);
@@ -204,4 +264,8 @@ Eseguibile* InterpreteElf32::interpreta(FILE* pexe)
 	return NULL;
 }
 
-InterpreteElf32		int_elf32;
+/**
+ *
+ */
+InterpreteElf32  int_elf32;
+

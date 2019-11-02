@@ -1354,7 +1354,7 @@ extern "C" void cmain(int sem_io)
 
     unsigned long long end_ = (unsigned long long)&end;
 
-    end_ = (end_ + DIM_PAGINA - 1) & ~(DIM_PAGINA - 1);
+    end_ = (end_ + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
 
     heap_init((void *)end_, DIM_IO_HEAP);
 

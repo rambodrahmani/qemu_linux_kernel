@@ -1,5 +1,11 @@
-#include <stdint.h>
+/**
+ * File: coff.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
 
+#include <stdint.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -11,20 +17,33 @@ using namespace std;
 #include "coff.h"
 #include "dos.h"
 
+/**
+ *
+ */
 typedef unsigned int uint;
 
-// interprete per formato coff-go32-exe
-class InterpreteCoff_go32: public Interprete {
+/**
+ * interprete per formato coff-go32-exe
+ */
+class InterpreteCoff_go32: public Interprete
+{
 public:
-	InterpreteCoff_go32();
-	~InterpreteCoff_go32() {}
-	virtual Eseguibile* interpreta(FILE* pexe);
+    InterpreteCoff_go32();
+    ~InterpreteCoff_go32() {}
+    virtual Eseguibile* interpreta(FILE* pexe);
 };
 
+/**
+ *
+ */
 InterpreteCoff_go32::InterpreteCoff_go32()
 {}
 
-class EseguibileCoff_go32: public Eseguibile {
+/**
+ *
+ */
+class EseguibileCoff_go32: public Eseguibile
+{
 	FILE *pexe;
 	FILHDR h;
 	AOUTHDR ah;
@@ -32,7 +51,8 @@ class EseguibileCoff_go32: public Eseguibile {
 	char *seg_buf;
 	int curr_seg;
 
-	class SegmentoCoff_go32: public Segmento {
+	class SegmentoCoff_go32: public Segmento
+    {
 		EseguibileCoff_go32 *padre;
 		SCNHDR* ph;
 		uint curr_offset;
@@ -40,6 +60,7 @@ class EseguibileCoff_go32: public Eseguibile {
 		uint da_leggere;
 		uint line;
 		size_t curr;
+
 	public:
 		SegmentoCoff_go32(EseguibileCoff_go32 *padre_, SCNHDR* ph_);
 		virtual bool scrivibile() const;
@@ -53,6 +74,7 @@ class EseguibileCoff_go32: public Eseguibile {
 	};
 
 	friend class SegmentoCoff_go32;
+
 public:
 	EseguibileCoff_go32(FILE* pexe_);
 	bool init();
@@ -61,12 +83,16 @@ public:
 	~EseguibileCoff_go32();
 };
 
+/**
+ *
+ */
 EseguibileCoff_go32::EseguibileCoff_go32(FILE* pexe_)
 	: pexe(pexe_), curr_seg(0), seg_buf(NULL)
 {}
 
-
-
+/**
+ *
+ */
 bool EseguibileCoff_go32::init()
 {
 	DOS_EXE dos;
@@ -119,6 +145,9 @@ bool EseguibileCoff_go32::init()
 	return true;
 }
 
+/**
+ *
+ */
 Segmento* EseguibileCoff_go32::prossimo_segmento()
 {
 	while (curr_seg < h.f_nscns) {
@@ -134,12 +163,17 @@ Segmento* EseguibileCoff_go32::prossimo_segmento()
 	return NULL;
 }
 
+/**
+ *
+ */
 uint64_t EseguibileCoff_go32::entry_point() const
 {
 	return ah.entry;
 }
 
-
+/**
+ *
+ */
 EseguibileCoff_go32::~EseguibileCoff_go32()
 {
 	delete[] seg_buf;
@@ -150,32 +184,46 @@ EseguibileCoff_go32::SegmentoCoff_go32::SegmentoCoff_go32(EseguibileCoff_go32* p
 	  curr_offset(ph->s_scnptr),
 	  curr_vaddr(ph->s_vaddr),
 	  da_leggere(ph->s_size),
-	  line(curr_vaddr & (DIM_PAGINA - 1)),
-	  curr(da_leggere > DIM_PAGINA - line ? DIM_PAGINA - line: da_leggere)
+	  line(curr_vaddr & (PAGE_SIZE - 1)),
+	  curr(da_leggere > PAGE_SIZE - line ? PAGE_SIZE - line: da_leggere)
 {
 }
 
+/**
+ *
+ */
 bool EseguibileCoff_go32::SegmentoCoff_go32::scrivibile() const
 {
 	return !!(ph->s_flags & (STYP_DATA | STYP_BSS));
 }
 
+/**
+ *
+ */
 uint64_t EseguibileCoff_go32::SegmentoCoff_go32::ind_virtuale() const
 {
 	return (ph->s_vaddr);
 }
 
+/**
+ *
+ */
 uint64_t EseguibileCoff_go32::SegmentoCoff_go32::dimensione() const
 {
 	return ph->s_size;
 }
 
+/**
+ *
+ */
 bool EseguibileCoff_go32::SegmentoCoff_go32::finito() const
 {
 	return (da_leggere <= 0);
 }
 
-
+/**
+ *
+ */
 bool EseguibileCoff_go32::SegmentoCoff_go32::copia_pagina(void* dest)
 {
 	if (finito())
@@ -197,6 +245,9 @@ bool EseguibileCoff_go32::SegmentoCoff_go32::copia_pagina(void* dest)
 	return true;
 }
 
+/**
+ *
+ */
 bool EseguibileCoff_go32::SegmentoCoff_go32::prossima_pagina()
 {
 	if (finito())
@@ -205,16 +256,22 @@ bool EseguibileCoff_go32::SegmentoCoff_go32::prossima_pagina()
 	da_leggere -= curr;
 	curr_offset += curr;
 	curr_vaddr += curr;
-	line = curr_vaddr & (DIM_PAGINA - 1);
-	curr = (da_leggere > DIM_PAGINA - line ? DIM_PAGINA - line: da_leggere);
+	line = curr_vaddr & (PAGE_SIZE - 1);
+	curr = (da_leggere > PAGE_SIZE - line ? PAGE_SIZE - line: da_leggere);
 	return true;
 }
 
+/**
+ *
+ */
 bool EseguibileCoff_go32::SegmentoCoff_go32::pagina_di_zeri() const
 {
-	return (ph->s_flags & STYP_BSS && line == 0 && curr == DIM_PAGINA);
+	return (ph->s_flags & STYP_BSS && line == 0 && curr == PAGE_SIZE);
 }
 
+/**
+ *
+ */
 Eseguibile* InterpreteCoff_go32::interpreta(FILE* pexe)
 {
 	EseguibileCoff_go32 *pe = new EseguibileCoff_go32(pexe);
@@ -226,4 +283,8 @@ Eseguibile* InterpreteCoff_go32::interpreta(FILE* pexe)
 	return NULL;
 }
 
+/**
+ *
+ */
 InterpreteCoff_go32	int_coff_go32;
+

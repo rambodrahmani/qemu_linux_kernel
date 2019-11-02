@@ -1,8 +1,19 @@
+/**
+ * File: decode.c
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-union entrata {
+/**
+ *
+ */
+union entrata
+{
 	// caso di pagina presente
 	struct {
 		// byte di accesso
@@ -40,22 +51,32 @@ union entrata {
 	} a;	
 };
 
+/**
+ *
+ */
 typedef uint64_t block_t;
 
-struct superblock_t {
-	int8_t		magic[8];
-	block_t		bm_start;
-	uint64_t	blocks;
-	block_t		directory;
-	uint64_t	user_entry;
-	uint64_t	user_end;
-	uint64_t	io_entry;
-	uint64_t	io_end;
-	uint64_t	checksum;
+/**
+ *
+ */
+struct superblock_t
+{
+    int8_t    magic[8];
+    block_t   bm_start;
+    uint64_t  blocks;
+    block_t   directory;
+    uint64_t  user_entry;
+    uint64_t  user_end;
+    uint64_t  io_entry;
+    uint64_t  io_end;
+    uint64_t  checksum;
 };
 
-
-int get_bit() {
+/**
+ *
+ */
+int get_bit()
+{
 	static int nbit = 0;
 	static uint64_t bitmap = 0;
 	int bit;
@@ -69,6 +90,9 @@ int get_bit() {
 	return bit;
 }
 
+/**
+ *
+ */
 int main(int argc, char* argv[])
 {
 	union entrata *p;
@@ -143,3 +167,4 @@ int main(int argc, char* argv[])
 	}
 	return 0;
 }
+

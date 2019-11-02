@@ -1,69 +1,96 @@
+/**
+ * File: swap.h
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
 #ifndef SWAP_H__
 #define SWAP_H__
 
 #include <stdint.h>
-
 #include <cstdlib>
 
+/**
+ *
+ */
 typedef uint64_t block_t;
 
-struct superblock_t {
-	int8_t		magic[8];
-	block_t		bm_start;
-	uint64_t	blocks;
-	block_t		directory;
-	uint64_t	user_entry;
-	uint64_t	user_end;
-	uint64_t	io_entry;
-	uint64_t	io_end;
-	uint64_t	checksum;
+/**
+ *
+ */
+struct superblock_t
+{
+    int8_t      magic[8];
+    block_t     bm_start;
+    uint64_t    blocks;
+    block_t     directory;
+    uint64_t    user_entry;
+    uint64_t    user_end;
+    uint64_t    io_entry;
+    uint64_t    io_end;
+    uint64_t    checksum;
 };
 
-// interfaccia generica agli swap
-class Swap {
+/**
+ * Generic Swap Interface.
+ */
+class Swap
+{
 public:
-	virtual unsigned int dimensione() const = 0;
-	bool scrivi_superblocco(const superblock_t& sb);
-	bool scrivi_bitmap(const void* vec, int nb);
-	bool scrivi_blocco(block_t b, const void* blk);
-	bool leggi_blocco(block_t b, void* blk);
-	virtual ~Swap() {}
+    virtual unsigned int dimensione() const = 0;
+    bool scrivi_superblocco(const superblock_t& sb);
+    bool scrivi_bitmap(const void* vec, int nb);
+    bool scrivi_blocco(block_t b, const void* blk);
+    bool leggi_blocco(block_t b, void* blk);
+    virtual ~Swap() {}
 protected:
-	virtual bool leggi(unsigned int off, void* buff, unsigned int size) = 0;
-	virtual bool scrivi(unsigned int off, const void* buff, unsigned int size) = 0;
+    virtual bool leggi(unsigned int off, void* buff, unsigned int size) = 0;
+    virtual bool scrivi(unsigned int off, const void* buff, unsigned int size) = 0;
 };
 
+/**
+ *
+ */
 class ListaTipiSwap;
 
-class TipoSwap {
+/**
+ *
+ */
+class TipoSwap
+{
 public:
-	TipoSwap();
-	virtual Swap* apri(const char* nome) = 0;
-	virtual ~TipoSwap() {};
+    TipoSwap();
+    virtual Swap* apri(const char* nome) = 0;
+    virtual ~TipoSwap() {};
 };
 
-class ListaTipiSwap {
-
+/**
+ *
+ */
+class ListaTipiSwap
+{
 public:
-	static ListaTipiSwap* instance();
-	void aggiungi(TipoSwap* in) { testa = new Elem(in, testa); }
-	void rewind() { curr = testa; }
-	bool ancora() { return curr != NULL; }
-	TipoSwap* prossimo();
+    static ListaTipiSwap* instance();
+    void aggiungi(TipoSwap* in) { testa = new Elem(in, testa); }
+    void rewind() { curr = testa; }
+    bool ancora() { return curr != NULL; }
+    TipoSwap* prossimo();
+
 private:
-	static ListaTipiSwap* instance_;
-	ListaTipiSwap() : testa(NULL), curr(NULL) {}
+    static ListaTipiSwap* instance_;
+    ListaTipiSwap() : testa(NULL), curr(NULL) {}
 
-	struct Elem {
-		TipoSwap* in;
-		Elem* next;
+    struct Elem
+    {
+        TipoSwap* in;
+        Elem* next;
 
-		Elem(TipoSwap* in_, Elem* next_ = NULL):
-			in(in_), next(next_)
+        Elem(TipoSwap* in_, Elem* next_ = NULL):
+            in(in_), next(next_)
 		{}
-	} *testa, *curr;
-
-
+    } *testa, *curr;
 };
 
 #endif
+

@@ -1,8 +1,21 @@
+/**
+ * File: showb.c
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ *
+ */
 #define BLOCK_SIZE 4096
 
+/**
+ *
+ */
 int main(int argc, char* argv[])
 {
 	char buf[BLOCK_SIZE];
@@ -28,4 +41,4 @@ int main(int argc, char* argv[])
 
 	return EXIT_SUCCESS;
 }
-	
+

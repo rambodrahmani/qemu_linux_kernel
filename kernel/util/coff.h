@@ -1,4 +1,10 @@
-/* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+/**
+ * File: coff.h
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
 #ifndef __dj_include_coff_h_
 #define __dj_include_coff_h_
 
@@ -6,23 +12,26 @@
 extern "C" {
 #endif
 
+/**
+ * coff information for Intel 386/486.
+ */
 
-/*** coff information for Intel 386/486.  */
+/******************************** FILE HEADER *********************************/
 
-/********************** FILE HEADER **********************/
-
-struct external_filehdr {
-	unsigned short f_magic;		/* magic number			*/
-	unsigned short f_nscns;		/* number of sections		*/
-	unsigned long f_timdat;	/* time & date stamp		*/
-	unsigned long f_symptr;	/* file pointer to symtab	*/
-	unsigned long f_nsyms;		/* number of symtab entries	*/
-	unsigned short f_opthdr;	/* sizeof(optional hdr)		*/
-	unsigned short f_flags;		/* flags			*/
+struct external_filehdr
+{
+    unsigned short f_magic;     /* magic number             */
+    unsigned short f_nscns;     /* number of sections       */
+    unsigned long f_timdat;     /* time & date stamp        */
+    unsigned long f_symptr;     /* file pointer to symtab   */
+    unsigned long f_nsyms;      /* number of symtab entries */
+    unsigned short f_opthdr;    /* sizeof(optional hdr)     */
+    unsigned short f_flags;     /* flags                    */
 };
 
 
-/* Bits for f_flags:
+/**
+ * Bits for f_flags:
  *	F_RELFLG	relocation info stripped from file
  *	F_EXEC		file is executable (no unresolved external references)
  *	F_LNNO		line numbers stripped from file
@@ -30,74 +39,88 @@ struct external_filehdr {
  *	F_AR32WR	file has byte ordering of an AR32WR machine (e.g. vax)
  */
 
-#define F_RELFLG	(0x0001)
-#define F_EXEC		(0x0002)
-#define F_LNNO		(0x0004)
-#define F_LSYMS		(0x0008)
+#define F_RELFLG (0x0001)
+#define F_EXEC (0x0002)
+#define F_LNNO (0x0004)
+#define F_LSYMS (0x0008)
 
-
-
-#define	I386MAGIC	0x14c
-#define I386AIXMAGIC	0x175
+/**
+ *
+ */
+#define	I386MAGIC       0x14c
+#define I386AIXMAGIC    0x175
 #define I386BADMAG(x) (((x).f_magic!=I386MAGIC) && (x).f_magic!=I386AIXMAGIC)
 
+/**
+ *
+ */
+#define	FILHDR  struct external_filehdr
+#define	FILHSZ  sizeof(FILHDR)
 
-#define	FILHDR	struct external_filehdr
-#define	FILHSZ	sizeof(FILHDR)
 
+/*************************** AOUT "OPTIONAL HEADER" ***************************/
 
-/********************** AOUT "OPTIONAL HEADER" **********************/
-
-
+/**
+ *
+ */
 typedef struct
 {
-  unsigned short 	magic;		/* type of file				*/
-  unsigned short	vstamp;		/* version stamp			*/
-  unsigned long	tsize;		/* text size in bytes, padded to FW bdry*/
-  unsigned long	dsize;		/* initialized data "  "		*/
-  unsigned long	bsize;		/* uninitialized data "   "		*/
-  unsigned long	entry;		/* entry pt.				*/
-  unsigned long 	text_start;	/* base of text used for this file */
-  unsigned long 	data_start;	/* base of data used for this file */
+    unsigned short magic;       /*  type of file                            */
+    unsigned short vstamp;      /*  version stamp                           */
+    unsigned long  tsize;       /*  text size in bytes, padded to FW bdry   */
+    unsigned long  dsize;       /*  initialized data                        */
+    unsigned long  bsize;       /*  uninitialized data                      */
+    unsigned long  entry;       /*  entry point                             */
+    unsigned long  text_start;  /*  base of text used for this file         */
+    unsigned long  data_start;  /*  base of data used for this file         */
 }
 AOUTHDR;
 
+/**
+ *
+ */
+typedef struct gnu_aout
+{
+    unsigned long info;
+    unsigned long tsize;
+    unsigned long dsize;
+    unsigned long bsize;
+    unsigned long symsize;
+    unsigned long entry;
+    unsigned long txrel;
+    unsigned long dtrel;
+} GNU_AOUT;
 
-typedef struct gnu_aout {
-	unsigned long info;
-	unsigned long tsize;
-	unsigned long dsize;
-	unsigned long bsize;
-	unsigned long symsize;
-	unsigned long entry;
-	unsigned long txrel;
-	unsigned long dtrel;
-	} GNU_AOUT;
-
+/**
+ *
+ */
 #define AOUTSZ (sizeof(AOUTHDR))
 
-#define OMAGIC          0404    /* object files, eg as output */
-#define ZMAGIC          0413    /* demand load format, eg normal ld output */
-#define STMAGIC		0401	/* target shlib */
-#define SHMAGIC		0443	/* host   shlib */
+#define OMAGIC      0404    /*  object files, eg as output              */
+#define ZMAGIC      0413    /*  demand load format, eg normal ld output */
+#define STMAGIC     0401    /*  target shlib                            */
+#define SHMAGIC     0443    /*  host   shlib                            */
 
 
-/********************** SECTION HEADER **********************/
+/******************************* SECTION HEADER *******************************/
 
-
-struct external_scnhdr {
-	char		s_name[8];	/* section name			*/
-	unsigned long		s_paddr;	/* physical address, aliased s_nlib */
-	unsigned long		s_vaddr;	/* virtual address		*/
-	unsigned long		s_size;		/* section size			*/
-	unsigned long		s_scnptr;	/* file ptr to raw data for section */
-	unsigned long		s_relptr;	/* file ptr to relocation	*/
-	unsigned long		s_lnnoptr;	/* file ptr to line numbers	*/
-	unsigned short		s_nreloc;	/* number of relocation entries	*/
-	unsigned short		s_nlnno;	/* number of line number entries*/
-	unsigned long		s_flags;	/* flags			*/
+struct external_scnhdr
+{
+    char            s_name[8];  /*  section name                        */
+    unsigned long   s_paddr;    /*  physical address, aliased s_nlib    */
+    unsigned long   s_vaddr;    /*  virtual address                     */
+    unsigned long   s_size;     /*  section size                        */
+    unsigned long   s_scnptr;   /*  file ptr to raw data for section    */
+    unsigned long   s_relptr;   /*  file ptr to relocation              */
+    unsigned long   s_lnnoptr;  /*  file ptr to line numbers            */
+    unsigned short  s_nreloc;   /*  number of relocation entries        */
+    unsigned short  s_nlnno;    /*  number of line number entries       */
+    unsigned long   s_flags;    /*  flags                               */
 };
 
+/**
+ *
+ */
 #define	SCNHDR	struct external_scnhdr
 #define	SCNHSZ	sizeof(SCNHDR)
 
@@ -113,59 +136,84 @@ struct external_scnhdr {
 /*
  * s_flags "type"
  */
-#define STYP_TEXT	 (0x0020)	/* section contains text only */
-#define STYP_DATA	 (0x0040)	/* section contains data only */
-#define STYP_BSS	 (0x0080)	/* section contains bss only */
+#define STYP_TEXT   (0x0020)    /* section contains text only */
+#define STYP_DATA   (0x0040)    /* section contains data only */
+#define STYP_BSS    (0x0080)    /* section contains bss only  */
 
-/********************** LINE NUMBERS **********************/
+/******************************** LINE NUMBERS ********************************/
 
-/* 1 line number entry for every "breakpointable" source line in a section.
+/**
+ * 1 line number entry for every "breakpointable" source line in a section.
  * Line numbers are grouped on a per function basis; first entry in a function
  * grouping will have l_lnno = 0 and in place of physical address will be the
  * symbol table index of the function name.
  */
-struct external_lineno {
-	union {
-		unsigned long l_symndx __attribute__((packed));	/* function name symbol index, iff l_lnno == 0 */
-		unsigned long l_paddr __attribute__((packed));		/* (physical) address of line number */
+struct external_lineno
+{
+	union
+    {
+        /**
+         * Function name symbol index, iff l_lnno == 0
+         */
+		unsigned long l_symndx __attribute__((packed));
+
+        /**
+         * (physical) address of line number 
+         */
+        unsigned long l_paddr __attribute__((packed));
 	} l_addr;
-	unsigned short l_lnno;						/* line number */
+	unsigned short l_lnno;		/* line number */
 };
 
-
+/**
+ *
+ */
 #define	LINENO	struct external_lineno
 #define	LINESZ	sizeof(LINENO)
 
 
-/********************** SYMBOLS **********************/
+/********************************** SYMBOLS ***********************************/
 
-#define E_SYMNMLEN	8	/* # characters in a symbol name	*/
-#define E_FILNMLEN	14	/* # characters in a file name		*/
-#define E_DIMNUM	4	/* # array dimensions in auxiliary entry */
+#define E_SYMNMLEN  8	/* # characters in a symbol name         */
+#define E_FILNMLEN  14	/* # characters in a file name           */
+#define E_DIMNUM    4	/* # array dimensions in auxiliary entry */
 
+/**
+ *
+ */
 struct external_syment
 {
-  union {
-    char e_name[E_SYMNMLEN];
-    struct {
-      unsigned long e_zeroes __attribute__((packed));
-      unsigned long e_offset __attribute__((packed));
+    union
+    {
+        char e_name[E_SYMNMLEN];
+        struct
+        {
+            unsigned long e_zeroes __attribute__((packed));
+            unsigned long e_offset __attribute__((packed));
+        } e;
     } e;
-  } e;
-  unsigned long e_value __attribute__((packed));
-  short e_scnum;
-  unsigned short e_type;
-  unsigned char e_sclass;
-  unsigned char e_numaux;
+    unsigned long e_value __attribute__((packed));
+    short e_scnum;
+    unsigned short e_type;
+    unsigned char e_sclass;
+    unsigned char e_numaux;
 };
 
-#define N_BTMASK	(0xf)
-#define N_TMASK		(0x30)
-#define N_BTSHFT	(4)
-#define N_TSHIFT	(2)
+/**
+ *
+ */
+#define N_BTMASK (0xf)
+#define N_TMASK  (0x30)
+#define N_BTSHFT (4)
+#define N_TSHIFT (2)
 
-union external_auxent {
-	struct {
+/**
+ *
+ */
+union external_auxent
+{
+	struct
+    {
 		unsigned long x_tagndx __attribute__((packed));		/* str, un, or enum tag indx */
 		union {
 			struct {
@@ -209,6 +257,9 @@ union external_auxent {
 
 };
 
+/**
+ *
+ */
 #define	SYMENT	struct external_syment
 #define	SYMESZ	sizeof(SYMENT)
 #define	AUXENT	union external_auxent
@@ -297,23 +348,29 @@ union external_auxent {
 #define C_ALIAS	 	105	/* duplicate tag		*/
 #define C_HIDDEN	106	/* ext symbol in dmert public lib */
 
-/********************** RELOCATION DIRECTIVES **********************/
+/*************************** RELOCATION DIRECTIVES ****************************/
 
-
-
+/**
+ *
+ */
 struct external_reloc {
   unsigned long r_vaddr __attribute__((packed));
   unsigned long r_symndx __attribute__((packed));
   unsigned short r_type;
 };
 
-
+/**
+ *
+ */
 #define RELOC struct external_reloc
 #define RELSZ sizeof(RELOC)
 
-#define RELOC_REL32	20	/* 32-bit PC-relative address */
-#define RELOC_ADDR32	6	/* 32-bit absolute address */
+#define RELOC_REL32     20  /* 32-bit PC-relative address   */
+#define RELOC_ADDR32    6   /* 32-bit absolute address      */
 
+/**
+ *
+ */
 #define DEFAULT_DATA_SECTION_ALIGNMENT 4
 #define DEFAULT_BSS_SECTION_ALIGNMENT 4
 #define DEFAULT_TEXT_SECTION_ALIGNMENT 4
@@ -328,3 +385,4 @@ struct external_reloc {
 #endif
 
 #endif /* !__dj_include_coff_h_ */
+

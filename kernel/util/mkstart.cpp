@@ -12,11 +12,17 @@
 
 using namespace std;
 
+/**
+ *
+ */
 static inline natq norm(natq a)
 {
-	return ((a & (1UL << 47)) ? (a | 0xffff000000000000UL) : (a & 0x0000ffffffffffffUL));
+    return ((a & (1UL << 47)) ? (a | 0xffff000000000000UL) : (a & 0x0000ffffffffffffUL));
 }
 
+/**
+ *
+ */
 int main()
 {
 	natq start_io = norm(((natq)I_MIO_C << 39UL));
@@ -44,3 +50,4 @@ int main()
 
 	return 0;
 }
+

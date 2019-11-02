@@ -1,3 +1,13 @@
+/**
+ * File: fswap.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
+/**
+ *
+ */
 #if __GNUC__ >= 3 && !defined(WIN)
 	#include <cstdio>
 	#include <cstdlib>
@@ -9,6 +19,9 @@
 #endif
 #include "swap.h"
 
+/**
+ *
+ */
 class TipoFileSwap: public TipoSwap
 {
 public:
@@ -17,8 +30,11 @@ public:
 	Swap *apri(const char *nome);
 };
 
-
-class FileSwap: public Swap {
+/**
+ *
+ */
+class FileSwap: public Swap
+{
 	FILE* img;
 	uint64_t dim;
 public:
@@ -30,6 +46,9 @@ protected:
 	virtual bool scrivi(unsigned int off, const void* buff, unsigned int size);
 };
 
+/**
+ *
+ */
 Swap* TipoFileSwap::apri(const char *nome)
 {
 	FILE *img;
@@ -43,17 +62,25 @@ Swap* TipoFileSwap::apri(const char *nome)
 	return new FileSwap(img);
 }
 
-
+/**
+ *
+ */
 FileSwap::~FileSwap()
 {
 	fclose(img);
 }
 
+/**
+ *
+ */
 unsigned int FileSwap::dimensione() const
 {
 	return dim;
 }
 
+/**
+ *
+ */
 bool FileSwap::scrivi(unsigned int off, const void* buf, unsigned int size)
 {
 	if (off >= dim)
@@ -61,6 +88,9 @@ bool FileSwap::scrivi(unsigned int off, const void* buf, unsigned int size)
 	return (fseek(img, off, SEEK_SET) == 0 && fwrite(buf, size, 1, img) == 1);
 }
 
+/**
+ *
+ */
 bool FileSwap::leggi(unsigned int off, void* buf, unsigned int size)
 {
 	if (off >= dim)
@@ -69,3 +99,4 @@ bool FileSwap::leggi(unsigned int off, void* buf, unsigned int size)
 }
 
 TipoFileSwap tipoFileSwap;
+

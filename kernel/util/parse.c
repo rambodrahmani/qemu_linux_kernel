@@ -6,6 +6,7 @@
  * Author: Rambod Rahmani <rambodrahmani@autistici.org>
  *         Created on 08/09/2019.
  */
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,5 +1,11 @@
-#include <stdint.h>
+/**
+ * File: elf64.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
 
+#include <stdint.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -13,24 +19,36 @@ using namespace std;
 //typedef unsigned int uint32_t;
 
 // interprete per formato elf
-class InterpreteElf64: public Interprete {
+class InterpreteElf64: public Interprete
+{
 public:
 	InterpreteElf64();
 	~InterpreteElf64() {}
 	virtual Eseguibile* interpreta(FILE* pexe);
 };
 
+/**
+ *
+ */
 InterpreteElf64::InterpreteElf64()
 {}
 
-class EseguibileElf64: public Eseguibile {
+/**
+ *
+ */
+class EseguibileElf64: public Eseguibile
+{
 	FILE *pexe;
 	Elf64_Ehdr h;
 	char *seg_buf;
 	char *sec_buf;
 	int curr_seg;
 
-	class SegmentoElf64: public Segmento {
+    /**
+     *
+     */
+	class SegmentoElf64: public Segmento
+    {
 		EseguibileElf64 *padre;
 		Elf64_Phdr* ph;
 		uint64_t curr_offset;
@@ -58,13 +76,17 @@ public:
 	~EseguibileElf64();
 };
 
+/**
+ *
+ */
 EseguibileElf64::EseguibileElf64(FILE* pexe_)
 	: pexe(pexe_), curr_seg(0),
 	  seg_buf(NULL), sec_buf(NULL)
 {}
 
-
-
+/**
+ *
+ */
 bool EseguibileElf64::init()
 {
 	if (fseek(pexe, 0, SEEK_SET) != 0)
@@ -107,6 +129,9 @@ bool EseguibileElf64::init()
 	return true;
 }
 
+/**
+ *
+ */
 Segmento* EseguibileElf64::prossimo_segmento()
 {
 	while (curr_seg < h.e_phnum) {
@@ -121,60 +146,90 @@ Segmento* EseguibileElf64::prossimo_segmento()
 	return NULL;
 }
 
+/**
+ *
+ */
 uint64_t EseguibileElf64::entry_point() const
 {
 	return h.e_entry;
 }
 
+/**
+ *
+ */
 EseguibileElf64::~EseguibileElf64()
 {
 	delete[] seg_buf;
 	delete[] sec_buf;
 }
 
+/**
+ *
+ */
 EseguibileElf64::SegmentoElf64::SegmentoElf64(EseguibileElf64* padre_, Elf64_Phdr* ph_)
 	: padre(padre_), ph(ph_),
-	  curr_offset(ph->p_offset & ~(DIM_PAGINA - 1)),
+	  curr_offset(ph->p_offset & ~(PAGE_SIZE - 1)),
 	  da_leggere(ph->p_filesz + (ph->p_offset - curr_offset)),
 	  ancora(ph->p_memsz)
 {
-	curr = (da_leggere > DIM_PAGINA ? DIM_PAGINA : da_leggere);
+	curr = (da_leggere > PAGE_SIZE ? PAGE_SIZE : da_leggere);
 }
 
+/**
+ *
+ */
 bool EseguibileElf64::SegmentoElf64::scrivibile() const
 {
 	return !!(ph->p_flags & PF_W);
 }
 
+/**
+ *
+ */
 uint64_t EseguibileElf64::SegmentoElf64::ind_virtuale() const
 {
 	return ph->p_vaddr;
 }
 
+/**
+ *
+ */
 uint64_t EseguibileElf64::SegmentoElf64::dimensione() const
 {
 	return ph->p_memsz;
 }
 
+/**
+ *
+ */
 bool EseguibileElf64::SegmentoElf64::finito() const
 {
 	return (ancora <= 0);
 }
 
+/**
+ *
+ */
 bool EseguibileElf64::SegmentoElf64::prossima_pagina()
 {
 	if (finito())
 		return false;
 	da_leggere -= curr;
 	curr_offset += curr;
-	curr = (da_leggere > DIM_PAGINA ? DIM_PAGINA : da_leggere);
+	curr = (da_leggere > PAGE_SIZE ? PAGE_SIZE : da_leggere);
 	return true;
 }
 
+/**
+ *
+ */
 bool EseguibileElf64::SegmentoElf64::pagina_di_zeri() const {
 	return (da_leggere <= 0);
 }
 
+/**
+ *
+ */
 bool EseguibileElf64::SegmentoElf64::copia_pagina(void* dest)
 {
 	if (curr == 0)
@@ -185,7 +240,7 @@ bool EseguibileElf64::SegmentoElf64::copia_pagina(void* dest)
 		exit(EXIT_FAILURE);
 	}
 
-	if (curr < DIM_PAGINA) memset(dest, 0, DIM_PAGINA);
+	if (curr < PAGE_SIZE) memset(dest, 0, PAGE_SIZE);
 	if (fread(dest, 1, curr, padre->pexe) < curr) {
 		fprintf(stderr, "errore nella lettura dal file ELF\n");
 		exit(EXIT_FAILURE);
@@ -193,6 +248,9 @@ bool EseguibileElf64::SegmentoElf64::copia_pagina(void* dest)
 	return true;
 }
 
+/**
+ *
+ */
 Eseguibile* InterpreteElf64::interpreta(FILE* pexe)
 {
 	EseguibileElf64 *pe = new EseguibileElf64(pexe);
@@ -204,4 +262,5 @@ Eseguibile* InterpreteElf64::interpreta(FILE* pexe)
 	return NULL;
 }
 
-InterpreteElf64		int_elf64;
+InterpreteElf64 int_elf64;
+

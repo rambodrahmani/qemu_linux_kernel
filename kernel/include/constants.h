@@ -53,9 +53,9 @@
 #define  MAX_SEM     4096
 
 /**
- *
+ * Virtual Memory Page size dimension: 4 KiB.
  */
-#define  DIM_PAGINA  4096UL
+#define  PAGE_SIZE  4096UL
 
 /**
  *

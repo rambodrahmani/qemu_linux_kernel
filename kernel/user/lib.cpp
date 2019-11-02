@@ -119,7 +119,7 @@ extern "C" void lib_init()
     mem_mutex = sem_ini(1);
 
     //
-    end_ = (end_ + DIM_PAGINA - 1) & ~(DIM_PAGINA - 1);
+    end_ = (end_ + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
 
     // allocate user heap memory space
     heap_init((void *)end_, DIM_USR_HEAP);

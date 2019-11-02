@@ -1,7 +1,18 @@
+/**
+ * File: dos.h
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
 #ifndef DOS_H_
 #define DOS_H_
 
-struct DOS_EXE {
+/**
+ *
+ */
+struct DOS_EXE
+{
   unsigned short signature; /* == 0x5a4D */
   unsigned short bytes_in_last_block;
   unsigned short blocks_in_file;
@@ -18,6 +29,10 @@ struct DOS_EXE {
   unsigned short overlay_number;
 };
 
+/**
+ *
+ */
 const unsigned short DOS_MAGIC = 0x5a4D;
 
 #endif
+

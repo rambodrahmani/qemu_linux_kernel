@@ -1,35 +1,56 @@
-/*****************************************************************************
-LBA version of biosdisk() for DJGPP
-Chris Giese <geezer@execpc.com>	http://my.execpc.com/~geezer
-Release date: Jan 2, 2004
-This code is public domain (no copyright).
-You can do whatever you want with it.
-*****************************************************************************/
-#include <stdio.h> /* printf() */
-#include <bios.h> /* _DISK_... */
-#include <dpmi.h> /* __dpmi_regs, __dpmi_int() */
-#include <go32.h> /* _go32_info_block, __tb, dosmemget(), dosmemput() */
+/**
+ * File: doswap.cpp
+ *
+ * Author: Rambod Rahmani <rambodrahmani@autistici.org>
+ *         Created on 02/11/2019.
+ */
+
+#include <stdio.h>  /* printf() */
+#include <bios.h>   /* _DISK_... */
+#include <dpmi.h>   /* __dpmi_regs, __dpmi_int() */
+#include <go32.h>   /* _go32_info_block, __tb, dosmemget(), dosmemput() */
 #include <string.h>
+
 #include "constants.h"
 #include "swap.h"
 
-#define	BPS	512	/* bytes per sector for disk */
+/**
+ * Bytes per sector for disk.
+ */
+#define	BPS	512
 
-typedef unsigned char		uint8_t;
-typedef unsigned short		uint16_t;
-typedef unsigned long		uint32_t;
-typedef unsigned long long	uint64_t;
+/**
+ *
+ */
+typedef unsigned char       uint8_t;
+typedef unsigned short      uint16_t;
+typedef unsigned long       uint32_t;
+typedef unsigned long long  uint64_t;
 
-struct partizione {
-	int	     type;	// tipo della partizione
-	unsigned int first;	// primo settore della partizione
-	unsigned int dim;	// dimensione in settori
+/**
+ *
+ */
+struct partizione
+{
+	int	     type;      // partition type
+	unsigned int first; // first partition sector
+	unsigned int dim;   // size (in sectors)
 	partizione*  next;
 };
 
+/**
+ *
+ */
 static int lba_biosdisk(unsigned int13_drive_num, int cmd, unsigned long lba, unsigned nsects, void *buf);
+
+/**
+ *
+ */
 static int get_disk_size(unsigned int13_drive_num, unsigned& nsec);
 
+/**
+ *
+ */
 class TipoDOSwap: public TipoSwap
 {
 	static const int MAX_DISCHI = 8;
@@ -44,6 +65,9 @@ private:
 	void read_all_partitions();
 };
 
+/**
+ *
+ */
 class DOSwap: public Swap
 {
 	partizione p;
@@ -57,11 +81,17 @@ protected:
 	bool scrivi(unsigned int off, const void* buff, unsigned int size);
 };
 
+/**
+ *
+ */
 TipoDOSwap::TipoDOSwap()
 {
 	read_all_partitions();
 }
 
+/**
+ *
+ */
 TipoDOSwap::~TipoDOSwap()
 {
 	for (int drv = 0; drv < MAX_DISCHI; drv++) {
@@ -74,6 +104,9 @@ TipoDOSwap::~TipoDOSwap()
 	}
 }
 
+/**
+ *
+ */
 Swap* TipoDOSwap::apri(const char *nome)
 {
 	if (nome == NULL || nome[0] != ':')
@@ -100,10 +133,12 @@ Swap* TipoDOSwap::apri(const char *nome)
 	return new DOSwap(scan, drv + 0x80);
 }
 
-
+/**
+ *
+ */
 static int lba_biosdisk(unsigned int13_drive_num, int cmd, unsigned long lba, unsigned nsects, void *buf)
 {
-/* INT 13h AH=42h/AH=43h command packet: */
+    /* INT 13h AH=42h/AH=43h command packet: */
 	struct
 	{
 		uint8_t  packet_len;
@@ -170,9 +205,15 @@ for data transferred by BIOS disk I/O... */
 	return err;
 }
 
+/**
+ *
+ */
 static int get_disk_size(unsigned int13_drive_num, unsigned& nsec)
 {
-	struct {
+	/**
+     *
+     */
+    struct {
 		uint16_t 	buff_size;
 		uint16_t	flags;
 		uint32_t	cyl;
@@ -210,13 +251,10 @@ static int get_disk_size(unsigned int13_drive_num, unsigned& nsec)
 	return 0;
 }
 
-
-
 // descrittore di una partizione dell'hard disk
 //
 // descrittore di partizione. Le uniche informazioni che ci interessano sono
 // "offset" e "sectors"
-
 partizione* TipoDOSwap::leggi_partizioni(unsigned drv)
 {
 	struct des_part {
@@ -305,17 +343,26 @@ errore:
 	return NULL;
 }
 
+/**
+ *
+ */
 void TipoDOSwap::read_all_partitions()
 {
 	for (unsigned drv = 0x80; drv < 0x80 + MAX_DISCHI; drv++)
 		partizioni[drv - 0x80] = leggi_partizioni(drv);
 }
 
+/**
+ *
+ */
 unsigned int DOSwap::dimensione() const
 {
 	return p.dim * BPS;
 }
 
+/**
+ *
+ */
 bool DOSwap::leggi(unsigned int off, void* buf, unsigned int size)
 {
 	const int STEP = 3;
@@ -353,6 +400,9 @@ bool DOSwap::leggi(unsigned int off, void* buf, unsigned int size)
 	return true;
 }
 
+/**
+ *
+ */
 bool DOSwap::scrivi(unsigned int off, const void* buf, unsigned int size)
 {
 	const int STEP = 3;
@@ -395,4 +445,8 @@ bool DOSwap::scrivi(unsigned int off, const void* buf, unsigned int size)
 	return true;
 }
 
+/**
+ *
+ */
 TipoDOSwap tipoDOSwap;
+

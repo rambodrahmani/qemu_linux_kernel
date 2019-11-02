@@ -731,7 +731,7 @@ extern "C" void c_pre_routine_pf(int tipo, pf_error errore, addr rip)
 		vaddr v = readCR2();
 		flog(LOG_ERR, "PAGE FAULT a %p, rip=%lx", v, rip);
 
-        if (v < DIM_PAGINA)
+        if (v < PAGE_SIZE)
         {
             flog(LOG_ERR, "Probabile puntatore NULL");
         }
@@ -853,7 +853,7 @@ des_frame* descrittore_frame(faddr indirizzo_frame)
 {
 	if (indirizzo_frame < primo_frame_utile)
 		return 0;
-	natq indice = (indirizzo_frame - primo_frame_utile) / DIM_PAGINA;
+	natq indice = (indirizzo_frame - primo_frame_utile) / PAGE_SIZE;
 	if (indice >= N_DF)
 		return 0;
 	return &vdf[indice];
@@ -864,7 +864,7 @@ des_frame* descrittore_frame(faddr indirizzo_frame)
 faddr indirizzo_frame(des_frame* df)
 {
 	natq indice = df - &vdf[0];
-	return primo_frame_utile + indice * DIM_PAGINA;
+	return primo_frame_utile + indice * PAGE_SIZE;
 }
 
 // restituisce il piu' piccolo numero maggiore o uguale ad a
@@ -883,18 +883,20 @@ natq allinea(natq a, natq m)
  */
 bool init_des_frame()
 {
-	faddr vdf_start;
-	// L'array di decrittori di frame comincia subito dopo
-	// la fine del programma
-	vdf_start = allinea(reinterpret_cast<natq>(&end), sizeof(natq));
-	// N_DPF e' il numero di frame di cui sara' composta M2.
-	// Per calcolarlo dobbiamo tenere conto che ci servira' un des_frame
-	// per ogni frame.
-	N_DF = (MEM_TOT - vdf_start) / (DIM_PAGINA + sizeof(des_frame));
+    faddr vdf_start;
+
+    // the frame descriptors start array is allocated right after the user
+    // program required memory
+    vdf_start = allinea(reinterpret_cast<natq>(&end), sizeof(natq));
+
+    // number of frames in the M2 memory area
+    N_DF = (MEM_TOT - vdf_start) / (PAGE_SIZE + sizeof(des_frame));
+
 	// M1 finisce dopo la fine dell'array dpf;
 	natq fine_M1 = vdf_start + N_DF * sizeof(des_frame);
+
 	// primo_frame_utile e' il primo frame che inizia dopo la fine di M1
-	primo_frame_utile = allinea(fine_M1, DIM_PAGINA);
+	primo_frame_utile = allinea(fine_M1, PAGE_SIZE);
 
 	// creiamo la lista dei frame liberi, che inizialmente contiene
 	// tutti i frame di M2
@@ -1430,9 +1432,9 @@ bool crea_pagina(natl proc, vaddr ind_virt, natl priv)
  */
 bool crea_pila(natl proc, vaddr bottom, natq size, natl priv)
 {
-    size = allinea(size, DIM_PAGINA);
+    size = allinea(size, PAGE_SIZE);
 
-    for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
+    for (vaddr ind = bottom - size; ind != bottom; ind += PAGE_SIZE)
     {
         if (!crea_pagina(proc, ind, priv))
         {
@@ -1450,7 +1452,7 @@ faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
 {
     des_frame *dp = 0;
 
-    for (vaddr ind = bottom - size; ind != bottom; ind += DIM_PAGINA)
+    for (vaddr ind = bottom - size; ind != bottom; ind += PAGE_SIZE)
     {
         dp = swap(proc, 0, ind);
 
@@ -1462,7 +1464,7 @@ faddr carica_pila_sistema(natl proc, vaddr bottom, natq size)
         dp->residente = true;
     }
 
-    return indirizzo_frame(dp) + DIM_PAGINA;
+    return indirizzo_frame(dp) + PAGE_SIZE;
 }
 
 /**
@@ -1482,7 +1484,7 @@ faddr crea_tab4()
 	df->residente = true;
 	df->processo = execution->id;
 	faddr tab4 = indirizzo_frame(df);
-	memset(reinterpret_cast<void *>(tab4), 0, DIM_PAGINA);
+	memset(reinterpret_cast<void *>(tab4), 0, PAGE_SIZE);
 
 	return tab4;
 }
@@ -1533,7 +1535,7 @@ void crea_tab4(faddr dest)
 {
 	faddr pdir = readCR3();
 
-	memset(reinterpret_cast<void*>(dest), 0, DIM_PAGINA);
+	memset(reinterpret_cast<void*>(dest), 0, PAGE_SIZE);
 
 	copy_des(pdir, dest, I_SIS_C, N_SIS_C);
 	copy_des(pdir, dest, I_MIO_C, N_MIO_C);
@@ -2105,7 +2107,7 @@ void carica(des_frame* df)
 {
 	tab_entry& e = get_des(df->processo, df->livello + 1, df->ind_virtuale);
 	if (extr_ZERO(e)) {
-		memset((addr)indirizzo_frame(df), 0, DIM_PAGINA);
+		memset((addr)indirizzo_frame(df), 0, PAGE_SIZE);
 	} else {
 		leggi_swap((addr)indirizzo_frame(df), df->ind_massa);
 	}
@@ -2407,7 +2409,7 @@ bool crea_spazio_condiviso()
 {
 	// ( lettura del direttorio principale dallo swap
 	flog(LOG_INFO, "lettura del direttorio principale...");
-	addr tmp = alloca(DIM_PAGINA);
+	addr tmp = alloca(PAGE_SIZE);
 	if (tmp == 0) {
 		flog(LOG_ERR, "memoria insufficiente");
 		return false;
@@ -3295,10 +3297,10 @@ bool swap_init()
     flog(LOG_DEBUG, "lettura della bitmap dei blocchi...");
 
 	// calcoliamo la dimensione della mappa di bit in pagine/blocchi
-	natl pages = ceild(swap_dev.sb.blocks, DIM_PAGINA * 8);
+	natl pages = ceild(swap_dev.sb.blocks, PAGE_SIZE * 8);
 
 	// quindi allochiamo in memoria un buffer che possa contenerla
-	swap_dev.free = static_cast<natl*>(alloca((pages * DIM_PAGINA)));
+	swap_dev.free = static_cast<natl*>(alloca((pages * PAGE_SIZE)));
 	if (swap_dev.free == 0) {
 		flog(LOG_ERR, "Impossibile allocare la bitmap dei blocchi");
 		return false;

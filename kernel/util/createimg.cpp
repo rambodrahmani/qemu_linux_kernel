@@ -51,7 +51,7 @@ verbose Log;
 /**
  *
  */
-const uint32_t UPB = DIM_PAGINA / sizeof(uint64_t);
+const uint32_t UPB = PAGE_SIZE / sizeof(uint64_t);
 
 /**
  *
@@ -115,8 +115,8 @@ struct tabella {
 struct pagina
 {
 	union {
-		uint8_t byte[DIM_PAGINA];
-		uint64_t parole_lunghe[DIM_PAGINA / sizeof(uint64_t)];
+		uint8_t byte[PAGE_SIZE];
+		uint64_t parole_lunghe[PAGE_SIZE / sizeof(uint64_t)];
 	};
 };
 
@@ -487,7 +487,7 @@ int main(int argc, char * argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	long dim = swap->dimensione() / DIM_PAGINA;
+	long dim = swap->dimensione() / PAGE_SIZE;
 	int nlong = dim / BPU + (dim % BPU ? 1 : 0);
 	int nbmblocks = nlong / UPB + (nlong % UPB ? 1 : 0);
 	Log << "Swap: blocks " << dim << " bitmap " << nbmblocks << "\n";
